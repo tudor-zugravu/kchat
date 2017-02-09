@@ -52,11 +52,11 @@ class RegisterPageViewControllorViewController: UIViewController {
             return;
         }else{
             let userDefault=UserDefaults.standard;
-            userDefault.set("email", forKey:"email");
-            userDefault.set("userName", forKey:"userName");
-            userDefault.set("phoneNo", forKey:"phoneNo");
-            userDefault.set("userPwd", forKey:"userPwd");
-            userDefault.set("confirmPwd", forKey:"confirmPwd");
+            userDefault.set(email, forKey:"email");
+            userDefault.set(userName, forKey:"userName");
+            userDefault.set(phoneNo, forKey:"phoneNo");
+            userDefault.set(userPwd, forKey:"userPwd");
+            userDefault.set(confirmPwd, forKey:"confirmPwd");
             userDefault.synchronize();
         }
         //Display alter page and register
@@ -70,7 +70,7 @@ class RegisterPageViewControllorViewController: UIViewController {
   
     //display alter message function
     func displayAlertMessage(mymessage:String) {
-        var myAlert = UIAlertController(title:"Oopse", message:mymessage, preferredStyle:.alert);
+        let myAlert = UIAlertController(title:"Oopse", message:mymessage, preferredStyle:.alert);
         let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
         myAlert.addAction(okaction);
         self.present(myAlert, animated:true, completion:nil);
