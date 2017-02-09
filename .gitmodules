@@ -1,0 +1,3 @@
+[submodule "KchatAndroid"]
+	path = KchatAndroid
+	url = https://github.com/TudorVasile/KchatAndroid.git
