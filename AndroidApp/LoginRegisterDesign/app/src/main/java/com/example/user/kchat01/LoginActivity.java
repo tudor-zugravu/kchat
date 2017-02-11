@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 //in actual application, these variables are sent to the server
                     Log.i("username", username);
                     Log.i("password", password);
+                    //test commit
                 }
             }
         });
