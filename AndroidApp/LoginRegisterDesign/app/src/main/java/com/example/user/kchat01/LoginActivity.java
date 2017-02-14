@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextInputEditText inputUsername, inputPassword;
     private Button btnGoRegister, btnLogin;
-
+        //testing commit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
