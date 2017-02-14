@@ -27,7 +27,7 @@ class RegisterPageViewControllorViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func registerButtom(_ sender: Any) {
+    @IBAction func registerButton(_ sender: Any) {
         let userName:String=userNameTextField.text!;
         let email:String=userEmailTextField.text!;
         let phoneNo:String=userPhoneNoTestField.text!;
@@ -37,21 +37,21 @@ class RegisterPageViewControllorViewController: UIViewController {
         //check for empty field
         if (userName.isEmpty||email.isEmpty||phoneNo.isEmpty||userPwd.isEmpty||(confirmPwd?.isEmpty)!){
             //display alter messaage
-            displayAlertMessage(mymessage: "All field are required!");
+            displayAlertMessage(mymessage: "All fields are required!");
             return;
         }
         //two passward is same
         if userPwd != confirmPwd{
             //display alter message
-            displayAlertMessage(mymessage: "Wrong password conformation!")
+            displayAlertMessage(mymessage: "Wrong password confirmation!")
             return;
         }
         //store data in default area(finally it should be store in database)
         let userid = UserDefaults.standard.string(forKey: "userid")
         if userid != nil{
             return;
-        }else{
-            let userDefault=UserDefaults.standard;
+        } else {
+            let userDefault = UserDefaults.standard;
             userDefault.set(email, forKey:"email");
             userDefault.set(userName, forKey:"userName");
             userDefault.set(phoneNo, forKey:"phoneNo");
@@ -61,7 +61,7 @@ class RegisterPageViewControllorViewController: UIViewController {
         }
         //Display alter page and register
         let myAlert = UIAlertController(title:"Success", message:"Register is success", preferredStyle:.alert);
-        let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
+        let okaction = UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
             action in self.dismiss(animated: true, completion: nil)
         }
         myAlert.addAction(okaction);
