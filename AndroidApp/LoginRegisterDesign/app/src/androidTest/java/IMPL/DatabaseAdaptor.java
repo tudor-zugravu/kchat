@@ -15,7 +15,7 @@ import API.IAdaptors;
 public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
 
 
-    // Database ----test2
+    // Database
     private static final int DATABASE_VERSION = 1;
     // Database Name
     private static final String DATABASE_NAME = "ChatMobileDB";
