@@ -1,8 +1,0 @@
-server IP: 188.166.157.62
-user: root
-password: kchatadmin
-
-mysql database user: root
-mysql database password: kchatadminx
-
-phpmyadmin: http://188.166.157.62/phpmyadmin
