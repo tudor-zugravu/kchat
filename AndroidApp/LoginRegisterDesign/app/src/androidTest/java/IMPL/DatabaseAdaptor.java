@@ -256,7 +256,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         Log.d("getAllBooks()", messages.toString());
         return messages;
     }
-
+///
 
     @Override
     public boolean flushData() {
