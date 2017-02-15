@@ -130,11 +130,8 @@
 				59334E4E1E492C8700E91DF3 /* ViewController.swift */,
 				59B18ED51E54B4660000642E /* messageViewController.swift */,
 				59334E501E492C8700E91DF3 /* Main.storyboard */,
-<<<<<<< HEAD
 				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
-=======
->>>>>>> da4ab13d19d4aef89f95a92fe2d06acac8c9817b
 				59334E531E492C8700E91DF3 /* Assets.xcassets */,
 				59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */,
 				59334E581E492C8700E91DF3 /* Info.plist */,

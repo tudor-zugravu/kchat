@@ -84,7 +84,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
     func permissionReceived(_ permission: NSString) {
         if permission == "success" {
             
-<<<<<<< HEAD
+            /*
             if userNameDefault == userName{
                 if userPwdDefault == userPwd{
                     //login is successful (the following is just use default to store it)
@@ -115,7 +115,6 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 myAlert.addAction(okaction);
                 self.present(myAlert, animated:true, completion:nil);
             }
-=======
 //            let hasLoginKey = UserDefaults.standard.bool(forKey: "hasLoginKey")
 //            if hasLoginKey == false {
 //                UserDefaults.standard.setValue(self.emailTextField.text, forKey: "userEmail")
@@ -129,12 +128,12 @@ class LoginViewController: UIViewController, LogInModelProtocol {
 //            if let navController = self.navigationController {
 //                navController.popViewController(animated: true)
 //            }
+ */
             let alertView = UIAlertController(title: "Success",
                                               message: "You are logged in" as String, preferredStyle:.alert)
             let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
             alertView.addAction(okAction)
             self.present(alertView, animated: true, completion: nil)
->>>>>>> da4ab13d19d4aef89f95a92fe2d06acac8c9817b
         } else {
             let alertView = UIAlertController(title: "Login Failed",
                                               message: "Wrong username or password." as String, preferredStyle:.alert)
