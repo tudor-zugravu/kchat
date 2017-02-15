@@ -69,7 +69,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
 
     @Override
     public void initialDatabaseSetup() {
-
+        //some change
     }
 
     @Override
