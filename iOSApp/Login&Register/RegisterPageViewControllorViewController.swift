@@ -75,7 +75,7 @@ class RegisterPageViewControllorViewController: UIViewController {
         myAlert.addAction(okaction);
         self.present(myAlert, animated:true, completion:nil);
         
-        // TESTING
+       
     }
     
     

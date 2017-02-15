@@ -20,11 +20,11 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     override func viewDidAppear(_ animated: Bool) {
-        let isUserLoggedin = UserDefaults.standard.bool(forKey: "isUserLogin")
+   //     let isUserLoggedin = UserDefaults.standard.bool(forKey: "isUserLogin")
 //        if !isUserLoggedin{
-//            self.performSegue(withIdentifier: "loginView", sender: self)
+           self.performSegue(withIdentifier: "loginView", sender: self)
 //        }
-        self.performSegue(withIdentifier: "loginView", sender: self)
+    //    self.performSegue(withIdentifier: "loginView", sender: self)
     }
 
     @IBAction func logoutButtom(_ sender: Any) {

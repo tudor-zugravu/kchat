@@ -40,10 +40,14 @@ class LoginViewController: UIViewController {
                     //self.dismiss(animated: true, completion: nil)
                     
                     // Alert for success
-                    let myAlert = UIAlertController(title:"Success!", message:"Logged in", preferredStyle:.alert);
+                  /*  let myAlert = UIAlertController(title:"Success!", message:"Logged in", preferredStyle:.alert);
                     let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
+                    /*let okaction = UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
+                        action in self.dismiss(animated: true, completion: nil)
+                    }*/
                     myAlert.addAction(okaction);
-                    self.present(myAlert, animated:true, completion:nil);
+                    
+                    self.present(myAlert, animated:true, completion:nil);*/
                 } else {
                     // Alert for wrong password
                     let myAlert = UIAlertController(title:"Error!", message:"Wrong password", preferredStyle:.alert);
