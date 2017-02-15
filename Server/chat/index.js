@@ -1,6 +1,11 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: false
+})); 
 
 // DataBase 
 var mysql = require("mysql");
@@ -18,17 +23,26 @@ con.connect(function(err){
   console.log('Connection established');
 });
 
-// Test database connection
-var db = con;
-var data = "";
-db.query('SELECT * FROM Users',function(err,rows){
-	//if(err) throw err;
-	
-	// console.log('Data received from Db:\n');
-	console.log(rows);
-	var data = rows;
-	console.log("Outside--"+data.id);
-	//res.render('userIndex', { title: 'User Information', dataGet: data });
+
+// Authenticate user
+app.post('/login', function(req, res) {
+
+	var queryString = 'SELECT * FROM Users WHERE username = ' + 
+                   con.escape(req.body.username) + ' AND password = ' + 
+                   con.escape(req.body.password) ;
+
+    con.query(queryString, function(err, rows, fields) {
+	    if (err) { 
+	    	throw err;
+	    	res.end('fail');
+	    }
+
+	 	if (rows.length == 1) {
+			res.end('success');
+	 	} else {
+			res.end('fail');
+		}
+	});
 });
 
 // Initial code
@@ -47,6 +61,6 @@ io.on('connection', function(socket){
  });
 });
 
-http.listen(5000, function(){
- console.log('listening on *:5000');
+http.listen(3000, function(){
+ console.log('listening on *:3000');
 });
