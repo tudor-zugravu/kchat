@@ -78,6 +78,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38938EE31E548EC7009F1973 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		38938EE41E548ECD009F1973 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */,
+				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		59334E401E492C8700E91DF3 = {
 			isa = PBXGroup;
 			children = (
@@ -101,14 +117,14 @@
 		59334E4B1E492C8700E91DF3 /* Login&Register */ = {
 			isa = PBXGroup;
 			children = (
+				38938EE41E548ECD009F1973 /* Controllers */,
+				38938EE31E548EC7009F1973 /* Models */,
 				59334E4C1E492C8700E91DF3 /* AppDelegate.swift */,
 				59334E4E1E492C8700E91DF3 /* ViewController.swift */,
 				59334E501E492C8700E91DF3 /* Main.storyboard */,
-				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
 				59334E531E492C8700E91DF3 /* Assets.xcassets */,
 				59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */,
 				59334E581E492C8700E91DF3 /* Info.plist */,
-				591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */,
 			);
 			path = "Login&Register";
 			sourceTree = "<group>";
