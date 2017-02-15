@@ -161,7 +161,6 @@
                                                         </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="loginPressed:" destination="pYg-4Q-uX8" eventType="touchUpInside" id="Qh3-aj-x9Z"/>
-                                                            <segue destination="t2a-SF-f7M" kind="presentation" identifier="ToMainPage" id="DzN-fL-PWf"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fyf-f4-wB7">
@@ -239,11 +238,12 @@
                     <connections>
                         <outlet property="userNameTextField" destination="BO2-0K-7eT" id="Xjb-Cb-XKw"/>
                         <outlet property="userPwdTextField" destination="n9v-ld-cnd" id="j08-pE-bbk"/>
+                        <segue destination="t2a-SF-f7M" kind="show" identifier="showTabBarViewController" id="Tb5-Z2-l4w"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EQ4-AJ-reS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2049.5999999999999" y="135.832083958021"/>
+            <point key="canvasLocation" x="2213" y="76"/>
         </scene>
         <!--Item 2-->
         <scene sceneID="vch-xW-jIz">
@@ -527,10 +527,10 @@
             </objects>
             <point key="canvasLocation" x="5942" y="-430"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--tabBarController-->
         <scene sceneID="BXL-tQ-cjy">
             <objects>
-                <tabBarController id="t2a-SF-f7M" sceneMemberID="viewController">
+                <tabBarController title="tabBarController" id="t2a-SF-f7M" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="SBw-GM-FN5">
@@ -625,19 +625,19 @@
                                 <rect key="frame" x="0.0" y="72" width="600" height="488"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ODG-B1-nvc">
-                                        <rect key="frame" x="166" y="69" width="200" height="380"/>
+                                        <rect key="frame" x="166" y="69" width="200" height="382"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="lGh-Bd-HcL">
-                                                <rect key="frame" x="0.0" y="0.0" width="200" height="49.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="200" height="50"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpc-ak-uJO">
-                                                        <rect key="frame" x="0.0" y="0.0" width="83" height="19.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="83" height="20"/>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="no4-Zk-Pyz">
-                                                        <rect key="frame" x="0.0" y="19.5" width="200" height="30"/>
+                                                        <rect key="frame" x="0.0" y="20" width="200" height="30"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="200" id="EwA-GC-Y6D"/>
                                                         </constraints>
@@ -648,16 +648,16 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="S1u-Ad-99s">
-                                                <rect key="frame" x="0.0" y="69.5" width="200" height="49.5"/>
+                                                <rect key="frame" x="0.0" y="70" width="200" height="50"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dqr-D3-VgD">
-                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="19.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="20"/>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email address" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Qpq-Hf-skg">
-                                                        <rect key="frame" x="0.0" y="19.5" width="200" height="30"/>
+                                                        <rect key="frame" x="0.0" y="20" width="200" height="30"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="200" id="e94-d4-Adr"/>
                                                         </constraints>
@@ -668,16 +668,16 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="DJa-I2-jwf">
-                                                <rect key="frame" x="0.0" y="139" width="200" height="49.5"/>
+                                                <rect key="frame" x="0.0" y="140" width="200" height="50"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Phone Number:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XF4-1K-GMh">
-                                                        <rect key="frame" x="0.0" y="0.0" width="120" height="19.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="120" height="20"/>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zWR-jk-xOw">
-                                                        <rect key="frame" x="0.0" y="19.5" width="200" height="30"/>
+                                                        <rect key="frame" x="0.0" y="20" width="200" height="30"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="200" id="XHc-QZ-Ejm"/>
                                                         </constraints>
@@ -688,16 +688,16 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="58x-W9-chS">
-                                                <rect key="frame" x="0.0" y="208.5" width="200" height="49.5"/>
+                                                <rect key="frame" x="0.0" y="210" width="200" height="50"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I4D-Ux-Puh">
-                                                        <rect key="frame" x="0.0" y="0.0" width="77.5" height="19.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="78" height="20"/>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="P2h-iL-Ygm">
-                                                        <rect key="frame" x="0.0" y="19.5" width="200" height="30"/>
+                                                        <rect key="frame" x="0.0" y="20" width="200" height="30"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="200" id="x40-Wf-ypl"/>
                                                         </constraints>
@@ -708,16 +708,16 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="oq4-KW-bsu">
-                                                <rect key="frame" x="0.0" y="278" width="200" height="49.5"/>
+                                                <rect key="frame" x="0.0" y="280" width="200" height="50"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Confirm Password:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vHG-0g-sxP">
-                                                        <rect key="frame" x="0.0" y="0.0" width="144.5" height="19.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="145" height="20"/>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Comfirm Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QG1-7f-qtf">
-                                                        <rect key="frame" x="0.0" y="19.5" width="200" height="30"/>
+                                                        <rect key="frame" x="0.0" y="20" width="200" height="30"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="200" id="6gr-it-4eq"/>
                                                         </constraints>
@@ -728,7 +728,7 @@
                                                 </subviews>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bN0-bg-z7L">
-                                                <rect key="frame" x="0.0" y="347.5" width="200" height="32"/>
+                                                <rect key="frame" x="0.0" y="350" width="200" height="32"/>
                                                 <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                 <state key="normal" title="Register">

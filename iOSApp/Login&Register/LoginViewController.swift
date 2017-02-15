@@ -83,57 +83,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
     
     func permissionReceived(_ permission: NSString) {
         if permission == "success" {
-            
-            /*
-            if userNameDefault == userName{
-                if userPwdDefault == userPwd{
-                    //login is successful (the following is just use default to store it)
-                    UserDefaults.standard.set(true, forKey: "isUserLogin");
-                    UserDefaults.standard.synchronize()
-                    //self.dismiss(animated: true, completion: nil)
-                    
-                    // Alert for success
-                  /*  let myAlert = UIAlertController(title:"Success!", message:"Logged in", preferredStyle:.alert);
-                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                    /*let okaction = UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
-                        action in self.dismiss(animated: true, completion: nil)
-                    }*/
-                    myAlert.addAction(okaction);
-                    
-                    self.present(myAlert, animated:true, completion:nil);*/
-                } else {
-                    // Alert for wrong password
-                    let myAlert = UIAlertController(title:"Error!", message:"Wrong password", preferredStyle:.alert);
-                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                    myAlert.addAction(okaction);
-                    self.present(myAlert, animated:true, completion:nil);
-                }
-            } else {
-                // Alert for wrong username
-                let myAlert = UIAlertController(title:"Error!", message:"Wrong username", preferredStyle:.alert);
-                let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                myAlert.addAction(okaction);
-                self.present(myAlert, animated:true, completion:nil);
-            }
-//            let hasLoginKey = UserDefaults.standard.bool(forKey: "hasLoginKey")
-//            if hasLoginKey == false {
-//                UserDefaults.standard.setValue(self.emailTextField.text, forKey: "userEmail")
-//            }
-//            
-//            Utils.MyKeychainWrapper.mySetObject(passwordTextField.text, forKey:kSecValueData)
-//            Utils.MyKeychainWrapper.writeToKeychain()
-//            UserDefaults.standard.set(true, forKey: "hasLoginKey")
-//            UserDefaults.standard.synchronize()
-//            
-//            if let navController = self.navigationController {
-//                navController.popViewController(animated: true)
-//            }
- */
-            let alertView = UIAlertController(title: "Success",
-                                              message: "You are logged in" as String, preferredStyle:.alert)
-            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
-            alertView.addAction(okAction)
-            self.present(alertView, animated: true, completion: nil)
+            performSegue(withIdentifier: "showTabBarViewController", sender: nil)
         } else {
             let alertView = UIAlertController(title: "Login Failed",
                                               message: "Wrong username or password." as String, preferredStyle:.alert)
