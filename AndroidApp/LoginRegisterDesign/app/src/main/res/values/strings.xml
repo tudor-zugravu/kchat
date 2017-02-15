@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">"KCHAT"</string>
+    <string name="action_settings">Settings</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm">Confirm Password</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="err_msg_username">Enter Username</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="err_msg_phone">Enter valid phone number</string>
+    <string name="err_msg_password">minimum 6 digits, there must be a number and a symbol</string>
+    <string name="err_msg_confirm">Password does NOT match</string>
+</resources>

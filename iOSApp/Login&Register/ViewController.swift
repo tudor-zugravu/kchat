@@ -21,9 +21,10 @@ class ViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         let isUserLoggedin = UserDefaults.standard.bool(forKey: "isUserLogin")
-        if !isUserLoggedin{
+//        if !isUserLoggedin{
+//            self.performSegue(withIdentifier: "loginView", sender: self)
+//        }
         self.performSegue(withIdentifier: "loginView", sender: self)
-        }
     }
 
     @IBAction func logoutButtom(_ sender: Any) {
