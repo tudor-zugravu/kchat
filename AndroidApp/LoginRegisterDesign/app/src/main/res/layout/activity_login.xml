@@ -34,7 +34,15 @@
         android:orientation="vertical"
         android:paddingLeft="60dp"
         android:paddingRight="60dp"
-        android:paddingTop="70dp">
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/logo"
+            android:id="@+id/imageLogo" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
