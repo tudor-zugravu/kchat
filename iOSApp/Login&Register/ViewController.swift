@@ -26,5 +26,10 @@ class ViewController: UIViewController {
         }
     }
 
+    @IBAction func logoutButtom(_ sender: Any) {
+        UserDefaults.standard.set(false, forKey: "isUserLogin");
+        UserDefaults.standard.synchronize()
+        self.performSegue(withIdentifier:"loginView",sender:self)
+    }
 }
 
