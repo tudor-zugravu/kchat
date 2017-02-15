@@ -6,17 +6,17 @@ package API;
 
 public interface IGroups {
 
-    public String getUsername();
+    public String getDescription();
 
-    public void setUsername(String username);
+    public void setDescription(String description);
 
     public int getGroupId();
 
     public void setGroupId(int groupId);
 
-    public String getGlobalId();
+    public int getType();
 
-    public void setGlobalId(String globalId);
+    public void setType(int type);
 
     public String getName();
 
