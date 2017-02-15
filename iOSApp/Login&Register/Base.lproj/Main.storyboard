@@ -97,7 +97,7 @@
                                 <rect key="frame" x="0.0" y="72" width="600" height="488"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="top" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Ui4-2U-tjG">
-                                        <rect key="frame" x="178" y="142" width="255" height="160"/>
+                                        <rect key="frame" x="178" y="142" width="255" height="215"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="AYk-rk-4Td">
                                                 <rect key="frame" x="0.0" y="0.0" width="255" height="40"/>
@@ -141,15 +141,15 @@
                                                     </textField>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="j0G-ng-7ya">
-                                                <rect key="frame" x="0.0" y="120" width="255" height="40"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="j0G-ng-7ya">
+                                                <rect key="frame" x="0.0" y="120" width="255" height="95"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="USR-w4-Izh">
-                                                        <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="255" height="40"/>
                                                         <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
+                                                            <constraint firstAttribute="width" constant="255" id="IRR-iE-S3R"/>
                                                             <constraint firstAttribute="height" constant="40" id="IXR-0t-LBj"/>
-                                                            <constraint firstAttribute="width" constant="120" id="wdr-lh-NUY"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -165,11 +165,11 @@
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fyf-f4-wB7">
-                                                        <rect key="frame" x="135" y="0.0" width="120" height="40"/>
+                                                        <rect key="frame" x="0.0" y="55" width="255" height="40"/>
                                                         <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="IFf-3g-9A2"/>
-                                                            <constraint firstAttribute="width" constant="120" id="akH-YE-cqc"/>
+                                                            <constraint firstAttribute="width" constant="255" id="Iet-RC-Wnb"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
                                                         <state key="normal" title="Register">

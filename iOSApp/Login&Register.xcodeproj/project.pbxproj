@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		38938EE61E54A775009F1973 /* LogInModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38938EE51E54A775009F1973 /* LogInModel.swift */; };
 		591100E71E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */; };
 		591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100EA1E4D113C00AC77A7 /* LoginViewController.swift */; };
 		59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4C1E492C8700E91DF3 /* AppDelegate.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		38938EE51E54A775009F1973 /* LogInModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInModel.swift; sourceTree = "<group>"; };
 		591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterPageViewControllorViewController.swift; sourceTree = "<group>"; };
 		591100EA1E4D113C00AC77A7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		59334E491E492C8700E91DF3 /* Login&Register.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Login&Register.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +84,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38938EE31E548EC7009F1973 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				38938EE51E54A775009F1973 /* LogInModel.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		38938EE41E548ECD009F1973 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */,
+				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
 		59334E401E492C8700E91DF3 = {
 			isa = PBXGroup;
 			children = (
@@ -105,16 +124,20 @@
 		59334E4B1E492C8700E91DF3 /* Login&Register */ = {
 			isa = PBXGroup;
 			children = (
+				38938EE41E548ECD009F1973 /* Controllers */,
+				38938EE31E548EC7009F1973 /* Models */,
 				59334E4C1E492C8700E91DF3 /* AppDelegate.swift */,
 				59334E4E1E492C8700E91DF3 /* ViewController.swift */,
 				59B18ED51E54B4660000642E /* messageViewController.swift */,
 				59334E501E492C8700E91DF3 /* Main.storyboard */,
+<<<<<<< HEAD
 				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
+=======
+>>>>>>> da4ab13d19d4aef89f95a92fe2d06acac8c9817b
 				59334E531E492C8700E91DF3 /* Assets.xcassets */,
 				59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */,
 				59334E581E492C8700E91DF3 /* Info.plist */,
-				591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */,
 			);
 			path = "Login&Register";
 			sourceTree = "<group>";
@@ -272,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */,
+				38938EE61E54A775009F1973 /* LogInModel.swift in Sources */,
 				59334E4F1E492C8700E91DF3 /* ViewController.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift in Sources */,

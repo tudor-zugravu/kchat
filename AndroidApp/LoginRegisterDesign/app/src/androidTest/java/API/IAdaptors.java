@@ -18,7 +18,7 @@ public interface IAdaptors {
 
     public boolean addToContactsTable(int contactId, int globalId, String contactName, String username);
 
-    public boolean addToGroupsTable(int groupId, String globalId, String name, String username);
+    public boolean addToGroupsTable(int id, String name, String description, int type);
 
     public boolean addToMessagesTable(int messageId, int senderId, int groupId, String message, Date timestamp);
 

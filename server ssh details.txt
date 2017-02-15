@@ -3,6 +3,6 @@ user: root
 password: kchatadmin
 
 mysql database user: root
-mysql database password: kchatadminx
+mysql database password: kchatadmin
 
 phpmyadmin: http://188.166.157.62/phpmyadmin
