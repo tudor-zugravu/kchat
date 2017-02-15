@@ -6,7 +6,7 @@ package API;
 
 public interface IGroups {
 
-    public int getDescription();
+    public String getDescription();
 
     public void setDescription(String description);
 

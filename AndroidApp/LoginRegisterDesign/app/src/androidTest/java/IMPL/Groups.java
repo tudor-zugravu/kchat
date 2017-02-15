@@ -8,47 +8,55 @@ import API.IGroups;
 
 public class Groups implements IGroups {
 
-    public Groups (){
+   private String description;
+    private int groupId;
+    private int type;
+    private String name;
 
+    public Groups (int groupId, String name, String description, int type){
+    this.description = description;
+        this.groupId = groupId;
+        this.type=type;
+        this.name=name;
     }
 
     @Override
-    public int getDescription() {
-        return 0;
+    public String getDescription() {
+        return this.description;
     }
 
     @Override
     public void setDescription(String description) {
-
+        this.description = description;
     }
 
     @Override
     public int getGroupId() {
-        return 0;
+        return getGroupId();
     }
 
     @Override
     public void setGroupId(int groupId) {
-
+    this.groupId=groupId;
     }
 
     @Override
     public int getType() {
-        return 0;
+        return this.type;
     }
 
     @Override
     public void setType(int type) {
-
+        this.type=type;
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
     public void setName(String name) {
-
+        this.name=name;
     }
 }
