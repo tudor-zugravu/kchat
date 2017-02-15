@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -51,6 +52,9 @@ public class RegisterActivity extends AppCompatActivity{
         inputPassword = (TextInputEditText)findViewById(R.id.input_password);
         inputConfirm = (TextInputEditText)findViewById(R.id.input_confirm);
         btnRegister = (Button)findViewById(R.id.btn_register);
+        // apply the Register button to Georgia font
+        btnRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+
 
         //for check during inputting characters in each field
         inputUsername.addTextChangedListener(new MyTextWatcher(inputUsername));
