@@ -307,7 +307,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
 
         db.close();
         return i;
-    }
+    }//
 
     public void deleteGroup(IGroups group) {
         SQLiteDatabase db = this.getWritableDatabase();
