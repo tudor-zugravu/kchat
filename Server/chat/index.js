@@ -24,6 +24,51 @@ con.connect(function(err){
 });
 
 
+// Validating user credentials with the database
+app.post('/login', function(req, res) {
+
+	var queryString = 'SELECT * FROM Users WHERE username = ' + 
+                   con.escape(req.body.username) + ' AND password = ' + 
+                   con.escape(req.body.password) ;
+
+    con.query(queryString, function(err, rows, fields) {
+	    if (err) { 
+	    	throw err;
+	    	res.end('fail');
+	    }
+
+	 	if (rows.length == 1) {
+			res.end('success');
+	 	} else {
+			res.end('fail');
+		}
+	});
+});
+
+// Inserting a new user in the database
+app.post('/register', function(req, res) {
+
+	var queryString = "INSERT INTO Users (`name`, `email`, `username`, `password`, `phone_number`, `session`) VALUES (" + 
+						con.escape(req.body.fullName) + ", " + con.escape(req.body.email) + ", "+ con.escape(req.body.username) + 
+						", " + con.escape(req.body.pwd) + ", " + con.escape(req.body.phoneNo) + ", '1')";
+	
+    con.query(queryString, function(err, rows, fields) {
+	    if (err) { 
+	    	//throw err;
+	    	res.end('fail');
+	    } else if (rows != null && rows.insertId > 0){
+	    	res.end('success');
+	    } else {
+	    	res.end('fail');
+	    }
+	});
+});
+
+// Initial code
+app.get('/', function(req, res){
+ res.sendFile(__dirname + '/index.html');
+});
+
 // Authenticate user
 app.post('/login', function(req, res) {
 

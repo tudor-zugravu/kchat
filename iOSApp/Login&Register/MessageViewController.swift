@@ -1,5 +1,5 @@
 //
-//  messageViewController.swift
+//  MessageViewController.swift
 //  Login&Register
 //
 //  Created by 骧小爷 on 2017/2/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class messageViewController: UIViewController {
+class MessageViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

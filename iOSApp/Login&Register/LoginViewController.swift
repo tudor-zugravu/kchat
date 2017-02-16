@@ -23,6 +23,8 @@ class LoginViewController: UIViewController, LogInModelProtocol {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
