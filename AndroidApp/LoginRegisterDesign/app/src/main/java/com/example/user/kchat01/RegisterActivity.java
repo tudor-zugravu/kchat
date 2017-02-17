@@ -4,7 +4,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
  * Created by user on 09/02/2017.
  */
 
-public class RegisterActivity extends AppCompatActivity{
+public class RegisterActivity extends CustomActivity{
 
     private Toolbar toolbar;
     private TextInputEditText inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;

@@ -4,13 +4,15 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static com.example.user.kchat01.R.id.profile;
 
 /**
  * Created by user on 15/02/2017.
@@ -23,8 +25,9 @@ import android.widget.Toast;
 5 bottom navigation
  */
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends CustomActivity {
 
+    private Toolbar toolbar;
     private TextView tvUsername, tvEmail, tvPhone;
     private ImageView imageProfile;
     private Button btnChangePassword, btnLogout;
@@ -33,6 +36,9 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         imageProfile = (ImageView) findViewById(R.id.imageProfile);
         tvUsername = (TextView) findViewById(R.id.textViewUsername);
@@ -71,7 +77,7 @@ send logout request to server
 
         });
 
-        //recognise the bottom navi.
+//recognise the bottom navi.
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -145,10 +151,10 @@ send logout request to server
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                       switch (item.getItemId()) {
-                            case R.id.profile:
-                               finish();
-                               startActivity(getIntent());
+                        switch (item.getItemId()) {
+                            case profile:
+                                finish();
+                                startActivity(getIntent());
                                 //Toast.makeText(ProfileActivity.this, "profile is clicked.", Toast.LENGTH_LONG).show();
                                 break;
                             case R.id.contacts:
@@ -165,8 +171,7 @@ send logout request to server
 
                 });
 
-
-
     }
+
 }
 

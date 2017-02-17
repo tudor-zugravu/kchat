@@ -3,9 +3,9 @@ package com.example.user.kchat01;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -15,11 +15,13 @@ import android.widget.Button;
  * Created by user on 10/02/2017.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends CustomActivity {
 
     private Toolbar toolbar;
     private TextInputEditText inputUsername, inputPassword;
     private Button btnGoRegister, btnLogin;
+    BottomNavigationView bottomNavigationView;
+    CustomActivity customActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,5 +69,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        //customActivity = new CustomActivity();
+        //customActivity.startActivity();
+
+        //Intent bottomIntent = new Intent(this, CustomActivity.class);
+        //this.startActivity(bottomIntent);
     }
+
+
 }
