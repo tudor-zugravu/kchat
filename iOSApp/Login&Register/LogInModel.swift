@@ -9,7 +9,7 @@
 import Foundation
 
 protocol LogInModelProtocol: class {
-    func permissionReceived(_ permission: NSString)
+    func userInfoReceived(_ userDetails: [String:Any])
 }
 
 
@@ -17,9 +17,12 @@ class LogInModel: NSObject, URLSessionDataDelegate {
     
     //properties
     weak var delegate: LogInModelProtocol!
+    var data : NSMutableData = NSMutableData()
     
     // Server request function for validating log in credentials
     func data_request(_ username: String, password: String) {
+        
+        self.data = NSMutableData()
         
         // Setting up the server session with the URL and the request
         let url: URL = URL(string: "http://188.166.157.62:3000/login")!
@@ -40,12 +43,19 @@ class LogInModel: NSObject, URLSessionDataDelegate {
                 print("error")
                 return
             }
-            
-            // Calling the success handler asynchroniously
-            let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.delegate.permissionReceived(dataString!)
-            })
+
+            do {
+                // Sending the received JSON
+                let parsedData = try JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
+                DispatchQueue.main.async(execute: { () -> Void in
+                    
+                    // Calling the success handler asynchroniously
+                    self.delegate.userInfoReceived(parsedData)
+                })
+    
+            } catch let error as NSError {
+                print(error)
+            }
         })
         task.resume()
     }

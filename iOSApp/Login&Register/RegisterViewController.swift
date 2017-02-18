@@ -64,38 +64,25 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         }
     }
     
+    // The function called at the arival of the response from the server
     func responseReceived(_ permission: NSString) {
         if permission == "success" {
+            
+            // Add the user details to the user defaults.
+            let userDefaults = UserDefaults.standard;
+            userDefaults.set(emailTextField.text, forKey:"email");
+            userDefaults.set(usernameTextField.text, forKey:"username");
+            userDefaults.set(phoneNoTextField.text, forKey:"phoneNo");
+            userDefaults.set(pwdTextField.text, forKey:"password");
+            userDefaults.set(fullNameTextField.text, forKey:"fullName");
+            userDefaults.set(true, forKey: "hasLoginKey")
+            userDefaults.synchronize();
             
             // Alert for success and view change on dismiss
             let myAlert = UIAlertController(title:"Success", message:"You are registered", preferredStyle:.alert);
             let okaction=UIAlertAction(title:"done", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.onSuccess()});
             myAlert.addAction(okaction);
             self.present(myAlert, animated:true, completion:nil);
-            
-            
-            // Still need to add the data to the user defaults and check on log in.
-            
-            /*//store data in default area(finally it should be store in database)
-            let userid = UserDefaults.standard.string(forKey: "userid")
-            if userid != nil{
-                return;
-            } else {
-                let userDefault = UserDefaults.standard;
-                userDefault.set(email, forKey:"email");
-                userDefault.set(userName, forKey:"userName");
-                userDefault.set(phoneNo, forKey:"phoneNo");
-                userDefault.set(userPwd, forKey:"userPwd");
-                userDefault.set(confirmPwd, forKey:"confirmPwd");
-                userDefault.synchronize();
-            }
-            //Display alter page and register
-            let myAlert = UIAlertController(title:"Success", message:"Register is success", preferredStyle:.alert);
-            let okaction = UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
-                action in self.dismiss(animated: true, completion: nil)
-            }
-            myAlert.addAction(okaction);
-            self.present(myAlert, animated: true, completion: nil);*/
             
         } else {
             
