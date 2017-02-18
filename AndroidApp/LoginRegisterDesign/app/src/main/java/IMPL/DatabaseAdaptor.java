@@ -47,7 +47,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
                 "sender_id INTEGER, "+
                 "group_id INTEGER, "+
                 "message TEXT, "+
-                "timestamp DATETIME,+" +
+                "timestamp DATETIME," +
                 "FOREIGN KEY(sender_id) REFERENCES contacts(id)," +
                 "FOREIGN KEY(group_id) REFERENCES groups(id))";
 
@@ -60,6 +60,15 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         db.execSQL(CREATE_MESSAGES_TABLE);
         db.execSQL(CREATE_CONTACTS_TABLE);
         db.execSQL(CREATE_GROUPS_TABLE);
+        Log.d("Identifier", "Reached here");
+    }
+
+    public boolean checkTable(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Log.d("Identifier", "Reached here part 2");
+        String CREATE_GROUPS_TABLE2 = "SHOW TABLES LIKE groups;";
+        return true;
     }
 
     @Override

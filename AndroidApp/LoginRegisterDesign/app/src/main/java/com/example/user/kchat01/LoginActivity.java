@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import IMPL.DatabaseAdaptor;
+import IMPL.RESTApi;
+
 /**
  * Created by user on 10/02/2017.
  */
@@ -27,7 +30,8 @@ public class LoginActivity extends CustomActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        DatabaseAdaptor myAdaptor = new DatabaseAdaptor(this);
+        myAdaptor.checkTable();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -78,6 +82,16 @@ public class LoginActivity extends CustomActivity {
 
         //Intent bottomIntent = new Intent(this, CustomActivity.class);
         //this.startActivity(bottomIntent);
+    }
+
+    public void OnLogin(View view) {
+      //  String username = UsernameEt.getText().toString();
+       // String password = PasswordEt.getText().toString();
+        String type = "login";
+         String login_url = "http://192.168.1.6/login.php";
+
+        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url);
+      // backgroundasync.execute(type, username, password);
     }
 
 
