@@ -66,6 +66,8 @@ public class LoginActivity extends CustomActivity {
                 //in actual application, these variables are sent to the server
                     Log.i("username", username);
                     Log.i("password", password);
+                    Intent loginIntent = new Intent(LoginActivity.this, UserListActivity.class);
+                    startActivity(loginIntent);
                 }
             }
         });
