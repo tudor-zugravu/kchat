@@ -16,6 +16,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".CustomActivity"></activity>
+        <activity android:name=".UserListActivity"></activity>
     </application>
 
 </manifest>
