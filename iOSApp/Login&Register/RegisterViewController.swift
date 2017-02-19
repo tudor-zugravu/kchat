@@ -84,6 +84,10 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
             myAlert.addAction(okaction);
             self.present(myAlert, animated:true, completion:nil);
             
+        } else if permission == "duplicate" {
+            
+            // Alert for duplicate user error
+            displayAlertMessage(mymessage: "User already exists")
         } else {
             
             // Alert for register error
@@ -101,7 +105,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
     }
     
     func onSuccess() {
-        let _ = navigationController?.popViewController(animated: true)
+        self.performSegue(withIdentifier: "registerTabBarViewController", sender: nil)
     }
     
     // Display alert message function

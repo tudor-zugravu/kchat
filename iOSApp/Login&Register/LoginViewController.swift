@@ -12,6 +12,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
 
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var userPwdTextField: UITextField!
+    @IBOutlet weak var profileImage: UIImageView!
     
     let logInModel = LogInModel()
     
@@ -27,13 +28,6 @@ class LoginViewController: UIViewController, LogInModelProtocol {
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
-        
-//        UserDefaults.standard.set(false, forKey: "hasLoginKey")
-
-        // If a user is already logged in, proceed to the messages view
-        if UserDefaults.standard.bool(forKey: "hasLoginKey") {
-            performSegue(withIdentifier: "showTabBarViewController", sender: nil)
-        }
     }
     
     @IBAction func loginPressed(_ sender: Any) {
@@ -55,8 +49,6 @@ class LoginViewController: UIViewController, LogInModelProtocol {
     // The function called at the arival of the response from the server
     func userInfoReceived(_ userDetails: [String:Any]) {
         
-        print ("success \(userDetails)")
-        
         // Check if the user has been found
         if (userDetails["status"] as? String) != nil {
             let alertView = UIAlertController(title: "Login Failed",
@@ -74,7 +66,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
             userDefaults.set(userDetails["name"] as? String, forKey:"fullName");
             userDefaults.set(true, forKey: "hasLoginKey")
             userDefaults.synchronize();
-            performSegue(withIdentifier: "showTabBarViewController", sender: nil)
+            performSegue(withIdentifier: "loginTabBarViewController", sender: nil)
         }
     }
     

@@ -12,7 +12,7 @@
 		591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */; };
 		591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100EA1E4D113C00AC77A7 /* LoginViewController.swift */; };
 		59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4C1E492C8700E91DF3 /* AppDelegate.swift */; };
-		59334E4F1E492C8700E91DF3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4E1E492C8700E91DF3 /* ViewController.swift */; };
+		59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4E1E492C8700E91DF3 /* InitialViewController.swift */; };
 		59334E521E492C8700E91DF3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59334E501E492C8700E91DF3 /* Main.storyboard */; };
 		59334E541E492C8700E91DF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59334E531E492C8700E91DF3 /* Assets.xcassets */; };
 		59334E571E492C8700E91DF3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */; };
@@ -46,7 +46,7 @@
 		591100EA1E4D113C00AC77A7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		59334E491E492C8700E91DF3 /* Login&Register.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Login&Register.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		59334E4C1E492C8700E91DF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		59334E4E1E492C8700E91DF3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		59334E4E1E492C8700E91DF3 /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		59334E511E492C8700E91DF3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		59334E531E492C8700E91DF3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59334E561E492C8700E91DF3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -98,9 +98,11 @@
 		38938EE41E548ECD009F1973 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				59334E4E1E492C8700E91DF3 /* InitialViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
 				591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */,
 				59B18ED51E54B4660000642E /* MessageViewController.swift */,
+				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -131,9 +133,7 @@
 				38938EE41E548ECD009F1973 /* Controllers */,
 				38938EE31E548EC7009F1973 /* Models */,
 				59334E4C1E492C8700E91DF3 /* AppDelegate.swift */,
-				59334E4E1E492C8700E91DF3 /* ViewController.swift */,
 				59334E501E492C8700E91DF3 /* Main.storyboard */,
-				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
 				59334E531E492C8700E91DF3 /* Assets.xcassets */,
 				59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */,
 				59334E581E492C8700E91DF3 /* Info.plist */,
@@ -295,7 +295,7 @@
 			files = (
 				591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */,
 				38938EE61E54A775009F1973 /* LogInModel.swift in Sources */,
-				59334E4F1E492C8700E91DF3 /* ViewController.swift in Sources */,
+				59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
 				388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,

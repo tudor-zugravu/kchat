@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  InitialViewController.swift
 //  Login&Register
 //
 //  Created by 骧小爷 on 2017/2/6.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class InitialViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,11 +20,13 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     override func viewDidAppear(_ animated: Bool) {
-   //     let isUserLoggedin = UserDefaults.standard.bool(forKey: "isUserLogin")
-//        if !isUserLoggedin{
-           self.performSegue(withIdentifier: "loginView", sender: self)
-//        }
-    //    self.performSegue(withIdentifier: "loginView", sender: self)
+        
+        // If a user is already logged in, proceed to the messages view
+        if UserDefaults.standard.bool(forKey: "hasLoginKey") {
+            self.performSegue(withIdentifier: "initialTabBarViewController", sender: nil)
+        } else {
+            self.performSegue(withIdentifier: "loginView", sender: self)
+        }
     }
 
     @IBAction func logoutButtom(_ sender: Any) {

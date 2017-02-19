@@ -38,9 +38,9 @@ app.post('/login', function(req, res) {
 	    }
 
 	 	if (rows.length == 1) {
-			res.end('success');
+	 		res.json(rows[0]);
 	 	} else {
-			res.end('fail');
+			res.json({ status: 'failed' });
 		}
 	});
 });
@@ -53,9 +53,10 @@ app.post('/register', function(req, res) {
 						", " + con.escape(req.body.pwd) + ", " + con.escape(req.body.phoneNo) + ", '1')";
 	
     con.query(queryString, function(err, rows, fields) {
-	    if (err) { 
-	    	//throw err;
-	    	res.end('fail');
+	    if (err) {
+	    	if (err.code == 'ER_DUP_ENTRY') {
+	    		res.end('duplicate');
+	    	}
 	    } else if (rows != null && rows.insertId > 0){
 	    	res.end('success');
 	    } else {
