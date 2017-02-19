@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +29,7 @@ import static com.example.user.kchat01.R.id.profile;
 public class ProfileActivity extends CustomActivity {
 
     private Toolbar toolbar;
-    private TextView tvUsername, tvEmail, tvPhone;
+    private TextView toolbarTitle, tvUsername, tvEmail, tvPhone;
     private ImageView imageProfile;
     private Button btnChangePassword, btnLogout;
 
@@ -40,11 +41,15 @@ public class ProfileActivity extends CustomActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
         imageProfile = (ImageView) findViewById(R.id.imageProfile);
         tvUsername = (TextView) findViewById(R.id.textViewUsername);
         tvEmail = (TextView) findViewById(R.id.textViewEmail);
         tvPhone = (TextView) findViewById(R.id.textViewPhone);
 
+        // apply toolbar title
+        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         btnChangePassword = (Button) findViewById(R.id.btnChangePassword);
         // apply the Change Password button to Georgia font
         btnChangePassword.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
@@ -72,14 +77,20 @@ create change password activity, then change following Toast to Intent
 /*
 send logout request to server
 */
+                Intent logoutIntent = new Intent(ProfileActivity.this, LoginActivity.class);
+                startActivity(logoutIntent);
                 Toast.makeText(ProfileActivity.this, "send logout request to server", Toast.LENGTH_LONG).show();
             }
 
         });
 
 //recognise the bottom navi.
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
+        bottomNavigationView.getMenu().getItem(0).setChecked(false);
+        bottomNavigationView.getMenu().getItem(1).setChecked(false);
+        bottomNavigationView.getMenu().getItem(2).setChecked(false);
+        bottomNavigationView.getMenu().getItem(3).setChecked(true);
 
 /*
         REST get profile image, username, email and phone
@@ -152,19 +163,38 @@ send logout request to server
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
-                            case profile:
-                                finish();
-                                startActivity(getIntent());
-                                //Toast.makeText(ProfileActivity.this, "profile is clicked.", Toast.LENGTH_LONG).show();
-                                break;
-                            case R.id.contacts:
-                                Toast.makeText(ProfileActivity.this, "contacts is clicked.", Toast.LENGTH_LONG).show();
+                            case R.id.chats:
+                                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "chats is clicked.", Toast.LENGTH_LONG).show();
                                 break;
                             case R.id.groups:
-                                Toast.makeText(ProfileActivity.this, "groups is clicked.", Toast.LENGTH_LONG).show();
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "groups is clicked.", Toast.LENGTH_LONG).show();
                                 break;
-                            case R.id.chats:
-                                Toast.makeText(ProfileActivity.this, "chats is clicked.", Toast.LENGTH_LONG).show();break;
+                            case R.id.contacts:
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "contacts is clicked.", Toast.LENGTH_LONG).show();
+                                break;
+                            case profile:
+                                //finish();
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(true);
+                                Intent profileIntent = new Intent(getApplication(), ProfileActivity.class);
+                                startActivity(profileIntent);
+                                //bottomNavigationView.getMenu().getItem(3).setCheckable(true);
+                                //Toast.makeText(getApplication(), "profile is clicked.", Toast.LENGTH_LONG).show();
+                                break;
                         }
                         return true;
                     }

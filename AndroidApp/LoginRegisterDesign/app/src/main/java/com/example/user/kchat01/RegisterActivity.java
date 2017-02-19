@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.regex.Pattern;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends CustomActivity{
 
     private Toolbar toolbar;
+    private TextView toolbarTitle;
     private TextInputEditText inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;
     private TextInputLayout inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm;
     private Button btnRegister;
@@ -40,6 +42,7 @@ public class RegisterActivity extends CustomActivity{
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
         inputLayoutUsername = (TextInputLayout)findViewById(R.id.input_layout_username);
         inputLayoutEmail= (TextInputLayout)findViewById(R.id.input_layout_email);
         inputLayoutPhone = (TextInputLayout)findViewById(R.id.input_layout_phone);
@@ -51,9 +54,12 @@ public class RegisterActivity extends CustomActivity{
         inputPassword = (TextInputEditText)findViewById(R.id.input_password);
         inputConfirm = (TextInputEditText)findViewById(R.id.input_confirm);
         btnRegister = (Button)findViewById(R.id.btn_register);
+
+        // apply toolbar title
+        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         // apply the Register button to Georgia font
         btnRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-
 
         //for check during inputting characters in each field
         inputUsername.addTextChangedListener(new MyTextWatcher(inputUsername));

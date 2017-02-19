@@ -2,6 +2,9 @@
     <string name="app_name">"KCHAT"</string>
     <string name="action_settings">Settings</string>
 
+    <!-- For toolbar title -->
+    <string name="toolbar_title">KCHAT</string>
+
     <!-- For login, register and profile page -->
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>

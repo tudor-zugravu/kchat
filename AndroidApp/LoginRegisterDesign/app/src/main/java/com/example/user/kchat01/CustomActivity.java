@@ -38,7 +38,11 @@ public class CustomActivity extends AppCompatActivity {
                 Toast.makeText(this, "setting language", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.logout:
-                Toast.makeText(this, "go to logout", Toast.LENGTH_LONG).show();
+                /*
+                Logout Request to server
+                 */
+                Intent logoutIntent = new Intent(this, LoginActivity.class);
+                startActivity(logoutIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

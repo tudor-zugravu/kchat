@@ -1,12 +1,21 @@
 package com.example.user.kchat01;
 
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.user.kchat01.R.id.profile;
 
 /**
  * Created by user on 17/02/2017.
@@ -15,6 +24,7 @@ import java.util.List;
 public class UserListActivity extends CustomActivity {
 
     private Toolbar toolbar;
+    private TextView toolbarTitle;
     private LinearLayoutManager ILayout;
 
     @Override
@@ -25,6 +35,12 @@ public class UserListActivity extends CustomActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
+
+        // apply toolbar title
+        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+
         List<ItemObject> rowListItem = getAllItemList();
         ILayout = new LinearLayoutManager(UserListActivity.this);
 
@@ -33,6 +49,65 @@ public class UserListActivity extends CustomActivity {
 
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(UserListActivity.this, rowListItem);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        //recognise the bottom navi.
+        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        for (int i=0; i<4; i++){
+            bottomNavigationView.getMenu().getItem(i).setEnabled(true);
+            bottomNavigationView.getMenu().getItem(i).setChecked(false);
+        }
+
+        /*
+    Bottom navigation settings
+    Future work: implement as another class
+    */
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.chats:
+                                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "chats is clicked.", Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.groups:
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "groups is clicked.", Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.contacts:
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(true);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
+                                Toast.makeText(getApplication(), "contacts is clicked.", Toast.LENGTH_LONG).show();
+                                break;
+                            case profile:
+                                //finish();
+                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
+                                bottomNavigationView.getMenu().getItem(3).setChecked(true);
+                                Intent profileIntent = new Intent(getApplication(), ProfileActivity.class);
+                                startActivity(profileIntent);
+                                //bottomNavigationView.getMenu().getItem(3).setCheckable(true);
+                                //Toast.makeText(getApplication(), "profile is clicked.", Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                        return true;
+                    }
+
+                });
+
+
     }
 
     private List<ItemObject> getAllItemList() {
