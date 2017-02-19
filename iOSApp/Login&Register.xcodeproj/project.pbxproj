@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */; };
 		38938EE61E54A775009F1973 /* LogInModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38938EE51E54A775009F1973 /* LogInModel.swift */; };
+		389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7AC1E59D4BE00B5FDEE /* Utils.swift */; };
+		389CB7AF1E59FA4B00B5FDEE /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7AE1E59FA4B00B5FDEE /* ChangePasswordViewController.swift */; };
+		389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */; };
 		591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */; };
 		591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100EA1E4D113C00AC77A7 /* LoginViewController.swift */; };
 		59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4C1E492C8700E91DF3 /* AppDelegate.swift */; };
@@ -42,6 +45,9 @@
 /* Begin PBXFileReference section */
 		388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterModel.swift; sourceTree = "<group>"; };
 		38938EE51E54A775009F1973 /* LogInModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInModel.swift; sourceTree = "<group>"; };
+		389CB7AC1E59D4BE00B5FDEE /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		389CB7AE1E59FA4B00B5FDEE /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
+		389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordModel.swift; sourceTree = "<group>"; };
 		591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		591100EA1E4D113C00AC77A7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		59334E491E492C8700E91DF3 /* Login&Register.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Login&Register.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +97,7 @@
 			children = (
 				38938EE51E54A775009F1973 /* LogInModel.swift */,
 				388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */,
+				389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -103,8 +110,17 @@
 				591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */,
 				59B18ED51E54B4660000642E /* MessageViewController.swift */,
 				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
+				389CB7AE1E59FA4B00B5FDEE /* ChangePasswordViewController.swift */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		389CB7AB1E59D4B000B5FDEE /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				389CB7AC1E59D4BE00B5FDEE /* Utils.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 		59334E401E492C8700E91DF3 = {
@@ -130,6 +146,7 @@
 		59334E4B1E492C8700E91DF3 /* Login&Register */ = {
 			isa = PBXGroup;
 			children = (
+				389CB7AB1E59D4B000B5FDEE /* Utils */,
 				38938EE41E548ECD009F1973 /* Controllers */,
 				38938EE31E548EC7009F1973 /* Models */,
 				59334E4C1E492C8700E91DF3 /* AppDelegate.swift */,
@@ -295,9 +312,12 @@
 			files = (
 				591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */,
 				38938EE61E54A775009F1973 /* LogInModel.swift in Sources */,
+				389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */,
+				389CB7AF1E59FA4B00B5FDEE /* ChangePasswordViewController.swift in Sources */,
 				59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
 				388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */,
+				389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,
 				59B18ED61E54B4660000642E /* MessageViewController.swift in Sources */,
 				59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */,

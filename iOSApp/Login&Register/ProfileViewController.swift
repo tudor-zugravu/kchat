@@ -28,6 +28,11 @@ class ProfileViewController: UIViewController {
         fullNameLabel.text = UserDefaults.standard.value(forKey: "fullName") as! String?
         emailLabel.text = UserDefaults.standard.value(forKey: "email") as! String?
         phoneNoLabel.text = UserDefaults.standard.value(forKey: "phoneNo") as! String?
+        
+        if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
+            let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
+            profilePictureImageView.image = image
+        }
     }
 
     @IBAction func changePassword(_ sender: Any) {
@@ -35,15 +40,34 @@ class ProfileViewController: UIViewController {
     }
 
     @IBAction func logOut(_ sender: Any) {
-        print("yep..")
+        
+        // Delete profile picture
+        do {
+            let fileManager = FileManager.default
+            let fileName = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))").path
+            
+            if fileManager.fileExists(atPath: fileName) {
+                try fileManager.removeItem(atPath: fileName)
+            } else {
+                print("File does not exist")
+            }
+        }
+        catch let error as NSError {
+            print("An error took place: \(error)")
+        }
+        
+        // Delete stored user data
         let userDefaults = UserDefaults.standard;
         userDefaults.removeObject(forKey: "email")
         userDefaults.removeObject(forKey: "username")
         userDefaults.removeObject(forKey: "phoneNo")
         userDefaults.removeObject(forKey: "password")
         userDefaults.removeObject(forKey: "fullName")
+        userDefaults.removeObject(forKey: "profilePicture")
         userDefaults.set(false, forKey: "hasLoginKey")
+        userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
+        print("done \(userDefaults.bool(forKey: "hasLoginKey"))")
         self.performSegue(withIdentifier: "profileLogInViewController", sender: self)
-    }    
+    }
 }

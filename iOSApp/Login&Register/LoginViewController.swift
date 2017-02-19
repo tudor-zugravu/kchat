@@ -12,7 +12,6 @@ class LoginViewController: UIViewController, LogInModelProtocol {
 
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var userPwdTextField: UITextField!
-    @IBOutlet weak var profileImage: UIImageView!
     
     let logInModel = LogInModel()
     
@@ -57,15 +56,42 @@ class LoginViewController: UIViewController, LogInModelProtocol {
             alertView.addAction(okAction)
             self.present(alertView, animated: true, completion: nil)
         } else {
-            // Add the user details to the user defaults.
-            let userDefaults = UserDefaults.standard;
-            userDefaults.set(userDetails["email"] as? String, forKey:"email");
-            userDefaults.set(userDetails["username"] as? String, forKey:"username");
-            userDefaults.set(userDetails["phone_number"] as? String, forKey:"phoneNo");
-            userDefaults.set(userDetails["password"] as? String, forKey:"password");
-            userDefaults.set(userDetails["name"] as? String, forKey:"fullName");
-            userDefaults.set(true, forKey: "hasLoginKey")
-            userDefaults.synchronize();
+            
+            // Ensure that none of the JSON values are nil through optional binding
+            if let email = userDetails["email"] as? String,
+                let username = userDetails["username"] as? String,
+                let phoneNo = userDetails["phone_number"] as? String,
+                let fullName = userDetails["name"] as? String,
+                let password = userDetails["password"] as? String
+            {
+                // Add the user details to the user defaults.
+                let userDefaults = UserDefaults.standard;
+                userDefaults.set(email, forKey:"email");
+                userDefaults.set(username, forKey:"username");
+                userDefaults.set(phoneNo, forKey:"phoneNo");
+                userDefaults.set(password, forKey:"password");
+                userDefaults.set(fullName, forKey:"fullName");
+                userDefaults.set(true, forKey: "hasLoginKey")
+                
+                // Download the profile picture, if exists
+                if let profilePicture = userDetails["profile_picture"] as? String {
+                    userDefaults.set(profilePicture, forKey:"profilePicture");
+                    if let url = URL(string: "http://188.166.157.62/profile_pictures/\(userDefaults.value(forKey: "profilePicture")!)") {
+                        if let data = try? Data(contentsOf: url) {
+                            var profileImg: UIImage
+                            profileImg = UIImage(data: data)!
+                            if let data = UIImagePNGRepresentation(profileImg) {
+                                let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(userDefaults.value(forKey: "profilePicture"))")
+                                try? data.write(to: filename)
+                                userDefaults.set(true, forKey:"hasProfilePicture");
+                            }
+                        }
+                    }
+                }
+                
+                userDefaults.synchronize();
+            }
+            
             performSegue(withIdentifier: "loginTabBarViewController", sender: nil)
         }
     }

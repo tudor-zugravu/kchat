@@ -22,17 +22,11 @@ class InitialViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         
         // If a user is already logged in, proceed to the messages view
-        if UserDefaults.standard.bool(forKey: "hasLoginKey") {
+        if UserDefaults.standard.bool(forKey: "hasLoginKey") == true {
             self.performSegue(withIdentifier: "initialTabBarViewController", sender: nil)
         } else {
             self.performSegue(withIdentifier: "loginView", sender: self)
         }
-    }
-
-    @IBAction func logoutButtom(_ sender: Any) {
-        UserDefaults.standard.set(false, forKey: "isUserLogin");
-        UserDefaults.standard.synchronize()
-        self.performSegue(withIdentifier:"loginView",sender:self)
     }
 }
 

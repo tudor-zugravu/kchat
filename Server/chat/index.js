@@ -57,7 +57,7 @@ app.post('/register', function(req, res) {
 	    	if (err.code == 'ER_DUP_ENTRY') {
 	    		res.end('duplicate');
 	    	}
-	    } else if (rows != null && rows.insertId > 0){
+	    } else if (rows != null && rows.insertId > 0) {
 	    	res.end('success');
 	    } else {
 	    	res.end('fail');
@@ -88,6 +88,26 @@ app.post('/login', function(req, res) {
 	 	} else {
 			res.end('fail');
 		}
+	});
+});
+
+// Change password
+app.post('/changePass', function(req, res) {
+
+	var queryString = 'UPDATE Users SET password = ' + con.escape(req.body.newPassword) +
+						' WHERE Users.username = ' + con.escape(req.body.username) +
+						' AND Users.password = ' + con.escape(req.body.password) + ';'
+
+    con.query(queryString, function(err, rows, fields) {
+	    if (err) {
+    		res.end('fail');
+	    } else if (rows != null && rows.affectedRows > 0) {
+	    	res.end('success');
+	    } else if (rows != null && rows.affectedRows == 0) {
+	    	res.end('invalid');
+	    } else {
+	    	res.end('fail');
+	    }
 	});
 });
 
