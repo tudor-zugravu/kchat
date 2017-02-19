@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,6 +39,7 @@ protected String doInBackground(String... params) {
 
     if(type.equals("login")) {
         try {
+            Log.d("SERVERCONNECT","Reached here 1");
         String user_name = params[1];
         String password = params[2];
 
@@ -53,7 +55,13 @@ protected String doInBackground(String... params) {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
         String post_data = URLEncoder.encode("user_name","UTF-8")+"="+URLEncoder.encode(user_name,"UTF-8")+"&"
         + URLEncoder.encode("password","UTF-8")+"="+URLEncoder.encode(password,"UTF-8");
-        bufferedWriter.write(post_data);
+            Log.d("SERVERCONNECT",user_name);
+            Log.d("SERVERCONNECT", password);
+            Log.d("SERVERCONNECT",login_url);
+            Log.d("SERVERCONNECT",post_data);
+
+
+            bufferedWriter.write(post_data);
 
         bufferedWriter.flush();
         bufferedWriter.close();
@@ -84,15 +92,27 @@ protected String doInBackground(String... params) {
 
 @Override
 protected void onPreExecute() {
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
+      //  alertDialog = new AlertDialog.Builder(context).create();
+      //  alertDialog.setTitle("Login Status");
         }
 
 @Override
 protected void onPostExecute(String result) {
-        alertDialog.setMessage(result);
-        alertDialog.show();
-        }
+      //  alertDialog.setMessage(result);
+      //  alertDialog.show();
+    if(result!=null){
+        Log.d("SERVERCONNECT", result+ "Sent from the server22222");
+        CharSequence text ="Hello From server:    your username and password is :    " +  result;
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+    }else{
+        Log.d("SERVERCONNECT",result + "Sent from the server");
+    }
+
+}
 
 @Override
 protected void onProgressUpdate(Void... values) {

@@ -59,6 +59,7 @@ public class LoginActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 // Intent to RegisterActivity;
+
                 Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
                 LoginActivity.this.startActivity(registerIntent);
             }
@@ -87,23 +88,25 @@ public class LoginActivity extends CustomActivity {
                 }
             }
         });
-
+        this.OnLogin();
         //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //customActivity = new CustomActivity();
         //customActivity.startActivity();
 
         //Intent bottomIntent = new Intent(this, CustomActivity.class);
         //this.startActivity(bottomIntent);
+
     }
 
-    public void OnLogin(View view) {
+    public void OnLogin() {
       //  String username = UsernameEt.getText().toString();
        // String password = PasswordEt.getText().toString();
         String type = "login";
-         String login_url = "http://192.168.1.6/login.php";
-
+         String login_url = "http://188.166.157.62:3000/test";
+        String username = "Ken";
+        String password = "OnePiece";
         RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url);
-      // backgroundasync.execute(type, username, password);
+        backgroundasync.execute(type, username, password);
     }
 
 
