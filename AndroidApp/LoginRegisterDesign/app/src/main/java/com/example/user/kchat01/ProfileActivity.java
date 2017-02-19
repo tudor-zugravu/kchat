@@ -84,14 +84,6 @@ send logout request to server
 
         });
 
-//recognise the bottom navi.
-        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.getMenu().getItem(0).setChecked(false);
-        bottomNavigationView.getMenu().getItem(1).setChecked(false);
-        bottomNavigationView.getMenu().getItem(2).setChecked(false);
-        bottomNavigationView.getMenu().getItem(3).setChecked(true);
-
 /*
         REST get profile image, username, email and phone
 
@@ -154,9 +146,18 @@ send logout request to server
         );
 
         /*
-    Bottom navigation settings
+    From here, Bottom navigation settings
     Future work: implement as another class
+    item0: Chats, item1: Groups, item2: Contacts, item3: Profile
     */
+//recognise the bottom navi.
+        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+        bottomNavigationView.getMenu().getItem(0).setChecked(false);
+        bottomNavigationView.getMenu().getItem(1).setChecked(false);
+        bottomNavigationView.getMenu().getItem(2).setChecked(false);
+        bottomNavigationView.getMenu().getItem(3).setChecked(true);
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -168,21 +169,23 @@ send logout request to server
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Toast.makeText(getApplication(), "chats is clicked.", Toast.LENGTH_LONG).show();
+                                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                                startActivity(chatIntent);
                                 break;
                             case R.id.groups:
                                 bottomNavigationView.getMenu().getItem(0).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(1).setChecked(true);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Toast.makeText(getApplication(), "groups is clicked.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "groups is clicked.", Toast.LENGTH_LONG).show();
                                 break;
                             case R.id.contacts:
                                 bottomNavigationView.getMenu().getItem(0).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Toast.makeText(getApplication(), "contacts is clicked.", Toast.LENGTH_LONG).show();
+                                Intent contactsIntent = new Intent(getApplicationContext(), ContactsListActivity.class);
+                                startActivity(contactsIntent);
                                 break;
                             case profile:
                                 //finish();
@@ -190,10 +193,8 @@ send logout request to server
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(true);
-                                Intent profileIntent = new Intent(getApplication(), ProfileActivity.class);
+                                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                                 startActivity(profileIntent);
-                                //bottomNavigationView.getMenu().getItem(3).setCheckable(true);
-                                //Toast.makeText(getApplication(), "profile is clicked.", Toast.LENGTH_LONG).show();
                                 break;
                         }
                         return true;
