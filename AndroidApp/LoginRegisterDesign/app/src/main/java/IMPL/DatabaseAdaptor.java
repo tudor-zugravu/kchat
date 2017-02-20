@@ -47,7 +47,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
                 "sender_id INTEGER, "+
                 "group_id INTEGER, "+
                 "message TEXT, "+
-                "timestamp DATETIME,+" +
+                "timestamp DATETIME," +
                 "FOREIGN KEY(sender_id) REFERENCES contacts(id)," +
                 "FOREIGN KEY(group_id) REFERENCES groups(id))";
 
@@ -60,6 +60,15 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         db.execSQL(CREATE_MESSAGES_TABLE);
         db.execSQL(CREATE_CONTACTS_TABLE);
         db.execSQL(CREATE_GROUPS_TABLE);
+        Log.d("Identifier", "Reached here");
+    }
+
+    public boolean checkTable(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Log.d("Identifier", "Reached here part 2");
+        String CREATE_GROUPS_TABLE2 = "SHOW TABLES LIKE groups;";
+        return true;
     }
 
     @Override
@@ -256,7 +265,85 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         Log.d("getAllBooks()", messages.toString());
         return messages;
     }
-///
+
+    public int updateContact(IContacts contact) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", contact.getContactId());
+        values.put("global_id", contact.getGlobalId());
+        values.put("name", contact.getContactName());
+        values.put("username", contact.getUsername());
+
+        int i = db.update("contacts", //table
+                values, // column/value
+                "id = ?", // selections
+                new String[] { String.valueOf(contact.getContactId()) });
+
+        db.close();
+        return i;
+    }
+
+    public int updateGroup(IGroups group) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", group.getGroupId());
+        values.put("name", group.getName());
+        values.put("description", group.getDescription());
+        values.put("type", group.getType());
+
+        int i = db.update("contacts", //table
+                values, // column/value
+                "id = ?", // selections
+                new String[] { String.valueOf(group.getGroupId()) });
+
+        db.close();
+        return i;
+    }
+
+    public int updateMessage(IMessage message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", message.getMessageId());
+        values.put("sender_id", message.getSenderId());
+        values.put("group_id", message.getGroupId());
+        values.put("message", message.getMessage());
+        values.put("timestamp", message.getTimestamp().toString());
+
+        int i = db.update("contacts", //table
+                values, // column/value
+                "id = ?", // selections
+                new String[] { String.valueOf(message.getMessageId()) });
+
+        db.close();
+        return i;
+    }
+
+    public void deleteGroup(IGroups group) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("groups", //table name
+                "id"+" = ?",  // selections
+                new String[] { String.valueOf(group.getGroupId()) }); //selections args
+        db.close();
+        Log.d("deleteBook", group.toString());
+    }
+
+    public void deleteContact(IContacts contact) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("contacts", //table name
+                "id"+" = ?",  // selections
+                new String[] { String.valueOf(contact.getContactId()) }); //selections args
+        db.close();
+        Log.d("deleteBook", contact.toString());
+    }
+
+    public void deleteMessage(IMessage message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("messages", //table name
+                "id"+" = ?",  // selections
+                new String[] { String.valueOf(message.getMessageId()) }); //selections args
+        db.close();
+        Log.d("deleteBook", message.toString());
+    }
 
     @Override
     public boolean flushData() {

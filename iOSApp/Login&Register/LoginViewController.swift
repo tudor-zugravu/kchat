@@ -23,49 +23,13 @@ class LoginViewController: UIViewController, LogInModelProtocol {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     
     @IBAction func loginPressed(_ sender: Any) {
-        
-//        if UserDefaults.standard.object(forKey: "userName") != nil && UserDefaults.standard.object(forKey: "userPwd") != nil {
-//            let userNameDefault:String=UserDefaults.standard.object(forKey: "userName") as! String;
-//            let userPwdDefault=UserDefaults.standard.object(forKey: "userPwd") as! String;
-//            
-//            if userNameDefault == userName{
-//                if userPwdDefault == userPwd{
-//                    //login is successful (the following is just use default to store it)
-//                    UserDefaults.standard.set(true, forKey: "isUserLogin");
-//                    UserDefaults.standard.synchronize()
-//                    //self.dismiss(animated: true, completion: nil)
-//                    
-//                    // Alert for success
-//                    let myAlert = UIAlertController(title:"Success!", message:"Logged in", preferredStyle:.alert);
-//                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-//                    myAlert.addAction(okaction);
-//                    self.present(myAlert, animated:true, completion:nil);
-//                } else {
-//                    // Alert for wrong password
-//                    let myAlert = UIAlertController(title:"Error!", message:"Wrong password", preferredStyle:.alert);
-//                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-//                    myAlert.addAction(okaction);
-//                    self.present(myAlert, animated:true, completion:nil);
-//                }
-//            } else {
-//                // Alert for wrong username
-//                let myAlert = UIAlertController(title:"Error!", message:"Wrong username", preferredStyle:.alert);
-//                let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-//                myAlert.addAction(okaction);
-//                self.present(myAlert, animated:true, completion:nil);
-//            }
-//        } else {
-//            // Alert for no default values
-//            let myAlert = UIAlertController(title:"Error!", message:"No default values", preferredStyle:.alert);
-//            let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-//            myAlert.addAction(okaction);
-//            self.present(myAlert, animated:true, completion:nil);
-//        }
         
         userNameTextField.resignFirstResponder()
         userPwdTextField.resignFirstResponder()
@@ -81,65 +45,56 @@ class LoginViewController: UIViewController, LogInModelProtocol {
         }
     }
     
-    func permissionReceived(_ permission: NSString) {
-        if permission == "success" {
-            
-            /*
-            if userNameDefault == userName{
-                if userPwdDefault == userPwd{
-                    //login is successful (the following is just use default to store it)
-                    UserDefaults.standard.set(true, forKey: "isUserLogin");
-                    UserDefaults.standard.synchronize()
-                    //self.dismiss(animated: true, completion: nil)
-                    
-                    // Alert for success
-                  /*  let myAlert = UIAlertController(title:"Success!", message:"Logged in", preferredStyle:.alert);
-                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                    /*let okaction = UIAlertAction(title:"ok", style:UIAlertActionStyle.default){
-                        action in self.dismiss(animated: true, completion: nil)
-                    }*/
-                    myAlert.addAction(okaction);
-                    
-                    self.present(myAlert, animated:true, completion:nil);*/
-                } else {
-                    // Alert for wrong password
-                    let myAlert = UIAlertController(title:"Error!", message:"Wrong password", preferredStyle:.alert);
-                    let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                    myAlert.addAction(okaction);
-                    self.present(myAlert, animated:true, completion:nil);
-                }
-            } else {
-                // Alert for wrong username
-                let myAlert = UIAlertController(title:"Error!", message:"Wrong username", preferredStyle:.alert);
-                let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-                myAlert.addAction(okaction);
-                self.present(myAlert, animated:true, completion:nil);
-            }
-//            let hasLoginKey = UserDefaults.standard.bool(forKey: "hasLoginKey")
-//            if hasLoginKey == false {
-//                UserDefaults.standard.setValue(self.emailTextField.text, forKey: "userEmail")
-//            }
-//            
-//            Utils.MyKeychainWrapper.mySetObject(passwordTextField.text, forKey:kSecValueData)
-//            Utils.MyKeychainWrapper.writeToKeychain()
-//            UserDefaults.standard.set(true, forKey: "hasLoginKey")
-//            UserDefaults.standard.synchronize()
-//            
-//            if let navController = self.navigationController {
-//                navController.popViewController(animated: true)
-//            }
- */
-            let alertView = UIAlertController(title: "Success",
-                                              message: "You are logged in" as String, preferredStyle:.alert)
-            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+    // The function called at the arival of the response from the server
+    func userInfoReceived(_ userDetails: [String:Any]) {
+        
+        // Check if the user has been found
+        if (userDetails["status"] as? String) != nil {
+            let alertView = UIAlertController(title: "Login Failed",
+                                              message: "Invalid username or password" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Try again", style: .default, handler: nil)
             alertView.addAction(okAction)
             self.present(alertView, animated: true, completion: nil)
         } else {
-            let alertView = UIAlertController(title: "Login Failed",
-                                              message: "Wrong username or password." as String, preferredStyle:.alert)
-            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
-            alertView.addAction(okAction)
-            self.present(alertView, animated: true, completion: nil)
+            
+            // Ensure that none of the JSON values are nil through optional binding
+            if let email = userDetails["email"] as? String,
+                let username = userDetails["username"] as? String,
+                let userId = userDetails["user_id"] as? Int,
+                let phoneNo = userDetails["phone_number"] as? String,
+                let fullName = userDetails["name"] as? String,
+                let password = userDetails["password"] as? String
+            {
+                // Add the user details to the user defaults.
+                let userDefaults = UserDefaults.standard;
+                userDefaults.set(email, forKey:"email");
+                userDefaults.set(userId, forKey:"userId");
+                userDefaults.set(username, forKey:"username");
+                userDefaults.set(phoneNo, forKey:"phoneNo");
+                userDefaults.set(password, forKey:"password");
+                userDefaults.set(fullName, forKey:"fullName");
+                userDefaults.set(true, forKey: "hasLoginKey")
+                
+                // Download the profile picture, if exists
+                if let profilePicture = userDetails["profile_picture"] as? String {
+                    userDefaults.set(profilePicture, forKey:"profilePicture");
+                    if let url = URL(string: "http://188.166.157.62/profile_pictures/\(userDefaults.value(forKey: "profilePicture")!)") {
+                        if let data = try? Data(contentsOf: url) {
+                            var profileImg: UIImage
+                            profileImg = UIImage(data: data)!
+                            if let data = UIImagePNGRepresentation(profileImg) {
+                                let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(userDefaults.value(forKey: "profilePicture"))")
+                                try? data.write(to: filename)
+                                userDefaults.set(true, forKey:"hasProfilePicture");
+                            }
+                        }
+                    }
+                }
+                
+                userDefaults.synchronize();
+            }
+            
+            performSegue(withIdentifier: "loginTabBarViewController", sender: nil)
         }
     }
     
