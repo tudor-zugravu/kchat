@@ -29,10 +29,10 @@ public class ContactsListActivity extends CustomActivity{
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private ListView listviewContacts;
-    List<ListItem> list = new ArrayList<ListItem>();
-    ListItem item;
-    // Class ImageArrayAdapter is defined as another class to deal with image and text in the same package
-    ImageArrayAdapter imageArrayAdapter;
+    List<ListItemContacts> list = new ArrayList<ListItemContacts>();
+    ListItemContacts item;
+    // Class ArrayAdapterContacts is defined as another class to deal with image and text in the same package
+    ArrayAdapterContacts imageArrayAdapter;
 
     @Override
     protected void onCreate (Bundle savedInstatnceState){
@@ -55,12 +55,12 @@ public class ContactsListActivity extends CustomActivity{
         list.clear();
 
         for (int i=0; i<20; i++){
-            item = new ListItem(R.drawable.human, "user"+i, "This is message from user" + i);
+            item = new ListItemContacts(R.drawable.human, "user"+i, "This is message from user" + i);
             list.add(item);
         }
 
         // set list to listview
-        imageArrayAdapter = new ImageArrayAdapter(this, R.layout.list_row, list);
+        imageArrayAdapter = new ArrayAdapterContacts(this, R.layout.list_item_contacts, list);
         listviewContacts.setAdapter(imageArrayAdapter);
 
         /*

@@ -8,12 +8,12 @@ package com.example.user.kchat01;
 This class is getter and setter on each list in user contacts list
  */
 
-public class ListItem {
+public class ListItemContacts {
 
     private int imageId;
     private String userName, message;
 
-    public ListItem(int imageId, String userName, String message){
+    public ListItemContacts(int imageId, String userName, String message){
         this.imageId = imageId;
         this.userName = userName;
         this.message = message;
@@ -28,7 +28,7 @@ public class ListItem {
     public String getUsername() {
         return userName;
     }
-    public void setText(String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 

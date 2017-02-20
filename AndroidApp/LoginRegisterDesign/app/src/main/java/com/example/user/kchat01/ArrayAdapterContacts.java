@@ -15,16 +15,16 @@ import java.util.List;
  */
 
 /* This class is the adapter to deal with profile image and text in user contacts list */
-// type ListItem is defined as another class in the same package
+// type ListItemContacts is defined as another class in the same package
 
-public class ImageArrayAdapter extends ArrayAdapter<ListItem> {
+public class ArrayAdapterContacts extends ArrayAdapter<ListItemContacts> {
 
     private int resourceId;
-    private List<ListItem> items;
+    private List<ListItemContacts> items;
     private LayoutInflater inflater;
 
     //constructor
-    public ImageArrayAdapter(Context context, int resourceId, List<ListItem> items) {
+    public ArrayAdapterContacts(Context context, int resourceId, List<ListItemContacts> items) {
 
         super(context, resourceId, items);
 
@@ -42,7 +42,7 @@ public class ImageArrayAdapter extends ArrayAdapter<ListItem> {
             view = this.inflater.inflate(this.resourceId, null);
         }
 
-        ListItem item = this.items.get(position);
+        ListItemContacts item = this.items.get(position);
 
         // set profile image
         ImageView appInfoImage = (ImageView)view.findViewById(R.id.imageProfile);
