@@ -59,6 +59,7 @@ class ProfileViewController: UIViewController {
         // Delete stored user data
         let userDefaults = UserDefaults.standard;
         userDefaults.removeObject(forKey: "email")
+        userDefaults.removeObject(forKey:"userId")
         userDefaults.removeObject(forKey: "username")
         userDefaults.removeObject(forKey: "phoneNo")
         userDefaults.removeObject(forKey: "password")
@@ -67,7 +68,6 @@ class ProfileViewController: UIViewController {
         userDefaults.set(false, forKey: "hasLoginKey")
         userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
-        print("done \(userDefaults.bool(forKey: "hasLoginKey"))")
         self.performSegue(withIdentifier: "profileLogInViewController", sender: self)
     }
 }

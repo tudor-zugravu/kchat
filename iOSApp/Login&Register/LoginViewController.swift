@@ -60,6 +60,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
             // Ensure that none of the JSON values are nil through optional binding
             if let email = userDetails["email"] as? String,
                 let username = userDetails["username"] as? String,
+                let userId = userDetails["user_id"] as? Int,
                 let phoneNo = userDetails["phone_number"] as? String,
                 let fullName = userDetails["name"] as? String,
                 let password = userDetails["password"] as? String
@@ -67,6 +68,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 // Add the user details to the user defaults.
                 let userDefaults = UserDefaults.standard;
                 userDefaults.set(email, forKey:"email");
+                userDefaults.set(userId, forKey:"userId");
                 userDefaults.set(username, forKey:"username");
                 userDefaults.set(phoneNo, forKey:"phoneNo");
                 userDefaults.set(password, forKey:"password");

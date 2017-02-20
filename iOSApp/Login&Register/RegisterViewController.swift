@@ -66,11 +66,12 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
     
     // The function called at the arival of the response from the server
     func responseReceived(_ permission: NSString) {
-        if permission == "success" {
+        if permission.contains("success") {
             
             // Add the user details to the user defaults.
             let userDefaults = UserDefaults.standard;
             userDefaults.set(emailTextField.text, forKey:"email");
+            userDefaults.set(Int(permission.substring(from: 8)), forKey:"userId");
             userDefaults.set(usernameTextField.text, forKey:"username");
             userDefaults.set(phoneNoTextField.text, forKey:"phoneNo");
             userDefaults.set(pwdTextField.text, forKey:"password");
