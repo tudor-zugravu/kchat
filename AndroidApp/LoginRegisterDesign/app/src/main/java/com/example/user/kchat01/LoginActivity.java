@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import IMPL.DatabaseAdaptor;
+import IMPL.InfoRetreiver;
 import IMPL.RESTApi;
 
 /**
@@ -88,7 +89,8 @@ public class LoginActivity extends CustomActivity {
                 }
             }
         });
-        this.OnLogin();
+        //this.OnLogin();
+        this.getJsonData();
         //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //customActivity = new CustomActivity();
         //customActivity.startActivity();
@@ -109,5 +111,12 @@ public class LoginActivity extends CustomActivity {
         backgroundasync.execute(type, username, password);
     }
 
+    public void getJsonData(){
+        String type = "weather";
+        String login_url = "http://api.androidhive.info/contacts/";
+        InfoRetreiver backgroundasync = new InfoRetreiver(login_url,LoginActivity.this);
+        backgroundasync.execute(type, login_url);
+
+    }
 
 }
