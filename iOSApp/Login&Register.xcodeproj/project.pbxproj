@@ -14,10 +14,6 @@
 		389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */; };
 		591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */; };
 		591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100EA1E4D113C00AC77A7 /* LoginViewController.swift */; };
-		5926C37E1E59E87B00E4DBF2 /* MessageItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5926C37D1E59E87B00E4DBF2 /* MessageItem.swift */; };
-		5926C3801E59EA3400E4DBF2 /* ChatDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5926C37F1E59EA3400E4DBF2 /* ChatDataSource.swift */; };
-		5926C3821E59EE6F00E4DBF2 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5926C3811E59EE6F00E4DBF2 /* TableView.swift */; };
-		5926C3841E59EF0F00E4DBF2 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5926C3831E59EF0F00E4DBF2 /* TableViewCell.swift */; };
 		59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4C1E492C8700E91DF3 /* AppDelegate.swift */; };
 		59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4E1E492C8700E91DF3 /* InitialViewController.swift */; };
 		59334E521E492C8700E91DF3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59334E501E492C8700E91DF3 /* Main.storyboard */; };
@@ -26,11 +22,7 @@
 		59334E621E492C8700E91DF3 /* Login_RegisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E611E492C8700E91DF3 /* Login_RegisterTests.swift */; };
 		59334E6D1E492C8700E91DF3 /* Login_RegisterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */; };
 		59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B18ED31E54A9360000642E /* ProfileViewController.swift */; };
-<<<<<<< HEAD
-		59B18F881E5538D20000642E /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B18F871E5538D20000642E /* MessagesViewController.swift */; };
-=======
 		59B18ED61E54B4660000642E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B18ED51E54B4660000642E /* MessageViewController.swift */; };
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,10 +50,6 @@
 		389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordModel.swift; sourceTree = "<group>"; };
 		591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		591100EA1E4D113C00AC77A7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		5926C37D1E59E87B00E4DBF2 /* MessageItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageItem.swift; sourceTree = "<group>"; };
-		5926C37F1E59EA3400E4DBF2 /* ChatDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataSource.swift; sourceTree = "<group>"; };
-		5926C3811E59EE6F00E4DBF2 /* TableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
-		5926C3831E59EF0F00E4DBF2 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		59334E491E492C8700E91DF3 /* Login&Register.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Login&Register.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		59334E4C1E492C8700E91DF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59334E4E1E492C8700E91DF3 /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
@@ -76,11 +64,7 @@
 		59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login_RegisterUITests.swift; sourceTree = "<group>"; };
 		59334E6E1E492C8700E91DF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		59B18ED31E54A9360000642E /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-<<<<<<< HEAD
-		59B18F871E5538D20000642E /* MessagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
-=======
 		59B18ED51E54B4660000642E /* MessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,16 +95,9 @@
 		38938EE31E548EC7009F1973 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				5926C37D1E59E87B00E4DBF2 /* MessageItem.swift */,
 				38938EE51E54A775009F1973 /* LogInModel.swift */,
-<<<<<<< HEAD
-				5926C37F1E59EA3400E4DBF2 /* ChatDataSource.swift */,
-				5926C3811E59EE6F00E4DBF2 /* TableView.swift */,
-				5926C3831E59EF0F00E4DBF2 /* TableViewCell.swift */,
-=======
 				388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */,
 				389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */,
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -128,16 +105,12 @@
 		38938EE41E548ECD009F1973 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
-				591100E61E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift */,
-=======
 				59334E4E1E492C8700E91DF3 /* InitialViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
 				591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */,
 				59B18ED51E54B4660000642E /* MessageViewController.swift */,
 				59B18ED31E54A9360000642E /* ProfileViewController.swift */,
 				389CB7AE1E59FA4B00B5FDEE /* ChangePasswordViewController.swift */,
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -177,11 +150,6 @@
 				38938EE41E548ECD009F1973 /* Controllers */,
 				38938EE31E548EC7009F1973 /* Models */,
 				59334E4C1E492C8700E91DF3 /* AppDelegate.swift */,
-<<<<<<< HEAD
-				59334E4E1E492C8700E91DF3 /* ViewController.swift */,
-				59B18F871E5538D20000642E /* MessagesViewController.swift */,
-=======
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 				59334E501E492C8700E91DF3 /* Main.storyboard */,
 				59334E531E492C8700E91DF3 /* Assets.xcassets */,
 				59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */,
@@ -343,25 +311,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */,
-				5926C3821E59EE6F00E4DBF2 /* TableView.swift in Sources */,
 				38938EE61E54A775009F1973 /* LogInModel.swift in Sources */,
 				389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */,
 				389CB7AF1E59FA4B00B5FDEE /* ChangePasswordViewController.swift in Sources */,
 				59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
-<<<<<<< HEAD
-				591100E71E4BE6CD00AC77A7 /* RegisterPageViewControllorViewController.swift in Sources */,
-				5926C3841E59EF0F00E4DBF2 /* TableViewCell.swift in Sources */,
-				5926C37E1E59E87B00E4DBF2 /* MessageItem.swift in Sources */,
-				59B18F881E5538D20000642E /* MessagesViewController.swift in Sources */,
-=======
 				388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */,
 				389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,
 				59B18ED61E54B4660000642E /* MessageViewController.swift in Sources */,
->>>>>>> 7e38b978fdf2153ed8512e6a8737c062950222d3
 				59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */,
-				5926C3801E59EA3400E4DBF2 /* ChatDataSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
