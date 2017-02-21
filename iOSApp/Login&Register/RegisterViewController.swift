@@ -45,7 +45,27 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         if fullNameTextField.text != nil && fullNameTextField.text != "" && usernameTextField.text != nil &&
             usernameTextField.text != "" && emailTextField.text != nil && emailTextField.text != "" &&
             phoneNoTextField.text != nil && phoneNoTextField.text != "" && pwdTextField.text != nil &&
-            pwdTextField.text != "" && confirmPwdTextField.text != nil && confirmPwdTextField.text != "" {
+            pwdTextField.text != "" && confirmPwdTextField.text != nil && confirmPwdTextField.text != ""
+        {
+            //email formate check
+            let mailPattern = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
+            let email = MyRegex(mailPattern)
+            if email.match(input: emailTextField.text!) {
+            }else{
+                displayAlertMessage(mymessage: "Invalid email address!")
+                return;
+            }
+
+            //check the telephone formate
+            let phoneParrern = "^7[0-9]{9}$"
+            let matcher = MyRegex(phoneParrern)
+            if matcher.match(input: phoneNoTextField.text!){
+                
+            }else{
+                displayAlertMessage(mymessage: "UK phone number contains 10 numbers beginning with 7!")
+                return;
+            }
+
             
             // Check if the two passwords match
             if pwdTextField.text != confirmPwdTextField.text {
@@ -116,4 +136,25 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         myAlert.addAction(okaction);
         self.present(myAlert, animated:true, completion:nil);
     }
+    
+    //regular expression funtion
+    struct  MyRegex {
+        let regex: NSRegularExpression?
+        
+        init(_ pattern: String) {
+            regex = try? NSRegularExpression(pattern: pattern,
+                                             options: .caseInsensitive)
+        }
+        
+        func match(input: String) -> Bool {
+            if let matches = regex?.matches(in: input,
+                                            options: [],
+                                            range: NSMakeRange(0, (input as NSString).length)) {
+                return matches.count > 0
+            } else {
+                return false
+            }
+        }
+    }
+
 }
