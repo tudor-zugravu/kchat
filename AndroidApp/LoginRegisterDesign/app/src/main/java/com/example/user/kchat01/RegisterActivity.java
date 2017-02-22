@@ -35,7 +35,7 @@ public class RegisterActivity extends CustomActivity{
     // start with 020 or 07 and 11 digits
     private static final Pattern PHONE_PATTERN = Pattern.compile("^020[0-9]{8}$||^07[0-9]{9}$");
     //include at least one digit and one character excluding alphabets, and more than 6
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[^a-zA-Z0-9])[^a-zA-Z]{6,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
