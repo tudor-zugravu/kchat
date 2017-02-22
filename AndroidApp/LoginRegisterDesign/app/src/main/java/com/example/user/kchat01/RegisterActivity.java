@@ -13,7 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import IMPL.RESTApi;
 
 /**
  * Created by user on 09/02/2017.
@@ -75,6 +78,25 @@ public class RegisterActivity extends CustomActivity{
             }
         });
         btnRegister.setEnabled(false);
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String type = "register";
+                String login_url = "http://188.166.157.62:3000/register";
+                ArrayList<String> paramList= new ArrayList<>();
+                paramList.add("password");
+                paramList.add("email");
+                paramList.add("phone");
+                paramList.add("password");
+
+                RESTApi backgroundasync = new RESTApi(RegisterActivity.this,login_url,paramList);
+                backgroundasync.execute(type, inputUsername.getText().toString(),
+                        inputEmail.getText().toString(),
+                        inputPhone.getText().toString(),
+                        inputPassword.getText().toString());
+            }
+        });
     }
 
     /* Form validation check*/

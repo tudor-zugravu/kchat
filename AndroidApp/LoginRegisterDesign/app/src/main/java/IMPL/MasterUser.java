@@ -13,12 +13,12 @@ import API.IGroups;
 
 public class MasterUser {
 
-
     static Bitmap usersprofile;
     static String username;
     static String email;
     static String telephonenumber;
     static String biography;
+    static boolean isAdmin;
 
     static ArrayList<IContacts> contactlist = new ArrayList<>();
     static ArrayList<IGroups> groupsList = new ArrayList<>();

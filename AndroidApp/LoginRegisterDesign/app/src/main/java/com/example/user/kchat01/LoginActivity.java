@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import IMPL.DatabaseAdaptor;
 import IMPL.InfoRetreiver;
 import IMPL.RESTApi;
@@ -28,6 +30,8 @@ public class LoginActivity extends CustomActivity {
     private Button btnGoRegister, btnLogin;
     BottomNavigationView bottomNavigationView;
     CustomActivity customActivity;
+    private String username;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +75,8 @@ public class LoginActivity extends CustomActivity {
             @Override
             public void onClick(View view) {
                 //login process
-                String username = inputUsername.getText().toString().trim();
-                String password = inputPassword.getText().toString().trim();
+                 username = inputUsername.getText().toString().trim();
+                 password = inputPassword.getText().toString().trim();
                 //empty field is not permitted
                 if (username.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
@@ -84,13 +88,13 @@ public class LoginActivity extends CustomActivity {
                 //in actual application, these variables are sent to the server
                     Log.i("username", username);
                     Log.i("password", password);
-                    Intent loginIntent = new Intent(LoginActivity.this, ContactsListActivity.class);
-                    startActivity(loginIntent);
+                    onLogin();
+
                 }
             }
         });
         //this.OnLogin();
-        this.getJsonData();
+
         //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //customActivity = new CustomActivity();
         //customActivity.startActivity();
@@ -100,15 +104,14 @@ public class LoginActivity extends CustomActivity {
 
     }
 
-    public void OnLogin() {
-      //  String username = UsernameEt.getText().toString();
-       // String password = PasswordEt.getText().toString();
+    public void onLogin() {
         String type = "login";
          String login_url = "http://188.166.157.62:3000/test";
-        String username = "Ken";
-        String password = "OnePiece";
-        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url);
-        backgroundasync.execute(type, username, password);
+        ArrayList<String> paramList= new ArrayList<>();
+        paramList.add("username");
+        paramList.add("password");
+        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url,paramList);
+        backgroundasync.execute(type, this.username, this.password);
     }
 
     public void getJsonData(){
