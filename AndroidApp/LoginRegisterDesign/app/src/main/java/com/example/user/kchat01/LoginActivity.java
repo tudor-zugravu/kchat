@@ -93,7 +93,6 @@ public class LoginActivity extends CustomActivity {
                 }
             }
         });
-        //this.OnLogin();
 
         //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //customActivity = new CustomActivity();
@@ -106,7 +105,7 @@ public class LoginActivity extends CustomActivity {
 
     public void onLogin() {
         String type = "login";
-         String login_url = "http://188.166.157.62:3000/test";
+         String login_url = "http://188.166.157.62:3000/login";
         ArrayList<String> paramList= new ArrayList<>();
         paramList.add("username");
         paramList.add("password");
