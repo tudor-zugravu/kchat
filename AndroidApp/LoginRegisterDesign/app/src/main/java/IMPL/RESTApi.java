@@ -1,5 +1,6 @@
 package IMPL;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.ContactsListActivity;
+import com.example.user.kchat01.LoginActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -112,9 +115,13 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         }else{
             Log.d("SERVERRRRR" , "Bad Result from the server");
         }
+        LoginActivity.editor.putString("usernamelogin", stringParams[2]); // Storing login
+        LoginActivity.editor.putString("usernamepassword", stringParams[3]); // Storing password
+        LoginActivity.editor.commit(); // commit changes
 
-        Intent loginIntent = new Intent(context, ContactsListActivity.class);
+        Intent loginIntent = new Intent(context, ContactsActivity.class);
         context.startActivity(loginIntent);
+        ((Activity) context).finish();
     }
 
     @Override

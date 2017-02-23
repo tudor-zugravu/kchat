@@ -1,6 +1,7 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -30,11 +31,27 @@ public class LoginActivity extends CustomActivity {
     private Button btnGoRegister, btnLogin;
     BottomNavigationView bottomNavigationView;
     CustomActivity customActivity;
-    private String username;
-    private String password;
 
+    public static SharedPreferences pref;
+    public static SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //before any work is done on creating the activity i will check to see if the user is still in session
+        //if the user is in session then send him to the chat menu but first check with the server
+        //if not then design the layout
+         this.pref = getApplicationContext().getSharedPreferences("LoginPreference", 0); // 0 - for private mode;
+         this.editor = pref.edit();
+        if(pref.getAll()!=null) {
+            String username = pref.getString("usernamelogin", null);
+            String password = pref.getString("usernamepassword", null);
+            if (username != null && password != null) {
+                Intent loginIntent = new Intent(LoginActivity.this, ContactsActivity.class);
+                startActivity(loginIntent);
+                finish();
+                //editor.clear();
+                //editor.commit(); // commit changes
+            }
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         DatabaseAdaptor myAdaptor = new DatabaseAdaptor(this);
@@ -74,11 +91,13 @@ public class LoginActivity extends CustomActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                 String user;
+                 String pass;
                 //login process
-                 username = inputUsername.getText().toString().trim();
-                 password = inputPassword.getText().toString().trim();
+                user = inputUsername.getText().toString().trim();
+                pass = inputPassword.getText().toString().trim();
                 //empty field is not permitted
-                if (username.isEmpty() || password.isEmpty()) {
+                if (user.isEmpty() || pass.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                     builder.setMessage("All fields are required.")
                             .setNegativeButton("Back", null)
@@ -86,13 +105,15 @@ public class LoginActivity extends CustomActivity {
                             .show();
                 } else {
                 //in actual application, these variables are sent to the server
-                    Log.i("username", username);
-                    Log.i("password", password);
-                    onLogin();
+                    Log.i("username", user);
+                    Log.i("password", pass);
+                    onLogin(user,pass);
 
                 }
             }
         });
+
+
 
         //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         //customActivity = new CustomActivity();
@@ -100,17 +121,16 @@ public class LoginActivity extends CustomActivity {
 
         //Intent bottomIntent = new Intent(this, CustomActivity.class);
         //this.startActivity(bottomIntent);
-
     }
 
-    public void onLogin() {
+    public void onLogin(String usr, String pass) {
         String type = "login";
          String login_url = "http://188.166.157.62:3000/login";
         ArrayList<String> paramList= new ArrayList<>();
         paramList.add("username");
         paramList.add("password");
         RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url,paramList);
-        backgroundasync.execute(type, this.username, this.password);
+        backgroundasync.execute(type, usr, pass);
     }
 
     public void getJsonData(){
@@ -118,7 +138,6 @@ public class LoginActivity extends CustomActivity {
         String login_url = "http://api.androidhive.info/contacts/";
         InfoRetreiver backgroundasync = new InfoRetreiver(login_url,LoginActivity.this);
         backgroundasync.execute(type, login_url);
-
     }
 
 }
