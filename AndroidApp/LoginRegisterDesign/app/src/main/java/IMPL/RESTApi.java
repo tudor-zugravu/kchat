@@ -72,7 +72,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 bufferedWriter.close();
                 outputStream.close();
 
-                InputStream inputStream = httpURLConnection.getInputStream(); //
+                InputStream inputStream = httpURLConnection.getInputStream(); ///
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
                 String result="";
                 String line="";
