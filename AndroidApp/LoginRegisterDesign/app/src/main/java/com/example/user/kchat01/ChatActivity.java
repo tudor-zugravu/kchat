@@ -45,7 +45,7 @@ public class ChatActivity extends CustomActivity{
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         /*
-        From here, receive intent with username from ContactsListActivity
+        From here, receive intent with username from ContactsActivity
         show chatting username under toolber title
          */
         Intent intent = getIntent();

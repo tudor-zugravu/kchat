@@ -184,7 +184,7 @@ send logout request to server
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent contactsIntent = new Intent(getApplicationContext(), ContactsListActivity.class);
+                                Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
                                 startActivity(contactsIntent);
                                 break;
                             case profile:
