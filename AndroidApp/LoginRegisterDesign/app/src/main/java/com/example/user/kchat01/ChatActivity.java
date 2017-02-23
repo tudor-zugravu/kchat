@@ -26,7 +26,7 @@ public class ChatActivity extends CustomActivity{
     private EditText messageET;
     private ListView messagesContainer;
     private Button sendBtn;
-    private ArrayAdapterChat adapter;
+    private ChatsListAdapter adapter;
     private ArrayList<ListItemChat> chatHistory;
 
     @Override
@@ -45,7 +45,7 @@ public class ChatActivity extends CustomActivity{
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         /*
-        From here, receive intent with username from ContactsListActivity
+        From here, receive intent with username from ContactsActivity
         show chatting username under toolber title
          */
         Intent intent = getIntent();
@@ -147,7 +147,7 @@ public class ChatActivity extends CustomActivity{
         msg5.setDate(DateFormat.getDateTimeInstance().format(new Date()));
         chatHistory.add(msg5);
 
-        adapter = new ArrayAdapterChat(ChatActivity.this, new ArrayList<ListItemChat>());
+        adapter = new ChatsListAdapter(ChatActivity.this, new ArrayList<ListItemChat>());
         messagesContainer.setAdapter(adapter);
 
         for(int i=0; i<chatHistory.size(); i++) {

@@ -18,7 +18,7 @@
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".CustomActivity"></activity>
-        <activity android:name=".ContactsListActivity"></activity>
+        <activity android:name=".ContactsActivity"></activity>
         <activity android:name=".ChatActivity"></activity>
     </application>
 
