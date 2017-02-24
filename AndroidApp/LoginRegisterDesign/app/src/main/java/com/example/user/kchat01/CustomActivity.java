@@ -41,7 +41,9 @@ public class CustomActivity extends AppCompatActivity {
                 /*
                 Logout Request to server
                  */
-                Intent logoutIntent = new Intent(this, LoginActivity.class);
+                Intent logoutIntent = new Intent(CustomActivity.this, LoginActivity.class);
+                LoginActivity.editor.clear();
+                LoginActivity.editor.commit(); // commit changes
                 startActivity(logoutIntent);
                 return true;
             default:

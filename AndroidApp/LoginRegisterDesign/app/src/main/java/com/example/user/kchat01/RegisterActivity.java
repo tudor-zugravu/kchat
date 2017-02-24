@@ -27,8 +27,8 @@ public class RegisterActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
-    private TextInputEditText inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;
-    private TextInputLayout inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm;
+    private TextInputEditText inputFullName,inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;
+    private TextInputLayout inputLayoutFullName,inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm;
     private Button btnRegister;
 
     // for java regular expression
@@ -47,11 +47,13 @@ public class RegisterActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
+        inputLayoutFullName = (TextInputLayout)findViewById(R.id.input_layout_fullname);
         inputLayoutUsername = (TextInputLayout)findViewById(R.id.input_layout_username);
         inputLayoutEmail= (TextInputLayout)findViewById(R.id.input_layout_email);
         inputLayoutPhone = (TextInputLayout)findViewById(R.id.input_layout_phone);
         inputLayoutPassword = (TextInputLayout)findViewById(R.id.input_layout_password);
         inputLayoutConfirm = (TextInputLayout)findViewById(R.id.input_layout_confirm);
+        inputFullName = (TextInputEditText)findViewById(R.id.input_fullname);
         inputUsername = (TextInputEditText)findViewById(R.id.input_username);
         inputEmail = (TextInputEditText)findViewById(R.id.input_email);
         inputPhone = (TextInputEditText)findViewById(R.id.input_phone);
@@ -66,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity{
         btnRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         //for check during inputting characters in each field
+        inputFullName.addTextChangedListener(new MyTextWatcher(inputFullName));
         inputUsername.addTextChangedListener(new MyTextWatcher(inputUsername));
         inputEmail.addTextChangedListener(new MyTextWatcher(inputEmail));
         inputPhone.addTextChangedListener(new MyTextWatcher(inputPhone));
@@ -84,15 +87,18 @@ public class RegisterActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 String type = "register";
-                String login_url = "http://188.166.157.62:3000/register";
+                String register_url = "http://188.166.157.62:3000/register";
                 ArrayList<String> paramList= new ArrayList<>();
-                paramList.add("password");
+                paramList.add("fullName");
                 paramList.add("email");
-                paramList.add("phone");
-                paramList.add("password");
+                paramList.add("username");
+                paramList.add("pwd");
+                paramList.add("phoneNo");
 
-                RESTApi backgroundasync = new RESTApi(RegisterActivity.this,login_url,paramList);
-                backgroundasync.execute(type, inputUsername.getText().toString(),
+                RESTApi backgroundasync = new RESTApi(RegisterActivity.this,register_url,paramList);
+                backgroundasync.execute(type,
+                        inputFullName.getText().toString(),
+                        inputUsername.getText().toString(),
                         inputEmail.getText().toString(),
                         inputPhone.getText().toString(),
                         inputPassword.getText().toString());
@@ -102,6 +108,9 @@ public class RegisterActivity extends AppCompatActivity{
 
     /* Form validation check*/
     private void validateCheck() {
+        if (!validateFullName()) {
+            return;
+        }
         if (!validateUsername()) {
             return;
         }
@@ -121,10 +130,23 @@ public class RegisterActivity extends AppCompatActivity{
 // Now, result is displayed by Toast and output each input in the Log.
 // For actual communication, required to store each variable in parameters
         Toast.makeText(this, "Registered", Toast.LENGTH_LONG).show();
+        Log.i("fullname", inputFullName.getText().toString());
         Log.i("username", inputUsername.getText().toString());
         Log.i("email", inputEmail.getText().toString());
         Log.i("phone", inputPhone.getText().toString());
         Log.i("password", inputPassword.getText().toString());
+    }
+
+    //get the text in username edittext
+    // if empty -> show error in layout field
+    private boolean validateFullName(){
+        if (inputFullName.getText().toString().trim().isEmpty()){
+            inputLayoutFullName.setError(getString(R.string.err_msg_fullname));
+            return false;
+        } else {
+            inputLayoutFullName.setErrorEnabled(false);
+        }
+        return true;
     }
 
     //get the text in username edittext
@@ -221,6 +243,9 @@ public class RegisterActivity extends AppCompatActivity{
         @Override
         public void afterTextChanged(Editable s){
             switch (view.getId()){
+                case R.id.input_fullname:
+                    validateUsername();
+                    break;
                 case R.id.input_username:
                     validateUsername();
                     break;

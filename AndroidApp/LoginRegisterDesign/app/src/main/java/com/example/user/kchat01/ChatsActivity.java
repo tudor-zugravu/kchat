@@ -9,11 +9,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -30,13 +39,23 @@ public class ChatsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     private ChatsAdapter adapter;
-    private ItemChats chats;
+    private ItemChats chats; // This is the object that represents each chat
     private ArrayList<ItemChats> dataList;
     private String message;
+    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            mSocket.connect();
+            mSocket.on("chat message", onLogin);
+
+
+        } catch (URISyntaxException e){
+        }
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,6 +96,14 @@ public class ChatsActivity extends AppCompatActivity {
                     return;
                 }else {
                     editTextMessage.setText("");
+                    //before i am outputting to the screen i will take the text of the message and any other user related information
+                    //and i will send it to the server using the socket.io
+                    if(mSocket.connected()){
+                        mSocket.emit("chat message", message);
+                    }else{
+                        Log.d("MESSAGEERROR", "Cannot send message:" + message);
+                    }
+                    mSocket.connect();
 
                     //set message and datetime to adapter and add them to RecyclerView
                     chats = new ItemChats();
@@ -91,7 +118,6 @@ public class ChatsActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         /*
         From here, search function is performed
@@ -111,4 +137,22 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private Emitter.Listener onLogin = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            String serverresult = (String) args[0];
+            //JSONObject data = (JSONObject) args[0];
+           // Log.d("MESSAGEERROR", data.toString());
+
+          //  int numUsers;
+//            try {
+//               // numUsers = data.getInt("numUsers");
+//            } catch (JSONException e) {
+//                return;
+//            }
+            Log.d("MESSAGEERROR", serverresult.toString());
+        }
+    };
 }

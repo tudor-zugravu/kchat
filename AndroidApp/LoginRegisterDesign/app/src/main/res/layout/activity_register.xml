@@ -37,10 +37,23 @@
         android:paddingTop="15dp">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_username"
+            android:id="@+id/input_layout_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_fullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_fullname"
+                android:nextFocusDown="@+id/input_username"
+                android:inputType="text"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/input_username"
                 android:layout_width="match_parent"

@@ -116,8 +116,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             Log.d("SERVERRRRR" , "Bad Result from the server");
         }
         if(LoginActivity.pref.getAll()!=null) {
-            LoginActivity.editor.putString("usernamelogin", stringParams[2]); // Storing login
-            LoginActivity.editor.putString("usernamepassword", stringParams[3]); // Storing password
+            LoginActivity.editor.putString("usernamelogin", stringParams[1]); // Storing login
+            LoginActivity.editor.putString("usernamepassword", stringParams[2]); // Storing password
             LoginActivity.editor.commit(); // commit changes
         }
         Intent loginIntent = new Intent(context, ContactsActivity.class);
