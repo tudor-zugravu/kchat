@@ -8,13 +8,13 @@ import java.util.ArrayList;
  * Created by user on 23/02/2017.
  */
 
-public class ContactsFilter extends Filter {
+public class ChatsFilter extends Filter {
 
-    ContactsAdapter adapter;
-    ArrayList<ItemContacts> filterList;
+    ChatsAdapter adapter;
+    ArrayList<ItemChats> filterList;
 
     //constructor
-    public ContactsFilter(ArrayList<ItemContacts> filterList, ContactsAdapter adapter){
+    public ChatsFilter(ArrayList<ItemChats> filterList, ChatsAdapter adapter){
         this.adapter = adapter;
         this.filterList= filterList;
     }
@@ -27,16 +27,16 @@ public class ContactsFilter extends Filter {
         //whether search words are input or not
         if (constraint != null && constraint.length() > 0){
             constraint = constraint.toString().toUpperCase();
-            ArrayList<ItemContacts> filteredContacts = new ArrayList<>();
+            ArrayList<ItemChats> filteredChats = new ArrayList<>();
 
             for (int i=0; i < filterList.size();i++){
-                //matching between constraint and username or message
-                if (filterList.get(i).getUsername().toUpperCase().contains(constraint) || filterList.get(i).getMessage().toUpperCase().contains(constraint)){
-                    filteredContacts.add(filterList.get(i));
+                //matching between constraint and message
+                if (filterList.get(i).getMessage().toUpperCase().contains(constraint)){
+                    filteredChats.add(filterList.get(i));
                 }
             }
-            results.count = filteredContacts.size();
-            results.values = filteredContacts;
+            results.count = filteredChats.size();
+            results.values = filteredChats;
         }else
         {
             results.count=filterList.size();
@@ -48,7 +48,7 @@ public class ContactsFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        adapter.objectList = (ArrayList<ItemContacts>) results.values;
+        adapter.objectList = (ArrayList<ItemChats>) results.values;
         adapter.notifyDataSetChanged();
     }
 }

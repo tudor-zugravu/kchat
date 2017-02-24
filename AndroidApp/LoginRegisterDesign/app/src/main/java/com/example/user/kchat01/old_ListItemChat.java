@@ -4,7 +4,7 @@ package com.example.user.kchat01;
  * Created by user on 19/02/2017.
  */
 
-public class ListItemChat {
+public class old_ListItemChat {
 
     private long id;
     private boolean isMe;

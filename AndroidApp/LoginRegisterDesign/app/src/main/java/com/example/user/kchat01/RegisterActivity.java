@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,7 +23,7 @@ import IMPL.RESTApi;
  * Created by user on 09/02/2017.
  */
 
-public class RegisterActivity extends CustomActivity{
+public class RegisterActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
@@ -59,7 +60,7 @@ public class RegisterActivity extends CustomActivity{
         btnRegister = (Button)findViewById(R.id.btn_register);
 
         // apply toolbar title
-        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setText("Register");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         // apply the Register button to Georgia font
         btnRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));

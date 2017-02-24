@@ -21,13 +21,13 @@ import static com.example.user.kchat01.R.id.imageProfile;
  * Created by user on 19/02/2017.
  */
 
-public class ChatsListAdapter extends BaseAdapter {
+public class old_ChatsListAdapter extends BaseAdapter {
 
 
-    private final List<ListItemChat> chatMessages;
+    private final List<old_ListItemChat> chatMessages;
     private Activity context;
 
-    public ChatsListAdapter(Activity context, List<ListItemChat> chatMessages) {
+    public old_ChatsListAdapter(Activity context, List<old_ListItemChat> chatMessages) {
         this.context = context;
         this.chatMessages = chatMessages;
     }
@@ -42,7 +42,7 @@ public class ChatsListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ListItemChat getItem(int position) {
+    public old_ListItemChat getItem(int position) {
         if (chatMessages != null) {
             return chatMessages.get(position);
         } else {
@@ -58,11 +58,11 @@ public class ChatsListAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        ListItemChat chatMessage = getItem(position);
+        old_ListItemChat chatMessage = getItem(position);
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
-            convertView = vi.inflate(R.layout.list_item_chat, null);
+            convertView = vi.inflate(R.layout.old_list_item_chat, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
         } else {
@@ -78,11 +78,11 @@ public class ChatsListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void add(ListItemChat message) {
+    public void add(old_ListItemChat message) {
         chatMessages.add(message);
     }
 
-    public void add(List<ListItemChat> messages) {
+    public void add(List<old_ListItemChat> messages) {
         chatMessages.addAll(messages);
     }
 

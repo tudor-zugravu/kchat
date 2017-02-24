@@ -3,19 +3,22 @@ package com.example.user.kchat01;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static com.example.user.kchat01.R.id.profile;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabReselectListener;
+import com.roughike.bottombar.OnTabSelectListener;
+
+import static com.example.user.kchat01.R.id.contacts;
 
 /**
  * Created by user on 22/02/2017.
@@ -32,7 +35,7 @@ public class ContactsActivity extends AppCompatActivity {
     ContactsAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,9 +54,10 @@ public class ContactsActivity extends AppCompatActivity {
             public void onClick(ContactsViewHolder holder) {
                 int position = recyclerView.getChildAdapterPosition(holder.itemView);
                 ItemContacts contact = ItemContacts.getObjectList().get(position);
-                Toast.makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
-                //     Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-                //     chatIntent.putExtra("username", )
+                //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                contactsIntent.putExtra("username", contact.getUsername());
+                startActivity(contactsIntent);
             }
         };
 
@@ -84,12 +88,57 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        From here, Bottom Bar is implemented
+        */
+
+
+        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
+        bottomBar.setDefaultTab(R.id.contacts);
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                if (tabId == R.id.chats) {
+                    //Intent chatsIntent = new Intent(getApplicationContext(),old_ChatActivity.class);
+                    //startActivity(chatsIntent);
+                    Toast.makeText(getApplicationContext(), "Chats", Toast.LENGTH_SHORT).show();
+                }
+                if (tabId == R.id.groups) {
+                    //Intent groupIntent = new Intent(getApplicationContext(),GroupActivity.class);
+                    //startActivity(groupIntent);
+                    Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
+                }
+                if (tabId == contacts) {
+                    //Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                    //startActivity(contactsIntent);
+                    //Toast.makeText(getApplicationContext(), "Contacts", Toast.LENGTH_SHORT).show();
+                }
+                if (tabId == R.id.profile) {
+                    Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(profileIntent);
+                    //Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(@IdRes int tabId) {
+                if (tabId == contacts) {
+                    Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                    startActivity(contactsIntent);
+                }
+            }
+        });
+
     /*
     From here, Bottom navigation settings
     Future work: implement as another class
     item0: Chats, item1: Groups, item2: Contacts, item3: Profile
     */
         //recognise the bottom navi
+   /*
         final BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
         bottomNavigationView.getMenu().getItem(0).setChecked(false);
@@ -107,7 +156,7 @@ public class ContactsActivity extends AppCompatActivity {
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                                Intent chatIntent = new Intent(getApplicationContext(), old_ChatActivity.class);
                                 startActivity(chatIntent);
                                 break;
                             case R.id.groups:
@@ -139,6 +188,6 @@ public class ContactsActivity extends AppCompatActivity {
                     }
 
                 });
-
+*/
     }
 }

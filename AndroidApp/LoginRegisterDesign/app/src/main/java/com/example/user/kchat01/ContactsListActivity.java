@@ -29,15 +29,15 @@ public class ContactsListActivity extends CustomActivity{
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private ListView listviewContacts;
-    List<ListItemContacts> list = new ArrayList<ListItemContacts>();
-    ListItemContacts item;
-    // Class ArrayAdapterContacts is defined as another class to deal with image and text in the same package
-    ArrayAdapterContacts imageArrayAdapter;
+    List<old_ListItemContacts> list = new ArrayList<old_ListItemContacts>();
+    old_ListItemContacts item;
+    // Class old_ArrayAdapterContacts is defined as another class to deal with image and text in the same package
+    old_ArrayAdapterContacts imageArrayAdapter;
 
     @Override
     protected void onCreate (Bundle savedInstatnceState){
         super.onCreate(savedInstatnceState);
-        setContentView(R.layout.activity_contactslist);
+        setContentView(R.layout.old_activity_contactslist);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,21 +55,21 @@ public class ContactsListActivity extends CustomActivity{
         list.clear();
 
         for (int i=0; i<20; i++){
-            item = new ListItemContacts(R.drawable.human, "user"+i, "This is message from user" + i);
+            item = new old_ListItemContacts(R.drawable.human, "user"+i, "This is message from user" + i);
             list.add(item);
         }
 
         // set list to listview
-        imageArrayAdapter = new ArrayAdapterContacts(this, R.layout.list_item_contacts, list);
+        imageArrayAdapter = new old_ArrayAdapterContacts(this, R.layout.old_list_item_contacts, list);
         listviewContacts.setAdapter(imageArrayAdapter);
 
         /*
-        From here, when pushing one contact user, jump to ChatActivity
+        From here, when pushing one contact user, jump to old_ChatActivity
          */
         listviewContacts.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
-                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                Intent chatIntent = new Intent(getApplicationContext(), old_ChatActivity.class);
                 chatIntent.putExtra("username", list.get(i).getUsername());
                 startActivity(chatIntent);
             }
@@ -99,7 +99,7 @@ public class ContactsListActivity extends CustomActivity{
                                 bottomNavigationView.getMenu().getItem(1).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(2).setChecked(false);
                                 bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                                Intent chatIntent = new Intent(getApplicationContext(), old_ChatActivity.class);
                                 startActivity(chatIntent);
                                 break;
                             case R.id.groups:

@@ -2,9 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!--
     <item
         android:id="@+id/chats"
-        android:icon="@drawable/ic_chat_black_24dp"
+        android:icon="@drawable/chats_logo"
         android:enabled="true"
         android:checked="false"
         android:checkable="true"
@@ -22,7 +23,7 @@
 
     <item
         android:id="@+id/contacts"
-        android:icon="@drawable/ic_folder_shared_black_24dp"
+        android:icon="@drawable/contacts_logo"
         android:enabled="true"
         android:checked="false"
         android:checkable="true"
@@ -31,11 +32,11 @@
 
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/ic_account_box_black_24dp"
+        android:icon="@drawable/profile_logo"
         android:enabled="true"
         android:checked="false"
         android:checkable="true"
         android:title="Profile"
         app:showAsAction="ifRoom" />
-
+-->
 </menu>

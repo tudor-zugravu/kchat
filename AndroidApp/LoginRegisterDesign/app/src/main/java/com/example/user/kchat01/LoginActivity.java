@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,7 @@ import IMPL.RESTApi;
  * Created by user on 10/02/2017.
  */
 
-public class LoginActivity extends CustomActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
@@ -65,7 +66,7 @@ public class LoginActivity extends CustomActivity {
         btnGoRegister = (Button) findViewById(R.id.btn_goRegister);
 
         // apply toolbar title
-        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setText("Login");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         // apply the Register button to Georgia font
         btnGoRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
