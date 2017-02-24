@@ -19,6 +19,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,8 +52,10 @@ public class ChatsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-            mSocket.on("chat message", onLogin);
+            mSocket.on("chat message", stringReply);
+            mSocket.on("updaterooms", jsonReply);
 
+            mSocket.emit("adduser", "Tudor");
 
         } catch (URISyntaxException e){
         }
@@ -138,21 +141,32 @@ public class ChatsActivity extends AppCompatActivity {
         });
     }
 
-
-    private Emitter.Listener onLogin = new Emitter.Listener() {
+    private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            String serverresult = (String) args[0];
-            //JSONObject data = (JSONObject) args[0];
-           // Log.d("MESSAGEERROR", data.toString());
+                String serverresult = (String) args[0];
+                Log.d("MESSAGEERROR", serverresult.toString());
+            }
+    };
 
-          //  int numUsers;
+    private Emitter.Listener jsonReply = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+
+           // JSONObject data = (JSONObject) args[0];
+            JSONArray jsonArray = (JSONArray) args[0]; // Exception.
+            Log.d("MESSAGEERROR", jsonArray.toString());
+
+        }
+            //JSONObject data = (JSONObject) args[0];
+            // Log.d("MESSAGEERROR", data.toString());
+
+            //  int numUsers;
 //            try {
 //               // numUsers = data.getInt("numUsers");
 //            } catch (JSONException e) {
 //                return;
 //            }
-            Log.d("MESSAGEERROR", serverresult.toString());
-        }
+
     };
 }
