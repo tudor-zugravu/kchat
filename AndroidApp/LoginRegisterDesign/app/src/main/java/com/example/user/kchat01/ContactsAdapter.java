@@ -10,6 +10,8 @@ import android.widget.Filterable;
 
 import java.util.ArrayList;
 
+import API.IGroups;
+
 /**
  * Created by user on 22/02/2017.
  */
@@ -20,13 +22,13 @@ import java.util.ArrayList;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> implements ContactsViewHolder.ContactsViewHolderListener, Filterable{
 
     private LayoutInflater inflater;
-    public ArrayList<ItemContacts> objectList;
-    public ArrayList<ItemContacts> filterList;
+    public ArrayList<IGroups> objectList;
+    public ArrayList<IGroups> filterList;
     private ContactsViewHolder holder;
     private ContactsFilter filter;
 
     //constructor
-    public ContactsAdapter(Context context, ArrayList<ItemContacts> objectList) {
+    public ContactsAdapter(Context context, ArrayList<IGroups> objectList) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.filterList = objectList;
@@ -45,10 +47,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     //bind data to view
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
-        ItemContacts current = objectList.get(position);
+        IGroups current = objectList.get(position);
         holder.imageProfile.setImageResource(current.getImageId());
-        holder.textViewUsername.setText(current.getUsername());
-        holder.textViewMessage.setText(current.getMessage());
+        holder.textViewUsername.setText(current.getName());
+        holder.textViewMessage.setText(current.getDescription());
 
         //set click listener
         holder.setListener(this);

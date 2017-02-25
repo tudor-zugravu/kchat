@@ -1,5 +1,7 @@
 package IMPL;
 
+import com.example.user.kchat01.R;
+import java.util.ArrayList;
 import API.IGroups;
 
 /**
@@ -12,9 +14,17 @@ public class Groups implements IGroups {
     private int groupId;
     private int type;
     private String name;
+    private int imageId;
 
     public Groups (int groupId, String name, String description, int type){
     this.description = description;
+        this.groupId = groupId;
+        this.type=type;
+        this.name=name;
+    }
+
+    public Groups (String name, String description, int type, int imageId){
+        this.description = description;
         this.groupId = groupId;
         this.type=type;
         this.name=name;
@@ -58,5 +68,25 @@ public class Groups implements IGroups {
     @Override
     public void setName(String name) {
         this.name=name;
+    }
+
+    @Override
+    public int getImageId() {
+        return imageId;
+    }
+
+    @Override
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+
+    public static ArrayList<IGroups> getObjectList() {
+        ArrayList<IGroups> dataList = new ArrayList<>();
+        for (int i = 0; i <= 20; i++) {
+            IGroups group = new Groups("name of group" +i,"Description message of group" + i,0,R.drawable.human);
+            group.setImageId(R.drawable.human);
+            dataList.add(group);
+        }
+        return dataList;
     }
 }

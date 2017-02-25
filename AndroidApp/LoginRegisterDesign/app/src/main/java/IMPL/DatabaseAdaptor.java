@@ -181,9 +181,9 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        IMessage message = new Message(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),cursor.getString(3),convertedDate);
-        Log.d("getBook("+messageId+")", message.toString());
-        return message;
+     //  IMessage message = new Message(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),cursor.getString(3),convertedDate);
+    //   Log.d("getBook("+messageId+")", message.toString());
+        return null;
     }
 
     private static final String[] COLUMNS3 = {"id","name","description","type"};
@@ -257,7 +257,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         IMessage message = null;
         if (cursor.moveToFirst()) {
             do {
-                 message = new Message(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),cursor.getString(3),convertedDate);
+               //  message = new Message(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),cursor.getString(3),convertedDate);
                 // Add book to books
                 messages.add(message);
             } while (cursor.moveToNext());

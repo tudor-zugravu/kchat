@@ -18,10 +18,10 @@ public class JsonDeserialiser {
 
     ArrayList<HashMap<String, String>> messageList;
 
-    public JsonDeserialiser(String serverREsult){
+    public JsonDeserialiser(String serverResult){
         messageList = new ArrayList<>();
         try {
-        JSONObject jsonObj = new JSONObject(serverREsult);
+        JSONObject jsonObj = new JSONObject(serverResult);
 
         // Getting JSON Array node
         JSONArray contacts = jsonObj.getJSONArray("contacts");
@@ -63,3 +63,13 @@ public class JsonDeserialiser {
     }
     }
 }
+
+//
+//    Bundle bundle = getBundleFromIntentOrWhaterver();
+//    JSONObject json = null;
+//try {
+//        json = new JSONObject(bundle.getString("json"));
+//        String key = json.getString("key");
+//        } catch (JSONException e) {
+//        e.printStackTrace();
+//        }

@@ -18,6 +18,9 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import API.IGroups;
+import IMPL.Groups;
+
 import static com.example.user.kchat01.R.id.contacts;
 
 /**
@@ -48,15 +51,15 @@ public class ContactsActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         // getObjectList is to generate sample data in ItemContacs class.
-        adapter = new ContactsAdapter(getApplicationContext(), ItemContacts.getObjectList()) {
+        adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList()) {
             //By clicking a card, the username is got
             @Override
             public void onClick(ContactsViewHolder holder) {
                 int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                ItemContacts contact = ItemContacts.getObjectList().get(position);
+                IGroups contact = Groups.getObjectList().get(position);
                 //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                 Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                contactsIntent.putExtra("username", contact.getUsername());
+                contactsIntent.putExtra("username", contact.getName());
                 startActivity(contactsIntent);
             }
         };

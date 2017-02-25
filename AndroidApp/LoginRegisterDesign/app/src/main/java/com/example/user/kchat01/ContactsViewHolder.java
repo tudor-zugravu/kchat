@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import API.IGroups;
+
 /**
  * Created by user on 22/02/2017.
  */
@@ -18,7 +20,7 @@ public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.
     //Related to ItemView
     ImageView imageProfile;
     TextView textViewUsername, textViewMessage;
-    private List<ItemContacts> objectList;
+    private List<IGroups> objectList;
     //listener on view
     private ContactsViewHolderListener viewholderlistener;
 

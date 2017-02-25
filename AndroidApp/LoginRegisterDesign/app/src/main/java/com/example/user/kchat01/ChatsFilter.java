@@ -4,6 +4,8 @@ import android.widget.Filter;
 
 import java.util.ArrayList;
 
+import API.IMessage;
+
 /**
  * Created by user on 23/02/2017.
  */
@@ -11,10 +13,10 @@ import java.util.ArrayList;
 public class ChatsFilter extends Filter {
 
     ChatsAdapter adapter;
-    ArrayList<ItemChats> filterList;
+    ArrayList<IMessage> filterList;
 
     //constructor
-    public ChatsFilter(ArrayList<ItemChats> filterList, ChatsAdapter adapter){
+    public ChatsFilter(ArrayList<IMessage> filterList, ChatsAdapter adapter){
         this.adapter = adapter;
         this.filterList= filterList;
     }
@@ -27,7 +29,7 @@ public class ChatsFilter extends Filter {
         //whether search words are input or not
         if (constraint != null && constraint.length() > 0){
             constraint = constraint.toString().toUpperCase();
-            ArrayList<ItemChats> filteredChats = new ArrayList<>();
+            ArrayList<IMessage> filteredChats = new ArrayList<>();
 
             for (int i=0; i < filterList.size();i++){
                 //matching between constraint and message
@@ -48,7 +50,7 @@ public class ChatsFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        adapter.objectList = (ArrayList<ItemChats>) results.values;
+        adapter.objectList = (ArrayList<IMessage>) results.values;
         adapter.notifyDataSetChanged();
     }
 }

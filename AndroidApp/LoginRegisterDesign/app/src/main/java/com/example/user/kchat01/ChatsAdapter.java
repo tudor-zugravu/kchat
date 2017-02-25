@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import API.IMessage;
+
 /**
  * Created by user on 22/02/2017.
  */
@@ -21,14 +23,14 @@ import java.util.ArrayList;
 public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHolder> implements Filterable{
 
     private LayoutInflater inflater;
-    public ArrayList<ItemChats> objectList;
-    public ArrayList<ItemChats> filterList;
+    public ArrayList<IMessage> objectList;
+    public ArrayList<IMessage> filterList;
     private ChatsFilter filter;
     public static final int SENDER = 1;
     public static final int RECEIVER = 0;
 
     //constructor
-    public ChatsAdapter(Context context, ArrayList<ItemChats> objectList) {
+    public ChatsAdapter(Context context, ArrayList<IMessage> objectList) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.filterList = objectList;
@@ -52,7 +54,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
     @Override
     public void onBindViewHolder(ChatsViewHolder holder, int position) {
-        ItemChats current = objectList.get(position);
+        IMessage current = objectList.get(position);
         holder.setData(current, position);
     }
 /*
@@ -71,7 +73,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
     @Override
     public int getItemViewType(int position){
-        ItemChats chats = objectList.get(position);
+        IMessage chats = objectList.get(position);
         if (chats.isMe()) {
             return SENDER;
         } else {
@@ -102,9 +104,9 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         }
 
         //set each data on layout file
-        public void setData(ItemChats current, int position) {
+        public void setData(IMessage current, int position) {
             this.txtMessage.setText(current.getMessage());
-            this.txtTime.setText(current.getDateTime());
+            this.txtTime.setText(current.getTimestamp().toString());
         }
     }
 }

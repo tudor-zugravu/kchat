@@ -27,6 +27,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import API.IMessage;
+import IMPL.Message;
+
 /**
  * Created by user on 22/02/2017.
  */
@@ -40,8 +43,8 @@ public class ChatsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     private ChatsAdapter adapter;
-    private ItemChats chats; // This is the object that represents each chat
-    private ArrayList<ItemChats> dataList;
+    private IMessage messageObject; // This is the object that represents each chat
+    private ArrayList<IMessage> dataList;
     private String message;
     private Socket mSocket;
 
@@ -77,8 +80,8 @@ public class ChatsActivity extends AppCompatActivity {
         // For local test, insert sample data which is generated ItemChats.java and
         // getObjectList method has the data.
         dataList = new ArrayList<>();
-        dataList = ItemChats.getObjectList();
-        adapter = new ChatsAdapter(getApplicationContext(), dataList);
+        dataList = Message.getObjectList();
+        adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
         recyclerView.scrollToPosition(adapter.getItemCount()-1);
 
@@ -109,12 +112,9 @@ public class ChatsActivity extends AppCompatActivity {
                     mSocket.connect();
 
                     //set message and datetime to adapter and add them to RecyclerView
-                    chats = new ItemChats();
-                    chats.setIsMe(true);
-                    chats.setMessage(message);
-                    chats.setDateTime(java.text.DateFormat.getDateTimeInstance().format(new Date()));
+                   // message = new IMPL.Message();
                     int latestPosition = adapter.getItemCount();
-                    dataList.add(latestPosition, chats);
+                    dataList.add(latestPosition, messageObject);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyItemInserted(latestPosition);
                     recyclerView.scrollToPosition(adapter.getItemCount()-1);

@@ -1,5 +1,9 @@
 package IMPL;
 
+import com.example.user.kchat01.R;
+
+import java.util.ArrayList;
+
 import API.IContacts;
 
 /**
@@ -58,4 +62,6 @@ public class Contacts implements IContacts {
     public void setUsername(String username) {
         this.username = username;
     }
+
+
 }

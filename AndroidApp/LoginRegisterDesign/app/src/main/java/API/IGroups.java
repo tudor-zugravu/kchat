@@ -22,4 +22,8 @@ public interface IGroups {
 
     public void setName(String name);
 
+    public int getImageId();
+
+    public void setImageId(int imageId);
+
 }
