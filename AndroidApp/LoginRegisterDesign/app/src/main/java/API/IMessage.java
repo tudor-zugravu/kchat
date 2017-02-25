@@ -18,5 +18,6 @@ public interface IMessage {
     public void setMessage(String message);
     public Date getTimestamp();
     public void setTimestamp(Date timestamp);
-
+    public String getUsername();
+    public void setUsername(String username);
 }

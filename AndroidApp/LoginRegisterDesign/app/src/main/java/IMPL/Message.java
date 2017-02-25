@@ -15,13 +15,15 @@ public class Message implements IMessage {
     private int groupId;
     private String message;
     private Date timestamp;
+    private String username;
 
-    public Message(int messageId,int senderId,int groupId,String message,Date timestamp){
+    public Message(int messageId,int senderId,int groupId,String message,Date timestamp,String username){
     this.messageId = messageId;
         this.senderId = senderId;
         this.groupId = groupId;
         this.message = message;
         this.timestamp = timestamp;
+        this.username = username;
     }
 
     @Override
@@ -72,5 +74,15 @@ public class Message implements IMessage {
     @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+    this.username = username;
     }
 }
