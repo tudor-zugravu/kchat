@@ -12,4 +12,6 @@
     <color name="violet">#8A2BE2</color>
     <color name="gray">#808080</color>
     <color name="unavailableButton">#E0E0E0</color>
+    <color name="textColorBlack">#000000</color>
+    <color name="textColorGray">#808080</color>
 </resources>

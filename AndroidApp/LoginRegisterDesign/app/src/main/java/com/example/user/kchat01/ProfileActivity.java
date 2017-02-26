@@ -1,11 +1,9 @@
 package com.example.user.kchat01;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,19 +12,15 @@ import android.widget.Toast;
  * Created by user on 15/02/2017.
  */
 /* This class has following functions:
-1 shows profile image, username, email and phone.
-2 modify those contents to click each element or menu button
-3 change password button
-4 logout button
-5 bottom navigation
+1 shows profile image, username, email, phone and text biography.
+2 modify those contents by clicking each element or by using top menu button
  */
 
 public class ProfileActivity extends CustomActivity {
 
     private Toolbar toolbar;
-    private TextView toolbarTitle, tvUsername, tvEmail, tvPhone;
+    private TextView toolbarTitle, tvUsername, tvEmail, tvPhone, tvBio;
     private ImageView imageProfile;
-    private Button btnChangePassword, btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,46 +35,14 @@ public class ProfileActivity extends CustomActivity {
         tvUsername = (TextView) findViewById(R.id.textViewUsername);
         tvEmail = (TextView) findViewById(R.id.textViewEmail);
         tvPhone = (TextView) findViewById(R.id.textViewPhone);
+        tvBio = (TextView) findViewById(R.id.textViewBio);
 
         // apply toolbar title
-        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setText("Profile");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-        btnChangePassword = (Button) findViewById(R.id.btnChangePassword);
-        // apply the Change Password button to Georgia font
-        btnChangePassword.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-        // apply the Change Password button to Georgia font
-        btnLogout.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-
-        // when pushing ChangePassword button, intent to change password activity
-        btnChangePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-/*
-create change password activity, then change following Toast to Intent
- */
-            public void onClick(View view) {
-                // Intent to Change password Activity;
-              //  Intent changePasswordIntent = new Intent(ProfileActivity.this, ChangePassword.class);
-              //  ProfileActivity.this.startActivity(changePasswordIntent);
-                Toast.makeText(ProfileActivity.this, "move to change password activity", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        btnLogout.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-/*
-send logout request to server
-*/
-                Intent logoutIntent = new Intent(ProfileActivity.this, LoginActivity.class);
-                startActivity(logoutIntent);
-                Toast.makeText(ProfileActivity.this, "send logout request to server", Toast.LENGTH_LONG).show();
-            }
-
-        });
 
 /*
-        REST get profile image, username, email and phone
+        REST get profile image, username, email, phone and biography
 
 */
 
@@ -88,14 +50,20 @@ send logout request to server
         imageProfile.setImageResource(R.drawable.human);
 
         //set username to textview
+        tvUsername.setTextSize(18);
         tvUsername.setText("hardcopy_username");
 
         //set email to txtview
+        tvEmail.setTextSize(18);
         tvEmail.setText("hardcopy_email");
 
         //set phone to txtview
+        tvPhone.setTextSize(18);
         tvPhone.setText("hardcopy_02012345678");
 
+        //set biography to txtview
+        tvBio.setTextSize(18);
+        tvBio.setText("hardcopy_biography");
 
         /*
         modify each field by long click
@@ -135,6 +103,16 @@ send logout request to server
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
                         Toast.makeText(ProfileActivity.this, "phone was clicked", Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                }
+        );
+
+        // Long Click event for Phone
+        tvBio.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    public boolean onLongClick(View v) {
+                        Toast.makeText(ProfileActivity.this, "bio was clicked", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }

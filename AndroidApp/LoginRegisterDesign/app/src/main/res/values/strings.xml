@@ -22,12 +22,10 @@
 
     <string name="btn_register">Register</string>
     <string name="btn_login">Login</string>
-    <string name="btn_changepassword">Change Password</string>
-    <string name="btn_logout">Log Out</string>
 
     <!-- For Top menu -->
-    <string name="setting01"> Setting 01</string>
-    <string name="setting02"> Profile</string>
+    <string name="editProfile"> Edit Profile</string>
+    <string name="changePassword"> Change Password</string>
     <string name="language"> Language</string>
     <string name="logout"> Logout</string>
 

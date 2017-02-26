@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/setting01"
-        android:title="@string/setting01"/>
+        android:id="@+id/editProfile"
+        android:title="@string/editProfile"/>
     <item
-        android:id="@+id/profile"
-        android:title="@string/setting02"/>
+        android:id="@+id/changePassword"
+        android:title="@string/changePassword"/>
     <item
         android:id="@+id/language"
         android:title="@string/language"/>
