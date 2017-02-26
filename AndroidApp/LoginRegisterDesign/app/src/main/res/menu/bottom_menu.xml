@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+    <item
+        android:id="@+id/chats"
+        android:icon="@drawable/chats_logo"
+        android:enabled="true"
+        android:checked="false"
+        android:checkable="true"
+        android:title="@string/text_chats"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/groups"
+        android:icon="@drawable/ic_supervisor_account_black_24dp"
+        android:enabled="true"
+        android:checked="false"
+        android:checkable="true"
+        android:title="@string/text_groups"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/contacts"
+        android:icon="@drawable/contacts_logo"
+        android:enabled="true"
+        android:checked="false"
+        android:checkable="true"
+        android:title="@string/text_contacts"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/profile_logo"
+        android:enabled="true"
+        android:checked="false"
+        android:checkable="true"
+        android:title="Profile"
+        app:showAsAction="ifRoom" />
+-->
+</menu>

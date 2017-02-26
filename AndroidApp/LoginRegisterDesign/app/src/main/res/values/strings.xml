@@ -1,16 +1,38 @@
 <resources>
     <string name="app_name">"KCHAT"</string>
     <string name="action_settings">Settings</string>
+
+    <!-- For toolbar title -->
+    <string name="toolbar_title">KCHAT</string>
+
+    <!-- For login, register and profile page -->
+    <string name="hint_fullname">Full Name</string>
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>
     <string name="hint_phone">Phone Number</string>
     <string name="hint_password">Password</string>
     <string name="hint_confirm">Confirm Password</string>
-    <string name="btn_register">Register</string>
-    <string name="btn_login">Login</string>
+
+    <string name="err_msg_fullname">Enter FullName</string>
     <string name="err_msg_username">Enter Username</string>
     <string name="err_msg_email">Enter valid email address</string>
     <string name="err_msg_phone">Enter valid phone number</string>
-    <string name="err_msg_password">minimum 6 digits, there must be a number and a symbol</string>
+    <string name="err_msg_password">minimum 6 characters, there must be a alphabet, number, and symbol</string>
     <string name="err_msg_confirm">Password does NOT match</string>
+
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+
+    <!-- For Top menu -->
+    <string name="editProfile"> Edit Profile</string>
+    <string name="changePassword"> Change Password</string>
+    <string name="language"> Language</string>
+    <string name="logout"> Logout</string>
+
+
+    <!-- For bottom navigation -->
+    <string name="text_profile">Profile</string>
+    <string name="text_contacts">Contacts</string>
+    <string name="text_groups">Groups</string>
+    <string name="text_chats">Chats</string>
 </resources>
