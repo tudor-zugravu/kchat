@@ -4,21 +4,26 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+//Example POST method invocation
+var Client = require('node-rest-client').Client;
+
 
 //var index = require('./routes/index');
 var users = require('./routes/users');
 
 var profile = require('./routes/profile');
 var login= require('./routes/login')
+var register = require('./routes/register')
 var app = express();
 var mysql = require('mysql');
-var con = mysql.createConnection({
+var client = new Client();
+
+/*var con = mysql.createConnection({
   host     : 'localhost',
-  port : '8889',
   user     : 'yuke',
   password : '123456789',
   database: "kchat"
-});
+});*/
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -29,46 +34,94 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static( 'public'));
+
+/*app.local({
+    user: {
+      fullName: "Yuke",
+      username:"yuke",
+      password:"yuke",
+      email:"yuke@outlook.com",
+      phone:"7897985430543"
+
+    }
+});*/
+app.locals.username = "";
+app.locals.email = "";
+app.locals.phone = "";
+app.locals.fullName=""
 
 //profile
 app.get('/profile', function(req, res){
-  con.query('SELECT * FROM users', function(err, rows){
-    var yuke = {};
-    yuke.name = rows[0].name;
-    yuke.email = rows[0].email;
-    yuke.phone = rows[0].phone_number;
-    console.log(yuke);
-    res.render('profile', {yuke});
-  });
+
+res.render('profile');
 });
 
 //login , as of now redirect to profle page first
 app.post('/authenticate', function(req,res){
-  var query =  'SELECT * FROM users where username="'+req.body.username+'"';
-  con.query(query, function(err, rows){
-    var yuke = {};
-    yuke.name=rows[0].name;
-    yuke.email = rows[0].email;
-    yuke.phone = rows[0].phone_number;
-    console.log(rows[0].username);
-    console.log(req.body.username);
-    console.log(rows[0].password);
-    console.log(req.body.password);
-   if ((req.body.username === rows[0].username) && (req.body.password===rows[0].password)){
-     res.render('profile',{yuke});
-   }
-  else {console.log("wrong password or username")}
-    });
+
+  var args = {
+      data: {
+        username : req.body.username,
+        password : req.body.password,
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+  client.post("http://188.166.157.62:3000/login", args, function (data, response) {
+      // parsed response body as js object
+      var ans = data;
+     if (ans.status === 'failed'){
+      console.log('unmatched username and password');
+    }
+    else {
+      console.log(ans);
+
+      app.locals.username=ans.username+"23";
+      app.locals.email=ans.email;
+      app.locals.phone=ans.phone_number;
+      app.locals.fullname=ans.name;
+      res.render('profile')
+    };
+
+  });
 
 });
 
 
 
-//app.use('/', index);
+
+app.post('/register', function(req,res){
+  var args = {
+      data: {
+        username :req.body.username ,
+        email : req.body.email,
+        fullName : req.body.fullName,
+        pwd : req.body.pwd,
+        phoneNo :req.body.phoneNo,
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+
+   client.post("http://188.166.157.62:3000/register", args, function (data, response) {
+      // parsed response body as js object
+     var ans = data;
+      console.log(ans.toString());
+
+    });
+
+  });
+
+
+
+
+
+
 app.use('/users', users);
-//app.use('/yuke', yuke);
-app.use('/login',login)
+app.use('/login',login);
+app.use('/register',register);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
