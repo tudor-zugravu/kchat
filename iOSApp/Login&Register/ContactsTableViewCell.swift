@@ -12,15 +12,19 @@ class ContactsTableViewCell: UITableViewCell {
     
     
     @IBOutlet weak var fullNameLabel: UILabel!
-    @IBOutlet weak var removeButton: UIButton!
+    @IBOutlet weak var profilePicture: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
     
-        func configureCell(_ fullName: String) {
-            fullNameLabel.text = fullName
+    func configureCell(_ fullName: String, profilePic: String) {
+        fullNameLabel.text = fullName
+        if (profilePic != "") {
+            let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePic)").path
+            profilePicture.image = UIImage(contentsOfFile: filename)
         }
+    }
     
 }

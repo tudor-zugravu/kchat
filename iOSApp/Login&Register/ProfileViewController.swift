@@ -65,6 +65,7 @@ class ProfileViewController: UIViewController {
         userDefaults.removeObject(forKey: "password")
         userDefaults.removeObject(forKey: "fullName")
         userDefaults.removeObject(forKey: "profilePicture")
+        userDefaults.removeObject(forKey: "contacts")
         userDefaults.set(false, forKey: "hasLoginKey")
         userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
