@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             String username = pref.getString("usernamelogin", null);
             String password = pref.getString("usernamepassword", null);
             if (username != null && password != null) {
+
                 Intent loginIntent = new Intent(LoginActivity.this, ContactsActivity.class);
                 startActivity(loginIntent);
                 finish();

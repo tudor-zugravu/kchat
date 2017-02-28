@@ -107,7 +107,21 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String result) {
         if(result!=null){
-            Log.d("SERVERRRRR",result + "Sent from the server");
+        switch(result){
+            case "":
+                break;
+            case"True":
+                break;
+            case"False":
+                break;
+            case"Username Already Exists":
+                break;
+            case"Email Already Exists":
+                break;
+            case "Incorrect Password":
+                break;
+        }
+            Log.d("SERVERRESULT","Sent from the server:" + result);
             CharSequence text ="Hello From server, your username and password is : " +  result;
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, text, duration);

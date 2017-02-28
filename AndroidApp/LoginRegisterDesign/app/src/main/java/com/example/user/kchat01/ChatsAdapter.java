@@ -74,11 +74,13 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
     @Override
     public int getItemViewType(int position){
         IMessage chats = objectList.get(position);
+
         if (chats.isMe()) {
             return SENDER;
         } else {
             return RECEIVER;
         }
+
     }
 
     //filter

@@ -114,6 +114,7 @@ public class ChatsActivity extends AppCompatActivity {
                     //set message and datetime to adapter and add them to RecyclerView
                    // message = new IMPL.Message();
                     int latestPosition = adapter.getItemCount();
+                    messageObject.setMe(true);
                     dataList.add(latestPosition, messageObject);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyItemInserted(latestPosition);
