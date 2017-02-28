@@ -40,7 +40,7 @@ public class JsonDeserialiser {
                 String profile_picture = jObject.getString("profile_picture");
 
                 MasterUser man = new MasterUser(Integer.parseInt(id),name,email,username,phone_number,Integer.parseInt(blocked),Integer.parseInt(session),profile_picture);
-
+//
                 Log.d("DESERIALISE VALUE", id);
                 Log.d("DESERIALISE VALUE", name);
                 Log.d("DESERIALISE VALUE", email);
