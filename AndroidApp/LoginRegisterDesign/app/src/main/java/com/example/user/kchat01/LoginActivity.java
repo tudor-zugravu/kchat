@@ -142,4 +142,12 @@ public class LoginActivity extends AppCompatActivity {
         backgroundasync.execute(type, login_url);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(pref.getAll()!=null) {
+            this.editor.clear();
+            this.editor.commit(); // commit changes
+        }
+    }
 }

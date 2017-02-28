@@ -107,12 +107,25 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String result) {
         if(result!=null){
+            boolean  b = result.startsWith("{");  // true
+            if(b){
+                Log.d("SERVERRESULT","Sent from the server:" + result);
+                result = result.replace("login_sucess", "");
+                JsonDeserialiser deserialiser = new JsonDeserialiser(result,"Login");
+                Intent loginIntent = new Intent(context, ContactsActivity.class);
+                context.startActivity(loginIntent);
+                ((Activity) context).finish();
+            }else if (result.contains("fail")){
+                Log.d("SERVERRESULT","Cannot Log in");
+            }
+
         switch(result){
             case "":
                 break;
             case"True":
                 break;
-            case"False":
+            case"fail":
+                Log.d("SERVERRESULT","Cannot Log in");
                 break;
             case"Username Already Exists":
                 break;
@@ -122,6 +135,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 break;
         }
             Log.d("SERVERRESULT","Sent from the server:" + result);
+
+
             CharSequence text ="Hello From server, your username and password is : " +  result;
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, text, duration);
@@ -134,9 +149,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             LoginActivity.editor.putString("usernamepassword", stringParams[2]); // Storing password
             LoginActivity.editor.commit(); // commit changes
         }
-        Intent loginIntent = new Intent(context, ContactsActivity.class);
-        context.startActivity(loginIntent);
-        ((Activity) context).finish();
+
     }
 
     @Override
