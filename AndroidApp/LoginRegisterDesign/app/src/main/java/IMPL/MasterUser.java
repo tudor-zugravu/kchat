@@ -36,6 +36,9 @@ public class MasterUser {
         this.biography=biography;
     }
 
+    public MasterUser(){
+    }
+
     //user id   int
     //name  String
     //email  String

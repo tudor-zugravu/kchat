@@ -108,13 +108,20 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     protected void onPostExecute(String result) {
         if(result!=null){
             boolean  b = result.startsWith("{");  // true
+            MasterUser man = new MasterUser();
             if(b){
                 Log.d("SERVERRESULT","Sent from the server:" + result);
                 result = result.replace("login_sucess", "");
                 JsonDeserialiser deserialiser = new JsonDeserialiser(result,"Login");
-                Intent loginIntent = new Intent(context, ContactsActivity.class);
-                context.startActivity(loginIntent);
-                ((Activity) context).finish();
+
+                if(man.getUsername()!=null) {
+                    Intent loginIntent = new Intent(context, ContactsActivity.class);
+                    context.startActivity(loginIntent);
+                    ((Activity) context).finish();
+                }else {
+                    Log.d("SERVERRESULT","Cannot Log in");
+                }
+
             }else if (result.contains("fail")){
                 Log.d("SERVERRESULT","Cannot Log in");
             }
