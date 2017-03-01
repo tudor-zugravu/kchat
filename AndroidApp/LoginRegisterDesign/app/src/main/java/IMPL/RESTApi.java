@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,9 +16,11 @@ import com.example.user.kchat01.ChatsActivity;
 import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.ContactsListActivity;
 import com.example.user.kchat01.LoginActivity;
+import com.example.user.kchat01.R;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,6 +56,9 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         this.type = params[0];
         String login_url = this.url;
 
+        if(type.equals("getImage")) {
+            getBitmapFromURL(this.url);
+        }
         if(type.equals("login")||type.equals("register")) {
             try {
                 URL url = new URL(login_url);
@@ -163,5 +172,42 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
+    }
+
+    public void getBitmapFromURL(String src) {
+        try {
+            Log.d("PROFILE",src);
+
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            resizedBitmap(myBitmap,450,450);
+        } catch (FileNotFoundException e) {
+            MasterUser man = new MasterUser();
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.human);
+            man.setUsersImage(icon);
+    } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Bitmap resizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+                   Log.d("PROFILE","reached here for image");
+
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,matrix, false);
+        MasterUser man = new MasterUser();
+        man.setUsersImage(resizedBitmap);
+        Log.d("PROFILE","reached here for image 22");
+        return resizedBitmap;
     }
 }

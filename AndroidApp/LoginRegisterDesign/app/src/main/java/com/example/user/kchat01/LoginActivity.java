@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLogin(String usr, String pass) {
         String type = "login";
-         String login_url = "http://188.166.157.62:3000/login";
+        String login_url = "http://188.166.157.62:3000/login";
         ArrayList<String> paramList= new ArrayList<>();
         paramList.add("username");
         paramList.add("password");

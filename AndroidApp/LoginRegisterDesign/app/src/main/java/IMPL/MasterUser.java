@@ -78,4 +78,15 @@ public class MasterUser {
     public String getBiography() {
         return biography;
     }
+
+    public String getuserId() {
+        return Integer.toString(this.usersId);
+    }
+    public String getProfileLocation() {
+        return this.profileLocation;
+    }
+
+    public void setUsersImage(Bitmap profile) {
+       this.usersprofile=profile;
+    }
 }

@@ -1,6 +1,9 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -18,9 +21,15 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+
 import API.IGroups;
 import IMPL.Groups;
 import IMPL.MasterUser;
+import IMPL.RESTApi;
 
 import static com.example.user.kchat01.R.id.contacts;
 
@@ -41,6 +50,17 @@ public class ContactsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MasterUser man = new MasterUser();
+        if(man.getProfileLocation()!=null) {
+            String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
+            String type = "getImage";
+            ArrayList<String> paramList= new ArrayList<>();
+            paramList.add("picture");
+            RESTApi backgroundasync = new RESTApi(ContactsActivity.this,picture_url,paramList);
+            backgroundasync.execute(type);
+        }
+
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,6 +161,7 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
+
     /*
     From here, Bottom navigation settings
     Future work: implement as another class
@@ -199,4 +220,9 @@ public class ContactsActivity extends AppCompatActivity {
                 });
 */
     }
+
+
+
+
+
 }

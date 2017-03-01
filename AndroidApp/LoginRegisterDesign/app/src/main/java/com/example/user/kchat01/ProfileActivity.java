@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import IMPL.MasterUser;
 
 /**
  * Created by user on 15/02/2017.
@@ -49,8 +52,13 @@ public class ProfileActivity extends CustomActivity {
 */
 
         //set profile image to imageview (temporarily, set the image in drawable forlder)
-        imageProfile.setImageResource(R.drawable.human);
-
+        MasterUser man = new MasterUser();
+        if(man.getProfileLocation()!=null||!man.getProfileLocation().equals("")) {
+//            Log.d("PROFILE",man.getUsersprofile().toString());
+            imageProfile.setImageBitmap(man.getUsersprofile());
+        }else {
+            imageProfile.setImageResource(R.drawable.human);
+        }
         //set username to textview
         tvUsername.setTextSize(18);
         //set email to txtview
