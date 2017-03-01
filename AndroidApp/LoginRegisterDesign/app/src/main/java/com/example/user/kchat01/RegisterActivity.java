@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
     }
-
+//
     /* Form validation check*/
     private void validateCheck() {
         if (!validateFullName()) {
