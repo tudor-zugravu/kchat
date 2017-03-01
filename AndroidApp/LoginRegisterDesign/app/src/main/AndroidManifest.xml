@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity"  android:noHistory="true"></activity>
         <activity android:name=".CustomActivity"></activity>
         <activity android:name=".ContactsActivity"></activity>
         <activity android:name=".ChatsActivity"></activity>

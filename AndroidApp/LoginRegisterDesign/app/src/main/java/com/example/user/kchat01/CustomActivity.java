@@ -98,7 +98,9 @@ public class CustomActivity extends AppCompatActivity {
                 Intent logoutIntent = new Intent(CustomActivity.this, LoginActivity.class);
                 LoginActivity.editor.clear();
                 LoginActivity.editor.commit(); // commit changes
+                logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
