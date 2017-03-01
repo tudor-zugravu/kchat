@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.user.kchat01.ChatsActivity;
 import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.ContactsListActivity;
 import com.example.user.kchat01.LoginActivity;
@@ -35,6 +36,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     String url;
     ArrayList<String> urlPostParams;
     String [] stringParams;
+    String type;
 
     public RESTApi (Context ctx, String url,ArrayList<String> urlPostParams) {
         context = ctx;
@@ -45,7 +47,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(String... params) {
         this.stringParams=params;
-        String type = params[0];
+        this.type = params[0];
         String login_url = this.url;
 
         if(type.equals("login")||type.equals("register")) {
@@ -109,19 +111,24 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(result!=null){
             boolean  b = result.startsWith("{");  // true
             MasterUser man = new MasterUser();
-            if(b){
+            if(b && type.equals("login")){
                 Log.d("SERVERRESULT","Sent from the server:" + result);
                 result = result.replace("login_sucess", "");
-                JsonDeserialiser deserialiser = new JsonDeserialiser(result,"Login");
+                JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type);
 
                 if(man.getUsername()!=null) {
+                    if(LoginActivity.pref.getAll()!=null) {
+                        Log.d("SERVERRESULT","I have reached here to save");
+                        LoginActivity.editor.putString("usernamelogin", stringParams[1]); // Storing login
+                        LoginActivity.editor.putString("usernamepassword", stringParams[2]); // Storing password
+                        LoginActivity.editor.commit(); // commit changes
+                    }
                     Intent loginIntent = new Intent(context, ContactsActivity.class);
                     context.startActivity(loginIntent);
                     ((Activity) context).finish();
                 }else {
                     Log.d("SERVERRESULT","Cannot Log in");
                 }
-
             }else if (result.contains("fail")){
                 Log.d("SERVERRESULT","Cannot Log in");
             }
@@ -151,12 +158,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         }else{
             Log.d("SERVERRRRR" , "Bad Result from the server");
         }
-        if(LoginActivity.pref.getAll()!=null) {
-            LoginActivity.editor.putString("usernamelogin", stringParams[1]); // Storing login
-            LoginActivity.editor.putString("usernamepassword", stringParams[2]); // Storing password
-            LoginActivity.editor.commit(); // commit changes
-        }
-
     }
 
     @Override

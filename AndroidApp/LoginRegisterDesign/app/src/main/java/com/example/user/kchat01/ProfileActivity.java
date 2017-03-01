@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +27,8 @@ public class ProfileActivity extends CustomActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        Intent intent= getIntent();
+        Bundle bundle = intent.getExtras();
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -43,7 +46,6 @@ public class ProfileActivity extends CustomActivity {
 
 /*
         REST get profile image, username, email, phone and biography
-
 */
 
         //set profile image to imageview (temporarily, set the image in drawable forlder)
@@ -51,20 +53,24 @@ public class ProfileActivity extends CustomActivity {
 
         //set username to textview
         tvUsername.setTextSize(18);
-        tvUsername.setText("hardcopy_username");
-
         //set email to txtview
         tvEmail.setTextSize(18);
-        tvEmail.setText("hardcopy_email");
-
         //set phone to txtview
         tvPhone.setTextSize(18);
-        tvPhone.setText("hardcopy_02012345678");
-
         //set biography to txtview
         tvBio.setTextSize(18);
-        tvBio.setText("hardcopy_biography");
 
+        if(bundle!=null) {
+            String users_username =(String) bundle.get("users_username");
+            String users_email =(String) bundle.get("users_email");
+            String users_phonenumber =(String) bundle.get("users_phonenumber");
+            String users_biography =(String) bundle.get("users_biography");
+           // String j =(String) bundle.get("name");
+            tvUsername.setText(users_username);
+            tvEmail.setText(users_email);
+            tvPhone.setText(users_phonenumber);
+            tvBio.setText(users_biography);
+        }
         /*
         modify each field by long click
          */

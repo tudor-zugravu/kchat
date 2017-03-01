@@ -20,6 +20,7 @@ import com.roughike.bottombar.OnTabSelectListener;
 
 import API.IGroups;
 import IMPL.Groups;
+import IMPL.MasterUser;
 
 import static com.example.user.kchat01.R.id.contacts;
 
@@ -119,6 +120,11 @@ public class ContactsActivity extends AppCompatActivity {
                 }
                 if (tabId == R.id.profile) {
                     Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    MasterUser man = new MasterUser();
+                    profileIntent.putExtra("users_username", man.getUsername());
+                    profileIntent.putExtra("users_email", man.getEmail());
+                    profileIntent.putExtra("users_phonenumber", man.getTelephonenumber());
+                    profileIntent.putExtra("users_biography", man.getBiography());
                     startActivity(profileIntent);
                     //Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_SHORT).show();
                 }

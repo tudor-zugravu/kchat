@@ -19,67 +19,29 @@ public class JsonDeserialiser {
 
     ArrayList<HashMap<String, String>> messageList;
 
-
+    JSONObject jObject;
 
     public JsonDeserialiser(String serverResult, String deserializeType) {
-
-
         try {
-        JSONObject jObject = new JSONObject(serverResult);
-        Iterator<String> keys = jObject.keys();
-            //JSONArray contacts = jObject.getJSONArray("");
-
-                String id = jObject.getString("user_id");
-                String name = jObject.getString("name");
-                String email = jObject.getString("email");
-                String username = jObject.getString("username");
-                String password = jObject.getString("password");
-                String phone_number = jObject.getString("phone_number");
-                String blocked = jObject.getString("blocked");
-                String session = jObject.getString("session");
-                String profile_picture = jObject.getString("profile_picture");
-
-                MasterUser man = new MasterUser(Integer.parseInt(id),name,email,username,phone_number,Integer.parseInt(blocked),Integer.parseInt(session),profile_picture);
-//
-                Log.d("DESERIALISE VALUE", id);
-                Log.d("DESERIALISE VALUE", name);
-                Log.d("DESERIALISE VALUE", email);
-                Log.d("DESERIALISE VALUE", username);
-                Log.d("DESERIALISE VALUE", password);
-                Log.d("DESERIALISE VALUE", phone_number);
-                Log.d("DESERIALISE VALUE", blocked);
-                Log.d("DESERIALISE VALUE", session);
-                Log.d("DESERIALISE VALUE", profile_picture);
-                // String gender = c.getString("gender");
-
-                // Phone node is JSON Object
-          //      JSONObject phone = c.getJSONObject("phone");
-                //          String mobile = phone.getString("mobile");
-//            String office = phone.getString("office");
-
-
-                while( keys.hasNext() ) {
-            String key = keys.next();
-            String value = jObject.getString(key);
-           // Log.d("DESERIALISE VALUE", value);
-        }
+            this.jObject = new JSONObject(serverResult);
+            Iterator<String> keys = jObject.keys();
 
         } catch (final JSONException e) {
             Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
             // Toast.makeText(this.context, "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        if (deserializeType.equals("message")) {
+        if(deserializeType.equals("login")){
+            loginDeserializer(this.jObject);
+        } else if (deserializeType.equals("message")) {
+
             messageList = new ArrayList<>();
             try {
                 JSONObject jsonObj = new JSONObject(serverResult);
-
                 // Getting JSON Array node
                 JSONArray contacts = jsonObj.getJSONArray("contacts");
-
                 // looping through All Contacts
                 for (int i = 0; i < contacts.length(); i++) {
                     JSONObject c = contacts.getJSONObject(i);
-
                     String id = c.getString("id");
                     String name = c.getString("name");
                     String email = c.getString("email");
@@ -93,7 +55,6 @@ public class JsonDeserialiser {
 
                     // tmp hash map for single contact
                     HashMap<String, String> contact = new HashMap<>();
-
                     // adding each child node to HashMap key => value
                     contact.put("id", id);
                     contact.put("name", name);
@@ -113,6 +74,24 @@ public class JsonDeserialiser {
             }
         }
     }
+
+    private void loginDeserializer(JSONObject jObject){
+        try{
+        String id=jObject.getString("user_id");
+        String name=jObject.getString("name");
+        String email=jObject.getString("email");
+        String username=jObject.getString("username");
+        String password=jObject.getString("password");
+        String phone_number=jObject.getString("phone_number");
+        String blocked=jObject.getString("blocked");
+        String session=jObject.getString("session");
+        String profile_picture=jObject.getString("profile_picture");
+        MasterUser man=new MasterUser(Integer.parseInt(id),name,email,username,phone_number,Integer.parseInt(blocked),Integer.parseInt(session),profile_picture);
+        }catch(final JSONException e){
+        Log.e("JSON ERROR","Json parsing error: "+e.getMessage());
+        // Toast.makeText(this.context, "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
 }
 
 //
@@ -124,3 +103,15 @@ public class JsonDeserialiser {
 //        } catch (JSONException e) {
 //        e.printStackTrace();
 //        }
+
+
+//JSONArray contacts = jObject.getJSONArray("");
+// String gender = c.getString("gender");
+// Phone node is JSON Object
+//      JSONObject phone = c.getJSONObject("phone");
+//          String mobile = phone.getString("mobile");
+//            String office = phone.getString("office");
+//                while( keys.hasNext() ) {
+//            String key = keys.next();
+//            String value = jObject.getString(key);
+// Log.d("DESERIALISE VALUE", value);
