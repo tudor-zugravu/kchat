@@ -90,6 +90,8 @@ public class CustomActivity extends AppCompatActivity {
                 return true;
             case R.id.language:
                 Toast.makeText(this, "setting language", Toast.LENGTH_LONG).show();
+                Intent imageintent = new Intent(CustomActivity.this, ImageUpload.class);
+                startActivity(imageintent);
                 return true;
             case R.id.logout:
                 /*
