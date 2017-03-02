@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -16,8 +18,16 @@ import android.view.View;
 import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import android.Manifest;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import IMPL.JsonSerialiser;
+import IMPL.MasterUser;
+import IMPL.RESTApi;
 
 
 public class ImageUpload extends AppCompatActivity {
@@ -59,7 +69,22 @@ public class ImageUpload extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            if(canvas.getDrawable()==null){
+                return;
+            }else{
+                Bitmap bitmap = ((BitmapDrawable)canvas.getDrawable()).getBitmap();
+                String codedImage = getStringImage(bitmap);
+                JsonSerialiser imageSerialiser = new JsonSerialiser();
+                MasterUser man = new MasterUser();
+                String imagetosend = imageSerialiser.serialiseProfileImage(man.getuserId(),codedImage);
+                String type = "updateImage";
+                String login_url = "http://188.166.157.62:3000/imageupload";
+                ArrayList<String> paramList= new ArrayList<>();
+                paramList.add("request");
+                paramList.add("json");
+                RESTApi backgroundasync = new RESTApi(ImageUpload.this,login_url,paramList);
+                backgroundasync.execute(type, "profileImageChange", imagetosend);
+             }
             }
         });
     }

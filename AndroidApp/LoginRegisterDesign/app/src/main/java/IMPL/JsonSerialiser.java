@@ -38,6 +38,18 @@ public class JsonSerialiser {
         return null;
     }
 
+    public String serialiseProfileImage(String usersid, String base64Image){
+        try {
+            json.put("type", "profileImageChange");
+            json.put("sender", usersid);
+            json.put("usersImage", base64Image);
+        }catch (JSONException e){
+            Log.e("Json Exception", "Cannot parse to json");
+        }
+        bundle.putString("json", json.toString());
+        return this.json.toString();
+    }
+
     public String serialiseGroupRequest(ArrayList<String> usernames,String groupChatId){
         try {
             json.put("type", "grouprequest");

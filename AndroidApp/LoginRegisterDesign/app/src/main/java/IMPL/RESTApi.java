@@ -59,7 +59,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(type.equals("getImage")) {
             getBitmapFromURL(this.url);
         }
-        if(type.equals("login")||type.equals("register")) {
+        if(type.equals("login")||type.equals("register")||type.equals("updateImage")) {
             try {
                 URL url = new URL(login_url);
 
@@ -140,6 +140,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 }
             }else if (result.contains("fail")){
                 Log.d("SERVERRESULT","Cannot Log in");
+            }else{
+                Log.d("SERVERRESULT","Sent from the server:" + result);
             }
 
         switch(result){
