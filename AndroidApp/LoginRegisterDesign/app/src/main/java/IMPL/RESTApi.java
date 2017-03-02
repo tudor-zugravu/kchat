@@ -67,7 +67,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setDoInput(true);
-
+                Log.d("REGISTER REACH", "reached here for register part 1");
                 OutputStream outputStream = httpURLConnection.getOutputStream();
 
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
@@ -79,6 +79,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 if(post_data2.endsWith("&")) {
                     post_data2.substring(0, post_data2.length() - 1);
                 }
+                Log.d("REGISTER REACH", post_data2);
+                Log.d("REGISTER REACH", login_url);
 
                 bufferedWriter.write(post_data2);
 
@@ -141,6 +143,10 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             }else if (result.contains("fail")){
                 Log.d("SERVERRESULT","Cannot Log in");
             }else{
+                Log.d("SERVERRESULT","Sent from the server:" + result);
+            }
+
+            if(b && type.equals("register")) {
                 Log.d("SERVERRESULT","Sent from the server:" + result);
             }
 
