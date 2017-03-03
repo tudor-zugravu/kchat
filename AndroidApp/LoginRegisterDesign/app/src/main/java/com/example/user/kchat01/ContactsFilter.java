@@ -5,6 +5,7 @@ import android.widget.Filter;
 import java.util.ArrayList;
 
 import API.IGroups;
+import IMPL.Groups;
 
 /**
  * Created by user on 23/02/2017.
@@ -13,10 +14,10 @@ import API.IGroups;
 public class ContactsFilter extends Filter {
 
     ContactsAdapter adapter;
-    ArrayList<IGroups> filterList;
+    ArrayList filterList;
 
     //constructor
-    public ContactsFilter(ArrayList<IGroups> filterList, ContactsAdapter adapter){
+    public ContactsFilter(ArrayList<?> filterList, ContactsAdapter adapter){
         this.adapter = adapter;
         this.filterList= filterList;
     }
@@ -29,12 +30,15 @@ public class ContactsFilter extends Filter {
         //whether search words are input or not
         if (constraint != null && constraint.length() > 0){
             constraint = constraint.toString().toUpperCase();
-            ArrayList<IGroups> filteredContacts = new ArrayList<>();
+            ArrayList filteredContacts = new ArrayList<>();
 
-            for (int i=0; i < filterList.size();i++){
+            if(!filterList.isEmpty()&& filterList instanceof IGroups) {
+                ArrayList<IGroups> group = this.filterList;
+                for (int i=0; i < group.size();i++){
                 //matching between constraint and username or message
-                if (filterList.get(i).getName().toUpperCase().contains(constraint) || filterList.get(i).getDescription().toUpperCase().contains(constraint)){
-                    filteredContacts.add(filterList.get(i));
+                    if (group.get(i).getName().toUpperCase().contains(constraint) || group.get(i).getDescription().toUpperCase().contains(constraint)) {
+                        filteredContacts.add(filterList.get(i));
+                    }
                 }
             }
             results.count = filteredContacts.size();
@@ -49,7 +53,7 @@ public class ContactsFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        adapter.objectList = (ArrayList<IGroups>) results.values;
+        adapter.objectList = (ArrayList) results.values;
         adapter.notifyDataSetChanged();
     }
 }

@@ -153,9 +153,9 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         if (cursor != null)
             cursor.moveToFirst();
         //  build the object
-        IContacts contact = new Contacts(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),cursor.getString(2),cursor.getString(3));
-        Log.d("getBook("+contactId+")", contact.toString());
-        return contact;
+       // IContacts contact = new Contacts(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),cursor.getString(2),cursor.getString(3));
+       // Log.d("getBook("+contactId+")", contact.toString());
+        return null;
     }
 
     private static final String[] COLUMNS2 = {"id","sender_id","group_id","message","timestamp"};
@@ -215,7 +215,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         IContacts contact = null;
         if (cursor.moveToFirst()) {
             do {
-                contact = new Contacts(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),cursor.getString(2),cursor.getString(3));
+              //  contact = new Contacts(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),cursor.getString(2),cursor.getString(3));
                 // Add book to books
                 contacts.add(contact);
             } while (cursor.moveToNext());
@@ -270,7 +270,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("id", contact.getContactId());
-        values.put("global_id", contact.getGlobalId());
+       // values.put("global_id", contact.getGlobalId());
         values.put("name", contact.getContactName());
         values.put("username", contact.getUsername());
 

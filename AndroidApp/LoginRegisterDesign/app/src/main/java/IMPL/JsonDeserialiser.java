@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import API.IContacts;
+
 /**
  * Created by tudor on 2/20/2017.
  */
@@ -32,7 +34,9 @@ public class JsonDeserialiser {
         }
         if(deserializeType.equals("login")){
             loginDeserializer(this.jObject);
-        } else if (deserializeType.equals("message")) {
+        }else if (deserializeType.equals("getcontacts")) {
+            contactDeserializer(this.jObject);
+        }else if (deserializeType.equals("message")) {
 
             messageList = new ArrayList<>();
             try {
@@ -92,6 +96,34 @@ public class JsonDeserialiser {
         // Toast.makeText(this.context, "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+
+    private void contactDeserializer(JSONObject jobject){
+        try {
+            JSONArray jArr = jobject.getJSONArray("");
+            for (int i = 0; i < jArr.length(); i++) {
+                JSONObject obj = jArr.getJSONObject(i);
+                 int contactId = Integer.parseInt(obj.getString("contact_id"));
+                 int requestNum=Integer.parseInt(obj.getString("request"));
+                 String timestamp= obj.getString("timestamp");
+                 String userId= obj.getString("user_id");
+                 String contactName= obj.getString("name");
+                 String email= obj.getString("email");
+                 String username= obj.getString("username");
+                 String phonenumber= obj.getString("phone_number");
+                 int blocked=Integer.parseInt(obj.getString("blocked"));
+                 int session=Integer.parseInt(obj.getString("session"));
+                 String contactPicture= obj.getString("profile_picture");
+                if(contactPicture!=null){
+                    //make a rest call to get image?
+                }
+                IContacts contact = new Contacts(contactId,requestNum,timestamp,userId,contactName,email,username,phonenumber,blocked,session,contactPicture);
+                Contacts.contactList.add(contact);
+                // Bitmap profilePicture;
+            }
+        }catch (JSONException e){
+
+        }
+    }
 }
 
 //

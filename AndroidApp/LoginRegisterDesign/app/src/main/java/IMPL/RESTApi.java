@@ -59,7 +59,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(type.equals("getImage")) {
             getBitmapFromURL(this.url);
         }
-        if(type.equals("login")||type.equals("register")||type.equals("updateImage")) {
+        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")) {
             try {
                 URL url = new URL(login_url);
 
@@ -145,11 +145,13 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             }else{
                 Log.d("SERVERRESULT","Sent from the server:" + result);
             }
-
             if(b && type.equals("register")) {
                 Log.d("SERVERRESULT","Sent from the server:" + result);
             }
-
+            if(b && type.equals("getcontacts")) {
+                Log.d("SERVERRESULT","Sent from the server:" + result);
+                JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type);
+            }
         switch(result){
             case "":
                 break;

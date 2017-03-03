@@ -19,9 +19,7 @@ public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.
 
     //Related to ItemView
     ImageView imageProfile;
-    TextView textViewUsername, textViewMessage;
-    private List<IGroups> objectList;
-    //listener on view
+    TextView textViewUsername, textViewMessage;//listener on view
     private ContactsViewHolderListener viewholderlistener;
 
     //constructor
