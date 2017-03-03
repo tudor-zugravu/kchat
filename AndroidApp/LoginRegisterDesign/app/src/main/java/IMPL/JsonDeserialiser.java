@@ -22,8 +22,10 @@ public class JsonDeserialiser {
     ArrayList<HashMap<String, String>> messageList;
 
     JSONObject jObject;
+    String serverResult;
 
     public JsonDeserialiser(String serverResult, String deserializeType) {
+        this.serverResult = serverResult;
         try {
             this.jObject = new JSONObject(serverResult);
             Iterator<String> keys = jObject.keys();
@@ -35,6 +37,7 @@ public class JsonDeserialiser {
         if(deserializeType.equals("login")){
             loginDeserializer(this.jObject);
         }else if (deserializeType.equals("getcontacts")) {
+
             contactDeserializer(this.jObject);
         }else if (deserializeType.equals("message")) {
 
@@ -99,30 +102,37 @@ public class JsonDeserialiser {
 
     private void contactDeserializer(JSONObject jobject){
         try {
-            JSONArray jArr = jobject.getJSONArray("");
-            for (int i = 0; i < jArr.length(); i++) {
-                JSONObject obj = jArr.getJSONObject(i);
-                 int contactId = Integer.parseInt(obj.getString("contact_id"));
-                 int requestNum=Integer.parseInt(obj.getString("request"));
-                 String timestamp= obj.getString("timestamp");
-                 String userId= obj.getString("user_id");
-                 String contactName= obj.getString("name");
-                 String email= obj.getString("email");
-                 String username= obj.getString("username");
-                 String phonenumber= obj.getString("phone_number");
-                 int blocked=Integer.parseInt(obj.getString("blocked"));
-                 int session=Integer.parseInt(obj.getString("session"));
-                 String contactPicture= obj.getString("profile_picture");
-                if(contactPicture!=null){
-                    //make a rest call to get image?
+            if(this.serverResult!=null) {
+                Contacts.contactList.clear();
+                JSONArray jArr = new JSONArray(this.serverResult);
+                for (int i = 0; i < jArr.length(); i++) {
+                    JSONObject obj = jArr.getJSONObject(i);
+                    int contactId = Integer.parseInt(obj.getString("contact_id"));
+                    int requestNum = Integer.parseInt(obj.getString("request"));
+                    String timestamp = obj.getString("timestmp");
+                    String userId = obj.getString("user_id");
+                    String contactName = obj.getString("name");
+                    String email = obj.getString("email");
+                    String username = obj.getString("username");
+                    String password = obj.getString("password");
+                    String phonenumber = obj.getString("phone_number");
+                    int blocked = Integer.parseInt(obj.getString("blocked"));
+                    int session = Integer.parseInt(obj.getString("session"));
+                    String contactPicture = obj.getString("profile_picture");
+                    if (contactPicture != null) {
+                        //make a rest call to get image?
+                    }
+                    IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+                    Contacts.contactList.add(contact);
+                    // Bitmap profilePicture;
                 }
-                IContacts contact = new Contacts(contactId,requestNum,timestamp,userId,contactName,email,username,phonenumber,blocked,session,contactPicture);
-                Contacts.contactList.add(contact);
-                // Bitmap profilePicture;
+                Log.d("DESERIALISER", "object size: " + Contacts.contactList.size());
+
             }
         }catch (JSONException e){
 
         }
+
     }
 }
 

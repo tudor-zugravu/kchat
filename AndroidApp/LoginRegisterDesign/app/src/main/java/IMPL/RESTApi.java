@@ -148,8 +148,9 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             if(b && type.equals("register")) {
                 Log.d("SERVERRESULT","Sent from the server:" + result);
             }
-            if(b && type.equals("getcontacts")) {
+            if(type.equals("getcontacts")) {
                 Log.d("SERVERRESULT","Sent from the server:" + result);
+                Log.d("DESERIALISER","Successfully created the object: " + result);
                 JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type);
             }
         switch(result){

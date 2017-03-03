@@ -1,7 +1,10 @@
 package com.example.user.kchat01;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 
 import API.IContacts;
 import API.IGroups;
+import IMPL.Contacts;
 
 /**
  * Created by user on 22/02/2017.
@@ -27,12 +31,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     private ArrayList filterList;
     private ContactsViewHolder holder;
     private ContactsFilter filter;
+    private int type;
+    Context context;
+    static int counter = 0;
 
     //constructor
-    public ContactsAdapter(Context context, ArrayList<?> objectList) {
+    public ContactsAdapter(Context context, ArrayList<?> objectList, int type) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.filterList = objectList;
+        this.type = type;
+        this.context = context;
     }
 
     //create view holder
@@ -41,17 +50,28 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
         //convert item layout to view object
         View view = inflater.inflate(R.layout.item_contacts, parent, false);
         //create view holder
-        final ContactsViewHolder holder = new ContactsViewHolder(view);
+        ContactsViewHolder holder = new ContactsViewHolder(view);
         return holder;
     }
 
     //bind data to view
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
-        IGroups current = (IGroups) objectList.get(position);
-        holder.imageProfile.setImageResource(current.getImageId());
-        holder.textViewUsername.setText(current.getName());
-        holder.textViewMessage.setText(current.getDescription());
+        if(type == 0) {
+            IGroups current = (IGroups) objectList.get(position);
+            holder.imageProfile.setImageResource(current.getImageId());
+            holder.textViewUsername.setText(current.getName());
+            holder.textViewMessage.setText(current.getDescription());
+        }if (type ==1){
+            for(int i =0; i< Contacts.contactList.size(); i++) {
+                Log.d("DATACHECKER", " Ihave got here for the data checker");
+                Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                holder.imageProfile.setImageDrawable(d);
+                holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
+                holder.textViewMessage.setText(Contacts.contactList.get(i).getEmail());
+            }
+            this.counter = this.counter ++; // remove
+        }
 
         //set click listener
         holder.setListener(this);

@@ -4,6 +4,7 @@ import android.widget.Filter;
 
 import java.util.ArrayList;
 
+import API.IContacts;
 import API.IGroups;
 import IMPL.Groups;
 
@@ -38,6 +39,17 @@ public class ContactsFilter extends Filter {
                 //matching between constraint and username or message
                     if (group.get(i).getName().toUpperCase().contains(constraint) || group.get(i).getDescription().toUpperCase().contains(constraint)) {
                         filteredContacts.add(filterList.get(i));
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }else if(!filterList.isEmpty()&& filterList instanceof IContacts) {
+                ArrayList<IContacts> group = this.filterList;
+                for (int i=0; i < group.size();i++){
+                    //matching between constraint and username or message
+                    if (group.get(i).getContactName().toUpperCase().contains(constraint) || group.get(i).getEmail().toUpperCase().contains(constraint)) {
+                        filteredContacts.add(filterList.get(i));
+                        adapter.notifyDataSetChanged();
+
                     }
                 }
             }

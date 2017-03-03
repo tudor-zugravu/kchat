@@ -8,12 +8,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,13 +27,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
+import API.IContacts;
 import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
 
+import static com.example.user.kchat01.R.id.cancel_action;
 import static com.example.user.kchat01.R.id.contacts;
 
 /**
@@ -47,12 +52,13 @@ public class ContactsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     ContactsAdapter adapter;
-    private int tabId;
+    public static int tabId;
     private BottomBar bottomBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         MasterUser man = new MasterUser();
         if(man.getProfileLocation()!=null) {
@@ -74,23 +80,17 @@ public class ContactsActivity extends AppCompatActivity {
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
 
-        if(bottomBar!=null && bottomBar.getCurrentTabId()==contacts && !Contacts.contactList.isEmpty()){
-//            adp = new ContactsAdapter(ContactsActivity.this, Contacts.contactList) {
-//                //By clicking a card, the username is got
-//                @Override
-//                public void onClick(ContactsViewHolder holder) {
-//                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
-//                    IGroups contact = Groups.getObjectList().get(position);
-//                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
-//                    Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-//                    contactsIntent.putExtra("username", contact.getName());
-//                    startActivity(contactsIntent);
-//                }
-//            };
-        }else {
+        Log.d("DESERIALISER", "contact id is: " + bottomBar.getCurrentTabId());
+        Log.d("DESERIALISER", "contact:: " + contacts);
+        Log.d("DESERIALISER", "list status: " + Contacts.contactList.size());
+
+        if(bottomBar!=null && !Contacts.contactList.isEmpty()){
+            Log.d("DESERIALISER", "contacts has been clicked");
+
             // getObjectList is to generate sample data in ItemContacs class.
-            adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList()) {
+            adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 //By clicking a card, the username is got
                 @Override
                 public void onClick(ContactsViewHolder holder) {
@@ -102,6 +102,23 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            recyclerView.setAdapter(adapter);
+
+        }else {
+            // getObjectList is to generate sample data in ItemContacs class.
+            adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+                //By clicking a card, the username is got
+                @Override
+                public void onClick(ContactsViewHolder holder) {
+                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                    IGroups contact = Groups.getObjectList().get(position);
+                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                    Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                    contactsIntent.putExtra("username", contact.getName());
+                    startActivity(contactsIntent);
+                }
+            };
+            recyclerView.setAdapter(adapter);
         }
 
         recyclerView.setAdapter(adapter);
@@ -134,29 +151,48 @@ public class ContactsActivity extends AppCompatActivity {
         /*
         From here, Bottom Bar is implemented
         */
-        this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
-        bottomBar.setDefaultTab(R.id.chats);
+        bottomBar.setDefaultTab(R.id.contacts);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
+                ContactsActivity.tabId = tabId;
                 if (tabId == R.id.chats) {
                     //Intent chatsIntent = new Intent(getApplicationContext(),old_ChatActivity.class);
                     //startActivity(chatsIntent);
                     Toast.makeText(getApplicationContext(), "Chats", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == R.id.groups) {
+                    adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+                        //By clicking a card, the username is got
+                        @Override
+                        public void onClick(ContactsViewHolder holder) {
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IGroups contact = Groups.getObjectList().get(position);
+                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                            contactsIntent.putExtra("username", contact.getName());
+                            startActivity(contactsIntent);
+                        }
+                    };
+                    recyclerView.setAdapter(adapter);
                     //Intent groupIntent = new Intent(getApplicationContext(),GroupActivity.class);
                     //startActivity(groupIntent);
                     Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
-                if (tabId == contacts) {
-                    String type = "getcontacts";
-                    String contacts_url = "http://188.166.157.62:3000/contacts";
-                    ArrayList<String> paramList= new ArrayList<>();
-                    paramList.add("userId");
-                    RESTApi backgroundasync = new RESTApi(ContactsActivity.this,contacts_url,paramList);
-                    MasterUser man = new MasterUser();
-                    backgroundasync.execute(type, man.getuserId());
+                if (tabId == contacts && Contacts.contactList.isEmpty()) {
+                    try {
+                        Log.d("DESERIALISER", "i made a rest request");
+                        String type = "getcontacts";
+                        String contacts_url = "http://188.166.157.62:3000/contacts";
+                        ArrayList<String> paramList = new ArrayList<>();
+                        paramList.add("userId");
+                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, contacts_url, paramList);
+                        MasterUser man = new MasterUser();
+                        backgroundasync.execute(type, man.getuserId()).get();
+                    }catch (InterruptedException e){
+                    }catch (ExecutionException f){
+
+                    }
                 }
                 if (tabId == R.id.profile) {
                     Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
@@ -175,8 +211,9 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
                 if (tabId == contacts) {
-                    Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                    startActivity(contactsIntent);
+
+                        Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                        startActivity(contactsIntent);
                 }
             }
         });
