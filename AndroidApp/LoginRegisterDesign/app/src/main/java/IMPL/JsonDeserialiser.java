@@ -123,6 +123,20 @@ public class JsonDeserialiser {
                         //make a rest call to get image?
                     }
                     IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+                    Log.d("CHECKER",contact.getUserId());
+                    Log.d("CHECKER",contact.getContactName());
+                    Log.d("CHECKER",contact.getContactProfile());
+                    Log.d("CHECKER",contact.getPhoneNumber());
+                    Log.d("CHECKER",contact.getTimestamp());
+                    Log.d("CHECKER",contact.getEmail());
+                    Log.d("CHECKER",Integer.toString(contact.getSessionNum()));
+                    Log.d("CHECKER",contact.getContactProfile());
+
+
+
+
+
+
                     Contacts.contactList.add(contact);
                     // Bitmap profilePicture;
                 }
@@ -130,7 +144,7 @@ public class JsonDeserialiser {
 
             }
         }catch (JSONException e){
-
+            e.printStackTrace();
         }
 
     }

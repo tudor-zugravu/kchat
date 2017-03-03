@@ -29,11 +29,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     private LayoutInflater inflater;
     public ArrayList objectList;
     private ArrayList filterList;
-    private ContactsViewHolder holder;
     private ContactsFilter filter;
     private int type;
     Context context;
     static int counter = 0;
+
+    public void swap(ArrayList<?> datas){
+        objectList.clear();
+        objectList.addAll(datas);
+        filterList.clear();
+        filterList.addAll(datas);
+        notifyDataSetChanged();
+    }
 
     //constructor
     public ContactsAdapter(Context context, ArrayList<?> objectList, int type) {
@@ -57,20 +64,29 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     //bind data to view
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
-        if(type == 0) {
+
+        for (int i = 0; i < Contacts.contactList.size(); i++) {
+            String result = Contacts.contactList.get(i).getContactName();
+            Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
+        }
+
+            if(type == 0) {
             IGroups current = (IGroups) objectList.get(position);
             holder.imageProfile.setImageResource(current.getImageId());
             holder.textViewUsername.setText(current.getName());
             holder.textViewMessage.setText(current.getDescription());
         }if (type ==1){
-            for(int i =0; i< Contacts.contactList.size(); i++) {
-                Log.d("DATACHECKER", " Ihave got here for the data checker");
-                Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
-                holder.imageProfile.setImageDrawable(d);
-                holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
-                holder.textViewMessage.setText(Contacts.contactList.get(i).getEmail());
+            if(!Contacts.contactList.isEmpty()) {
+                for (int i = 0; i < Contacts.contactList.size(); i++) {
+                    Log.d("DATACHECKER", " Ihave got here for the data checker");
+                    Log.d("DATACHECKER", " counter value:" + this.counter);
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                    holder.imageProfile.setImageDrawable(d);
+                    holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
+                    holder.textViewMessage.setText(Contacts.contactList.get(i).getEmail());
+                }
+                this.counter++; // remove
             }
-            this.counter = this.counter ++; // remove
         }
 
         //set click listener

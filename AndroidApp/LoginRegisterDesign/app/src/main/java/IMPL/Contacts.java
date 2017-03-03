@@ -47,112 +47,112 @@ public class Contacts implements IContacts {
 
     @Override
     public int getContactId() {
-        return 0;
+        return this.contactId;
     }
 
     @Override
     public void setContactId(int contactId) {
-
+        this.contactId=contactId;
     }
 
     @Override
     public int getRequestNum() {
-        return 0;
+        return this.requestNum;
     }
 
     @Override
     public void setRequestNum(int requestNum) {
-
+    this.requestNum = requestNum;
     }
 
     @Override
     public String getTimestamp() {
-        return null;
+        return this.timestamp;
     }
 
     @Override
     public void setTimestamp(String timestamp) {
-
+    this.timestamp = timestamp;
     }
 
     @Override
     public String getUserId() {
-        return null;
+        return this.userId;
     }
 
     @Override
     public void setUserId(String userId) {
-
+        this.userId = userId;
     }
 
     @Override
     public String getContactName() {
-        return null;
+        return this.contactName;
     }
 
     @Override
     public void setContactName(String contactName) {
-
+        this.contactName=contactName;
     }
 
     @Override
     public String getEmail() {
-        return null;
+        return this.email;
     }
 
     @Override
     public void setEmail(String email) {
-
+        this.email = email;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.username;
     }
 
     @Override
     public void setUsername(String username) {
-
+        this.username= username;
     }
 
     @Override
     public String getPhoneNumber() {
-        return null;
+        return this.phonenumber;
     }
 
     @Override
     public void setPhoneNumber(String phoneNumber) {
-
+    this.phonenumber = phoneNumber;
     }
 
     @Override
     public int getblcoked() {
-        return 0;
+        return this.blocked;
     }
 
     @Override
     public void setBlocked(int blockedNum) {
-
+        this.blocked = blockedNum;
     }
 
     @Override
     public int getSessionNum() {
-        return 0;
+        return this.session;
     }
 
     @Override
     public void setSessionNum(int sessionNum) {
-
+    this.session =sessionNum;
     }
 
     @Override
     public String getContactProfile() {
-        return null;
+        return this.contactPicture;
     }
 
     @Override
     public void setContactPicture(String contactPicture) {
-
+    this.contactPicture = contactPicture;
     }
 
     @Override

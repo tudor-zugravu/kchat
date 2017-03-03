@@ -59,7 +59,6 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         MasterUser man = new MasterUser();
         if(man.getProfileLocation()!=null) {
             String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
@@ -88,7 +87,6 @@ public class ContactsActivity extends AppCompatActivity {
 
         if(bottomBar!=null && !Contacts.contactList.isEmpty()){
             Log.d("DESERIALISER", "contacts has been clicked");
-
             // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 //By clicking a card, the username is got
@@ -102,7 +100,9 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            adapter.notifyItemRangeChanged(0, adapter.getItemCount());
             recyclerView.setAdapter(adapter);
+            recyclerView.invalidate();
 
         }else {
             // getObjectList is to generate sample data in ItemContacs class.
@@ -118,10 +118,14 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            adapter.notifyItemRangeChanged(0, adapter.getItemCount());
             recyclerView.setAdapter(adapter);
-        }
+            recyclerView.invalidate();
 
+        }
+        adapter.notifyItemRangeChanged(0, adapter.getItemCount());
         recyclerView.setAdapter(adapter);
+        recyclerView.invalidate();
 
         //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -211,7 +215,6 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
                 if (tabId == contacts) {
-
                         Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
                         startActivity(contactsIntent);
                 }
