@@ -13,7 +13,6 @@ import android.widget.Filterable;
 
 import java.util.ArrayList;
 
-import API.IContacts;
 import API.IGroups;
 import IMPL.Contacts;
 
@@ -77,14 +76,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
             holder.textViewMessage.setText(current.getDescription());
         }if (type ==1){
             if(!Contacts.contactList.isEmpty()) {
-                for (int i = 0; i < Contacts.contactList.size(); i++) {
+                //for (int i = 0; i < Contacts.contactList.size(); i++) {
                     Log.d("DATACHECKER", " Ihave got here for the data checker");
                     Log.d("DATACHECKER", " counter value:" + this.counter);
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
-                    holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
-                    holder.textViewMessage.setText(Contacts.contactList.get(i).getEmail());
-                }
+                    //holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
+                holder.textViewUsername.setText(Contacts.contactList.get(position).getContactName());
+                holder.textViewMessage.setText(Contacts.contactList.get(position).getEmail());
+                //}
                 this.counter++; // remove
             }
         }
