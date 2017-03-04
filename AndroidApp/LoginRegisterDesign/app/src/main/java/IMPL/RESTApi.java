@@ -32,6 +32,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import API.IContacts;
+
 /**
  * Created by tudor on 2/17/2017.
  */
@@ -43,6 +45,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     ArrayList<String> urlPostParams;
     String [] stringParams;
     String type;
+    ArrayList<IContacts> contacts;
+    int num;
 
     public RESTApi (Context ctx, String url,ArrayList<String> urlPostParams) {
         context = ctx;
@@ -57,12 +61,15 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         String login_url = this.url;
 
         if(type.equals("getImage")) {
-            getBitmapFromURL(this.url);
+            getBitmapFromURL(this.url,450,450);
+        }
+
+        if(type.equals("getIcon")) {
+            getBitmapFromURL(this.url,50,50);
         }
         if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")) {
             try {
                 URL url = new URL(login_url);
-
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -151,7 +158,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             if(type.equals("getcontacts")) {
                 Log.d("SERVERRESULT","Sent from the server:" + result);
                 Log.d("DESERIALISER","Successfully created the object: " + result);
-                JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type);
             }
         switch(result){
             case "":
@@ -185,7 +191,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         super.onProgressUpdate(values);
     }
 
-    public void getBitmapFromURL(String src) {
+    public void getBitmapFromURL(String src,int num1, int num2) {
         try {
             Log.d("PROFILE",src);
 
@@ -195,7 +201,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             connection.connect();
             InputStream input = connection.getInputStream();
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            resizedBitmap(myBitmap,450,450);
+            resizedBitmap(myBitmap,num1,num2);
         } catch (FileNotFoundException e) {
             MasterUser man = new MasterUser();
             Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
@@ -207,8 +213,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     }
 
     public Bitmap resizedBitmap(Bitmap bm, int newHeight, int newWidth) {
-                   Log.d("PROFILE","reached here for image");
-
+        Log.d("PROFILE","reached here for image");
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = ((float) newWidth) / width;
@@ -216,9 +221,12 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,matrix, false);
-        MasterUser man = new MasterUser();
-        man.setUsersImage(resizedBitmap);
-        Log.d("PROFILE","reached here for image 22");
+        if(type.equals("getIcon")){
+            //Contacts.contactList.get()
+        }else {
+            MasterUser man = new MasterUser();
+            man.setUsersImage(resizedBitmap);
+        }
         return resizedBitmap;
     }
 }

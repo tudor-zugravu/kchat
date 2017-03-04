@@ -1,6 +1,7 @@
 package com.example.user.kchat01;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -79,8 +80,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
                 //for (int i = 0; i < Contacts.contactList.size(); i++) {
                     Log.d("DATACHECKER", " Ihave got here for the data checker");
                     Log.d("DATACHECKER", " counter value:" + this.counter);
+                if(Contacts.contactList.get(position).getBitmap()!=null){
+                    Log.d("picturestatus", " i have a picture");
+                    // new BitmapDrawable(getResources(), bitmap);
+                    Drawable d = new BitmapDrawable(Contacts.contactList.get(position).getBitmap());
+                    holder.imageProfile.setImageDrawable(d);
+                }else {
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
+                }
                     //holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
                 holder.textViewUsername.setText(Contacts.contactList.get(position).getContactName());
                 holder.textViewMessage.setText(Contacts.contactList.get(position).getEmail());

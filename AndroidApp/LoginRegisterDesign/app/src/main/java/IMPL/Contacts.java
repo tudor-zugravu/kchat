@@ -24,9 +24,22 @@ public class Contacts implements IContacts {
     private int blocked;
     private int session;
     private String contactPicture;
-    private Bitmap profilePicture;
 
+    public void setProfilePicture(Bitmap profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
+
+    public static ArrayList<IContacts> getContactList() {
+        return contactList;
+    }
+
+
+    public Contacts(){
+
+    }
 
     public Contacts(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
                     String username,String phonenumber,int blocked,int session,String contactPicture){

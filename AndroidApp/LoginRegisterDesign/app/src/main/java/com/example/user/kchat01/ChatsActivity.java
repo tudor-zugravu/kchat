@@ -153,7 +153,6 @@ public class ChatsActivity extends AppCompatActivity {
     private Emitter.Listener jsonReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-
            // JSONObject data = (JSONObject) args[0];
             JSONArray jsonArray = (JSONArray) args[0]; // Exception.
             Log.d("MESSAGEERROR", jsonArray.toString());

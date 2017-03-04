@@ -132,15 +132,10 @@ public class JsonDeserialiser {
                     Log.d("CHECKER",Integer.toString(contact.getSessionNum()));
                     Log.d("CHECKER",contact.getContactProfile());
 
-
-
-
-
-
                     Contacts.contactList.add(contact);
                     // Bitmap profilePicture;
                 }
-                Log.d("DESERIALISER", "object size: " + Contacts.contactList.size());
+                Log.d("CALLEDSTATUS", "object size: " + Contacts.contactList.size());
 
             }
         }catch (JSONException e){

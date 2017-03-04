@@ -19,6 +19,9 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -26,6 +29,7 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -33,6 +37,7 @@ import API.IContacts;
 import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
+import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
 
@@ -54,20 +59,38 @@ public class ContactsActivity extends AppCompatActivity {
     ContactsAdapter adapter;
     public static int tabId;
     private BottomBar bottomBar;
+    private Socket mSocket;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("CALLEDSTATUS","Contacts Contacts Activity was called");
 
         MasterUser man = new MasterUser();
-        if(man.getProfileLocation()!=null) {
-            String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
-            String type = "getImage";
-            ArrayList<String> paramList= new ArrayList<>();
-            paramList.add("picture");
-            RESTApi backgroundasync = new RESTApi(ContactsActivity.this,picture_url,paramList);
-            backgroundasync.execute(type);
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            mSocket.on("user_connect",onlineJoin);
+            mSocket.connect();
+            mSocket.emit("user_connect", man.getUsername());
+        }catch (URISyntaxException e){
         }
+
+        if(man.getProfileLocation()!=null) {
+            try {
+                Log.d("CALLEDSTATUS","Getting the data from the server");
+
+                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
+                String type = "getImage";
+                ArrayList<String> paramList = new ArrayList<>();
+                paramList.add("picture");
+                RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
+                String result = backgroundasync.execute(type).get();
+            }catch(InterruptedException e){
+            }catch(ExecutionException f){
+            }
+        }
+        Log.d("CALLEDSTATUS","resuming with the ui draw");
 
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -81,12 +104,13 @@ public class ContactsActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
 
-        Log.d("DESERIALISER", "contact id is: " + bottomBar.getCurrentTabId());
-        Log.d("DESERIALISER", "contact:: " + contacts);
-        Log.d("DESERIALISER", "list status: " + Contacts.contactList.size());
-
-        if(bottomBar!=null && !Contacts.contactList.isEmpty()){
-            Log.d("DESERIALISER", "contacts has been clicked");
+        Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
+            int bottomBarNum = bottomBar.getCurrentTabPosition();
+        Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
+        adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0);
+        recyclerView.setAdapter(adapter);
+        if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
+            Log.d("CALLEDSTATUS", "contacts has been clicked");
             // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 //By clicking a card, the username is got
@@ -100,12 +124,12 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
-            adapter.notifyItemRangeChanged(0, adapter.getItemCount());
             recyclerView.setAdapter(adapter);
-            recyclerView.invalidate();
 
-        }else {
+        }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
             // getObjectList is to generate sample data in ItemContacs class.
+            Log.d("CALLEDSTATUS", "groups has been clicked");
+
             adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
                 //By clicking a card, the username is got
                 @Override
@@ -118,14 +142,27 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
-            adapter.notifyItemRangeChanged(0, adapter.getItemCount());
             recyclerView.setAdapter(adapter);
-            recyclerView.invalidate();
+
+        }else if (ContactsActivity.tabId==2131624159) { // for contacts
+            Log.d("CALLEDSTATUS", "something has been clicked");
+            // getObjectList is to generate sample data in ItemContacs class.
+            adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
+                //By clicking a card, the username is got
+                @Override
+                public void onClick(ContactsViewHolder holder) {
+                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                    IGroups contact = Groups.getObjectList().get(position);
+                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                    Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                    contactsIntent.putExtra("username", contact.getName());
+                    startActivity(contactsIntent);
+                }
+            };
+            recyclerView.setAdapter(adapter);
 
         }
-        adapter.notifyItemRangeChanged(0, adapter.getItemCount());
         recyclerView.setAdapter(adapter);
-        recyclerView.invalidate();
 
         //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -155,17 +192,21 @@ public class ContactsActivity extends AppCompatActivity {
         /*
         From here, Bottom Bar is implemented
         */
-        bottomBar.setDefaultTab(R.id.contacts);
+        bottomBar.setDefaultTab(R.id.chats);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
                 ContactsActivity.tabId = tabId;
                 if (tabId == R.id.chats) {
+                    ContactsActivity.tabId=tabId;
+                    Log.d("CALLEDSTATUS","bottom bar chats id is:"+ ContactsActivity.tabId);
                     //Intent chatsIntent = new Intent(getApplicationContext(),old_ChatActivity.class);
                     //startActivity(chatsIntent);
                     Toast.makeText(getApplicationContext(), "Chats", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == R.id.groups) {
+                    ContactsActivity.tabId=tabId;
+                    Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
                     adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
                         //By clicking a card, the username is got
                         @Override
@@ -183,22 +224,65 @@ public class ContactsActivity extends AppCompatActivity {
                     //startActivity(groupIntent);
                     Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
-                if (tabId == contacts && Contacts.contactList.isEmpty()) {
-                    try {
-                        Log.d("DESERIALISER", "i made a rest request");
-                        String type = "getcontacts";
-                        String contacts_url = "http://188.166.157.62:3000/contacts";
-                        ArrayList<String> paramList = new ArrayList<>();
-                        paramList.add("userId");
-                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, contacts_url, paramList);
-                        MasterUser man = new MasterUser();
-                        backgroundasync.execute(type, man.getuserId()).get();
-                    }catch (InterruptedException e){
-                    }catch (ExecutionException f){
+                if (tabId == contacts) {
+                    MasterUser man = new MasterUser();
+                    ContactsActivity.tabId=tabId;
+                    try{
+                    Log.d("CALLEDSTATUS", "i made a rest request");
+                    String type2 = "getcontacts";
+                    String contacts_url = "http://188.166.157.62:3000/contacts";
+                    ArrayList<String> paramList2 = new ArrayList<>();
+                    paramList2.add("userId");
+                    RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                    String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts");
 
-                    }
+                        for(int i=0; i<Contacts.contactList.size(); i++){
+                                if(Contacts.getContactList().get(i).getContactProfile()!=null
+                                        ||Contacts.getContactList().get(i).getContactProfile().equals("")
+                                        ||Contacts.getContactList().get(i).getContactProfile().equals("null")) {
+                                    try {
+                                        String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + Contacts.getContactList().get(i).getUserId() + ".jpg";
+                                        Log.d("picturestatus","picture link is  :" + picture_url);
+
+                                        String type = "getIcon";
+                                        ArrayList<String> paramList = new ArrayList<>();
+                                        paramList.add("picture");
+                                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
+                                        String result = backgroundasync.execute(type).get();
+                                        if(Contacts.getContactList().get(i).getBitmap()!=null) {
+                                            Log.d("picturestatus", "these contacts have a picture:  :" + Contacts.getContactList().get(i).getUsername());
+                                        }
+
+                                    } catch (InterruptedException e) {
+                                    } catch (ExecutionException f) {
+                                    }
+                                }
+                        }
+                }catch(InterruptedException e){
+                }catch(ExecutionException f){
+                }
+
+                    Log.d("CALLEDSTATUS","The size of the Arraylist for contacts is part2  :" + Contacts.getContactList().size());
+
+                    adapter.notifyDataSetChanged();
+                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1);
+                    recyclerView.setAdapter(adapter);
+//                    try {
+//                        Log.d("DESERIALISER", "i made a rest request");
+//                        String type = "getcontacts";
+//                        String contacts_url = "http://188.166.157.62:3000/contacts";
+//                        ArrayList<String> paramList = new ArrayList<>();
+//                        paramList.add("userId");
+//                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, contacts_url, paramList);
+//                        MasterUser man = new MasterUser();
+//                        String result = backgroundasync.execute(type, man.getuserId()).get();
+//                    }catch (InterruptedException e){
+//                    }catch (ExecutionException f){
+//                    }
                 }
                 if (tabId == R.id.profile) {
+                    ContactsActivity.tabId=tabId;
                     Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                     MasterUser man = new MasterUser();
                     profileIntent.putExtra("users_username", man.getUsername());
@@ -214,7 +298,7 @@ public class ContactsActivity extends AppCompatActivity {
         bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
-                if (tabId == contacts) {
+                if (tabId != ContactsActivity.tabId) {
                         Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
                         startActivity(contactsIntent);
                 }
@@ -280,7 +364,13 @@ public class ContactsActivity extends AppCompatActivity {
                 });
 */
     }
-
+    private Emitter.Listener onlineJoin = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            String serverresult = (String) args[0];
+            Log.d("MESSAGEERROR", serverresult.toString());
+        }
+    };
 
 
 
