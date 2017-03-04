@@ -193,7 +193,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
 
     public void getBitmapFromURL(String src,int num1, int num2) {
         try {
-            Log.d("PROFILE",src);
 
             java.net.URL url = new java.net.URL(src);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -206,7 +205,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             MasterUser man = new MasterUser();
             Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
                     R.drawable.human);
-            man.setUsersImage(icon);
+            //man.setUsersImage(icon);
     } catch (IOException e) {
             e.printStackTrace();
         }
@@ -221,12 +220,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,matrix, false);
-        if(type.equals("getIcon")){
-            //Contacts.contactList.get()
-        }else {
             MasterUser man = new MasterUser();
             man.setUsersImage(resizedBitmap);
-        }
         return resizedBitmap;
     }
 }
