@@ -23,14 +23,14 @@ import API.IMessage;
 public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHolder> implements Filterable{
 
     private LayoutInflater inflater;
-    public ArrayList<IMessage> objectList;
-    public ArrayList<IMessage> filterList;
+    public ArrayList objectList;
+    public ArrayList filterList;
     private ChatsFilter filter;
     public static final int SENDER = 1;
     public static final int RECEIVER = 0;
 
     //constructor
-    public ChatsAdapter(Context context, ArrayList<IMessage> objectList) {
+    public ChatsAdapter(Context context, ArrayList<?> objectList) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.filterList = objectList;
@@ -54,7 +54,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
     @Override
     public void onBindViewHolder(ChatsViewHolder holder, int position) {
-        IMessage current = objectList.get(position);
+        IMessage current = (IMessage)objectList.get(position);
         holder.setData(current, position);
     }
 /*
@@ -71,9 +71,11 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         return objectList.size();
     }
 
+    //ViewType is used to judge me(right hand side view) or not me(left hand one)
+    //actual usage method is onCreateViewHolder (param:viewType)
     @Override
     public int getItemViewType(int position){
-        IMessage chats = objectList.get(position);
+        IMessage chats = (IMessage)objectList.get(position);
 
         if (chats.isMe()) {
             return SENDER;

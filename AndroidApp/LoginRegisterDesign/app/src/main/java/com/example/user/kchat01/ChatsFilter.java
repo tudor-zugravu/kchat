@@ -13,10 +13,10 @@ import API.IMessage;
 public class ChatsFilter extends Filter {
 
     ChatsAdapter adapter;
-    ArrayList<IMessage> filterList;
+    ArrayList filterList;
 
     //constructor
-    public ChatsFilter(ArrayList<IMessage> filterList, ChatsAdapter adapter){
+    public ChatsFilter(ArrayList<?> filterList, ChatsAdapter adapter){
         this.adapter = adapter;
         this.filterList= filterList;
     }
@@ -29,14 +29,14 @@ public class ChatsFilter extends Filter {
         //whether search words are input or not
         if (constraint != null && constraint.length() > 0){
             constraint = constraint.toString().toUpperCase();
-            ArrayList<IMessage> filteredChats = new ArrayList<>();
-
-            for (int i=0; i < filterList.size();i++){
-                //matching between constraint and message
-                if (filterList.get(i).getMessage().toUpperCase().contains(constraint)){
-                    filteredChats.add(filterList.get(i));
+            ArrayList filteredChats = new ArrayList<>();
+                ArrayList<IMessage> message = this.filterList;
+                for (int i = 0; i < filterList.size(); i++) {
+                    //matching between constraint and message
+                    if (message.get(i).getMessage().toUpperCase().contains(constraint)) {
+                        filteredChats.add(filterList.get(i));
+                    }
                 }
-            }
             results.count = filteredChats.size();
             results.values = filteredChats;
         }else

@@ -20,8 +20,6 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -82,8 +80,9 @@ public class ChatsActivity extends AppCompatActivity {
         dataList = new ArrayList<>();
         dataList = Message.getObjectList();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
+
         recyclerView.setAdapter(adapter);
-        recyclerView.scrollToPosition(adapter.getItemCount()-1);
+        //recyclerView.scrollToPosition(adapter.getItemCount()-1);
 
         //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -114,6 +113,7 @@ public class ChatsActivity extends AppCompatActivity {
                     //set message and datetime to adapter and add them to RecyclerView
                    // message = new IMPL.Message();
                     int latestPosition = adapter.getItemCount();
+                    IMessage messageObject = new Message(1,message,new Date(),"user01",R.drawable.human);//This is used to add actual message
                     messageObject.setMe(true);
                     dataList.add(latestPosition, messageObject);
                     recyclerView.setAdapter(adapter);
@@ -144,10 +144,23 @@ public class ChatsActivity extends AppCompatActivity {
 
     private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
-        public void call(Object... args) {
-                String serverresult = (String) args[0];
-                Log.d("MESSAGEERROR", serverresult.toString());
-            }
+        public void call(final Object... args) {
+            ChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String serverresult = (String) args[0];
+                    Log.d("MESSAGEERROR", serverresult.toString());
+
+                    int latestPosition = adapter.getItemCount();
+                    IMessage messageObject = new Message(1, serverresult.toString(), new Date(), "user01", R.drawable.human);//This is used to add actual message
+                    messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                    dataList.add(latestPosition, messageObject);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyItemInserted(latestPosition);
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                }
+            });
+        }
     };
 
     private Emitter.Listener jsonReply = new Emitter.Listener() {
