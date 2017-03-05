@@ -31,7 +31,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     private ContactsFilter filter;
     private int type;
     Context context;
-    static int counter = 0;
 
     public void swap(ArrayList<?> datas){
         objectList.clear();
@@ -68,7 +67,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
             String result = Contacts.contactList.get(i).getContactName();
             Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
         }
-
             if(type == 0) {
             IGroups current = (IGroups) objectList.get(position);
             holder.imageProfile.setImageResource(current.getImageId());
@@ -78,17 +76,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
             if(!Contacts.contactList.isEmpty()) {
                 //for (int i = 0; i < Contacts.contactList.size(); i++) {
                     Log.d("DATACHECKER", " Ihave got here for the data checker");
-                    Log.d("DATACHECKER", " counter value:" + this.counter);
+
+                if(Contacts.contactList.get(position).getBitmap()==null) {
+                    Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
-                    //holder.textViewUsername.setText("my counter value is :" + this.counter); // change back to object contact.getcontact name
+                }else{
+                    holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
+                }
                 holder.textViewUsername.setText(Contacts.contactList.get(position).getContactName());
                 holder.textViewMessage.setText(Contacts.contactList.get(position).getEmail());
-                //}
-                this.counter++; // remove
-            }
-        }
 
+                }
+        }
         //set click listener
         holder.setListener(this);
     }

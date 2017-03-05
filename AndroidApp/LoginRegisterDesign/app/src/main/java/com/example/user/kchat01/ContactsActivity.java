@@ -235,30 +235,8 @@ public class ContactsActivity extends AppCompatActivity {
                     paramList2.add("userId");
                     RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
                     String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts");
+                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts",ContactsActivity.this);
 
-                        for(int i=0; i<Contacts.contactList.size(); i++){
-                                if(Contacts.getContactList().get(i).getContactProfile()!=null
-                                        ||Contacts.getContactList().get(i).getContactProfile().equals("")
-                                        ||Contacts.getContactList().get(i).getContactProfile().equals("null")) {
-                                    try {
-                                        String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + Contacts.getContactList().get(i).getUserId() + ".jpg";
-                                        Log.d("picturestatus","picture link is  :" + picture_url);
-
-                                        String type = "getIcon";
-                                        ArrayList<String> paramList = new ArrayList<>();
-                                        paramList.add("picture");
-                                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
-                                        String result = backgroundasync.execute(type).get();
-                                        if(Contacts.getContactList().get(i).getBitmap()!=null) {
-                                            Log.d("picturestatus", "these contacts have a picture:  :" + Contacts.getContactList().get(i).getUsername());
-                                        }
-
-                                    } catch (InterruptedException e) {
-                                    } catch (ExecutionException f) {
-                                    }
-                                }
-                        }
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
                 }

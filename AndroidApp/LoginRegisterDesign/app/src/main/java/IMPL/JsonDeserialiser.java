@@ -1,7 +1,11 @@
 package IMPL;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.user.kchat01.ContactsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +14,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
 
@@ -23,9 +28,11 @@ public class JsonDeserialiser {
 
     JSONObject jObject;
     String serverResult;
+    Context context;
 
-    public JsonDeserialiser(String serverResult, String deserializeType) {
+    public JsonDeserialiser(String serverResult, String deserializeType,Context context) {
         this.serverResult = serverResult;
+        this.context = context;
         try {
             this.jObject = new JSONObject(serverResult);
             Iterator<String> keys = jObject.keys();
@@ -119,10 +126,24 @@ public class JsonDeserialiser {
                     int blocked = Integer.parseInt(obj.getString("blocked"));
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
-                    if (contactPicture != null) {
-                        //make a rest call to get image?
-                    }
                     IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+
+                    if (contactPicture != null && (!contactPicture.equals("null"))) {
+                        //make a rest call to get image?
+                        Bitmap contactsBitmap;
+                                try {
+                                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
+                                    String type = "getIcon";
+                                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
+                                    contactsBitmap = backgroundasync.execute(type).get();
+                                    if (contactsBitmap != null){
+                                        Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
+                                        contact.setBitmap(contactsBitmap);
+                                    }
+                                } catch (InterruptedException e) {
+                                } catch (ExecutionException f) {
+                                }
+                    }
                     Log.d("CHECKER",contact.getUserId());
                     Log.d("CHECKER",contact.getContactName());
                     Log.d("CHECKER",contact.getContactProfile());
@@ -131,6 +152,7 @@ public class JsonDeserialiser {
                     Log.d("CHECKER",contact.getEmail());
                     Log.d("CHECKER",Integer.toString(contact.getSessionNum()));
                     Log.d("CHECKER",contact.getContactProfile());
+                    Log.d("PROFILE","reached here for contacts image PART 3");
 
                     Contacts.contactList.add(contact);
                     // Bitmap profilePicture;

@@ -24,11 +24,6 @@ public class Contacts implements IContacts {
     private int blocked;
     private int session;
     private String contactPicture;
-
-    public void setProfilePicture(Bitmap profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
     private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
 
@@ -36,9 +31,7 @@ public class Contacts implements IContacts {
         return contactList;
     }
 
-
     public Contacts(){
-
     }
 
     public Contacts(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
@@ -54,7 +47,22 @@ public class Contacts implements IContacts {
         this.blocked=blocked;
         this.session=session;
         this.contactPicture=contactPicture;
-       // this.profilePicture=profilePicture;
+    }
+
+    public Contacts(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
+                    String username,String phonenumber,int blocked,int session,String contactPicture,Bitmap profilePicture){
+        this.contactId=contactId;
+        this.requestNum=requestNum;
+        this.timestamp=timestamp;
+        this.userId=userId;
+        this.contactName=contactName;
+        this.email=email;
+        this.username=username;
+        this.phonenumber=phonenumber;
+        this.blocked=blocked;
+        this.session=session;
+        this.contactPicture=contactPicture;
+        this.profilePicture=profilePicture;
     }
 
 
@@ -170,11 +178,11 @@ public class Contacts implements IContacts {
 
     @Override
     public Bitmap getBitmap() {
-        return null;
+        return this.profilePicture;
     }
 
     @Override
     public void setBitmap(Bitmap contactsBitmap) {
-
+    this.profilePicture = contactsBitmap;
     }
 }

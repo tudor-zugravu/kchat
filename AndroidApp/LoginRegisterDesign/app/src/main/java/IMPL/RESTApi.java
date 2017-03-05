@@ -132,7 +132,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
             if(b && type.equals("login")){
                 Log.d("SERVERRESULT","Sent from the server:" + result);
                 result = result.replace("login_sucess", "");
-                JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type);
+                JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type,context);
 
                 if(man.getUsername()!=null) {
                     if(LoginActivity.pref.getAll()!=null) {
