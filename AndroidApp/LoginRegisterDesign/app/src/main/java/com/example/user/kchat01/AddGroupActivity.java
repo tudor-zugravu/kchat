@@ -162,7 +162,7 @@ public class AddGroupActivity extends AppCompatActivity {
         /*
         From here, search function is performed
          */
-
+/*
         searchView = (SearchView) findViewById(R.id.searchView);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,6 +182,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 return false;
             }
         });
+*/
     }
 
 }
