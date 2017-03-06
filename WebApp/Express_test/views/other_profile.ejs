@@ -12,19 +12,19 @@
     <title>kchat</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="../public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
-    <link href="../public/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="../public/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/stylesheets/sb-admin-2.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
-    <link href="../public/vendor/morrisjs/morris.css" rel="stylesheet">
+    <link href="../vendor/morrisjs/morris.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../public/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -53,19 +53,19 @@
             <!-- /.navbar-header -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active">
+                    <li >
                         <a href="#">
-                            <img src="../public/img/chat.png" width="40" height="40">
+                            <img src="chat.png" width="40" height="40">
                     </a>
                     </li>
                     <li>
                         <a href="/group">
-                            <img src="../public/img/group.png" width="40" height="40">
+                            <img src="group.png" width="40" height="40">
                         </a>
                     </li>
-                    <li>
-                        <a href="/profile">
-                            <img src="../public/img/profile.png" width="40" height="40">
+                    <li class="active">
+                        <a href="/contact">
+                            <img src="profile.png" width="40" height="40">
                         </a>
                     </li>
                 </ul>
@@ -90,17 +90,19 @@
                             </div>
                         </li>
                             <!-- /chat list from database -->
-                            <li> 
+                            <li>
                                 <!-- EJS PART TO BE EDITED WHEN SERVER IS DONE -->
-                                <table>                        
-                                    <% for(var i=0; i < chats.length; i++) { %>
+                                <table>
+                                    <% for(var i=0; i < contacts.length; i++) { %>
+
                                    <tr>
-                                     <th> <%= chats[i].username %> </th>
+                                     <th> <%= contacts[i].username %> </th>
                                      <tr>
-                                     <td> <%= chats[i].message[1] %> </td>
+                                     <td> <%= contacts[i].name %> <a href="profile/<%= contacts[i].user_id %>"><%= contacts[i].user_id%></a> </td>
                                      </tr>
                                    </tr>
                                 <% } %>
+                            \
                                 </table>
                             </li>
                     </ul>
@@ -110,20 +112,55 @@
             <!-- /.navbar-static-side -->
         </nav>
 
+      </div>
+
         <div id="page-wrapper">
-            
+        <div class="col-md-12 col-xs-12 login_control">
+
+                <div class="control">
+
+                    <i class="fa fa-user-circle-o" ></i>
+										<img src="../images/button.png" / style="width:40px" height:"40px">
+                    <p value="<%= username %>" name="name"><%= contacts[0].username %></p>
+                </div>
+
+								<div class="control">
+
+                    <i class="fa fa-user-circle-o" ></i>
+										<img src="../images/button.png" / style="width:40px" height:"40px">
+                    <p value="<%= email %>" name="email"/><%= contacts[0].email %></p>
+                </div>
+·
+								<div class="control">
+
+                    <i class="fa fa-user-circle-o" ></i>
+										<img src="../images/button.png" / style="width:40px" height:"40px">
+                    <p value="<%= phone %>" name="phone"/><%= contacts[0].phone %></p>
+                </div>
+
+
+
+
+        </div>
+          </div>
+
+
+    </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            
+
 
                     <!-- /.panel -->
                     <div class="chat-panel panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-comments fa-fw"></i> <%= username %>
-                            
+
                             <span class="chat-img pull-right">
                                         <img src="<%= profilePicture %>" class="img-circle" />
                                     </span>
@@ -132,14 +169,14 @@
                         <div class="panel-body">
                             <ul class="chat">
                                 <li class="left clearfix">
-                                    
+
                                     <div class="chat-body clearfix">
-                                        <table>                        
+                                        <table>
                                     <% for(var i=0; i < chats.length; i++) { %>
-                                   
+
                                      <tr>
                                      <td> <%= chats[i].message[1] %> </td>
-                                     
+
                                    </tr>
                                 <% } %>
                                 </table>
@@ -172,21 +209,21 @@
     <!-- /#wrapper -->
 
     <!-- jQuery -->
-    <script src="../public/vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../public/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="../public/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script src="../public/vendor/raphael/raphael.min.js"></script>
-    <script src="../public/vendor/morrisjs/morris.min.js"></script>
-    <script src="../public/data/morris-data.js"></script>
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <script src="../data/morris-data.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../public/dist/js/sb-admin-2.js"></script>
+    <script src="../dist/js/sb-admin-2.js"></script>
 
 </body>
 

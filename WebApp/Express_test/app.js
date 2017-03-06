@@ -12,8 +12,11 @@ var Client = require('node-rest-client').Client;
 var users = require('./routes/users');
 
 var profile = require('./routes/profile');
-var login= require('./routes/login')
-var register = require('./routes/register')
+var login= require('./routes/login');
+var register = require('./routes/register');
+var changePass= require('./routes/changePass');
+var loginError=require('./routes/loginError');
+var contacts=require('./routes/contacts');
 var app = express();
 var mysql = require('mysql');
 var client = new Client();
@@ -50,6 +53,8 @@ app.locals.username = "";
 app.locals.email = "";
 app.locals.phone = "";
 app.locals.fullName=""
+app.locals.user_id="";
+app.locals.contactList="";
 
 //profile
 app.get('/profile', function(req, res){
@@ -62,26 +67,45 @@ app.post('/authenticate', function(req,res){
 
   var args = {
       data: {
-        username : req.body.username,
+        username : req.body.username, // username is unique
         password : req.body.password,
       },
       headers: { "Content-Type": "application/json" }
   };
 
   client.post("http://188.166.157.62:3000/login", args, function (data, response) {
+
       // parsed response body as js object
+
       var ans = data;
      if (ans.status === 'failed'){
-      console.log('unmatched username and password');
+      res.render('loginError');
     }
     else {
       console.log(ans);
 
-      app.locals.username=ans.username+"23";
+      app.locals.username=ans.username;
       app.locals.email=ans.email;
       app.locals.phone=ans.phone_number;
       app.locals.fullname=ans.name;
-      res.render('profile')
+      app.locals.user_id=ans.user_id;
+
+      var args = {
+          data: {
+            userId :app.locals.user_id
+          },
+          headers: { "Content-Type": "application/json" }
+      };
+
+
+      client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+          // parsed response body as js object
+          app.locals.contactList=data;
+          var contacts = data;
+           console.log(contacts);
+           var send = { contacts , profilePicture:"DummyDummy" , chats : [ {message : "Dummy"} ], pointer : 0};
+           res.render('contacts',send);
+        });
     };
 
   });
@@ -114,13 +138,63 @@ app.post('/register', function(req,res){
   });
 
 
+  app.post('/changePass', function(req,res){
+console.log("req.body.app.local.username");
+    var args = {
+        data: {
+          newPassword : req.body.newPassword,
+          password : req.body.password,
+          username : app.locals.username,
+        },
+        headers: { "Content-Type": "application/json" }
+    };
+    console.log(req.body.newPassword);
+    console.log(req.body.password);
+    console.log(app.locals.username);
+
+    client.post("http://188.166.157.62:3000/changePass", args, function (data, response) {
+        // parsed response body as js object
+        var ans = data;
+         console.log(ans.toString());
+      });
+
+    });
 
 
+
+
+app.get('/contacts/:id', function(req,res){
+
+    target = req.params.id;
+    temp = app.locals.contactList;
+
+    pointer = 0;
+
+    for(var i = 0; i < temp.length; i++){
+      /*console.log(temp[i].user_id);
+      console.log(target);
+      console.log(temp[i].user_id == target);*/
+      if(temp[i].user_id == target){
+        pointer = i;
+      }
+
+    }
+
+
+
+    /*console.log("pointer:"+pointer);
+    console.log(app.locals.contactList[pointer]);*/
+    var send = { contacts : app.locals.contactList , profilePicture:"DummyDummy" , pointer : pointer};
+    res.render('contacts',send);
+});
 
 
 app.use('/users', users);
 app.use('/login',login);
 app.use('/register',register);
+app.use('/changePass',changePass);
+app.use('/loginError',loginError);
+app.use('/contacts',contacts);
 
 
 // catch 404 and forward to error handler
