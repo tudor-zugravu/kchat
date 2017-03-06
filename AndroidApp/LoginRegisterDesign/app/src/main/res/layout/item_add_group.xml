@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_margin="5dp"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp"
     card_view:cardCornerRadius="10dp"
     card_view:cardElevation="5dp"
     card_view:cardBackgroundColor="@color/windowBackground">
@@ -14,32 +16,30 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/imageProfile"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/imageProfile"
-            android:layout_toRightOf="@+id/imageProfile"
+            android:layout_toEndOf="@+id/imageProfile"
+            android:layout_centerVertical="true"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/cardviewUsernameColor"
-            android:layout_toEndOf="@+id/imageProfile"
-            android:id="@+id/textViewUsername"/>
+            android:id="@+id/textViewUsername" />
 
-        <TextView
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imageProfile"
-            android:layout_below="@+id/textViewUsername"
-            android:textSize="14sp"
-            android:textColor="@color/cardviewMessageColor"
-            android:layout_alignLeft="@+id/textViewUsername"
-            android:layout_alignStart="@+id/textViewUsername"
-            android:id="@+id/textViewMessage"/>
+            android:layout_alignParentEnd="true"
+            android:paddingEnd="10dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/checkBox"
+            android:theme="@style/MyCheckBox"/>
 
     </RelativeLayout>
 

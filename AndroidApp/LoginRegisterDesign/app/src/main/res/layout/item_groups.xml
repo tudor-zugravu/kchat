@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/imageProfile"/>
 
         <TextView
@@ -28,19 +28,7 @@
             android:textStyle="bold"
             android:textColor="@color/cardviewUsernameColor"
             android:layout_toEndOf="@+id/imageProfile"
-            android:id="@+id/textViewUsername"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imageProfile"
-            android:layout_below="@+id/textViewUsername"
-            android:textSize="14sp"
-            android:textColor="@color/cardviewMessageColor"
-            android:layout_alignLeft="@+id/textViewUsername"
-            android:layout_alignStart="@+id/textViewUsername"
-            android:id="@+id/textViewMessage"/>
-
+            android:id="@+id/textViewGroupName"/>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

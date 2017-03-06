@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.user.kchat01.ChatsActivity;
 import com.example.user.kchat01.ContactsActivity;
-import com.example.user.kchat01.ContactsListActivity;
 import com.example.user.kchat01.LoginActivity;
 import com.example.user.kchat01.R;
 
@@ -33,6 +30,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import API.IContacts;
+
+//import com.example.user.kchat01.ContactsListActivity;
 
 /**
  * Created by tudor on 2/17/2017.

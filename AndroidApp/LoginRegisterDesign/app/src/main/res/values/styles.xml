@@ -14,4 +14,11 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style  name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <!-- line -->
+        <item name="colorControlNormal">@color/textColorGray</item>
+        <!-- checked color -->
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
 </resources>

@@ -1,14 +1,10 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +23,6 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -41,7 +35,6 @@ import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
 
-import static com.example.user.kchat01.R.id.cancel_action;
 import static com.example.user.kchat01.R.id.contacts;
 
 /**
@@ -176,6 +169,14 @@ public class ContactsActivity extends AppCompatActivity {
          */
 
         searchView = (SearchView) findViewById(R.id.searchView);
+        searchView.onActionViewExpanded();
+        searchView.setIconified(false);
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setIconified(false);
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -220,9 +221,9 @@ public class ContactsActivity extends AppCompatActivity {
                         }
                     };
                     recyclerView.setAdapter(adapter);
-                    //Intent groupIntent = new Intent(getApplicationContext(),GroupActivity.class);
-                    //startActivity(groupIntent);
-                    Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
+                    Intent groupIntent = new Intent(getApplicationContext(),GroupsActivity.class);
+                    startActivity(groupIntent);
+                    //Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == contacts) {
                     MasterUser man = new MasterUser();
@@ -244,7 +245,18 @@ public class ContactsActivity extends AppCompatActivity {
                     Log.d("CALLEDSTATUS","The size of the Arraylist for contacts is part2  :" + Contacts.getContactList().size());
 
                     adapter.notifyDataSetChanged();
-                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1);
+                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1){// set Listener to move chat
+                        //By clicking a card, the username is got
+                        @Override
+                        public void onClick(ContactsViewHolder holder) {
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IContacts contact = Contacts.getContactList().get(position);
+                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                            contactsIntent.putExtra("username", contact.getContactName());
+                            startActivity(contactsIntent);
+                        }
+                    };
                     recyclerView.setAdapter(adapter);
 //                    try {
 //                        Log.d("DESERIALISER", "i made a rest request");
@@ -283,64 +295,6 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
-
-    /*
-    From here, Bottom navigation settings
-    Future work: implement as another class
-    item0: Chats, item1: Groups, item2: Contacts, item3: Profile
-    */
-        //recognise the bottom navi
-   /*
-        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.getMenu().getItem(0).setChecked(false);
-        bottomNavigationView.getMenu().getItem(1).setChecked(false);
-        bottomNavigationView.getMenu().getItem(2).setChecked(true);
-        bottomNavigationView.getMenu().getItem(3).setChecked(false);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.chats:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent chatIntent = new Intent(getApplicationContext(), old_ChatActivity.class);
-                                startActivity(chatIntent);
-                                break;
-                            case R.id.groups:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Toast.makeText(getApplicationContext(), "groups is clicked.", Toast.LENGTH_LONG).show();
-                                break;
-                            case R.id.contacts:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent contactsIntent = new Intent(getApplicationContext(), ContactsListActivity.class);
-                                startActivity(contactsIntent);
-                                break;
-                            case profile:
-                                //finish();
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(true);
-                                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                                startActivity(profileIntent);
-                                break;
-                        }
-                        return true;
-                    }
-
-                });
-*/
     }
     private Emitter.Listener onlineJoin = new Emitter.Listener() {
         @Override

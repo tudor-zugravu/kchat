@@ -78,7 +78,7 @@ public class ChatsActivity extends AppCompatActivity {
         // For local test, insert sample data which is generated ItemChats.java and
         // getObjectList method has the data.
         dataList = new ArrayList<>();
-        dataList = Message.getObjectList();
+        //dataList = Message.getObjectList();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
 
         recyclerView.setAdapter(adapter);
