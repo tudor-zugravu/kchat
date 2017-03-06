@@ -97,8 +97,6 @@ public class GroupsActivity extends AppCompatActivity {
          */
 
         searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,8 +136,8 @@ public class GroupsActivity extends AppCompatActivity {
                     //startActivity(groupIntent);
                 }
                 if (tabId == contacts) {
-                    Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                    startActivity(contactsIntent);
+                //    Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                //    startActivity(contactsIntent);
                 }
                 if (tabId == R.id.profile) {
                     Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
@@ -158,8 +156,8 @@ public class GroupsActivity extends AppCompatActivity {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
                 if (tabId == contacts) {
-                    Intent contactsIntent = new Intent(getApplicationContext(), GroupsActivity.class);
-                    startActivity(contactsIntent);
+                  //  Intent contactsIntent = new Intent(getApplicationContext(), GroupsActivity.class);
+                  //  startActivity(contactsIntent);
                 }
             }
         });

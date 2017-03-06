@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,6 +106,8 @@ public class ContactsActivity extends AppCompatActivity {
         adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0);
         recyclerView.setAdapter(adapter);
         if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
+            ContactsActivity.showPlus=false;
+            invalidateOptionsMenu();
             Log.d("CALLEDSTATUS", "contacts has been clicked");
             // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
@@ -120,6 +125,8 @@ public class ContactsActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
+            ContactsActivity.showPlus=true;
+            invalidateOptionsMenu();
             // getObjectList is to generate sample data in ItemContacs class.
             Log.d("CALLEDSTATUS", "groups has been clicked");
 
@@ -138,6 +145,8 @@ public class ContactsActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624159) { // for contacts
+            ContactsActivity.showPlus=false;
+            invalidateOptionsMenu();
             Log.d("CALLEDSTATUS", "something has been clicked");
             // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
@@ -169,8 +178,7 @@ public class ContactsActivity extends AppCompatActivity {
          */
 
         searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
+
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,13 +207,31 @@ public class ContactsActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 ContactsActivity.tabId = tabId;
                 if (tabId == R.id.chats) {
+                    ContactsActivity.showPlus=false;
+                    invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar chats id is:"+ ContactsActivity.tabId);
                     //Intent chatsIntent = new Intent(getApplicationContext(),old_ChatActivity.class);
                     //startActivity(chatsIntent);
                     Toast.makeText(getApplicationContext(), "Chats", Toast.LENGTH_SHORT).show();
+
+                    adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+                        //By clicking a card, the username is got
+                        @Override
+                        public void onClick(ContactsViewHolder holder) {
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IGroups contact = Groups.getObjectList().get(position);
+                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
+                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                            contactsIntent.putExtra("username", contact.getName());
+                            startActivity(contactsIntent);
+                        }
+                    };
+                    recyclerView.setAdapter(adapter);
                 }
                 if (tabId == R.id.groups) {
+                    ContactsActivity.showPlus=true;
+                    invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
                     adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
@@ -221,11 +247,13 @@ public class ContactsActivity extends AppCompatActivity {
                         }
                     };
                     recyclerView.setAdapter(adapter);
-                    Intent groupIntent = new Intent(getApplicationContext(),GroupsActivity.class);
-                    startActivity(groupIntent);
+                   // Intent groupIntent = new Intent(getApplicationContext(),GroupsActivity.class);
+                   // startActivity(groupIntent);
                     //Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == contacts) {
+                    ContactsActivity.showPlus=false;
+                    invalidateOptionsMenu();
                     MasterUser man = new MasterUser();
                     ContactsActivity.tabId=tabId;
                     try{
@@ -289,8 +317,8 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
                 if (tabId != ContactsActivity.tabId) {
-                        Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                        startActivity(contactsIntent);
+                     //   Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                     //   startActivity(contactsIntent);
                 }
             }
         });
@@ -304,7 +332,27 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.add) {
+            Intent intent = new Intent(getApplicationContext(), AddGroupActivity.class);
+            startActivity(intent);
+        }
+        return true;
+    }
 
+    static Boolean showPlus = false;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(showPlus==false){
+            return false;
+        }
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.groups_menu, menu);
+
+        return true;
+    }
 
 
 }
