@@ -1,5 +1,7 @@
 package API;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Tudor Vasile on 2/10/2017.
  */
@@ -25,5 +27,9 @@ public interface IGroups {
     public int getImageId();
 
     public void setImageId(int imageId);
+
+    public Bitmap getGroupImage();
+
+    public void setGroupImage(Bitmap groupImage);
 
 }

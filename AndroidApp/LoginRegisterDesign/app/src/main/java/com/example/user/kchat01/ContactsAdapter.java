@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import API.IGroups;
 import IMPL.Contacts;
+import IMPL.Groups;
 
 /**
  * Created by user on 22/02/2017.
@@ -88,6 +89,22 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
                 holder.textViewMessage.setText(Contacts.contactList.get(position).getEmail());
 
                 }
+        }if (type ==2){
+            if(!Groups.groupList.isEmpty()) {
+                //for (int i = 0; i < Contacts.contactList.size(); i++) {
+                Log.d("DATACHECKER", " Ihave got here for the data checker");
+
+                if(Groups.groupList.get(position).getGroupImage()==null) {
+                    Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                    holder.imageProfile.setImageDrawable(d);
+                }else{
+                    holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
+                }
+                holder.textViewUsername.setText(Groups.groupList.get(position).getName());
+                holder.textViewMessage.setText(String.valueOf(Groups.groupList.get(position).getDescription()));
+
+            }
         }
         //set click listener
         holder.setListener(this);

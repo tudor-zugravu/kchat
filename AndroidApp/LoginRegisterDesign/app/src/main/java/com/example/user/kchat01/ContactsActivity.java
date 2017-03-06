@@ -129,14 +129,12 @@ public class ContactsActivity extends AppCompatActivity {
             invalidateOptionsMenu();
             // getObjectList is to generate sample data in ItemContacs class.
             Log.d("CALLEDSTATUS", "groups has been clicked");
-
-            adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+            adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
                 //By clicking a card, the username is got
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IGroups contact = Groups.getObjectList().get(position);
-                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                     Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
                     contactsIntent.putExtra("username", contact.getName());
                     startActivity(contactsIntent);
@@ -234,7 +232,7 @@ public class ContactsActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
-                    adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+                    adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
                         //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {

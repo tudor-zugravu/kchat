@@ -32,7 +32,6 @@
         <activity android:name=".CustomActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".ChatsActivity" />
-        <activity android:name=".GroupsActivity"/>
         <activity android:name=".AddGroupActivity"/>
         <activity android:name=".ImageUpload" android:exported="true"></activity>
 

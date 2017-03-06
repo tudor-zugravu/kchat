@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
+import API.IGroups;
 import IMPL.Contacts;
+import IMPL.Groups;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
@@ -45,6 +47,7 @@ public class AddGroupActivity extends AppCompatActivity {
     private ArrayList<IContacts> memberList;
     private StringBuffer checkedString=null;
     private Socket mSocket;
+    ArrayList<Integer> usersId = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,10 +134,17 @@ public class AddGroupActivity extends AppCompatActivity {
                     Log.i("groupName", groupName);
                     Log.i("groupDescription", description);
                     Log.i("selected username", checkedString.toString());
-                    //after sending data, back to contact page
-                    Toast.makeText(AddGroupActivity.this, "Group: "+groupName+"\n Description: "+description+"\n User: "+checkedString.toString()+" was added.", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                    startActivity(myIntent);
+                    if(AddGroupAdapter.checkedUsers!=null) {
+                        for(int i=0; i<AddGroupAdapter.checkedUsers.size(); i++){
+                            usersId.add(Integer.parseInt(AddGroupAdapter.checkedUsers.get(i).getUserId()));
+                        }
+                        IGroups group = new Groups(1,groupName,description,1,usersId);
+                        Groups.groupList.add(group);
+                        //after sending data, back to contact page
+                        Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                        startActivity(myIntent);
+                    }
                 }
             }
         });
@@ -154,8 +164,6 @@ public class AddGroupActivity extends AppCompatActivity {
          */
 
         searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

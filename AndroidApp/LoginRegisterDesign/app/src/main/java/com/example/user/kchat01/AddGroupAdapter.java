@@ -26,7 +26,7 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
     private LayoutInflater inflater;
     public ArrayList<IContacts> objectList;
     private ArrayList<IContacts> filterList;
-    public ArrayList<IContacts> checkedUsers=new ArrayList<>();
+    public static ArrayList<IContacts> checkedUsers=new ArrayList<>();
     private AddGroupViewHolder holder;
     private AddGroupFilter filter;
 

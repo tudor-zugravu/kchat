@@ -1,7 +1,11 @@
 package IMPL;
 
+import android.graphics.Bitmap;
+
 import com.example.user.kchat01.R;
 import java.util.ArrayList;
+
+import API.IContacts;
 import API.IGroups;
 
 /**
@@ -15,12 +19,24 @@ public class Groups implements IGroups {
     private int type;
     private String name;
     private int imageId;
+    private ArrayList<Integer> usersAsID;
+    private Bitmap groupImage;
+
+    public static ArrayList<IGroups> groupList = new ArrayList<>();
 
     public Groups (int groupId, String name, String description, int type){
     this.description = description;
         this.groupId = groupId;
         this.type=type;
         this.name=name;
+    }
+
+    public Groups (int groupId, String name, String description, int type,ArrayList<Integer> usersAsID){
+        this.description = description;
+        this.groupId = groupId;
+        this.type=type;
+        this.name=name;
+        this.usersAsID = usersAsID;
     }
 
     public Groups (String name, String description, int type, int imageId){
@@ -42,7 +58,7 @@ public class Groups implements IGroups {
 
     @Override
     public int getGroupId() {
-        return getGroupId();
+        return this.groupId;
     }
 
     @Override
@@ -88,5 +104,29 @@ public class Groups implements IGroups {
             dataList.add(group);
         }
         return dataList;
+    }
+
+    public static ArrayList<IGroups> getGroupList() {
+        return groupList;
+    }
+
+    public static void setGroupList(ArrayList<IGroups> groupList) {
+        Groups.groupList = groupList;
+    }
+
+    public ArrayList<Integer> getUsersAsID() {
+        return usersAsID;
+    }
+
+    public void setUsersAsID(ArrayList<Integer> usersAsID) {
+        this.usersAsID = usersAsID;
+    }
+
+    public Bitmap getGroupImage() {
+        return groupImage;
+    }
+
+    public void setGroupImage(Bitmap groupImage) {
+        this.groupImage = groupImage;
     }
 }
