@@ -99,7 +99,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
                 }else{
-                    holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
+                    //holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
+                    holder.imageProfile.setImageBitmap(Groups.groupList.get(position).getGroupImage());
                 }
                 holder.textViewUsername.setText(Groups.groupList.get(position).getName());
                 holder.textViewMessage.setText(String.valueOf(Groups.groupList.get(position).getDescription()));

@@ -127,9 +127,9 @@ public class ChatsActivity extends AppCompatActivity {
                     int latestPosition = adapter.getItemCount();
                     IMessage messageObject = new Message(1,message,new Date(),"user01",R.drawable.human);//This is used to add actual message
                     messageObject.setMe(true);
-                    dataList.add(0, messageObject);//"0" means top of array
+                    dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(0);//"0" means insertion to the top of display
+                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     recyclerView.scrollToPosition(adapter.getItemCount()-1);
                 }
             }
@@ -166,9 +166,9 @@ public class ChatsActivity extends AppCompatActivity {
                     int latestPosition = adapter.getItemCount();
                     IMessage messageObject = new Message(1, serverresult.toString(), new Date(), "user01", R.drawable.human);//This is used to add actual message
                     messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
-                    dataList.add(0, messageObject);//"0" means top of array
+                    dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(0);//"0" means insertion to the top of display
+                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                 }
             });

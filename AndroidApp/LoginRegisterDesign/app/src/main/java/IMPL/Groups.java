@@ -3,9 +3,9 @@ package IMPL;
 import android.graphics.Bitmap;
 
 import com.example.user.kchat01.R;
+
 import java.util.ArrayList;
 
-import API.IContacts;
 import API.IGroups;
 
 /**
@@ -45,6 +45,16 @@ public class Groups implements IGroups {
         this.type=type;
         this.name=name;
     }
+
+    public Groups (int groupId, String name, String description, int type,ArrayList<Integer> usersAsID, Bitmap groupImage){
+        this.description = description;
+        this.groupId = groupId;
+        this.type=type;
+        this.name=name;
+        this.usersAsID = usersAsID;
+        this.groupImage = groupImage;
+    }
+
 
     @Override
     public String getDescription() {

@@ -59,6 +59,7 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
             Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
         }
         final IContacts current = Contacts.contactList.get(position);
+        holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
         holder.textViewUsername.setText(current.getContactName());
         holder.checkBox.setTag(current);
 
