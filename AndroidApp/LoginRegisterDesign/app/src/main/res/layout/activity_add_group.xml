@@ -14,7 +14,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
             <TextView
                 android:layout_width="wrap_content"
@@ -48,13 +47,13 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.example.user.kchat01.ContactsActivity">
-
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+-->
 <!--
            <android.support.v7.widget.SearchView
                 android:id="@+id/searchView"
@@ -63,26 +62,17 @@
                app:layout_scrollFlags="scroll|enterAlways"
                 app:queryHint="Search"/>
 -->
-
-
-
-
-
+   <!--
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlways">
-                <ImageView
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:id="@+id/canvas"
-                    android:layout_marginTop="10dp" />
+-->
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/iVCamera"
-                    android:layout_toRightOf="@+id/canvas"
-                    android:layout_alignTop="@+id/canvas"
+                    android:layout_alignParentRight="true"
                     android:padding="20dp"
                     android:src="@android:drawable/ic_menu_camera"/>
                 <ImageView
@@ -90,17 +80,26 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/iVGallery"
                     android:layout_below="@+id/iVCamera"
-                    android:layout_toRightOf="@+id/canvas"
+                    android:layout_alignParentRight="true"
                     android:layout_alignBottom="@+id/canvas"
                     android:padding="20dp"
                     android:src="@android:drawable/ic_menu_gallery"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:id="@+id/canvas"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:layout_toLeftOf="@+id/iVCamera" />
 
-                <TextView
+        <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Group Name: "
                     android:textSize="14dp"
                     android:layout_below="@+id/canvas"
+            android:paddingTop="10dp"
                     android:id="@+id/textViewGroupName"/>
                 <EditText
                     android:layout_width="match_parent"
@@ -110,8 +109,6 @@
                     android:id="@+id/editTextGroupName"
                     android:inputType="text"
                     android:background="@drawable/edittext_add_group"/>
-            </RelativeLayout>
-
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -128,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:text="Select Group Member"
                 android:layout_marginTop="10dp"
+                android:layout_below="@+id/editTextGroupDescription"
                 app:layout_scrollFlags="scroll|enterAlways"
                 android:id="@+id/textViewSelect"/>
 
@@ -135,6 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="10dp"
+                android:layout_below="@+id/textViewSelect"
                 android:id="@+id/scrollbar">
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -143,6 +142,8 @@
                     android:layout_below="@+id/textViewSelect"
                     class="android.support.v7.widget.RecyclerView"/>
             </android.support.v4.widget.NestedScrollView>
+        <!--
         </LinearLayout>
+        -->
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
