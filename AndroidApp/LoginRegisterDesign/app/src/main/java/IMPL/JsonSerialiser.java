@@ -26,16 +26,17 @@ public class JsonSerialiser {
     public String serialiseMessage(IMessage message, String groupname){
         try {
             json.put("type", "sentmessage");
-            json.put("sender", message.getUsername());
+            json.put("sender", message.getSenderId());
             json.put("groupId", message.getGroupId());
-            json.put("contents", message.getMessage());
+            json.put("receiver", message.getReceiverId());
+            json.put("message", message.getMessage());
             json.put("timestamp", message.getTimestamp().toString());
             json.put("groupname", groupname);
         }catch (JSONException e){
             Log.e("Json Exception", "Cannot parse to json");
         }
         bundle.putString("json", json.toString());
-        return null;
+        return this.json.toString();
     }
 
     public String serialiseProfileImage(String usersid, String base64Image){

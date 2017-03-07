@@ -140,6 +140,7 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624159) { // for contacts

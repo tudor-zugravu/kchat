@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import API.IMessage;
+import IMPL.JsonSerialiser;
+import IMPL.MasterUser;
 import IMPL.Message;
 
 /**
@@ -46,6 +48,10 @@ public class ChatsActivity extends AppCompatActivity {
     private String message;
     private Socket mSocket;
 
+    public void onMessageReceived(IMessage message){
+
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +60,14 @@ public class ChatsActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
             mSocket.on("chat message", stringReply);
+            mSocket.on("private_chat", messageRetreiver);
             mSocket.on("updaterooms", jsonReply);
-
             mSocket.emit("adduser", "Tudor");
 
         } catch (URISyntaxException e){
         }
+
+
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -104,7 +112,11 @@ public class ChatsActivity extends AppCompatActivity {
                     //before i am outputting to the screen i will take the text of the message and any other user related information
                     //and i will send it to the server using the socket.io
                     if(mSocket.connected()){
-                        mSocket.emit("chat message", message);
+                        Date date = new Date();
+                        IMessage messageobj = new Message(MasterUser.usersId,0,MasterUser.usersId,message,date);
+                        JsonSerialiser messageSerialize = new JsonSerialiser();
+                       String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
+                        mSocket.emit("private_chat", messageResult);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
                     }
@@ -142,7 +154,7 @@ public class ChatsActivity extends AppCompatActivity {
         });
     }
 
-    private Emitter.Listener stringReply = new Emitter.Listener() {
+    private Emitter.Listener messageRetreiver = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             ChatsActivity.this.runOnUiThread(new Runnable() {
@@ -163,6 +175,16 @@ public class ChatsActivity extends AppCompatActivity {
         }
     };
 
+    private Emitter.Listener stringReply = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            IMessage message = (IMessage) args[0];
+            Log.d("PRIVATECHAT", message.getMessage() + "  " + message.getSenderId());
+        }
+    };
+
+
+
     private Emitter.Listener jsonReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -171,6 +193,8 @@ public class ChatsActivity extends AppCompatActivity {
             Log.d("MESSAGEERROR", jsonArray.toString());
 
         }
+
+
             //JSONObject data = (JSONObject) args[0];
             // Log.d("MESSAGEERROR", data.toString());
 

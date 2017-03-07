@@ -53,7 +53,7 @@ public class ProfileActivity extends CustomActivity {
 
         //set profile image to imageview (temporarily, set the image in drawable forlder)
         MasterUser man = new MasterUser();
-        if(man.getProfileLocation()!=null||!man.getProfileLocation().equals("")) {
+        if(man.getProfileLocation()!=null) {
 //            Log.d("PROFILE",man.getUsersprofile().toString());
             imageProfile.setImageBitmap(man.getUsersprofile());
         }else {

@@ -22,6 +22,7 @@ public class Message implements IMessage {
     private String username;
     private int imageId;
     private boolean isMe;
+    private int receiverId;
 
     public Message(int messageId,int groupId,String message,Date timestamp,String username){
     this.messageId = messageId;
@@ -29,6 +30,14 @@ public class Message implements IMessage {
         this.message = message;
         this.timestamp = timestamp;
         this.username = username;
+    }
+
+    public Message( int senderId,int groupId,int receiverId,String message,Date timestamp){
+        this.senderId = senderId;
+        this.groupId = groupId;
+        this.receiverId = receiverId;
+        this.message = message;
+        this.timestamp = timestamp;
     }
 
     public Message(int messageId, String message,Date timestamp,String username,int imageId){
@@ -94,6 +103,15 @@ public class Message implements IMessage {
         return this.username;
     }
 
+    @Override
+    public int getReceiverId() {
+        return this.receiverId;
+    }
+
+    @Override
+    public void setReceiverId(int receiverId) {
+        this.receiverId = receiverId;
+    }
 
     @Override
     public void setUsername(String username) {

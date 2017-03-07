@@ -12,6 +12,8 @@ public interface IMessage {
     public void setMessageId(int id);
     public int getSenderId();
     public void setSenderId(int messageId);
+    public int getReceiverId();
+    public void setReceiverId(int receiverId);
     public int getGroupId();
     public void setGroupId(int GroupId);
     public String getMessage();

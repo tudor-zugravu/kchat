@@ -13,7 +13,7 @@ import API.IGroups;
 
 public class MasterUser {
 
-    static int usersId;
+    public static int usersId;
     static int blocked;
     static int session;
     static String fullName;

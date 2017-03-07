@@ -175,7 +175,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         }
             Log.d("SERVERRESULT","Sent from the server:" + result);
 
-
             CharSequence text ="Hello From server, your username and password is : " +  result;
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, text, duration);
