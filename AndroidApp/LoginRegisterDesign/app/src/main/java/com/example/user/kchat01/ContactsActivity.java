@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,11 +98,11 @@ public class ContactsActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
-
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
             int bottomBarNum = bottomBar.getCurrentTabPosition();
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
         adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
             ContactsActivity.showPlus=false;
@@ -122,6 +121,7 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
@@ -160,10 +160,13 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
+            Log.d("CheckContacts","line 164");
+            adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
 
         }
-        recyclerView.setAdapter(adapter);
+        //adapter.notifyDataSetChanged();
+        //recyclerView.setAdapter(adapter);
 
         //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -177,13 +180,14 @@ public class ContactsActivity extends AppCompatActivity {
          */
 
         searchView = (SearchView) findViewById(R.id.searchView);
-
+/*
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchView.setIconified(false);
             }
         });
+*/
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -192,6 +196,7 @@ public class ContactsActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
+                //adapter.notifyDataSetChanged();
                 adapter.getFilter().filter(query);
                 return false;
             }
@@ -226,6 +231,8 @@ public class ContactsActivity extends AppCompatActivity {
                             startActivity(contactsIntent);
                         }
                     };
+                    Log.d("CheckGroups","line 235");
+                    adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
                 }
                 if (tabId == R.id.groups) {
@@ -245,6 +252,7 @@ public class ContactsActivity extends AppCompatActivity {
                             startActivity(contactsIntent);
                         }
                     };
+                    adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
                    // Intent groupIntent = new Intent(getApplicationContext(),GroupsActivity.class);
                    // startActivity(groupIntent);
@@ -284,6 +292,8 @@ public class ContactsActivity extends AppCompatActivity {
                             startActivity(contactsIntent);
                         }
                     };
+                    Log.d("CheckContacts","line298");
+                    adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
 //                    try {
 //                        Log.d("DESERIALISER", "i made a rest request");

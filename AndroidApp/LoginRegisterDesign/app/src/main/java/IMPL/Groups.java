@@ -108,12 +108,19 @@ public class Groups implements IGroups {
 
     public static ArrayList<IGroups> getObjectList() {
         ArrayList<IGroups> dataList = new ArrayList<>();
-        for (int i = 0; i <= 20; i++) {
+        for (int i = 0; i <= 2; i++) {
             IGroups group = new Groups("name of group" +i,"Description message of group" + i,0,R.drawable.human);
             group.setImageId(R.drawable.human);
             dataList.add(group);
         }
+        IGroups group = new Groups("group","Description message of group",0,R.drawable.human);
+        group.setImageId(R.drawable.human);
+        dataList.add(group);
+        group = new Groups("agroup","Description message of group",0,R.drawable.human);
+        group.setImageId(R.drawable.human);
+        dataList.add(group);
         return dataList;
+
     }
 
     public static ArrayList<IGroups> getGroupList() {

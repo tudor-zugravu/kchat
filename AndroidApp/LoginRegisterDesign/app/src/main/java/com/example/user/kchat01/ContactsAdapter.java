@@ -28,7 +28,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
 
     private LayoutInflater inflater;
     public ArrayList objectList;
-    private ArrayList filterList;
+    public ArrayList filterList;
     private ContactsFilter filter;
     private int type;
     Context context;
@@ -120,6 +120,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     public int getItemCount() {
         return objectList.size();
     }
+
 
     //filter
     @Override
