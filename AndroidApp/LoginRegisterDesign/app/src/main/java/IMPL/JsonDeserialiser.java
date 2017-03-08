@@ -127,7 +127,6 @@ public class JsonDeserialiser {
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
                     IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
-
                     if (contactPicture != null && (!contactPicture.equals("null"))) {
                         //make a rest call to get image?
                         Bitmap contactsBitmap;
@@ -139,6 +138,9 @@ public class JsonDeserialiser {
                                     if (contactsBitmap != null){
                                         Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
                                         contact.setBitmap(contactsBitmap);
+                                     //   DatabaseAdaptor adaptor = new DatabaseAdaptor(context);
+                                   //     adaptor.addToContactsTable(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture,contactsBitmap);
+                                    //    Log.d("DATABASETEST", adaptor.getContact(contactId).getContactName());
                                     }
                                 } catch (InterruptedException e) {
                                 } catch (ExecutionException f) {

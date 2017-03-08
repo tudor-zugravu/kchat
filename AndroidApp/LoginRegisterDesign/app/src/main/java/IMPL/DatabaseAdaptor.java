@@ -5,8 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,16 +34,24 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
     public DatabaseAdaptor(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("DATABASETEST","I was called part 1");
 
         // SQL statement to create book table
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE contacts ( " +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "global_id INTEGER, "+
-                "name TEXT, "+
-                "username TEXT" +")";
+        String CREATE_CONTACTS_TABLE = "CREATE TABLE contacts( " +
+                "contactid INTEGER PRIMARY KEY, " +
+                "requestnum INTEGER, " +
+                "timestamp TEXT, " +
+                "userId TEXT, " +
+                "contactname TEXT, " +
+                "email TEXT, " +
+                "username TEXT, " +
+                "phonenumber TEXT, " +
+                "blocked INTEGER, " +
+                "session INTEGER, " +
+                "contactPicture TEXT, "+
+                "profilepic BLOB" +")";
 
         String CREATE_MESSAGES_TABLE = "CREATE TABLE messages ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -89,19 +100,37 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
     }
 
     @Override
-    public boolean addToContactsTable(int contactId, int globalId, String contactName, String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
+    public boolean addToContactsTable(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
+                                      String username,String phonenumber,int blocked,int session,String contactPicture,Bitmap profilePicture) {
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id", contactId);
-        values.put("global_id", globalId);
-        values.put("name", contactName);
+        values.put("contactid", contactId);
+        values.put("requestnum", requestNum);
+        values.put("timestamp", timestamp);
+        values.put("userId", userId);
+        values.put("contactname", contactName);
+        values.put("email", email);
         values.put("username", username);
-        db.insert("contacts", // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
+        values.put("phonenumber", phonenumber);
+        values.put("blocked", blocked);
+        values.put("session", session);
+        values.put("contactPicture", contactPicture);
+        values.put("profilepic", getBytes(profilePicture));
+
+        db.insert("contacts", null, values);
         db.close();
         return true;
+    }
+
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
     @Override
@@ -137,13 +166,13 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         return true;
     }
 
-    private static final String[] COLUMNS = {"id","global_id","name","username"};
+    private static final String[] COLUMNS = {"contactid","requestnum","timestamp","userId","contactname","email","username","phonenumber","blocked","session","contactPicture","profilepic"};
     public IContacts getContact(int contactId){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor =
                 db.query("contacts", // a. table
                         COLUMNS, // b. column names
-                        " id = ?", // c. selections
+                        " contactid = ?", // c. selections
                         new String[] { String.valueOf(contactId) }, // d. selections args
                         null, // e. group by
                         null, // f. having
@@ -153,9 +182,21 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         if (cursor != null)
             cursor.moveToFirst();
         //  build the object
-       // IContacts contact = new Contacts(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),cursor.getString(2),cursor.getString(3));
-       // Log.d("getBook("+contactId+")", contact.toString());
-        return null;
+        byte[] image = cursor.getBlob(11);
+
+        IContacts contact = new Contacts(cursor.getInt(0),
+                cursor.getInt(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5),
+                cursor.getString(6),
+                cursor.getString(7),
+                Integer.parseInt(cursor.getString(8)),
+                Integer.parseInt(cursor.getString(9)),
+                cursor.getString(10),
+                getImage(image));
+        return contact;
     }
 
     private static final String[] COLUMNS2 = {"id","sender_id","group_id","message","timestamp"};

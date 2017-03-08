@@ -24,6 +24,9 @@ public class Groups implements IGroups {
 
     public static ArrayList<IGroups> groupList = new ArrayList<>();
 
+    public static ArrayList<IGroups> testList = new ArrayList<>();
+
+
     public Groups (int groupId, String name, String description, int type){
     this.description = description;
         this.groupId = groupId;
@@ -39,6 +42,7 @@ public class Groups implements IGroups {
         this.usersAsID = usersAsID;
     }
 
+    //used for test
     public Groups (String name, String description, int type, int imageId){
         this.description = description;
         this.groupId = groupId;
@@ -46,6 +50,7 @@ public class Groups implements IGroups {
         this.name=name;
     }
 
+    //used for test
     public Groups (int groupId, String name, String description, int type,ArrayList<Integer> usersAsID, Bitmap groupImage){
         this.description = description;
         this.groupId = groupId;
@@ -107,19 +112,19 @@ public class Groups implements IGroups {
     }
 
     public static ArrayList<IGroups> getObjectList() {
-        ArrayList<IGroups> dataList = new ArrayList<>();
+       // ArrayList<IGroups> dataList = new ArrayList<>();
         for (int i = 0; i <= 2; i++) {
             IGroups group = new Groups("name of group" +i,"Description message of group" + i,0,R.drawable.human);
             group.setImageId(R.drawable.human);
-            dataList.add(group);
+            testList.add(group);
         }
-        IGroups group = new Groups("group","Description message of group",0,R.drawable.human);
-        group.setImageId(R.drawable.human);
-        dataList.add(group);
-        group = new Groups("agroup","Description message of group",0,R.drawable.human);
-        group.setImageId(R.drawable.human);
-        dataList.add(group);
-        return dataList;
+        IGroups group2 = new Groups("group","Description message of group",0,R.drawable.human);
+        group2.setImageId(R.drawable.human);
+        testList.add(group2);
+        IGroups group3 = new Groups("agroup","Description message of group",0,R.drawable.human);
+        group3.setImageId(R.drawable.human);
+        testList.add(group3);
+        return testList;
 
     }
 

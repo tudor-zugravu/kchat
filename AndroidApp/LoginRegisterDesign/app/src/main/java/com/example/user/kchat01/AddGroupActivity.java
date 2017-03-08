@@ -70,24 +70,6 @@ public class AddGroupActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MasterUser man = new MasterUser();
-        if (man.getProfileLocation() != null) {
-            try {
-                Log.d("CALLEDSTATUS", "Getting the data from the server");
-
-                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
-                String type = "getImage";
-                ArrayList<String> paramList = new ArrayList<>();
-                paramList.add("picture");
-                RESTApi backgroundasync = new RESTApi(AddGroupActivity.this, picture_url, paramList);
-                String result = backgroundasync.execute(type).get();
-            } catch (InterruptedException e) {
-            } catch (ExecutionException f) {
-            }
-        }
-        Log.d("CALLEDSTATUS", "resuming with the ui draw");
-
-
         setContentView(R.layout.activity_add_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -96,21 +78,6 @@ public class AddGroupActivity extends AppCompatActivity {
         // apply toolbar title
         toolbarTitle.setText("Add Group");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-
-        try {
-            Log.d("CALLEDSTATUS", "i made a rest request");
-            String type2 = "getcontacts";
-            String contacts_url = "http://188.166.157.62:3000/contacts";
-            ArrayList<String> paramList2 = new ArrayList<>();
-            paramList2.add("userId");
-            RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
-            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", AddGroupActivity.this);
-
-        } catch (InterruptedException e) {
-        } catch (ExecutionException f) {
-        }
-
         adapter = new AddGroupAdapter(AddGroupActivity.this, Contacts.contactList);
 
         textViewDone = (TextView) findViewById(R.id.textViewDone);
@@ -173,25 +140,8 @@ public class AddGroupActivity extends AppCompatActivity {
                         return;
                     } else {
                         bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                        /*
-                        String codedImage = getStringImage(bitmap);
-                        JsonSerialiser imageSerialiser = new JsonSerialiser();
-                        MasterUser man = new MasterUser();
-                        String imagetosend = imageSerialiser.serialiseProfileImage(man.getuserId(), codedImage);
-                        String type = "updateImage";
-                        String login_url = "http://188.166.157.62:3000/imageupload";
-                        ArrayList<String> paramList = new ArrayList<>();
-                        paramList.add("request");
-                        paramList.add("json");
-                        RESTApi backgroundasync = new RESTApi(AddGroupActivity.this, login_url, paramList);
-                        backgroundasync.execute(type, "profileImageChange", imagetosend);
-                        */
                     }
 
-                    //in actual application, these variables are sent to the server
-                    Log.i("groupName", groupName);
-                    Log.i("groupDescription", description);
-                    Log.i("selected username", checkedString.toString());
                     if (AddGroupAdapter.checkedUsers != null) {
                         for (int i = 0; i < AddGroupAdapter.checkedUsers.size(); i++) {
                             usersId.add(Integer.parseInt(AddGroupAdapter.checkedUsers.get(i).getUserId()));
@@ -200,7 +150,7 @@ public class AddGroupActivity extends AppCompatActivity {
                         Groups.groupList.add(group);
                         //after sending data, back to contact page
                         Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
-                        Intent myIntent = new Intent(getApplicationContext(), ContactsActivity.class);
+                        Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
                         startActivity(myIntent);
                     }
                 }
@@ -210,7 +160,6 @@ public class AddGroupActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);
 
-        //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -271,14 +220,6 @@ public class AddGroupActivity extends AppCompatActivity {
         }
     }
 
-    private static String getStringImage(Bitmap bmp){//encoding the image to base 64 string  via compression
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
-        byte []imageBytes = byteArrayOutputStream.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -311,30 +252,5 @@ public class AddGroupActivity extends AppCompatActivity {
             Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
         }
     }
-
-        /*
-        From here, search function is performed
-         */
-/*
-        searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchView.setIconified(false);
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                adapter.getFilter().filter(query);
-                return false;
-            }
-        });
-*/
 
 }

@@ -27,6 +27,14 @@ public class Contacts implements IContacts {
     private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
 
+    public static ArrayList<IContacts> sentRequests = new ArrayList<>();
+    public static ArrayList<IContacts> receivedRequests = new ArrayList<>();
+    public static ArrayList<IContacts> searchList = new ArrayList<>();
+
+
+    public static ArrayList<IContacts> CONTACTTEST = new ArrayList<>();
+
+
     public static ArrayList<IContacts> getContactList() {
         return contactList;
     }
@@ -64,7 +72,6 @@ public class Contacts implements IContacts {
         this.contactPicture=contactPicture;
         this.profilePicture=profilePicture;
     }
-
 
     @Override
     public int getContactId() {
@@ -184,5 +191,18 @@ public class Contacts implements IContacts {
     @Override
     public void setBitmap(Bitmap contactsBitmap) {
     this.profilePicture = contactsBitmap;
+    }
+
+
+    public static ArrayList<IContacts> getSentRequests() {
+        return sentRequests;
+    }
+
+    public static ArrayList<IContacts> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public static ArrayList<IContacts> getSearchList() {
+        return searchList;
     }
 }

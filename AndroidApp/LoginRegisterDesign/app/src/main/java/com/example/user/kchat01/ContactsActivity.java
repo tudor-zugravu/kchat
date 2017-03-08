@@ -101,15 +101,16 @@ public class ContactsActivity extends AppCompatActivity {
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
             int bottomBarNum = bottomBar.getCurrentTabPosition();
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
-        adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0);
+
+        adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0);
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
+
         if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
-            Log.d("CALLEDSTATUS", "contacts has been clicked");
             // getObjectList is to generate sample data in ItemContacs class.
-            adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
+            adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0) {
                 //By clicking a card, the username is got
                 @Override
                 public void onClick(ContactsViewHolder holder) {
@@ -127,8 +128,6 @@ public class ContactsActivity extends AppCompatActivity {
         }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
             ContactsActivity.showPlus=true;
             invalidateOptionsMenu();
-            // getObjectList is to generate sample data in ItemContacs class.
-            Log.d("CALLEDSTATUS", "groups has been clicked");
             adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
                 //By clicking a card, the username is got
                 @Override
@@ -146,10 +145,7 @@ public class ContactsActivity extends AppCompatActivity {
         }else if (ContactsActivity.tabId==2131624159) { // for contacts
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
-            Log.d("CALLEDSTATUS", "something has been clicked");
-            // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
-                //By clicking a card, the username is got
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
@@ -160,13 +156,10 @@ public class ContactsActivity extends AppCompatActivity {
                     startActivity(contactsIntent);
                 }
             };
-            Log.d("CheckContacts","line 164");
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
 
         }
-        //adapter.notifyDataSetChanged();
-        //recyclerView.setAdapter(adapter);
 
         //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -286,10 +279,7 @@ public class ContactsActivity extends AppCompatActivity {
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.getContactList().get(position);
-                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
-                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                            contactsIntent.putExtra("username", contact.getContactName());
-                            startActivity(contactsIntent);
+
                         }
                     };
                     Log.d("CheckContacts","line298");
@@ -316,8 +306,8 @@ public class ContactsActivity extends AppCompatActivity {
                     profileIntent.putExtra("users_email", man.getEmail());
                     profileIntent.putExtra("users_phonenumber", man.getTelephonenumber());
                     profileIntent.putExtra("users_biography", man.getBiography());
+                    profileIntent.putExtra("type", "usersprofile");
                     startActivity(profileIntent);
-                    //Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_SHORT).show();
                 }
             }
         });

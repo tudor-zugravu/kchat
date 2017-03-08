@@ -1,6 +1,7 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -51,14 +52,6 @@ public class ProfileActivity extends CustomActivity {
         REST get profile image, username, email, phone and biography
 */
 
-        //set profile image to imageview (temporarily, set the image in drawable forlder)
-        MasterUser man = new MasterUser();
-        if(man.getProfileLocation()!=null) {
-//            Log.d("PROFILE",man.getUsersprofile().toString());
-            imageProfile.setImageBitmap(man.getUsersprofile());
-        }else {
-            imageProfile.setImageResource(R.drawable.human);
-        }
         //set username to textview
         tvUsername.setTextSize(18);
         //set email to txtview
@@ -69,15 +62,39 @@ public class ProfileActivity extends CustomActivity {
         tvBio.setTextSize(18);
 
         if(bundle!=null) {
-            String users_username =(String) bundle.get("users_username");
-            String users_email =(String) bundle.get("users_email");
-            String users_phonenumber =(String) bundle.get("users_phonenumber");
-            String users_biography =(String) bundle.get("users_biography");
-           // String j =(String) bundle.get("name");
-            tvUsername.setText(users_username);
-            tvEmail.setText(users_email);
-            tvPhone.setText(users_phonenumber);
-            tvBio.setText(users_biography);
+            String type =(String) bundle.get("type");
+            if (type.equals("contactsprofile")){
+                String contacts_username = (String) bundle.get("contact_username");
+                String contacts_email = (String) bundle.get("contact_email");
+                String contacts_phonenumber = (String) bundle.get("contact_phonenumber");
+                String contacts_biography = (String) bundle.get("contact_biography");
+                Bitmap contacts_bitmap =(Bitmap) bundle.get("contacts_bitmap");
+                if(contacts_bitmap!=null) {
+                    imageProfile.setImageBitmap(contacts_bitmap);
+                }else {
+                    imageProfile.setImageResource(R.drawable.human);
+                }
+                tvUsername.setText(contacts_username);
+                tvEmail.setText(contacts_email);
+                tvPhone.setText(contacts_phonenumber);
+                tvBio.setText(contacts_biography);
+            }else if (type.equals("usersprofile")) {
+                MasterUser man = new MasterUser();
+                if(man.getProfileLocation()!=null) {
+                    imageProfile.setImageBitmap(man.getUsersprofile());
+                }else {
+                    imageProfile.setImageResource(R.drawable.human);
+                }
+                String users_username = (String) bundle.get("users_username");
+                String users_email = (String) bundle.get("users_email");
+                String users_phonenumber = (String) bundle.get("users_phonenumber");
+                String users_biography = (String) bundle.get("users_biography");
+                // String j =(String) bundle.get("name");
+                tvUsername.setText(users_username);
+                tvEmail.setText(users_email);
+                tvPhone.setText(users_phonenumber);
+                tvBio.setText(users_biography);
+            }
         }
         /*
         modify each field by long click
