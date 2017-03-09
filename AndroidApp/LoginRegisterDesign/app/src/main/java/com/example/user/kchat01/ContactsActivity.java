@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,8 @@ import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.example.user.kchat01.R.id.contacts;
 
 /**
@@ -48,6 +52,7 @@ import static com.example.user.kchat01.R.id.contacts;
 
 public class ContactsActivity extends AppCompatActivity {
     private Toolbar toolbar;
+    private ImageButton btn_sendRequest, btn_receiveRequest, btn_searchContacts;
     private TextView toolbarTitle;
     private RecyclerView recyclerView;
     private SearchView searchView;
@@ -96,17 +101,49 @@ public class ContactsActivity extends AppCompatActivity {
         toolbarTitle.setText("Contacts");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
+        btn_sendRequest = (ImageButton)findViewById(R.id.btn_sendRequest);
+        btn_receiveRequest = (ImageButton)findViewById(R.id.btn_receiveRequest);
+        btn_searchContacts = (ImageButton)findViewById(R.id.btn_searchContacts);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
             int bottomBarNum = bottomBar.getCurrentTabPosition();
         Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
+//3 buttons click listener
+        btn_searchContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerIntent = new Intent(ContactsActivity.this, SearchRequestActivity.class);
+                registerIntent.putExtra("type","searchContacts");
+                ContactsActivity.this.startActivity(registerIntent);
+            }
+        });
+        btn_sendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerIntent = new Intent(ContactsActivity.this, SearchRequestActivity.class);
+                registerIntent.putExtra("type","sendRequest");
+                ContactsActivity.this.startActivity(registerIntent);
+            }
+        });
+        btn_receiveRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerIntent = new Intent(ContactsActivity.this, SearchRequestActivity.class);
+                registerIntent.putExtra("type","receiveRequest");
+                ContactsActivity.this.startActivity(registerIntent);
+            }
+        });
 
         adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0);
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
 
         if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
+            btn_receiveRequest.setVisibility(GONE);
+            btn_sendRequest.setVisibility(GONE);
+            btn_searchContacts.setVisibility(GONE);
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
             // getObjectList is to generate sample data in ItemContacs class.
@@ -126,6 +163,9 @@ public class ContactsActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
+            btn_receiveRequest.setVisibility(GONE);
+            btn_sendRequest.setVisibility(GONE);
+            btn_searchContacts.setVisibility(GONE);
             ContactsActivity.showPlus=true;
             invalidateOptionsMenu();
             adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
@@ -143,6 +183,9 @@ public class ContactsActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
 
         }else if (ContactsActivity.tabId==2131624159) { // for contacts
+            btn_receiveRequest.setVisibility(VISIBLE);
+            btn_sendRequest.setVisibility(VISIBLE);
+            btn_searchContacts.setVisibility(VISIBLE);
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
@@ -189,7 +232,6 @@ public class ContactsActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                //adapter.notifyDataSetChanged();
                 adapter.getFilter().filter(query);
                 return false;
             }
@@ -204,6 +246,9 @@ public class ContactsActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 ContactsActivity.tabId = tabId;
                 if (tabId == R.id.chats) {
+                    btn_receiveRequest.setVisibility(GONE);
+                    btn_sendRequest.setVisibility(GONE);
+                    btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
@@ -224,11 +269,13 @@ public class ContactsActivity extends AppCompatActivity {
                             startActivity(contactsIntent);
                         }
                     };
-                    Log.d("CheckGroups","line 235");
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
                 }
                 if (tabId == R.id.groups) {
+                    btn_receiveRequest.setVisibility(GONE);
+                    btn_sendRequest.setVisibility(GONE);
+                    btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=true;
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
@@ -252,6 +299,9 @@ public class ContactsActivity extends AppCompatActivity {
                     //Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == contacts) {
+                    btn_receiveRequest.setVisibility(VISIBLE);
+                    btn_sendRequest.setVisibility(VISIBLE);
+                    btn_searchContacts.setVisibility(VISIBLE);
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
                     MasterUser man = new MasterUser();
@@ -282,7 +332,6 @@ public class ContactsActivity extends AppCompatActivity {
 
                         }
                     };
-                    Log.d("CheckContacts","line298");
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
 //                    try {

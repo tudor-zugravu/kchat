@@ -35,51 +35,22 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.example.user.kchat01.ContactsActivity">
+        tools:context="com.example.user.kchat01.SearchRequestActivity">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/buttonLayout">
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:baselineAlignBottom="true"
-                    android:padding="10dp"
-                    android:id="@+id/btn_searchContacts"
-                    android:background="@null"
-                    android:src="@drawable/ic_person_add_black_24dp"/>
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:baselineAlignBottom="true"
-                    android:padding="10dp"
-                    android:id="@+id/btn_sendRequest"
-                    android:background="@null"
-                    android:src="@drawable/send_request"/>
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:baselineAlignBottom="true"
-                    android:padding="10dp"
-                    android:id="@+id/btn_receiveRequest"
-                    android:background="@null"
-                    android:src="@drawable/receive_request"/>
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
            <android.support.v7.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-               android:layout_below="@+id/buttonLayout"
                android:focusable="false"
                 app:defaultQueryHint="Search"/>
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/searchView"
                 android:id="@+id/scrollbar">
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -88,7 +59,9 @@
                     android:layout_below="@+id/searchView"
                     class="android.support.v7.widget.RecyclerView"/>
             </android.support.v4.widget.NestedScrollView>
-        </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <!--
         <com.roughike.bottombar.BottomBar
             android:id="@+id/bottomNavi"
             android:layout_width="match_parent"
@@ -96,5 +69,5 @@
             android:layout_gravity="bottom"
             app:bb_tabXmlResource="@xml/bottombar_tabs"
             app:bb_behavior="shy"/>
-
+-->
 </android.support.design.widget.CoordinatorLayout>
