@@ -75,7 +75,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 userDefaults.set(fullName, forKey:"fullName");
                 userDefaults.set(true, forKey: "hasLoginKey")
                 
-                // Download the profile picture, if exists
+                // Download the profile picture, if it exists
                 if let profilePicture = userDetails["profile_picture"] as? String {
                     userDefaults.set(profilePicture, forKey:"profilePicture");
                     if let url = URL(string: "http://188.166.157.62/profile_pictures/\(userDefaults.value(forKey: "profilePicture")!)") {
