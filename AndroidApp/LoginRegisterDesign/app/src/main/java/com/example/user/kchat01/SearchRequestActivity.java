@@ -12,15 +12,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 
 import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
+import IMPL.JsonDeserialiser;
 
 /**
  * Created by user on 22/02/2017.
@@ -32,7 +42,6 @@ public class SearchRequestActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private AlertDialog alertDialog;
-    private View alertView;
     private RecyclerView recyclerView;
     private SearchView searchView;
     SearchRequestAdapter adapter;
@@ -41,32 +50,15 @@ public class SearchRequestActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-/*
-        MasterUser man = new MasterUser();
+
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("user_connect", onlineJoin);
+            mSocket.on("search_user_filter",jsonFilter);
             mSocket.connect();
-            mSocket.emit("user_connect", man.getUsername());
-        } catch (URISyntaxException e) {
+        }catch (URISyntaxException e){
         }
 
-        if (man.getProfileLocation() != null) {
-            try {
-                Log.d("CALLEDSTATUS", "Getting the data from the server");
-
-                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
-                String type = "getImage";
-                ArrayList<String> paramList = new ArrayList<>();
-                paramList.add("picture");
-                RESTApi backgroundasync = new RESTApi(SearchRequestActivity.this, picture_url, paramList);
-                String result = backgroundasync.execute(type).get();
-            } catch (InterruptedException e) {
-            } catch (ExecutionException f) {
-            }
-        }
-*/
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_request);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -118,7 +110,6 @@ public class SearchRequestActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
-        //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,9 +130,54 @@ public class SearchRequestActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
+
+                mSocket.emit("search_user_filter",query);
                 adapter.getFilter().filter(query);
                 return false;
             }
         });
     }
+
+    private Emitter.Listener jsonFilter = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            try {
+                JSONArray serverresult = new JSONArray(args[0]);
+                String serverresult2 = (String) args[0];
+                Log.d("FILTERLIST", serverresult2);
+
+            }catch (JSONException e){
+
+            }catch ( ClassCastException f){
+
+            }
+            //String serverresult = (String) args[0];
+            Groups.testList.clear();
+
+         //   JsonDeserialiser userSearchDeserialiser = new JsonDeserialiser();
+
+            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Groups.testList, 0) {
+                //By clicking a card, show dialog whether sending request or not
+                @Override
+                public void onClick(SearchRequestViewHolder holder) {
+                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                    IGroups group = Groups.testList.get(position);
+                    // when clicking one user, show dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
+                    builder.setTitle("Send Request Confirmation");
+                    builder.setMessage("Do you send contact request to "+group.getName()+" ?");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // to change this to send request operation
+                            Toast.makeText(getApplicationContext(), "sending request", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", null);
+                    alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            };
+            recyclerView.setAdapter(adapter);
+        }
+    };
 }
