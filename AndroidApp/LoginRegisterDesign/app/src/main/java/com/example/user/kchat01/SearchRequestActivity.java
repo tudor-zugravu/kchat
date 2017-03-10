@@ -21,16 +21,10 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URISyntaxException;
 
 import API.IContacts;
-import API.IGroups;
 import IMPL.Contacts;
-import IMPL.Groups;
 import IMPL.JsonDeserialiser;
 
 /**

@@ -99,6 +99,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     public void onClick(ContactsViewHolder holder){
     }
 
+    @Override
+    public void onLongClick(ContactsViewHolder holder){
+    }
+
 
     @Override
     public int getItemCount() {

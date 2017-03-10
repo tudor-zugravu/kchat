@@ -1,14 +1,9 @@
 package com.example.user.kchat01;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.List;
-
-import API.IGroups;
 
 /**
  * Created by user on 22/02/2017.
@@ -16,7 +11,7 @@ import API.IGroups;
 
 /* This class sets recyclerview and listener */
 
-public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
     //Related to ItemView
     ImageView imageProfile;
@@ -31,6 +26,8 @@ public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.
         textViewMessage = (TextView)itemView.findViewById(R.id.textViewMessage);
         // set listener at item
         itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
+
     }
 
     public void setListener(ContactsViewHolderListener listener){
@@ -44,7 +41,16 @@ public class ContactsViewHolder extends RecyclerView.ViewHolder implements View.
         }
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        if (viewholderlistener!=null){
+            viewholderlistener.onLongClick(this);
+        }
+        return false;
+    }
+
     public interface ContactsViewHolderListener {
         void onClick(ContactsViewHolder holder);
+        void onLongClick(ContactsViewHolder holder);
     }
 }

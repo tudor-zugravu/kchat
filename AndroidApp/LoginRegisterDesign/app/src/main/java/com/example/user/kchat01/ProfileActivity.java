@@ -1,17 +1,27 @@
 package com.example.user.kchat01;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.regex.Pattern;
+
 import IMPL.MasterUser;
+
+import static com.example.user.kchat01.R.id.editTextNewProfile;
+import static com.example.user.kchat01.R.id.textViewCurrentProfile;
 
 /**
  * Created by user on 15/02/2017.
@@ -24,8 +34,18 @@ import IMPL.MasterUser;
 public class ProfileActivity extends CustomActivity {
 
     private Toolbar toolbar;
-    private TextView toolbarTitle, tvUsername, tvEmail, tvPhone, tvBio;
+    private TextView toolbarTitle, tvUsername, tvEmail, tvPhone, tvBio, textViewField;
     private ImageView imageProfile;
+    private AlertDialog alertDialog;
+    private View alertView;
+    private EditText editTextField;
+    private String fieldName; //filed name to edit Profile
+    private String newValue=null; //store new username, email or phone
+    private boolean self=false; //Profile data is her/himself or not
+
+    //check new Email and Phone
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^020[0-9]{8}$||^07[0-9]{9}$");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +98,7 @@ public class ProfileActivity extends CustomActivity {
                 tvEmail.setText(contacts_email);
                 tvPhone.setText(contacts_phonenumber);
                 tvBio.setText(contacts_biography);
+                self = false;
             }else if (type.equals("usersprofile")) {
                 MasterUser man = new MasterUser();
                 if(man.getProfileLocation()!=null) {
@@ -94,6 +115,7 @@ public class ProfileActivity extends CustomActivity {
                 tvEmail.setText(users_email);
                 tvPhone.setText(users_phonenumber);
                 tvBio.setText(users_biography);
+                self = true;
             }
         }
         /*
@@ -103,7 +125,7 @@ public class ProfileActivity extends CustomActivity {
         imageProfile.setOnLongClickListener(
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "profile image was clicked", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ProfileActivity.this, "profile image was clicked", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 }
@@ -113,7 +135,14 @@ public class ProfileActivity extends CustomActivity {
         tvUsername.setOnLongClickListener(
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "username was clicked", Toast.LENGTH_LONG).show();
+                        fieldName = "Username";
+                        if (!self){
+                            // other user's Username, error dialog
+                            createErrorDialog(fieldName);
+                        } else if (self){
+                            // her/his Username, Change Username
+                            createDialog(fieldName);
+                        }
                         return true;
                     }
                 }
@@ -123,7 +152,14 @@ public class ProfileActivity extends CustomActivity {
         tvEmail.setOnLongClickListener(
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "email was clicked", Toast.LENGTH_LONG).show();
+                        fieldName = "Email";
+                        if (!self){
+                            // other user's Email, error dialog
+                            createErrorDialog(fieldName);
+                        } else if (self){
+                            // her/his own Email, change Email
+                            createDialog(fieldName);
+                        }
                         return true;
                     }
                 }
@@ -133,80 +169,136 @@ public class ProfileActivity extends CustomActivity {
         tvPhone.setOnLongClickListener(
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "phone was clicked", Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                }
-        );
-
-        // Long Click event for Phone
-        tvBio.setOnLongClickListener(
-                new View.OnLongClickListener() {
-                    public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "bio was clicked", Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                }
-        );
-
-        /*
-    From here, Bottom navigation settings
-    Future work: implement as another class
-    item0: Chats, item1: Groups, item2: Contacts, item3: Profile
-    */
-//recognise the bottom navi.
-        /*
-        final BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.getMenu().getItem(0).setChecked(false);
-        bottomNavigationView.getMenu().getItem(1).setChecked(false);
-        bottomNavigationView.getMenu().getItem(2).setChecked(false);
-        bottomNavigationView.getMenu().getItem(3).setChecked(true);
-
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.chats:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent chatIntent = new Intent(getApplicationContext(), old_ChatActivity.class);
-                                startActivity(chatIntent);
-                                break;
-                            case R.id.groups:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Toast.makeText(getApplicationContext(), "groups is clicked.", Toast.LENGTH_LONG).show();
-                                break;
-                            case R.id.contacts:
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(true);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(false);
-                                Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                                startActivity(contactsIntent);
-                                break;
-                            case profile:
-                                //finish();
-                                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(1).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(2).setChecked(false);
-                                bottomNavigationView.getMenu().getItem(3).setChecked(true);
-                                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                                startActivity(profileIntent);
-                                break;
+                        fieldName = "Phone";
+                        if (!self){
+                            // other user's Phone, error dialog
+                            createErrorDialog(fieldName);
+                        } else if (self){
+                            // her/his Phone, change Phone
+                            createDialog(fieldName);
                         }
                         return true;
                     }
+                }
+        );
 
+        // Long Click event for Biography
+        tvBio.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    public boolean onLongClick(View v) {
+                        fieldName = "Biography";
+                        if (!self){
+                            // other user's Bio, error dialog
+                            createErrorDialog(fieldName);
+                        } else if (self){
+                            // her/his Phone, change Phone
+                            Toast.makeText(ProfileActivity.this,"To change "+fieldName, Toast.LENGTH_SHORT).show();
+                        }
+                        return true;
+                    }
+                }
+        );
+    }
+
+    private boolean createDialog(final String fieldName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(ProfileActivity.this);
+        alertView = inflater.inflate(R.layout.dialog_change_profile, null);
+        builder.setView(alertView);
+        builder.setTitle("Change "+fieldName);
+        textViewField = (TextView) alertView.findViewById(textViewCurrentProfile);
+        editTextField = (EditText) alertView.findViewById(editTextNewProfile);
+        // input check
+        editTextField.addTextChangedListener(new MyTextWatcher(editTextField));
+        builder.setPositiveButton("Change",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //To add request server for changing field.
+                        // String fieldname has "Username", Email" or "Phone"
+                        // new data is stored in "newValue"
+                        // If server error, return false
+                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        LoginActivity.editor.clear();
+                        LoginActivity.editor.commit(); // commit changes
+                        startActivity(intent);
+                        Toast.makeText(ProfileActivity.this,fieldName+"was changed to "+newValue,Toast.LENGTH_SHORT).show();
+                    }
                 });
-*/
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        newValue = null;
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog = builder.create();
+        alertDialog.show();
+        //Initially the positive button is disable
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        return true;
+    }
+
+    private class MyTextWatcher implements TextWatcher {
+        private View view;
+        private MyTextWatcher(View view) {
+            this.view = view;
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+            inputCheck(fieldName);
+            enableButton();
+        }
+    }
+
+    private boolean inputCheck(String fieldName) {
+        newValue = editTextField.getText().toString().trim();
+        if (fieldName.equals("Username")){
+            if(newValue.isEmpty()) { // Duplicate check is needed on Server
+                editTextField.setError(getString(R.string.err_msg_username));
+                return false;
+            } else {
+                editTextField.setError(null);
+            }
+        } else if (fieldName.equals("Email")) {
+            if (newValue.isEmpty() || !EMAIL_PATTERN.matcher(newValue).matches()) {
+                editTextField.setError(getString(R.string.err_msg_email));
+                return false;
+            } else {
+                editTextField.setError(null);
+            }
+        }else if(fieldName.equals("Phone")){
+            if (newValue.isEmpty() || !PHONE_PATTERN.matcher(newValue).matches()) {
+                editTextField.setError(getString(R.string.err_msg_phone));
+                return false;
+            } else {
+                editTextField.setError(null);
+            }
+        }
+        return true;
+    }
+
+    private void enableButton(){
+        if (!inputCheck(fieldName)) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        } else {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        }
+    }
+
+    private void createErrorDialog(String fieldName){
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Not Allowed");
+        builder.setMessage("This is not your profile.\n You can't edit this "+fieldName+".");
+        builder.setNegativeButton("Cancel", null);
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
 }

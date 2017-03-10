@@ -49,7 +49,8 @@ public class AddGroupFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        adapter.objectList = (ArrayList<IContacts>) results.values;
+        //adapter.objectList = (ArrayList<IContacts>) results.values;
+        adapter.filterList = (ArrayList<IContacts>) results.values;
         adapter.notifyDataSetChanged();
     }
 }

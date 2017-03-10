@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.regex.Pattern;
 
 import static com.example.user.kchat01.R.id.currentPassword;
+import static com.example.user.kchat01.R.id.newPassword;
 
 
 /**
@@ -27,6 +28,7 @@ public class CustomActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     private View alertView;
     private EditText etCurrentPassword, etNewPassword, etConfirm;
+    private String newValue;
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
 
     /*
@@ -48,6 +50,7 @@ public class CustomActivity extends AppCompatActivity {
                 Toast.makeText(this, "Edit Profile", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.changePassword:
+                newValue = null;
                 //create alert dialog to change password
                 AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
                 LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -56,7 +59,7 @@ public class CustomActivity extends AppCompatActivity {
                 builder.setTitle("Change Password");
 
                 etCurrentPassword = (EditText) alertView.findViewById(currentPassword);
-                etNewPassword = (EditText) alertView.findViewById(R.id.newPassword);
+                etNewPassword = (EditText) alertView.findViewById(newPassword);
                 etConfirm = (EditText) alertView.findViewById(R.id.confirm);
 
                 // input check
@@ -68,11 +71,12 @@ public class CustomActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 //Send request for changing password to the server
+                                // New password is stored in variable of "newValue"
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 LoginActivity.editor.clear();
                                 LoginActivity.editor.commit(); // commit changes
                                 startActivity(intent);
-                                Toast.makeText(getApplicationContext(),"Password Changed", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Password was changed to "+newValue, Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -88,8 +92,8 @@ public class CustomActivity extends AppCompatActivity {
                 //Initially the positive button is disable
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 return true;
-            case R.id.language:
-                Toast.makeText(this, "setting language", Toast.LENGTH_LONG).show();
+            case R.id.changeImage:
+                Toast.makeText(this, "to change profile image", Toast.LENGTH_SHORT).show();
                 Intent imageintent = new Intent(CustomActivity.this, ImageUpload.class);
                 startActivity(imageintent);
                 return true;
@@ -125,8 +129,8 @@ Compare the hash value of input strings with that of current actual password
 
 
     private boolean newPasswordCheck() {
-        String newPassword = etNewPassword.getText().toString().trim();
-        if (newPassword.isEmpty() || !PASSWORD_PATTERN.matcher(newPassword).matches()) {
+        newValue = etNewPassword.getText().toString().trim();
+        if (newValue.isEmpty() || !PASSWORD_PATTERN.matcher(newValue).matches()) {
             etNewPassword.setError("Minimum 6 characters including alphabet, number and special character");
             return false;
         } else {
@@ -169,7 +173,7 @@ Compare the hash value of input strings with that of current actual password
                 case currentPassword:
                     currentPasswordCheck();
                     break;
-                case R.id.newPassword:
+                case newPassword:
                     newPasswordCheck();
                     break;
                 case R.id.confirm:

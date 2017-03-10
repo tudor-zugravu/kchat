@@ -324,13 +324,30 @@ public class ContactsActivity extends AppCompatActivity {
                     Log.d("CALLEDSTATUS","The size of the Arraylist for contacts is part2  :" + Contacts.getContactList().size());
 
                     adapter.notifyDataSetChanged();
-                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1){// set Listener to move chat
+                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1){// move to profile
                         //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.getContactList().get(position);
-
+                            // move to Chat
+                            Intent chatsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
+                            chatsIntent.putExtra("username", contact.getContactName());
+                            startActivity(chatsIntent);
+                        }
+                        @Override
+                        public void onLongClick(ContactsViewHolder holder){
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IContacts contact = Contacts.getContactList().get(position);
+                            // move to Profile
+                            Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
+                            profileIntent.putExtra("contact_username", contact.getUsername());
+                            profileIntent.putExtra("contact_email", contact.getEmail());
+                            profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
+                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
+                            profileIntent.putExtra("type", "contactsprofile");
+                            startActivity(profileIntent);
                         }
                     };
                     adapter.notifyDataSetChanged();

@@ -26,7 +26,7 @@
     <!-- For Top menu -->
     <string name="editProfile"> Edit Profile</string>
     <string name="changePassword"> Change Password</string>
-    <string name="language"> Language</string>
+    <string name="changeProfileImage"> Change Profile Image</string>
     <string name="logout"> Logout</string>
 
 

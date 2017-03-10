@@ -1,6 +1,8 @@
 package com.example.user.kchat01;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,17 +26,19 @@ import IMPL.Contacts;
 public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> implements Filterable{
 
     private LayoutInflater inflater;
-    public ArrayList<IContacts> objectList;
-    private ArrayList<IContacts> filterList;
+    //public ArrayList<IContacts> objectList;
+    public ArrayList<IContacts> filterList;
     public static ArrayList<IContacts> checkedUsers=new ArrayList<>();
     private AddGroupViewHolder holder;
     private AddGroupFilter filter;
+    Context context;
 
     //constructor
     public AddGroupAdapter(Context context, ArrayList<IContacts> objectList) {
         inflater = LayoutInflater.from(context);
-        this.objectList = objectList;
+      //  this.objectList = objectList;
         this.filterList = objectList;
+        this.context = context;
     }
 
     //create view holder
@@ -53,13 +57,20 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
         //final IContacts current = objectList.get(position);
         //holder.textViewUsername.setText(current.getUsername());
         //holder.checkBox.setChecked(current.isSelected());
-
         for (int i = 0; i < Contacts.contactList.size(); i++) {
             String result = Contacts.contactList.get(i).getContactName();
             Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
         }
         final IContacts current = Contacts.contactList.get(position);
-        holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
+
+        if(current.getBitmap()==null) {
+            Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+            holder.imageProfile.setImageDrawable(d);
+        }else{
+            holder.imageProfile.setImageBitmap(current.getBitmap());
+        }
+
+        //holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
         holder.textViewUsername.setText(current.getContactName());
         holder.checkBox.setTag(current);
 
@@ -82,12 +93,15 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
 
     @Override
     public int getItemCount() {
-        return objectList.size();
+        //return objectList.size();
+        return filterList.size();
+
     }
 
     // return selected user list to MainActivity after being checked
     public ArrayList<IContacts> getUserList(){
-        return objectList;
+        //return objectList;
+        return filterList;
     }
 
     //filter

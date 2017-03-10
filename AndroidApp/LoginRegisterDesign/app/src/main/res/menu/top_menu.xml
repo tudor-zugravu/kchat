@@ -7,8 +7,8 @@
         android:id="@+id/changePassword"
         android:title="@string/changePassword"/>
     <item
-        android:id="@+id/language"
-        android:title="@string/language"/>
+        android:id="@+id/changeImage"
+        android:title="@string/changeProfileImage"/>
     <item
         android:id="@+id/logout"
         android:title="@string/logout"/>

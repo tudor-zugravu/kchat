@@ -20,7 +20,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -30,7 +29,6 @@ import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.Socket;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -78,6 +76,23 @@ public class AddGroupActivity extends AppCompatActivity {
         // apply toolbar title
         toolbarTitle.setText("Add Group");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+
+        //get contactList Here
+        MasterUser man = new MasterUser();
+        try{
+            Log.d("CALLEDSTATUS", "i made a rest request");
+            String type2 = "getcontacts";
+            String contacts_url = "http://188.166.157.62:3000/contacts";
+            ArrayList<String> paramList2 = new ArrayList<>();
+            paramList2.add("userId");
+            RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
+            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+            JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts",AddGroupActivity.this);
+
+        }catch(InterruptedException e){
+        }catch(ExecutionException f){
+        }
+
         adapter = new AddGroupAdapter(AddGroupActivity.this, Contacts.contactList);
 
         textViewDone = (TextView) findViewById(R.id.textViewDone);
@@ -158,6 +173,7 @@ public class AddGroupActivity extends AppCompatActivity {
         });
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
