@@ -73,6 +73,18 @@ public class Contacts implements IContacts {
         this.profilePicture=profilePicture;
     }
 
+    public Contacts(String userId,String contactName,String email, String username,String phonenumber,
+                    int blocked,int session,String contactPicture){
+        this.userId=userId;
+        this.contactName=contactName;
+        this.email=email;
+        this.username=username;
+        this.phonenumber=phonenumber;
+        this.blocked=blocked;
+        this.session=session;
+        this.contactPicture=contactPicture;
+    }
+
     @Override
     public int getContactId() {
         return this.contactId;

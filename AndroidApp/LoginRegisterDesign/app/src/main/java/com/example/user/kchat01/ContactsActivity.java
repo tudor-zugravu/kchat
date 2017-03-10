@@ -70,9 +70,10 @@ public class ContactsActivity extends AppCompatActivity {
         MasterUser man = new MasterUser();
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("user_connect",onlineJoin);
+            mSocket.on("Connected",onlineJoin);
             mSocket.connect();
             mSocket.emit("user_connect", man.getUsername());
+
         }catch (URISyntaxException e){
         }
 
@@ -376,7 +377,7 @@ public class ContactsActivity extends AppCompatActivity {
         @Override
         public void call(Object... args) {
             String serverresult = (String) args[0];
-            Log.d("MESSAGEERROR", serverresult.toString());
+            Log.d("CONNECTED", serverresult.toString());
         }
     };
 

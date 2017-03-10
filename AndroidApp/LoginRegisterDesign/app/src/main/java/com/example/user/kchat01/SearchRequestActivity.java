@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
+import API.IContacts;
 import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
@@ -50,10 +51,9 @@ public class SearchRequestActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
+        Contacts.searchList.clear();
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("search_user_filter",jsonFilter);
             mSocket.connect();
         }catch (URISyntaxException e){
         }
@@ -73,26 +73,7 @@ public class SearchRequestActivity extends AppCompatActivity {
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             // to change this list to search users list
             // Anyway, set listener on each user
-            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Groups.testList, 0) {
-                //By clicking a card, show dialog whether sending request or not
-                @Override
-                public void onClick(SearchRequestViewHolder holder) {
-                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                    IGroups group = Groups.testList.get(position);
-                    // when clicking one user, show dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
-                    builder.setTitle("Send Request Confirmation");
-                    builder.setMessage("Do you send contact request to "+group.getName()+" ?");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // to change this to send request operation
-                            Toast.makeText(getApplicationContext(), "sending request", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", null);
-                    alertDialog = builder.create();
-                    alertDialog.show();
-                }
+            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0) {
             };
 
         }else if (type.equals("sendRequest")){
@@ -130,54 +111,64 @@ public class SearchRequestActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
-
                 mSocket.emit("search_user_filter",query);
+                mSocket.on("search_user_received",onlineJoin);
                 adapter.getFilter().filter(query);
+                adapter.notifyDataSetChanged();
                 return false;
             }
         });
     }
 
+    private Emitter.Listener onlineJoin = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Contacts.searchList.clear();
+                    String serverresult = (String) args[0];
+                    JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult,"filterlist",SearchRequestActivity.this);
+
+                    adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0) {
+                        //By clicking a card, show dialog whether sending request or not
+                        @Override
+                        public void onClick(SearchRequestViewHolder holder) {
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IContacts filteredContact = Contacts.searchList.get(position);
+                            // when clicking one user, show dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
+                            builder.setTitle("Send Request Confirmation");
+                            builder.setMessage("Do you send contact request to "+filteredContact.getContactName()+" ?");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // to change this to send request operation
+                                    Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", null);
+                            alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    };
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
+                }
+            });
+
+        }
+    };
+
     private Emitter.Listener jsonFilter = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            try {
-                JSONArray serverresult = new JSONArray(args[0]);
                 String serverresult2 = (String) args[0];
                 Log.d("FILTERLIST", serverresult2);
 
-            }catch (JSONException e){
 
-            }catch ( ClassCastException f){
+//            recyclerView.setAdapter(adapter); gives the error                                                                                      android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+//            android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
 
-            }
-            //String serverresult = (String) args[0];
-            Groups.testList.clear();
-
-         //   JsonDeserialiser userSearchDeserialiser = new JsonDeserialiser();
-
-            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Groups.testList, 0) {
-                //By clicking a card, show dialog whether sending request or not
-                @Override
-                public void onClick(SearchRequestViewHolder holder) {
-                    int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                    IGroups group = Groups.testList.get(position);
-                    // when clicking one user, show dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
-                    builder.setTitle("Send Request Confirmation");
-                    builder.setMessage("Do you send contact request to "+group.getName()+" ?");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // to change this to send request operation
-                            Toast.makeText(getApplicationContext(), "sending request", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", null);
-                    alertDialog = builder.create();
-                    alertDialog.show();
-                }
-            };
-            recyclerView.setAdapter(adapter);
         }
     };
 }

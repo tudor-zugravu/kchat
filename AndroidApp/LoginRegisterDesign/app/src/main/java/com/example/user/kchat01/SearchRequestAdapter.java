@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import API.IContacts;
 import API.IGroups;
+import IMPL.Contacts;
 
 import static IMPL.Contacts.contactList;
 
@@ -54,10 +55,17 @@ public class SearchRequestAdapter extends RecyclerView.Adapter<SearchRequestView
     @Override
     public void onBindViewHolder(SearchRequestViewHolder holder, int position) {
         if (type == 0) { // to change this to search users list
-            IGroups current = (IGroups) filterList.get(position);
-            holder.imageProfile.setImageResource(current.getImageId());
-            holder.textViewUsername.setText(current.getName());
-            holder.textViewDescription.setText(current.getDescription());
+            if(!Contacts.searchList.isEmpty()) {
+                IContacts current = (IContacts) Contacts.searchList.get(position);
+                if (Contacts.searchList.get(position).getBitmap() == null) {
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                    holder.imageProfile.setImageDrawable(d);
+                } else {
+                    holder.imageProfile.setImageBitmap(current.getBitmap());
+                }
+                holder.textViewUsername.setText(current.getUsername());
+                holder.textViewDescription.setText(current.getEmail());
+            }
         }
         if (type == 1) { // to change this to sent requests list
             if (!contactList.isEmpty()) {

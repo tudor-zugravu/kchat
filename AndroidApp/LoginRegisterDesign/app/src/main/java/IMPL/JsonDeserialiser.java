@@ -45,6 +45,8 @@ public class JsonDeserialiser {
             contactDeserializer(this.jObject);
         }else if (deserializeType.equals("message")) {
             messageList = new ArrayList<>();
+        }else if (deserializeType.equals("filterlist")) {
+            userFilterDeserializer(this.jObject);
         }
     }
 
@@ -116,49 +118,42 @@ public class JsonDeserialiser {
 
     }
 
-    /*
+
      private void userFilterDeserializer(JSONObject jobject){
         try {
             if(this.serverResult!=null) {
                 JSONArray jArr = new JSONArray(this.serverResult);
                 for (int i = 0; i < jArr.length(); i++) {
                     JSONObject obj = jArr.getJSONObject(i);
-                    int contactId = Integer.parseInt(obj.getString("contact_id"));
-                    int requestNum = Integer.parseInt(obj.getString("request"));
-                    String timestamp = obj.getString("timestmp");
                     String userId = obj.getString("user_id");
                     String contactName = obj.getString("name");
                     String email = obj.getString("email");
                     String username = obj.getString("username");
-                    String password = obj.getString("password");
                     String phonenumber = obj.getString("phone_number");
                     int blocked = Integer.parseInt(obj.getString("blocked"));
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
-                    IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
-                    if (contactPicture != null && (!contactPicture.equals("null"))) {
-                        //make a rest call to get image?
-                        Bitmap contactsBitmap;
-                                try {
-                                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
-                                    String type = "getIcon";
-                                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
-                                    contactsBitmap = backgroundasync.execute(type).get();
-                                    if (contactsBitmap != null){
-                                        Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
-                                        contact.setBitmap(contactsBitmap);
-                                     //   DatabaseAdaptor adaptor = new DatabaseAdaptor(context);
-                                   //     adaptor.addToContactsTable(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture,contactsBitmap);
-                                    //    Log.d("DATABASETEST", adaptor.getContact(contactId).getContactName());
-                                    }
-                                } catch (InterruptedException e) {
-                                } catch (ExecutionException f) {
-                                }
-                    }
-                    Contacts.contactList.add(contact);
+                    IContacts contact = new Contacts(userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+//                    if (contactPicture != null && (!contactPicture.equals("null"))) {
+//                        //make a rest call to get image?
+//                        Bitmap contactsBitmap;
+//                                try {
+//                                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
+//                                    String type = "getIcon";
+//                                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
+//                                    contactsBitmap = backgroundasync.execute(type).get();
+//                                    if (contactsBitmap != null){
+//                                        Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
+//                                        contact.setBitmap(contactsBitmap);
+//                                    }
+//                                } catch (InterruptedException e) {
+//                                } catch (ExecutionException f) {
+//                                }
+//                    }
+                    Contacts.searchList.add(contact);
                     // Bitmap profilePicture;
                 }
-                Log.d("CALLEDSTATUS", "object size: " + Contacts.contactList.size());
+               // Log.d("CALLEDSTATUS", "object size: " + Contacts.searchList.size());
 
             }
         }catch (JSONException e){
@@ -166,7 +161,7 @@ public class JsonDeserialiser {
         }
 
     }
-     */
+
 }
 
 //
