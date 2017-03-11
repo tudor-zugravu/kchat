@@ -31,10 +31,10 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
             if contacts.count == 0 {
-                cell.configureCell("", profilePic: "")
+                cell.configureCell("", email: "", profilePic: "")
             } else {
                 let item: ContactModel = contacts[indexPath.row]
-                cell.configureCell(item.name!, profilePic: item.profilePicture!)
+                cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
             }
             return cell
         } else {
@@ -57,7 +57,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             
             if let username = contactDetails[i]["username"] as? String,
                 let name = contactDetails[i]["name"] as? String,
-                let request = contactDetails[i]["request"] as? Int,
                 let email = contactDetails[i]["email"] as? String,
                 let phoneNo = contactDetails[i]["phone_number"] as? String,
                 let userId = contactDetails[i]["user_id"] as? Int,
@@ -67,7 +66,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 item = ContactModel()
                 item.username = username
                 item.name = name
-                item.request = request
                 item.email = email
                 item.phoneNo = phoneNo
                 item.userId = userId

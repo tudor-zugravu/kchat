@@ -10,9 +10,6 @@ import Foundation
 
 protocol ContactsModelProtocol: class {
     func contactsDownloaded(_ contactDetails: [[String:Any]])
-//    func contactsDownloaded(_ items: [[ConferenceModel]])
-//    func itemAdded(_ status: NSString)
-//    func itemRemoved(_ status: NSString)
 }
 
 
