@@ -459,7 +459,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="70"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contacts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JGl-Nq-eRm">
-                                        <rect key="frame" x="175" y="17" width="250" height="45"/>
+                                        <rect key="frame" x="175" y="22" width="250" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="6IP-fB-S37"/>
                                             <constraint firstAttribute="width" constant="250" id="d7f-mk-bCL"/>
@@ -468,12 +468,26 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Svp-FH-DDv">
+                                        <rect key="frame" x="562" y="29" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="PVk-hn-5Pi"/>
+                                            <constraint firstAttribute="height" constant="30" id="zeF-P4-RSm"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="27"/>
+                                        <inset key="titleEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="8"/>
+                                        <state key="normal" title="+">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="JGl-Nq-eRm" secondAttribute="bottom" constant="8" id="0cX-g5-5Jn"/>
                                     <constraint firstItem="JGl-Nq-eRm" firstAttribute="centerX" secondItem="f5e-QK-hAW" secondAttribute="centerX" id="1xZ-Sq-Pab"/>
                                     <constraint firstAttribute="height" constant="70" id="Qud-ZB-Eem"/>
+                                    <constraint firstAttribute="bottom" secondItem="Svp-FH-DDv" secondAttribute="bottom" constant="11" id="dM4-Hr-fuF"/>
+                                    <constraint firstAttribute="bottom" secondItem="JGl-Nq-eRm" secondAttribute="bottom" constant="3" id="neH-CF-Xat"/>
+                                    <constraint firstAttribute="trailing" secondItem="Svp-FH-DDv" secondAttribute="trailing" constant="8" id="r6g-GY-sUf"/>
                                 </constraints>
                             </view>
                             <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="yMh-og-FC1">
@@ -491,7 +505,7 @@
                                         <rect key="frame" x="0.0" y="20" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sJZ-L0-GPL" id="Mcg-gy-ngY">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="49"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tudor Zugravu" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ymU-U0-g0t">
