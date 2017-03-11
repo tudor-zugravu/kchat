@@ -184,19 +184,19 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         //  build the object
         byte[] image = cursor.getBlob(11);
 
-        IContacts contact = new Contacts(cursor.getInt(0),
-                cursor.getInt(1),
-                cursor.getString(2),
-                cursor.getString(3),
-                cursor.getString(4),
-                cursor.getString(5),
-                cursor.getString(6),
-                cursor.getString(7),
-                Integer.parseInt(cursor.getString(8)),
-                Integer.parseInt(cursor.getString(9)),
-                cursor.getString(10),
-                getImage(image));
-        return contact;
+//        IContacts contact = new Contacts(cursor.getInt(0),
+//                cursor.getInt(1),
+//                cursor.getString(2),
+//                cursor.getString(3),
+//                cursor.getString(4),
+//                cursor.getString(5),
+//                cursor.getString(6),
+//                cursor.getString(7),
+//                Integer.parseInt(cursor.getString(8)),
+//                Integer.parseInt(cursor.getString(9)),
+//                cursor.getString(10),
+//                getImage(image));
+        return null;
     }
 
     private static final String[] COLUMNS2 = {"id","sender_id","group_id","message","timestamp"};

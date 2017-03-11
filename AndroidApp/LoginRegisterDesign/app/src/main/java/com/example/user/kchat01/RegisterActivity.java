@@ -105,10 +105,10 @@ public class RegisterActivity extends AppCompatActivity{
                 RESTApi backgroundasync = new RESTApi(RegisterActivity.this,register_url,paramList);
                 backgroundasync.execute(type,
                         inputFullName.getText().toString(),
-                        inputUsername.getText().toString(),
                         inputEmail.getText().toString(),
-                        inputPhone.getText().toString(),
-                        inputPassword.getText().toString());
+                        inputUsername.getText().toString(),
+                        inputPassword.getText().toString(),
+                inputPhone.getText().toString());
             }
         });
     }

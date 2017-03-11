@@ -12,10 +12,6 @@ public interface IContacts {
 
     public void setContactId(int contactId);
 
-    public int getRequestNum();
-
-    public void setRequestNum(int requestNum);
-
     public String getTimestamp();
 
     public void setTimestamp(String timestamp);

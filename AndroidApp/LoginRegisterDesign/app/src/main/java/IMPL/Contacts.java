@@ -14,7 +14,6 @@ import API.IContacts;
 
 public class Contacts implements IContacts {
     private int contactId;
-    private int requestNum;
     private String timestamp;
     private String userId;
     private String contactName;
@@ -32,7 +31,6 @@ public class Contacts implements IContacts {
     public static ArrayList<IContacts> searchList = new ArrayList<>();
 
 
-    public static ArrayList<IContacts> CONTACTTEST = new ArrayList<>();
 
 
     public static ArrayList<IContacts> getContactList() {
@@ -42,10 +40,9 @@ public class Contacts implements IContacts {
     public Contacts(){
     }
 
-    public Contacts(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
+    public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
                     String username,String phonenumber,int blocked,int session,String contactPicture){
        this.contactId=contactId;
-        this.requestNum=requestNum;
         this.timestamp=timestamp;
         this.userId=userId;
         this.contactName=contactName;
@@ -57,10 +54,9 @@ public class Contacts implements IContacts {
         this.contactPicture=contactPicture;
     }
 
-    public Contacts(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
+    public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
                     String username,String phonenumber,int blocked,int session,String contactPicture,Bitmap profilePicture){
         this.contactId=contactId;
-        this.requestNum=requestNum;
         this.timestamp=timestamp;
         this.userId=userId;
         this.contactName=contactName;
@@ -73,16 +69,10 @@ public class Contacts implements IContacts {
         this.profilePicture=profilePicture;
     }
 
-    public Contacts(String userId,String contactName,String email, String username,String phonenumber,
-                    int blocked,int session,String contactPicture){
+    public Contacts(String userId,String username, String name){
         this.userId=userId;
-        this.contactName=contactName;
-        this.email=email;
         this.username=username;
-        this.phonenumber=phonenumber;
-        this.blocked=blocked;
-        this.session=session;
-        this.contactPicture=contactPicture;
+        this.contactName=name;
     }
 
     @Override
@@ -93,16 +83,6 @@ public class Contacts implements IContacts {
     @Override
     public void setContactId(int contactId) {
         this.contactId=contactId;
-    }
-
-    @Override
-    public int getRequestNum() {
-        return this.requestNum;
-    }
-
-    @Override
-    public void setRequestNum(int requestNum) {
-    this.requestNum = requestNum;
     }
 
     @Override

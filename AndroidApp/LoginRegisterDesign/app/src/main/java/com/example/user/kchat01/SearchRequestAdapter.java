@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import java.util.ArrayList;
 
 import API.IContacts;
@@ -28,7 +31,7 @@ import static IMPL.Contacts.contactList;
 public class SearchRequestAdapter extends RecyclerView.Adapter<SearchRequestViewHolder> implements SearchRequestViewHolder.SearchRequestViewHolderListener, Filterable {
 
     private LayoutInflater inflater;
-    public ArrayList filterList;
+    public static  ArrayList filterList;
     private SearchRequestFilter filter;
     private int type;
     Context context;
@@ -64,13 +67,14 @@ public class SearchRequestAdapter extends RecyclerView.Adapter<SearchRequestView
                     holder.imageProfile.setImageBitmap(current.getBitmap());
                 }
                 holder.textViewUsername.setText(current.getUsername());
-                holder.textViewDescription.setText(current.getEmail());
+                holder.textViewDescription.setText(current.getContactName());
             }
         }
         if (type == 1) { // to change this to sent requests list
-            if (!contactList.isEmpty()) {
-                IContacts current2 = (IContacts) filterList.get(position);
-                if (contactList.get(position).getBitmap() == null) {
+            Log.d("PRESSED","i pressed the send requests list");
+            if (!Contacts.sentRequests.isEmpty()) {
+                IContacts current2 = (IContacts) Contacts.sentRequests.get(position);
+                if (Contacts.sentRequests.get(position).getBitmap() == null) {
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
                 } else {
@@ -80,10 +84,11 @@ public class SearchRequestAdapter extends RecyclerView.Adapter<SearchRequestView
                 holder.textViewDescription.setText(current2.getEmail());
             }
         }
+
         if (type == 2) { // to change this to received requests list
-            if (!contactList.isEmpty()) {
-                IContacts current3 = (IContacts) filterList.get(position);
-                if (contactList.get(position).getBitmap() == null) {
+            if (!Contacts.receivedRequests.isEmpty()) {
+                IContacts current3 = (IContacts) Contacts.receivedRequests.get(position);
+                if (Contacts.receivedRequests.get(position).getBitmap() == null) {
                     Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
                     holder.imageProfile.setImageDrawable(d);
                 } else {

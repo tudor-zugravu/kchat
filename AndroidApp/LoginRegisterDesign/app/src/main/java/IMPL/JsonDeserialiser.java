@@ -42,11 +42,15 @@ public class JsonDeserialiser {
         if(deserializeType.equals("login")){
             loginDeserializer(this.jObject);
         }else if (deserializeType.equals("getcontacts")) {
-            contactDeserializer(this.jObject);
+            contactDeserializer(this.jObject,0);
         }else if (deserializeType.equals("message")) {
             messageList = new ArrayList<>();
         }else if (deserializeType.equals("filterlist")) {
             userFilterDeserializer(this.jObject);
+        }else if (deserializeType.equals("getcontactrequests")) {
+            contactDeserializer(this.jObject, 1);
+        }else if (deserializeType.equals("getcontactinvites")) {
+            contactDeserializer(this.jObject, 2);
         }
     }
 
@@ -67,7 +71,7 @@ public class JsonDeserialiser {
             }
         }
 
-    private void contactDeserializer(JSONObject jobject){
+    private void contactDeserializer(JSONObject jobject ,int num){
         try {
             if(this.serverResult!=null) {
                 Contacts.contactList.clear();
@@ -75,18 +79,16 @@ public class JsonDeserialiser {
                 for (int i = 0; i < jArr.length(); i++) {
                     JSONObject obj = jArr.getJSONObject(i);
                     int contactId = Integer.parseInt(obj.getString("contact_id"));
-                    int requestNum = Integer.parseInt(obj.getString("request"));
                     String timestamp = obj.getString("timestmp");
                     String userId = obj.getString("user_id");
                     String contactName = obj.getString("name");
                     String email = obj.getString("email");
                     String username = obj.getString("username");
-                    String password = obj.getString("password");
                     String phonenumber = obj.getString("phone_number");
                     int blocked = Integer.parseInt(obj.getString("blocked"));
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
-                    IContacts contact = new Contacts(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+                    IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
                     if (contactPicture != null && (!contactPicture.equals("null"))) {
                         //make a rest call to get image?
                         Bitmap contactsBitmap;
@@ -106,8 +108,14 @@ public class JsonDeserialiser {
                                 } catch (ExecutionException f) {
                                 }
                     }
-                    Contacts.contactList.add(contact);
-                    // Bitmap profilePicture;
+                    if(num==0) {
+                        Contacts.contactList.add(contact);
+                        // Bitmap profilePicture;
+                    }else if (num ==1){
+                        Contacts.sentRequests.add(contact);
+                    }else if (num ==2){
+                        Contacts.receivedRequests.add(contact);
+                    }
                 }
                 Log.d("CALLEDSTATUS", "object size: " + Contacts.contactList.size());
 
@@ -126,32 +134,10 @@ public class JsonDeserialiser {
                 for (int i = 0; i < jArr.length(); i++) {
                     JSONObject obj = jArr.getJSONObject(i);
                     String userId = obj.getString("user_id");
-                    String contactName = obj.getString("name");
-                    String email = obj.getString("email");
-                    String username = obj.getString("username");
-                    String phonenumber = obj.getString("phone_number");
-                    int blocked = Integer.parseInt(obj.getString("blocked"));
-                    int session = Integer.parseInt(obj.getString("session"));
-                    String contactPicture = obj.getString("profile_picture");
-                    IContacts contact = new Contacts(userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
-//                    if (contactPicture != null && (!contactPicture.equals("null"))) {
-//                        //make a rest call to get image?
-//                        Bitmap contactsBitmap;
-//                                try {
-//                                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
-//                                    String type = "getIcon";
-//                                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
-//                                    contactsBitmap = backgroundasync.execute(type).get();
-//                                    if (contactsBitmap != null){
-//                                        Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
-//                                        contact.setBitmap(contactsBitmap);
-//                                    }
-//                                } catch (InterruptedException e) {
-//                                } catch (ExecutionException f) {
-//                                }
-//                    }
+                    String username1 = obj.getString("username");
+                    String name1 = obj.getString("name");
+                    IContacts contact = new Contacts(userId, username1, name1);
                     Contacts.searchList.add(contact);
-                    // Bitmap profilePicture;
                 }
                // Log.d("CALLEDSTATUS", "object size: " + Contacts.searchList.size());
 

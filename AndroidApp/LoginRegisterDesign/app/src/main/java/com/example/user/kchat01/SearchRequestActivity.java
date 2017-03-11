@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import API.IContacts;
 import IMPL.Contacts;
 import IMPL.JsonDeserialiser;
+import IMPL.MasterUser;
 
 /**
  * Created by user on 22/02/2017.
@@ -40,7 +41,7 @@ public class SearchRequestActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     SearchRequestAdapter adapter;
-    private Socket mSocket;
+    private static Socket mSocket;
 
 
     @Override
@@ -71,16 +72,24 @@ public class SearchRequestActivity extends AppCompatActivity {
             };
 
         }else if (type.equals("sendRequest")){
+            mSocket.emit("view_sent_requests",MasterUser.usersId);
+            mSocket.on("get_sent_requests",contactManagement);
+
+
+            //make a request and show
             toolbarTitle.setText("Sent Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-            // to change this list to sent requests list
-            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.contactList, 1);
+            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
 
         }else if (type.equals("receiveRequest")){
+
+            mSocket.emit("view_received_requests",MasterUser.usersId);
+            mSocket.on("get_received_requests",contactManagement2);
+            //make a request and show
             toolbarTitle.setText("Received Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             // to change this list to received requests list
-            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.contactList, 2);
+            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.receivedRequests, 2);
         }
 
         recyclerView.setAdapter(adapter);
@@ -105,7 +114,8 @@ public class SearchRequestActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                mSocket.emit("search_user_filter",query);
+                MasterUser man = new MasterUser();
+                mSocket.emit("search_user_filter",query,man.getuserId());
                 mSocket.on("search_user_received",onlineJoin);
                 adapter.getFilter().filter(query);
                 adapter.notifyDataSetChanged();
@@ -122,21 +132,100 @@ public class SearchRequestActivity extends AppCompatActivity {
                 public void run() {
                     Contacts.searchList.clear();
                     String serverresult = (String) args[0];
-                    JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult,"filterlist",SearchRequestActivity.this);
+                    if(serverresult.equals("success")){
+                        toolbarTitle.clearComposingText();
+                    }
+                    if (serverresult.equals("fail")||serverresult.equals("[]")) {
+                        Contacts.searchList.clear();
+                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                    }else {
+                        JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult, "filterlist", SearchRequestActivity.this);
+                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0) {
+                            //By clicking a card, show dialog whether sending request or not
+                            @Override
+                            public void onClick(SearchRequestViewHolder holder) {
+                                int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                                final IContacts filteredContact = Contacts.searchList.get(position);
+                                // when clicking one user, show dialog
+                                AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
+                                builder.setTitle("Send Request Confirmation");
+                                builder.setMessage("Do you send contact request to " + filteredContact.getUsername() + " ?");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // to change this to send request operation
+                                        mSocket.emit("send_contact_request",MasterUser.usersId,filteredContact.getUserId());
+                                        mSocket.on("sent_request",onlineJoin);
+                                        Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                builder.setNegativeButton("Cancel", null);
+                                alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        };
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                    }
+                }
+            });
+        }
+    };
 
-                    adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0) {
+    private Emitter.Listener contactManagement = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Contacts.sentRequests.clear();
+                    String serverresult = (String) args[0];
+                    Log.d("AAAAAA",serverresult);
+                        JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult, "getcontactrequests", SearchRequestActivity.this);
+                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                }
+            });
+        }
+    };
+
+
+    private Emitter.Listener contactManagement2 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String serverresult = (String) args[0];
+                    Log.d("BBBB",serverresult);
+                    if(serverresult.equals("success")){
+                        //toolbarTitle.clearComposingText();
+                    }
+                   else if (serverresult.equals("fail")||serverresult.equals("[]")) {
+                        Contacts.receivedRequests.clear();
+                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.receivedRequests, 0);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                    }else {
+                        Contacts.receivedRequests.clear();
+                        JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult, "getcontactinvites", SearchRequestActivity.this);
+                    adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.receivedRequests, 2){
                         //By clicking a card, show dialog whether sending request or not
                         @Override
                         public void onClick(SearchRequestViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IContacts filteredContact = Contacts.searchList.get(position);
+                            final IContacts filteredContact = Contacts.receivedRequests.get(position);
                             // when clicking one user, show dialog
                             AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
-                            builder.setTitle("Send Request Confirmation");
-                            builder.setMessage("Do you send contact request to "+filteredContact.getContactName()+" ?");
+                            builder.setTitle("Accept Contact Confirmation");
+                            builder.setMessage("Do you wish to accept this contact: " + filteredContact.getUsername() + " ?");
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // to change this to send request operation
+                                    mSocket.emit("accept_contact_request",MasterUser.usersId,filteredContact.getUserId());
+                                    mSocket.on("get_request_status_received",contactManagement2);
                                     Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -147,22 +236,9 @@ public class SearchRequestActivity extends AppCompatActivity {
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
-                }
+                }}
             });
-
         }
     };
 
-    private Emitter.Listener jsonFilter = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-                String serverresult2 = (String) args[0];
-                Log.d("FILTERLIST", serverresult2);
-
-
-//            recyclerView.setAdapter(adapter); gives the error                                                                                      android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
-//            android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
-
-        }
-    };
 }

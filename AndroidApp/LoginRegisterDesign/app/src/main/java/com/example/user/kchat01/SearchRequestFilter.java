@@ -31,7 +31,7 @@ public class SearchRequestFilter extends Filter {
             constraint = constraint.toString().toUpperCase();
             filteredContacts = new ArrayList<>();
 
-            if(!filterList.isEmpty() && filterList.get(0) instanceof IGroups) {
+            if(!filterList.isEmpty() && filterList instanceof IGroups) {
                 ArrayList<IGroups> group = this.filterList;
                 for (int i=0; i < filterList.size();i++){
                     if (group.get(i).getName().toUpperCase().startsWith((String) constraint) ) {
@@ -39,7 +39,7 @@ public class SearchRequestFilter extends Filter {
                        }
                 }
 
-            }else if(!filterList.isEmpty() && filterList.get(0) instanceof IContacts) {
+            }else if(!filterList.isEmpty() && filterList instanceof IContacts) {
                 ArrayList<IContacts> contact = this.filterList;
                 for (int i=0; i < filterList.size();i++){
                     if (contact.get(i).getContactName().toUpperCase().startsWith((String)constraint)){
