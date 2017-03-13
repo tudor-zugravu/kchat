@@ -196,8 +196,9 @@ public class ContactsActivity extends AppCompatActivity {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IContacts contact = Contacts.contactList.get(position);
                     //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
-                    Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                    contactsIntent.putExtra("type","contact");
+                    Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
+                    String type = "contact";
+                    contactsIntent.putExtra("type",type);
                     contactsIntent.putExtra("userid",contact.getUserId());
                     contactsIntent.putExtra("username",contact.getUsername());
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();

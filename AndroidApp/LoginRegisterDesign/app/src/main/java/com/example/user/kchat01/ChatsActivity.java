@@ -81,9 +81,9 @@ public class ChatsActivity extends AppCompatActivity {
         // and show chatting username on toolber
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
-        if(chatUser.equals("contact")){
-            this. contactId = intent.getStringExtra("userid");
-            this. username = intent.getStringExtra("username");
+        if(chatUser!=null&&chatUser.equals("contact")){
+            this.contactId = intent.getStringExtra("userid");
+            this.username = intent.getStringExtra("username");
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
         }
