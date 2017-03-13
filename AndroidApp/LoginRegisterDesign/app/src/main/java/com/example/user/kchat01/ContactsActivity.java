@@ -1,6 +1,7 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -27,6 +28,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -61,7 +63,6 @@ public class ContactsActivity extends AppCompatActivity {
     private BottomBar bottomBar;
     private Socket mSocket;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,9 +71,9 @@ public class ContactsActivity extends AppCompatActivity {
         MasterUser man = new MasterUser();
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("Connected",onlineJoin);
+            mSocket.on("users_chat_status",onlineJoin);
             mSocket.connect();
-            mSocket.emit("user_connect", man.getUsername());
+            mSocket.emit("join_own_chat", man.getUsername());
 
         }catch (URISyntaxException e){
         }
@@ -156,7 +157,7 @@ public class ContactsActivity extends AppCompatActivity {
                     IGroups contact = Groups.getObjectList().get(position);
                     //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                     Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                    contactsIntent.putExtra("username", contact.getName());
+                    contactsIntent.putExtra("contactObj", contact.getName());
                     startActivity(contactsIntent);
                 }
             };
@@ -193,10 +194,16 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                    IGroups contact = Groups.getObjectList().get(position);
+                    IContacts contact = Contacts.contactList.get(position);
                     //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                     Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                    contactsIntent.putExtra("username", contact.getName());
+                    contactsIntent.putExtra("type","contact");
+                    contactsIntent.putExtra("userid",contact.getUserId());
+                    contactsIntent.putExtra("username",contact.getUsername());
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
+                    byte [] byteArray = stream.toByteArray();
+                    contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
                 }
             };
@@ -394,7 +401,7 @@ public class ContactsActivity extends AppCompatActivity {
         @Override
         public void call(Object... args) {
             String serverresult = (String) args[0];
-            Log.d("CONNECTED", serverresult.toString());
+            Log.d("PRIVATECHAT", serverresult.toString());
         }
     };
 

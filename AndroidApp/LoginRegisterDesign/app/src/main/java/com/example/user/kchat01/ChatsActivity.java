@@ -1,6 +1,8 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +47,10 @@ public class ChatsActivity extends AppCompatActivity {
     private ChatsAdapter adapter;
     private IMessage messageObject; // This is the object that represents each chat
     private ArrayList<IMessage> dataList;
-    private String message;
+    private String username,message;
     private Socket mSocket;
+    private Bitmap contactsBitmap;
+    String contactId;
 
     public void onMessageReceived(IMessage message){
 
@@ -59,14 +63,13 @@ public class ChatsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-            mSocket.on("chat message", stringReply);
+            mSocket.on("message_receival", stringReply);
             mSocket.on("private_chat", messageRetreiver);
             mSocket.on("updaterooms", jsonReply);
             mSocket.emit("adduser", "Tudor");
 
         } catch (URISyntaxException e){
         }
-
 
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -77,7 +80,13 @@ public class ChatsActivity extends AppCompatActivity {
         // For that, receive intent with username from ContactsActivity
         // and show chatting username on toolber
         Intent intent = getIntent();
-        String chatUser = intent.getStringExtra("username");
+        String chatUser = intent.getStringExtra("type");
+        if(chatUser.equals("contact")){
+            this. contactId = intent.getStringExtra("userid");
+            this. username = intent.getStringExtra("username");
+            byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
+            this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+        }
         textViewChatUser.setText(chatUser);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
@@ -113,7 +122,8 @@ public class ChatsActivity extends AppCompatActivity {
                     //and i will send it to the server using the socket.io
                     if(mSocket.connected()){
                         Date date = new Date();
-                        IMessage messageobj = new Message(MasterUser.usersId,0,MasterUser.usersId,message,date);
+
+                        IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(contactId),message,date);
                         JsonSerialiser messageSerialize = new JsonSerialiser();
                        String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
                         mSocket.emit("private_chat", messageResult);
