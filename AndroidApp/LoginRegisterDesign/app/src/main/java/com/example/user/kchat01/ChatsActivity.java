@@ -82,6 +82,7 @@ public class ChatsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
+            Log.d("PRIVATECHAT","reached here");
             this.contactId = intent.getStringExtra("userid");
             this.username = intent.getStringExtra("username");
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
@@ -188,8 +189,10 @@ public class ChatsActivity extends AppCompatActivity {
     private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            IMessage message = (IMessage) args[0];
-            Log.d("PRIVATECHAT", message.getMessage() + "  " + message.getSenderId());
+         //   IMessage message = (IMessage) args[0];
+            //   IMessage message = (IMessage) args[0];
+            String receivedMessage = (String) args [0];
+            Log.d("PRIVATECHAT", receivedMessage);
         }
     };
 

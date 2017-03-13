@@ -193,6 +193,7 @@ public class ContactsActivity extends AppCompatActivity {
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 @Override
                 public void onClick(ContactsViewHolder holder) {
+                    Log.d("PRIVATECHAT","clicked on the contact");
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IContacts contact = Contacts.contactList.get(position);
                     //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
@@ -329,8 +330,6 @@ public class ContactsActivity extends AppCompatActivity {
                 }catch(ExecutionException f){
                 }
 
-                    Log.d("CALLEDSTATUS","The size of the Arraylist for contacts is part2  :" + Contacts.getContactList().size());
-
                     adapter.notifyDataSetChanged();
                     adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1){// move to profile
                         //By clicking a card, the username is got
@@ -339,9 +338,16 @@ public class ContactsActivity extends AppCompatActivity {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.getContactList().get(position);
                             // move to Chat
-                            Intent chatsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
-                            chatsIntent.putExtra("username", contact.getContactName());
-                            startActivity(chatsIntent);
+                            Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
+                            String type = "contact";
+                            contactsIntent.putExtra("type",type);
+                            contactsIntent.putExtra("userid",contact.getUserId());
+                            contactsIntent.putExtra("username",contact.getUsername());
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
+                            byte [] byteArray = stream.toByteArray();
+                            contactsIntent.putExtra("contactbitmap",byteArray);
+                            startActivity(contactsIntent);
                         }
                         @Override
                         public void onLongClick(ContactsViewHolder holder){
