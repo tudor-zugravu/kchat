@@ -13,7 +13,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var contacts: [FilteredContactModel] = []
+    var contacts: [Any] = []
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -29,7 +29,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: "2", completionHandler: { (userList) -> Void in
+        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: UserDefaults.standard.value(forKey: "userId")! as! String, completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.contactsDownloaded(userList!)
             })
