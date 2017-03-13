@@ -1,11 +1,13 @@
 package IMPL;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.user.kchat01.ContactsActivity;
+import com.example.user.kchat01.DataManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +31,13 @@ public class JsonDeserialiser {
     JSONObject jObject;
     String serverResult;
     Context context;
+    DataManager dm;
 
     public JsonDeserialiser(String serverResult, String deserializeType,Context context) {
         this.serverResult = serverResult;
         this.context = context;
+        dm = new DataManager(this.context);
+
         try {
             this.jObject = new JSONObject(serverResult);
         } catch (final JSONException e) {
@@ -88,6 +93,7 @@ public class JsonDeserialiser {
                     int blocked = Integer.parseInt(obj.getString("blocked"));
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
+                    dm.insert(contactName,phonenumber);
                     IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
                     if (contactPicture != null && (!contactPicture.equals("null"))) {
                         //make a rest call to get image?
@@ -118,14 +124,20 @@ public class JsonDeserialiser {
                     }
                 }
                 Log.d("CALLEDSTATUS", "object size: " + Contacts.contactList.size());
-
+                showData(dm.selectAll());
             }
         }catch (JSONException e){
             e.printStackTrace();
         }
 
     }
-
+    public void showData(Cursor c){
+        while (c.moveToNext()){
+            Log.i(c.getString(1), c.getString(2));
+            Log.d("DATABASERESULT",c.getString(1));
+            Log.d("DATABASERESULT",c.getString(2));
+        }
+    }
 
      private void userFilterDeserializer(JSONObject jobject){
         try {
@@ -139,8 +151,6 @@ public class JsonDeserialiser {
                     IContacts contact = new Contacts(userId, username1, name1);
                     Contacts.searchList.add(contact);
                 }
-               // Log.d("CALLEDSTATUS", "object size: " + Contacts.searchList.size());
-
             }
         }catch (JSONException e){
             e.printStackTrace();

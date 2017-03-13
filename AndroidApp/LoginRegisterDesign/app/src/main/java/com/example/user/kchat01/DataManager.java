@@ -18,15 +18,12 @@ public class DataManager {
     private static final String DB_NAME = "address_book_db";
     private static final int DB_VERSION = 1;
     private static final String TABLE_N_AND_A = "names_and_addresses";
-
     // This is the actual database
     private SQLiteDatabase db;
 
     public DataManager(Context context) {
-// Create an instance of our internal
 //CustomSQLiteOpenHelper class
         CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
-// Get a writable database
         db = helper.getWritableDatabase();
     }
 
@@ -95,10 +92,8 @@ public class DataManager {
             db.execSQL(newTableQueryString);
         }
         // This method only runs when we increment DB_VERSION
-// We will look at this in chapter 26
         @Override
-        public void onUpgrade(SQLiteDatabase db,
-                              int oldVersion, int newVersion) {
+        public void onUpgrade(SQLiteDatabase db,int oldVersion, int newVersion) {
         }
     }
 }
