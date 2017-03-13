@@ -73,7 +73,7 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.on("users_chat_status",onlineJoin);
             mSocket.connect();
-            mSocket.emit("join_own_chat", man.getUsername());
+            mSocket.emit("join_own_chat", man.getuserId());
 
         }catch (URISyntaxException e){
         }
