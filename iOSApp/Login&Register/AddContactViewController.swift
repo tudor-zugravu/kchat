@@ -47,7 +47,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
             if contacts.count == 0 {
                 cell.configureCell("", email: "", profilePic: "")
             } else {
-                let item: FilteredContactModel = contacts[indexPath.row]
+                let item: FilteredContactModel = contacts[indexPath.row] as! FilteredContactModel
                 cell.configureCell(item.username!, email: item.name!, profilePic: "")
             }
             return cell

@@ -22,6 +22,17 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         contactsModel.downloadContacts()
     }
     
+    @IBAction func addNewFriend(_ sender: Any) {
+        
+    }
+    
+    @IBAction func sendFriendList(_ sender: Any) {
+    }
+    
+    @IBAction func recivedFriendList(_ sender: Any) {
+    }
+ 
+    
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
         return contacts.count
