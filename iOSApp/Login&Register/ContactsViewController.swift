@@ -8,9 +8,10 @@
 
 import UIKit
 
-class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol {
+class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, ContactsModelProtocol {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var contacts: [ContactModel] = []
     let contactsModel = ContactsModel()
@@ -19,7 +20,19 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.delegate = self
         tableView.dataSource = self
         contactsModel.delegate = self
+        searchBar.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         contactsModel.downloadContacts()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.contacts.filter { (contact) -> Bool in
+            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
+            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
+        }
+        self.tableView.reloadData()
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
