@@ -30,9 +30,6 @@ public class Contacts implements IContacts {
     public static ArrayList<IContacts> receivedRequests = new ArrayList<>();
     public static ArrayList<IContacts> searchList = new ArrayList<>();
 
-
-
-
     public static ArrayList<IContacts> getContactList() {
         return contactList;
     }
