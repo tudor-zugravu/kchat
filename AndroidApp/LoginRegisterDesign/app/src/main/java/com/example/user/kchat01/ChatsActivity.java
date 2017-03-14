@@ -66,6 +66,7 @@ public class ChatsActivity extends AppCompatActivity {
            // mSocket.on("message_receival", stringReply); ///
             mSocket.on("private_chat", messageRetreiver);
             //mSocket.on("updaterooms", jsonReply); // -<
+            mSocket.on("updatechat", stringReply); // -<
 
             //  mSocket.emit("adduser", "Tudor");
 

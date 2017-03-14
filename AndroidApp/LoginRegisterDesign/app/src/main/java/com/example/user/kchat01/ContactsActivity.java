@@ -75,8 +75,8 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket.on("roomcreated",stringReply);
             mSocket.connect();
             mSocket.emit("join_own_chat", man.getuserId());
-            mSocket.emit("createroom",MasterUser.usersId);
-            mSocket.emit("adduser",MasterUser.usersId);
+            mSocket.emit("createroom",MasterUser.usersId,MasterUser.usersId);
+            mSocket.emit("adduser",MasterUser.usersId,MasterUser.usersId);
 //
 
         }catch (URISyntaxException e){
@@ -211,7 +211,8 @@ public class ContactsActivity extends AppCompatActivity {
                     byte [] byteArray = stream.toByteArray();
                     contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
-                    mSocket.emit("adduser", Contacts.contactList.get(position).getContactId(), MasterUser.usersId);
+                    mSocket.emit("createroom", Contacts.contactList.get(position).getUserId(),MasterUser.usersId);
+                    mSocket.emit("adduser", Contacts.contactList.get(position).getUserId(), MasterUser.usersId);
 
                 }
             };
@@ -361,6 +362,7 @@ public class ContactsActivity extends AppCompatActivity {
                             Log.d("PRIVATECHAT","clicked on this id : " + position);
 
                             Log.d("PRIVATECHAT","clicked on this id : " +contact.getUserId());
+                            mSocket.emit("createroom", Contacts.contactList.get(position).getUserId(), MasterUser.usersId);
                             mSocket.emit("adduser", Contacts.contactList.get(position).getUserId(), MasterUser.usersId);
                             startActivity(contactsIntent);
                         }
