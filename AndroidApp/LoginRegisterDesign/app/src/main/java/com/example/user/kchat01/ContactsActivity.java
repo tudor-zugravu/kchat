@@ -77,7 +77,7 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket.emit("join_own_chat", man.getuserId());
             mSocket.emit("createroom",MasterUser.usersId);
             mSocket.emit("adduser",MasterUser.usersId);
-
+//
 
         }catch (URISyntaxException e){
         }
