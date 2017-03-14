@@ -106,6 +106,21 @@ public class JsonDeserialiser {
                                     if (contactsBitmap != null){
                                         Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
                                         contact.setBitmap(contactsBitmap);
+                                        /*
+ byte[] image = cursor.getBlob(1);
+
+                                        // convert from bitmap to byte array
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+                                         */
                                      //   DatabaseAdaptor adaptor = new DatabaseAdaptor(context);
                                    //     adaptor.addToContactsTable(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture,contactsBitmap);
                                     //    Log.d("DATABASETEST", adaptor.getContact(contactId).getContactName());
