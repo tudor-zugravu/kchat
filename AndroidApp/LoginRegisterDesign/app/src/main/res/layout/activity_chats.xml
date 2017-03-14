@@ -16,77 +16,47 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/textViewChatUser" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/textViewChatUser" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
     <RelativeLayout
-        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/containerChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="66dp">
-
-        <LinearLayout
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginTop="70dp">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:focusable="false"
-                app:defaultQueryHint="Search"/>
-            <RelativeLayout
-                android:id="@+id/containerChat"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
-
-            <EditText
-                android:id="@+id/editTextMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@color/windowBackground"
-                android:layout_toLeftOf="@+id/btn_sendMessage"
-                android:paddingLeft="10dp"
-                android:hint="Input Message"
-                android:layout_below="@+id/scrollbar" />
-
-            <Button
-                android:id="@+id/btn_sendMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:background="@color/colorPrimary"
-                android:text="Send"
-                android:textColor="@color/textColorPrimary"
-                android:minHeight="45dp" />
-
-            <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/scrollbar"
-                android:layout_above="@+id/btn_sendMessage">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/searchView"
-                    class="android.support.v7.widget.RecyclerView"/>
-            </android.support.v4.widget.NestedScrollView>
-            </RelativeLayout>
-        </LinearLayout>
- </RelativeLayout>
+            android:layout_above="@+id/editTextMessage"
+            class="android.support.v7.widget.RecyclerView"/>
+        <EditText
+            android:id="@+id/editTextMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/windowBackground"
+            android:layout_toStartOf="@+id/btn_sendMessage"
+            android:paddingStart="10dp"
+            android:minHeight="45dp"
+            android:layout_alignBaseline="@+id/btn_sendMessage"
+            android:hint="Input Message" />
+        <Button
+            android:id="@+id/btn_sendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/colorPrimary"
+            android:text="Send"
+            android:textColor="@color/textColorPrimary"
+            android:minHeight="45dp" />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

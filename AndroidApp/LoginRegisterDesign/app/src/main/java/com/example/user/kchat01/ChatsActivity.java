@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +42,7 @@ public class ChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textViewChatUser;
     private RecyclerView recyclerView;
-    private SearchView searchView;
+   // private SearchView searchView;
     private ChatsAdapter adapter;
     private IMessage messageObject; // This is the object that represents each chat
     private ArrayList<IMessage> dataList;
@@ -153,7 +152,8 @@ public class ChatsActivity extends AppCompatActivity {
         /*
         From here, search function is performed
          */
-        searchView = (SearchView) findViewById(R.id.searchView);
+        /*
+        searchView = (SearchView) findViewById(searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -166,6 +166,7 @@ public class ChatsActivity extends AppCompatActivity {
                 return false;
             }
         });
+        */
     }
 
     private Emitter.Listener messageRetreiver = new Emitter.Listener() {
