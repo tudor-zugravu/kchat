@@ -29,7 +29,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: "2", completionHandler: { (userList) -> Void in
+        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.contactsDownloaded(userList!)
             })
@@ -60,15 +60,13 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print()
-        
-//        // Alert for success and view change on dismiss
-//        let myAlert = UIAlertController(title:"Send Request Confirmation", message:"Add \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
-//        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.addContact(receiver: self.contacts[indexPath.row].userId!)});
-//        myAlert.addAction(yesAction);
-//        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
-//        myAlert.addAction(noAction);
-//        self.present(myAlert, animated:true, completion:nil);
+        // Alert for success and view change on dismiss
+        let myAlert = UIAlertController(title:"Send Request Confirmation", message:"Add \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
+        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.addContact(receiver: self.contacts[indexPath.row].userId!)});
+        myAlert.addAction(yesAction);
+        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+        myAlert.addAction(noAction);
+        self.present(myAlert, animated:true, completion:nil);
     }
     
     // The function called at the arival of the response from the server

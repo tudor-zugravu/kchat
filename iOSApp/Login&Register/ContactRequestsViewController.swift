@@ -1,25 +1,47 @@
 //
-//  ContactsViewController.swift
+//  ContactRequestsViewController.swift
 //  Login&Register
 //
-//  Created by Tudor Zugravu on 2/21/17.
+//  Created by Tudor Zugravu on 3/13/17.
 //  Copyright © 2017 骧小爷. All rights reserved.
 //
 
 import UIKit
 
-class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol {
+class ContactRequestsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var contacts: [ContactModel] = []
-    let contactsModel = ContactsModel()
+    var passedValue: Bool?
     
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
-        contactsModel.delegate = self
-        contactsModel.downloadContacts()
+        searchBar.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if let value = passedValue {
+            print(value)
+        } else {
+            print("nope...")
+        }
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {        
+//        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
+//            DispatchQueue.main.async(execute: { () -> Void in
+//                self.contactsDownloaded(userList!)
+//            })
+//        })
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -34,7 +56,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 cell.configureCell("", email: "", profilePic: "")
             } else {
                 let item: ContactModel = contacts[indexPath.row]
-                cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
+                cell.configureCell(item.username!, email: item.name!, profilePic: item.profilePicture!)
             }
             return cell
         } else {
@@ -43,7 +65,18 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        print("selected")
+        
+        //        // Alert for success and view change on dismiss
+        //        let myAlert = UIAlertController(title:"Send Request Confirmation", message:"Add \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
+        //        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.addContact(receiver: self.contacts[indexPath.row].userId!)});
+        //        myAlert.addAction(yesAction);
+        //        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+        //        myAlert.addAction(noAction);
+        //        self.present(myAlert, animated:true, completion:nil);
     }
     
     // The function called at the arival of the response from the server
@@ -51,7 +84,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         var contactsAux: [ContactModel] = []
         var item:ContactModel;
-
+        
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
             
@@ -97,22 +130,29 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 contactsAux.append(item)
             }
         }
-        contacts = contactsAux
-//        UserDefaults.standard.set(contactsAux, forKey:"contacts");
-        
-        
         self.tableView.reloadData()
     }
     
-    @IBAction func sentRequestsPressed(_ sender: Any) {
-        let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
-        contactRequestsViewController?.passedValue = true
-        self.navigationController?.pushViewController(contactRequestsViewController!, animated: true)
+//    func addContact(receiver: Int) {
+//        
+//        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(receiver), completionHandler: { (response) -> Void in
+//            if(response == true) {
+//                self.contacts = []
+//                self.tableView.reloadData()
+//                self.searchBar.text = ""
+//            } else {
+//                print("error")
+//            }
+//        })
+//    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
     
-    @IBAction func receivedRequestsPressed(_ sender: Any) {
-        let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
-        contactRequestsViewController?.passedValue = false
-        self.navigationController?.pushViewController(contactRequestsViewController!, animated: true)
+    @IBAction func backButtonPressed(_ sender: Any) {
+        let _ = navigationController?.popViewController(animated: true)
     }
+  
 }
