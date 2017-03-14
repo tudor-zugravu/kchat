@@ -38,6 +38,7 @@
 		3816822E1E5CB3F000B637E8 /* ContactsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3816822D1E5CB3F000B637E8 /* ContactsModel.swift */; };
 		3847247B1E5C903F00611EA2 /* ContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3847247A1E5C903F00611EA2 /* ContactsTableViewCell.swift */; };
 		3847247F1E5C915D00611EA2 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3847247E1E5C915D00611EA2 /* ContactsViewController.swift */; };
+		384D31DB1E7739F3003DA0B1 /* ContactRequestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31DA1E7739F3003DA0B1 /* ContactRequestsViewController.swift */; };
 		388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */; };
 		38938EE61E54A775009F1973 /* LogInModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38938EE51E54A775009F1973 /* LogInModel.swift */; };
 		389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7AC1E59D4BE00B5FDEE /* Utils.swift */; };
@@ -110,6 +111,7 @@
 		3816822D1E5CB3F000B637E8 /* ContactsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsModel.swift; sourceTree = "<group>"; };
 		3847247A1E5C903F00611EA2 /* ContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsTableViewCell.swift; sourceTree = "<group>"; };
 		3847247E1E5C915D00611EA2 /* ContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
+		384D31DA1E7739F3003DA0B1 /* ContactRequestsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactRequestsViewController.swift; sourceTree = "<group>"; };
 		388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterModel.swift; sourceTree = "<group>"; };
 		38938EE51E54A775009F1973 /* LogInModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInModel.swift; sourceTree = "<group>"; };
 		389CB7AC1E59D4BE00B5FDEE /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				389CB7AE1E59FA4B00B5FDEE /* ChangePasswordViewController.swift */,
 				3847247E1E5C915D00611EA2 /* ContactsViewController.swift */,
 				3810AC021E742DD2005A98EB /* AddContactViewController.swift */,
+				384D31DA1E7739F3003DA0B1 /* ContactRequestsViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -466,6 +469,7 @@
 				3810AC211E743CBF005A98EB /* SocketAckEmitter.swift in Sources */,
 				389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */,
 				3810AC371E743CBF005A98EB /* SSLSecurity.swift in Sources */,
+				384D31DB1E7739F3003DA0B1 /* ContactRequestsViewController.swift in Sources */,
 				3810AC331E743CBF005A98EB /* SocketPacket.swift in Sources */,
 				380C173C1E64C08C00813821 /* ContactModel.swift in Sources */,
 				3810AC2A1E743CBF005A98EB /* SocketEngineWebsocket.swift in Sources */,

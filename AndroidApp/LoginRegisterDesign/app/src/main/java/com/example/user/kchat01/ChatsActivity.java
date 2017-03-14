@@ -63,9 +63,9 @@ public class ChatsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-            mSocket.on("message_receival", stringReply);
+            mSocket.on("message_receival", stringReply); ///
             mSocket.on("private_chat", messageRetreiver);
-            mSocket.on("updaterooms", jsonReply);
+            mSocket.on("updaterooms", jsonReply); // -<
             mSocket.emit("adduser", "Tudor");
 
         } catch (URISyntaxException e){
@@ -145,11 +145,9 @@ public class ChatsActivity extends AppCompatActivity {
                 }
             }
         });
-
         /*
         From here, search function is performed
          */
-
         searchView = (SearchView) findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -195,8 +193,6 @@ public class ChatsActivity extends AppCompatActivity {
             Log.d("PRIVATECHAT", receivedMessage);
         }
     };
-
-
 
     private Emitter.Listener jsonReply = new Emitter.Listener() {
         @Override
