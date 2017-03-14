@@ -60,7 +60,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        // Alert for success and view change on dismiss
+        // Popup for validation with sending a contact request on accept
         let myAlert = UIAlertController(title:"Send Request Confirmation", message:"Add \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
         let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.addContact(receiver: self.contacts[indexPath.row].userId!)});
         myAlert.addAction(yesAction);

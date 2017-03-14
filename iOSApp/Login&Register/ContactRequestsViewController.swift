@@ -12,6 +12,7 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var titleLabel: UILabel!
     
     var contacts: [ContactModel] = []
     var passedValue: Bool?
@@ -25,23 +26,27 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
-            print(value)
-        } else {
-            print("nope...")
+            if value == true {
+                titleLabel.text = "Sent Requests"
+                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.contactsDownloaded(userList!)
+                    })
+                })
+            } else {
+                titleLabel.text = "Received Requests"
+                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.contactsDownloaded(userList!)
+                    })
+                })
+            }
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {        
-//        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
-//            DispatchQueue.main.async(execute: { () -> Void in
-//                self.contactsDownloaded(userList!)
-//            })
-//        })
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -68,15 +73,25 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print("selected")
-        
-        //        // Alert for success and view change on dismiss
-        //        let myAlert = UIAlertController(title:"Send Request Confirmation", message:"Add \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
-        //        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.addContact(receiver: self.contacts[indexPath.row].userId!)});
-        //        myAlert.addAction(yesAction);
-        //        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
-        //        myAlert.addAction(noAction);
-        //        self.present(myAlert, animated:true, completion:nil);
+        if let value = passedValue {
+            if value == true {
+                // Popup for validation with accepting a contact request on accept
+                let myAlert = UIAlertController(title:"Delete Request Confirmation", message:"Delete the request sent to \(contacts[indexPath.row].name!)?", preferredStyle:.alert);
+                let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.deleteRequest(receiver: indexPath.row)});
+                myAlert.addAction(yesAction);
+                let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+                myAlert.addAction(noAction);
+                self.present(myAlert, animated:true, completion:nil);
+            } else {
+                // Popup for validation with accepting a contact request on accept
+                let myAlert = UIAlertController(title:"Accept Request Confirmation", message:"Accept \(contacts[indexPath.row].name!) as a contact?", preferredStyle:.alert);
+                let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.acceptContact(receiver: indexPath.row)});
+                myAlert.addAction(yesAction);
+                let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+                myAlert.addAction(noAction);
+                self.present(myAlert, animated:true, completion:nil);
+            }
+        }
     }
     
     // The function called at the arival of the response from the server
@@ -130,21 +145,34 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
                 contactsAux.append(item)
             }
         }
+        contacts = contactsAux
+        
         self.tableView.reloadData()
     }
     
-//    func addContact(receiver: Int) {
-//        
-//        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(receiver), completionHandler: { (response) -> Void in
-//            if(response == true) {
-//                self.contacts = []
-//                self.tableView.reloadData()
-//                self.searchBar.text = ""
-//            } else {
-//                print("error")
-//            }
-//        })
-//    }
+    func deleteRequest(receiver: Int) {
+        
+        SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), completionHandler: { (response) -> Void in
+            if(response == true) {
+                self.contacts.remove(at: receiver)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+    }
+    
+    func acceptContact(receiver: Int) {
+        
+        SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), completionHandler: { (response) -> Void in
+            if(response == true) {
+                self.contacts.remove(at: receiver)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+    }
     
     func dismissKeyboard() {
         //Causes the view (or one of its embedded text fields) to resign the first responder status.
