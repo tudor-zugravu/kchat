@@ -16,21 +16,11 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var phoneNoLabel: UILabel!
     
-    @IBOutlet weak var dropDownMenu: DropMenuButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //drop-down menu initinal
-        dropDownMenu.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
-            print("Edit profile")
-        }), ({ () -> (Void) in
-            let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
-            self.present(nextView, animated: true, completion: nil)
-        }), ({ () -> (Void) in
-            print("Change Profile image")
-        }),({ () -> (Void) in
-            self.logOut(Any.self)
-        })])
+
+        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,7 +39,7 @@ class ProfileViewController: UIViewController {
         
     }
 
- func logOut(_ sender: Any) {
+    @IBAction func logOut(_ sender: Any) {
         
         // Delete profile picture
         do {
