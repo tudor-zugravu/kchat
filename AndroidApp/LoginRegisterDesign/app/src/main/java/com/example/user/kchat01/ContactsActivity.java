@@ -72,8 +72,11 @@ public class ContactsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.on("users_chat_status",onlineJoin);
+            mSocket.on("roomcreated",stringReply);
             mSocket.connect();
             mSocket.emit("join_own_chat", man.getuserId());
+            mSocket.emit("createroom",MasterUser.usersId);
+
 
         }catch (URISyntaxException e){
         }
@@ -207,6 +210,8 @@ public class ContactsActivity extends AppCompatActivity {
                     byte [] byteArray = stream.toByteArray();
                     contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
+                    mSocket.emit("adduser", Contacts.contactList.get(position).getContactId(), MasterUser.usersId);
+
                 }
             };
             adapter.notifyDataSetChanged();
@@ -337,6 +342,8 @@ public class ContactsActivity extends AppCompatActivity {
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.getContactList().get(position);
+                            Log.d("PRIVATECHAT","contact id part 1 is : : " + contact.getContactId());
+
                             // move to Chat
                             Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
                             String type = "contact";
@@ -347,6 +354,13 @@ public class ContactsActivity extends AppCompatActivity {
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                             byte [] byteArray = stream.toByteArray();
                             contactsIntent.putExtra("contactbitmap",byteArray);
+                            for(int i=0; i<Contacts.getContactList().size(); i++){
+                                Log.d("PRIVATECHAT","list id currently is " + Contacts.getContactList().get(i).getUserId());
+                            }
+                            Log.d("PRIVATECHAT","clicked on this id : " + position);
+
+                            Log.d("PRIVATECHAT","clicked on this id : " +contact.getUserId());
+                            mSocket.emit("adduser", Contacts.contactList.get(position).getUserId(), MasterUser.usersId);
                             startActivity(contactsIntent);
                         }
                         @Override
@@ -433,6 +447,16 @@ public class ContactsActivity extends AppCompatActivity {
 
         return true;
     }
+
+    private Emitter.Listener stringReply = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            //   IMessage message = (IMessage) args[0];
+            //   IMessage message = (IMessage) args[0];
+            String receivedMessage = (String) args [0];
+            Log.d("PRIVATECHAT", receivedMessage);
+        }
+    };
 
 
 }

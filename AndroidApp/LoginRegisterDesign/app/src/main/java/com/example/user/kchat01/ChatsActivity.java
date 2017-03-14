@@ -63,10 +63,12 @@ public class ChatsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-            mSocket.on("message_receival", stringReply); ///
+           // mSocket.on("message_receival", stringReply); ///
             mSocket.on("private_chat", messageRetreiver);
-            mSocket.on("updaterooms", jsonReply); // -<
-            mSocket.emit("adduser", "Tudor");
+            //mSocket.on("updaterooms", jsonReply); // -<
+            mSocket.on("updatechat",stringReply);
+
+            //  mSocket.emit("adduser", "Tudor");
 
         } catch (URISyntaxException e){
         }
@@ -127,7 +129,10 @@ public class ChatsActivity extends AppCompatActivity {
                         IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(contactId),message,date);
                         JsonSerialiser messageSerialize = new JsonSerialiser();
                        String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
-                        mSocket.emit("private_chat", messageResult);
+                        //mSocket.emit("private_chat", messageResult);
+                        Log.d("PRIVATECHAT", "Reached here:" + contactId);
+
+                        mSocket.emit("sendchat",message);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
                     }

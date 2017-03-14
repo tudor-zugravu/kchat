@@ -3,6 +3,7 @@ package IMPL;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -93,6 +95,7 @@ public class JsonDeserialiser {
                     int blocked = Integer.parseInt(obj.getString("blocked"));
                     int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
+                    String contactbiography = obj.getString("biography");
                     dm.insert(contactName,phonenumber);
                     IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
                     if (contactPicture != null && (!contactPicture.equals("null"))) {
@@ -107,21 +110,11 @@ public class JsonDeserialiser {
                                         Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
                                         contact.setBitmap(contactsBitmap);
                                         /*
- byte[] image = cursor.getBlob(1);
+                                        byte[] image = cursor.getBlob(1);
 
-                                        // convert from bitmap to byte array
-    public static byte[] getBytes(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
-    }
-
-    // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
-    }
                                          */
-                                     //   DatabaseAdaptor adaptor = new DatabaseAdaptor(context);
+                                        byte [] image = getBytes(contactsBitmap);
+                                     //   dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,image);
                                    //     adaptor.addToContactsTable(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture,contactsBitmap);
                                     //    Log.d("DATABASETEST", adaptor.getContact(contactId).getContactName());
                                     }
@@ -173,7 +166,21 @@ public class JsonDeserialiser {
 
     }
 
+
+    // convert from bitmap to byte array
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
 }
+
+
 
 //
 //    Bundle bundle = getBundleFromIntentOrWhaterver();
