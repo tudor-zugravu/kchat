@@ -9,14 +9,6 @@
         android:layout_alignParentRight="true"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewTime"
-            android:layout_width="wrap_content"
-            android:layout_height="30sp"
-            android:layout_gravity="right"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"/>
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bubble2"
                 android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/textViewMessage"
@@ -51,6 +44,13 @@
 
 
         </RelativeLayout>
-
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="30sp"
+            android:layout_gravity="right"
+            android:paddingRight="10dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"/>
     </LinearLayout>
 </RelativeLayout>

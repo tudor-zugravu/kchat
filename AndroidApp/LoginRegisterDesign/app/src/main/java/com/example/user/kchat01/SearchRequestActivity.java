@@ -157,6 +157,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                                         // to change this to send request operation
                                         mSocket.emit("send_contact_request",MasterUser.usersId,filteredContact.getUserId());
                                         mSocket.on("sent_request",onlineJoin);
+                                        searchView.setQuery(null,false);
                                         Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -234,7 +235,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                             alertDialog.show();
                         }
                     };
-                    adapter.notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
                 }}
             });
