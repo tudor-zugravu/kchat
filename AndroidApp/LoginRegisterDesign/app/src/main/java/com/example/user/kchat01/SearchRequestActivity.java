@@ -72,8 +72,8 @@ public class SearchRequestActivity extends AppCompatActivity {
             };
 
         }else if (type.equals("sendRequest")){
-            mSocket.emit("view_sent_requests",MasterUser.usersId);
-            mSocket.on("get_sent_requests",contactManagement);
+            mSocket.emit("sent_contact_requests",MasterUser.usersId);
+            mSocket.on("sent_requests",contactManagement);
 
 
             //make a request and show
@@ -83,8 +83,8 @@ public class SearchRequestActivity extends AppCompatActivity {
 
         }else if (type.equals("receiveRequest")){
 
-            mSocket.emit("view_received_requests",MasterUser.usersId);
-            mSocket.on("get_received_requests",contactManagement2);
+            mSocket.emit("received_contact_requests",MasterUser.usersId);
+            mSocket.on("received_requests",contactManagement2);
             //make a request and show
             toolbarTitle.setText("Received Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
@@ -225,7 +225,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // to change this to send request operation
                                     mSocket.emit("accept_contact_request",MasterUser.usersId,filteredContact.getUserId());
-                                    mSocket.on("get_request_status_received",contactManagement2);
+                                    mSocket.on("request_accepted",contactManagement2);
                                     Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
                                 }
                             });

@@ -57,6 +57,10 @@
 		59334E571E492C8700E91DF3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */; };
 		59334E621E492C8700E91DF3 /* Login_RegisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E611E492C8700E91DF3 /* Login_RegisterTests.swift */; };
 		59334E6D1E492C8700E91DF3 /* Login_RegisterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */; };
+		597428141E7814B900C30980 /* DropMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597428131E7814B900C30980 /* DropMenuButton.swift */; };
+		597428161E78388200C30980 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597428151E78388200C30980 /* GroupViewController.swift */; };
+		597428181E783AA700C30980 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597428171E783AA700C30980 /* NewGroupViewController.swift */; };
+		5974281A1E783D0600C30980 /* GroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597428191E783D0600C30980 /* GroupModel.swift */; };
 		59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B18ED31E54A9360000642E /* ProfileViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -134,6 +138,10 @@
 		59334E681E492C8700E91DF3 /* Login&RegisterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Login&RegisterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login_RegisterUITests.swift; sourceTree = "<group>"; };
 		59334E6E1E492C8700E91DF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		597428131E7814B900C30980 /* DropMenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropMenuButton.swift; sourceTree = "<group>"; };
+		597428151E78388200C30980 /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
+		597428171E783AA700C30980 /* NewGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
+		597428191E783D0600C30980 /* GroupModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupModel.swift; sourceTree = "<group>"; };
 		59B18ED31E54A9360000642E /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -205,6 +213,7 @@
 		38938EE31E548EC7009F1973 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				597428191E783D0600C30980 /* GroupModel.swift */,
 				38938EE51E54A775009F1973 /* LogInModel.swift */,
 				388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */,
 				389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */,
@@ -219,6 +228,8 @@
 		38938EE41E548ECD009F1973 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				597428151E78388200C30980 /* GroupViewController.swift */,
+				597428171E783AA700C30980 /* NewGroupViewController.swift */,
 				5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */,
 				59334E4E1E492C8700E91DF3 /* InitialViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
@@ -238,6 +249,7 @@
 			children = (
 				3810AC081E743CBF005A98EB /* Source */,
 				389CB7AC1E59D4BE00B5FDEE /* Utils.swift */,
+				597428131E7814B900C30980 /* DropMenuButton.swift */,
 				3810AC391E743CF2005A98EB /* SocketIOManager.swift */,
 			);
 			name = Utils;
@@ -442,6 +454,7 @@
 				3810AC351E743CBF005A98EB /* SocketStringReader.swift in Sources */,
 				3810AC361E743CBF005A98EB /* SocketTypes.swift in Sources */,
 				3810AC231E743CBF005A98EB /* SocketAnyEvent.swift in Sources */,
+				597428161E78388200C30980 /* GroupViewController.swift in Sources */,
 				389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */,
 				389CB7AF1E59FA4B00B5FDEE /* ChangePasswordViewController.swift in Sources */,
 				3810AC221E743CBF005A98EB /* SocketAckManager.swift in Sources */,
@@ -455,6 +468,7 @@
 				3810AC281E743CBF005A98EB /* SocketEnginePollable.swift in Sources */,
 				3810AC2D1E743CBF005A98EB /* SocketIOClient.swift in Sources */,
 				3810AC031E742DD2005A98EB /* AddContactViewController.swift in Sources */,
+				597428181E783AA700C30980 /* NewGroupViewController.swift in Sources */,
 				3810AC251E743CBF005A98EB /* SocketEngine.swift in Sources */,
 				388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */,
 				3810AC2F1E743CBF005A98EB /* SocketIOClientOption.swift in Sources */,
@@ -470,12 +484,14 @@
 				3810AC2A1E743CBF005A98EB /* SocketEngineWebsocket.swift in Sources */,
 				3810AC3A1E743CF2005A98EB /* SocketIOManager.swift in Sources */,
 				3847247B1E5C903F00611EA2 /* ContactsTableViewCell.swift in Sources */,
+				5974281A1E783D0600C30980 /* GroupModel.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,
 				3810AC381E743CBF005A98EB /* WebSocket.swift in Sources */,
 				3810AC291E743CBF005A98EB /* SocketEngineSpec.swift in Sources */,
 				3810AC2C1E743CBF005A98EB /* SocketExtensions.swift in Sources */,
 				3810AC341E743CBF005A98EB /* SocketParsable.swift in Sources */,
 				3810AC241E743CBF005A98EB /* SocketClientManager.swift in Sources */,
+				597428141E7814B900C30980 /* DropMenuButton.swift in Sources */,
 				5926C3C01E5C974600E4DBF2 /* IndividualTableViewController.swift in Sources */,
 				59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */,
 			);
