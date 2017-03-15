@@ -52,33 +52,20 @@ public class ChatsActivity extends AppCompatActivity {
     String contactId;
 
     public void onMessageReceived(IMessage message){
-
-
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-           // mSocket.on("message_receival", stringReply); ///
-            mSocket.on("private_chat", messageRetreiver);
-            //mSocket.on("updaterooms", jsonReply); // -<
             mSocket.on("updatechat", stringReply); // -<
-
-            //  mSocket.emit("adduser", "Tudor");
-
         } catch (URISyntaxException e){
         }
-
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
-
-        // apply toolbar textview to chat user
-        // For that, receive intent with username from ContactsActivity
         // and show chatting username on toolber
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
@@ -91,19 +78,10 @@ public class ChatsActivity extends AppCompatActivity {
         }
         textViewChatUser.setText(chatUser);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
-
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
-        // For local test, insert sample data which is generated ItemChats.java and
-        // getObjectList method has the data.
         dataList = new ArrayList<>();
-        //dataList = Message.getObjectList();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
-
         recyclerView.setAdapter(adapter);
-        //recyclerView.scrollToPosition(adapter.getItemCount()-1);
-
-        //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -128,17 +106,13 @@ public class ChatsActivity extends AppCompatActivity {
                         IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(contactId),message,date);
                         JsonSerialiser messageSerialize = new JsonSerialiser();
                        String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
-                        //mSocket.emit("private_chat", messageResult);
                         Log.d("PRIVATECHAT", "Reached here:" + contactId);
-
                         mSocket.emit("sendchat",message);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
                     }
                     mSocket.connect();
 
-                    //set message and datetime to adapter and add them to RecyclerView
-                   // message = new IMPL.Message();
                     int latestPosition = adapter.getItemCount();
                     IMessage messageObject = new Message(1,message,new Date(),"user01",R.drawable.human);//This is used to add actual message
                     messageObject.setMe(true);
@@ -193,8 +167,6 @@ public class ChatsActivity extends AppCompatActivity {
     private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-         //   IMessage message = (IMessage) args[0];
-            //   IMessage message = (IMessage) args[0];
             String receivedMessage = (String) args [0];
             Log.d("PRIVATECHAT", receivedMessage);
         }

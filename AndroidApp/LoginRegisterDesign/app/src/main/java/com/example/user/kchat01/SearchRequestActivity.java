@@ -43,7 +43,6 @@ public class SearchRequestActivity extends AppCompatActivity {
     SearchRequestAdapter adapter;
     private static Socket mSocket;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Contacts.searchList.clear();
@@ -68,19 +67,14 @@ public class SearchRequestActivity extends AppCompatActivity {
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             // to change this list to search users list
             // Anyway, set listener on each user
-            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0) {
-            };
+            adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0);
 
         }else if (type.equals("sendRequest")){
             mSocket.emit("sent_contact_requests",MasterUser.usersId);
             mSocket.on("sent_requests",contactManagement);
-
-
-            //make a request and show
             toolbarTitle.setText("Sent Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
-
         }else if (type.equals("receiveRequest")){
 
             mSocket.emit("received_contact_requests",MasterUser.usersId);
@@ -182,11 +176,41 @@ public class SearchRequestActivity extends AppCompatActivity {
                 public void run() {
                     Contacts.sentRequests.clear();
                     String serverresult = (String) args[0];
-                    Log.d("AAAAAA",serverresult);
+                    Log.d("AAAAAA", serverresult);
+                    if (serverresult.equals("success")) {
+                        //toolbarTitle.clearComposingText();
+                        Log.d("BBBB", "hello");
+                    } else {
                         JsonDeserialiser jsonDeserialiser = new JsonDeserialiser(serverresult, "getcontactrequests", SearchRequestActivity.this);
-                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
+                        adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1) {
+                            //By clicking a card, show dialog whether sending request or not
+                            @Override
+                            public void onClick(SearchRequestViewHolder holder) {
+                                final int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                                final IContacts filteredContact = Contacts.sentRequests.get(position);
+                                // when clicking one user, show dialog
+                                AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
+                                builder.setTitle("Delete Request");
+                                builder.setMessage("Do you want to delete this request to : " + filteredContact.getUsername() + " ?");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // to change this to send request operation
+                                        mSocket.emit("delete_contact_request", MasterUser.usersId, filteredContact.getUserId(), "success");
+                                        mSocket.on("request_deleted", contactManagement);
+                                        Log.d("DELETE", Integer.toString(position));
+                                        Contacts.sentRequests.remove(position);
+                                        adapter.notifyDataSetChanged();
+                                        recyclerView.setAdapter(adapter);
+                                    }
+                                });
+                                builder.setNegativeButton("Cancel", null);
+                                alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        };
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
+                    }
                 }
             });
         }
@@ -203,6 +227,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                     Log.d("BBBB",serverresult);
                     if(serverresult.equals("success")){
                         //toolbarTitle.clearComposingText();
+                        Log.d("BBBB","hello");
                     }
                    else if (serverresult.equals("fail")||serverresult.equals("[]")) {
                         Contacts.receivedRequests.clear();
@@ -216,7 +241,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                         //By clicking a card, show dialog whether sending request or not
                         @Override
                         public void onClick(SearchRequestViewHolder holder) {
-                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            final int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             final IContacts filteredContact = Contacts.receivedRequests.get(position);
                             // when clicking one user, show dialog
                             AlertDialog.Builder builder = new AlertDialog.Builder(SearchRequestActivity.this);
@@ -225,9 +250,11 @@ public class SearchRequestActivity extends AppCompatActivity {
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // to change this to send request operation
-                                    mSocket.emit("accept_contact_request",MasterUser.usersId,filteredContact.getUserId());
+                                    mSocket.emit("accept_contact_request",filteredContact.getUserId(),MasterUser.usersId,"success");
                                     mSocket.on("request_accepted",contactManagement2);
-                                    Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
+                                    Contacts.receivedRequests.remove(position);
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.setAdapter(adapter);
                                 }
                             });
                             builder.setNegativeButton("Cancel", null);
