@@ -7,7 +7,8 @@ var bodyParser = require('body-parser');
 //Example POST method invocation
 var Client = require('node-rest-client').Client;
 
-
+var http = require('http').Server(app);
+var socket_io = require('socket.io');
 //var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -20,6 +21,10 @@ var contacts=require('./routes/contacts');
 var app = express();
 var mysql = require('mysql');
 var client = new Client();
+
+var io = socket_io();
+app.io = io;
+
 
 /*var con = mysql.createConnection({
   host     : 'localhost',
@@ -188,6 +193,16 @@ app.get('/contacts/:id', function(req,res){
     res.render('contacts',send);
 });
 
+app.get('/sockettest', function(req, res){
+  res.render('socket');
+});
+
+io.on('connection', function(socket){
+  //'chat message equals to the app function in express'
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});
 
 app.use('/users', users);
 app.use('/login',login);
