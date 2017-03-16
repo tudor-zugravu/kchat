@@ -46,7 +46,7 @@
 </head>
 
 <body>
-  <p><%=user_id %></p>
+  <P id="user_id" style="visibility: hidden"><%=user_id %></p>
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -175,6 +175,16 @@
           <div id="modal">
 
           </div>
+          <!--Modal to show when it's successful -->
+          <div id="inviteSuccessful" style="display:none;">
+            <p>Invitation Sucessful</p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+          </div>
+
+          <!--Modal to show when it's error -->
+          <div id="inviteError" style="display:none;">
+            <p>Invitation Error. Please Try Again.</p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
           </div>
 
   <!-- Link to open the modal -->
@@ -197,48 +207,75 @@
     <script src="/dist/js/sb-admin-2.js"></script>
       <script src="/socket.io/socket.io.js"></script>
   -->
-          <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
+        <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
 
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="/jquery-modal/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
 
         <script>
+        var socket = io.connect('http://188.166.157.62:3000');
+        var currentUser = $("#user_id").text();;
         $(function () {
-      var socket = io.connect('http://188.166.157.62:3000');
-        console.log("test 1");
+
+        var currentUser= "";
+        var FriendUser="";
       //jquery fuction
       $('#search_user').submit(function(){
-          console.log("test 2");
         //send to 'chat message' in server with m's value
         socket.emit('search_user_filter',$('#search').val() , "0");
         //set the message box to be empty after send to server
       //  $('#m').val('');
-      console.log("test test");
         return false;
       });
       //get server data and integrated with UI
       socket.on('search_user_received', function(msg){
-      // $('#messages').append($('<li>').text(msg));
-      console.log(msg);
       var target = JSON.parse(msg);
-      console.log(target[0].name);
-      console.log(target[0].username);
-      console.log (target.length);
-
       if(!$('#search_result').is(':empty')){
         $( "#search_result" ).empty();
       }
-
        for(var i=0; i < target.length; i++) {
-      $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text("username:"+target[i].username+" name:"+target[i].name ));
-      $("#modal").append('<div id="ex'+i+'" style="display:none;"><p >Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'  </p><button> <a href="#" rel="modal:close">CANCEL</a></button><button> <a href="/'+target[i].user_id+'" rel="modal:close">OK</a></button></div>');
-        }
-  // $('#message').append($('<li style="">').text(msg.username).append($('<i>').text(msg.name)));
-        //$('#messages').append($('<li>').text(msg));
-    //  window.scrollTo(0, document.body.scrollHeight);
 
+         $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text("username:"+target[i].username+" name:"+target[i].name ));
+
+         $("#modal").append('<div id="ex'+i+'" style="display:none;"><p>Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'?</p><button onclick="sendRequest('+target[i].user_id+')">OK</button><button type="button" onclick="$.modal.close();" rel="modal:close">Cancel</button>');
+
+
+    //  $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text("username:"+target[i].username+" name:"+target[i].name ));
+    //  $("#modal").append('<div id="ex'+i+'" style="display:none;"><p >Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'  </p <a href="#" rel="modal:close">CANCEL</a></button> <form id="send_request" k><input type="hidden" id="foo" name="zyx" value="bar" /><button type="submit"><a href="/'+target[i].user_id+'" rel="modal:close">OK</a></button></form></div>');
+      // $("#modal").append('<div id="ex'+i+'" style="display:none;"><p>Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'?</p><button onclick="sendRequest('+target[i].user_id+')">OK</button><button type="button" onclick="$.modal.close();" rel="modal:close">Cancel</button>');
+        }
        });
-      });
+     });
+
+     function sendRequest(id) {
+       var error;
+       console.log ("test4");
+
+
+
+ socket.emit('send_contact_request', currentUser, id);
+  console.log ("test5");
+       socket.on('sent_request', function(msg){
+         console.log ("test6");
+         console.log(msg);
+         console.log ("test7");
+         if(msg == "fail"){
+           //Close openning modal
+           $.modal.close();
+           //Open Invite Error Modal
+           $('#inviteError').modal();
+         }else{
+           //Close openning modal
+           $.modal.close();
+           //Open Invite Sucessful Modal
+           $('#inviteSuccessful').modal();
+         }
+       });
+
+     }
+
+
+
     </script>
 </body>
 
