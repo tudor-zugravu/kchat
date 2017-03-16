@@ -68,7 +68,10 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
     }
     
     
-    
+    func backgroundTapped()
+    {
+    self.superSuperView.isHidden = true
+    }
     
     func fixLayout()
     {
@@ -103,16 +106,9 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         
-        self.setTitle(items[(indexPath as NSIndexPath).row], for: UIControlState())
-        self.setTitle(items[(indexPath as NSIndexPath).row], for: UIControlState.highlighted)
-        self.setTitle(items[(indexPath as NSIndexPath).row], for: UIControlState.selected)
-        
-        if self.act.count > 1
-        {
             self.act[indexPath.row]()
-        }
         
-        showItems()
+            showItems()
         
     }
     

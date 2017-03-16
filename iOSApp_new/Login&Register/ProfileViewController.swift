@@ -20,17 +20,9 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //drop-down menu initinal
-        dropDownMenu.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
-            print("Edit profile")
-        }), ({ () -> (Void) in
-            let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
-            self.present(nextView, animated: true, completion: nil)
-        }), ({ () -> (Void) in
-            print("Change Profile image")
-        }),({ () -> (Void) in
-            self.logOut(Any.self)
-        })])
+        
+        self.dropInit()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,12 +36,41 @@ class ProfileViewController: UIViewController {
             profilePictureImageView.image = image
         }
     }
+    
+    
+
+    @IBAction func dropButtonPressed(_ sender: Any) {
+      self.dropInit()
+
+    }
+    
+    //touch the space and hide drop down menu
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            self.dropDownMenu.table.isHidden = true
+
+    }
 
     @IBAction func changePassword(_ sender: Any) {
         
     }
+ //drop down menu initinal
+    func dropInit()  {
+        dropDownMenu.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
+            print("Edit profile")
+        }), ({ () -> (Void) in
+            //push to change password page
+            let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
+            self.navigationController?.pushViewController(nextView , animated: true)
+        }), ({ () -> (Void) in
+            print("Change Profile image")
+        }),({ () -> (Void) in
+            self.logOut(Any.self)
+        })])
 
- func logOut(_ sender: Any) {
+    }
+    
+// Log out
+    func logOut(_ sender: Any) {
         
         // Delete profile picture
         do {
