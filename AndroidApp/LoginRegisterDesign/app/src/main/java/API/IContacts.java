@@ -36,14 +36,6 @@ public interface IContacts {
 
     public void setPhoneNumber(String phoneNumber);
 
-    public int getblcoked();
-
-    public void setBlocked(int blockedNum);
-
-    public int getSessionNum();
-
-    public void setSessionNum(int sessionNum);
-
     public String getContactProfile();
 
     public void setContactPicture(String contactPicture);

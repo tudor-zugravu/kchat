@@ -41,6 +41,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/buttonLayout">
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:baselineAlignBottom="true"
+                android:padding="10dp"
+                android:id="@+id/btn_sendRequest"
+                android:background="@null"
+                android:src="@drawable/send_request"/>
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:baselineAlignBottom="true"
+                android:padding="10dp"
+                android:id="@+id/btn_receiveRequest"
+                android:background="@null"
+                android:src="@drawable/receive_request"/>
                 <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -50,24 +68,6 @@
                     android:id="@+id/btn_searchContacts"
                     android:background="@null"
                     android:src="@drawable/ic_person_add_black_24dp"/>
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:baselineAlignBottom="true"
-                    android:padding="10dp"
-                    android:id="@+id/btn_sendRequest"
-                    android:background="@null"
-                    android:src="@drawable/send_request"/>
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:baselineAlignBottom="true"
-                    android:padding="10dp"
-                    android:id="@+id/btn_receiveRequest"
-                    android:background="@null"
-                    android:src="@drawable/receive_request"/>
         </LinearLayout>
            <android.support.v7.widget.SearchView
                 android:id="@+id/searchView"

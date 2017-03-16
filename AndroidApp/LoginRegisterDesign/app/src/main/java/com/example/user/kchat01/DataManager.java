@@ -5,7 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
+
+import java.io.ByteArrayInputStream;
+
+import API.IContacts;
+import IMPL.Contacts;
 
 /**
  * Created by Tudor Vasile on 3/11/2017.
@@ -48,7 +55,7 @@ public class DataManager {
     }
 
     // Insert a record
-    public void insertContact(int contactid, String timestamp, int userid, String contactName, String email, String username, String phone, String profileDirectory, String biography, byte [] usersImage){
+    public void insertContact(int contactid, String timestamp, int userid, String contactName, String email, String username, String phone, String profileDirectory, String biography,String usersImage){
 // Add all the details to the table
         String query = "INSERT INTO " + CONTACTS_TABLE + " (" +
                 CONTACT_TABLE_ID + ", " +
@@ -77,7 +84,6 @@ public class DataManager {
         db.execSQL(query);
     }
 
-    // Insert a record
     public void insert(String name, String age){
 // Add all the details to the table
         String query = "INSERT INTO " + TABLE_N_AND_A + " (" +
@@ -90,8 +96,12 @@ public class DataManager {
         Log.i("insert() = ", query);
         db.execSQL(query);
     }
-
-    // Delete a record
+    public void flushAllData(){ //logout to delete all
+// Delete the details from the table if already exists
+        String query = "DELETE FROM " +  CONTACTS_TABLE+ ";";
+        Log.i("delete() = ", query);
+        db.execSQL(query);
+    }
     public void deleteContact(String name){
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  CONTACTS_TABLE+
@@ -100,21 +110,35 @@ public class DataManager {
         Log.i("delete() = ", query);
         db.execSQL(query);
     }
-    // Delete a record
-    public void delete(String name){
-// Delete the details from the table if already exists
-        String query = "DELETE FROM " + TABLE_N_AND_A +
-                      " WHERE " + TABLE_ROW_NAME +
-                       " = '" + name + "';";
-                       Log.i("delete() = ", query);
-        db.execSQL(query);
-    }
-    // Find a specific record
-    // Get all the records
+
     public Cursor selectAllContacts() {
         Cursor c = db.rawQuery("SELECT *" +" from " +
                 CONTACTS_TABLE, null);
+        Contacts.contactList.clear();
+        while (c.moveToNext()){
+            int contactId = c.getInt(0);
+            String timestamp = c.getString(1);
+            int userId = c.getInt(2);
+            String contactname = c.getString(3);
+            String email = c.getString(4);
+            String username = c.getString(5);
+            String phone = c.getString(6);
+            String profilelocation = c.getString(7);
+            String biography = c.getString(8);
+            String base64Bitmap = c.getString(9);
+            /*
+            public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
+                    String username,String phonenumber,String contactPicture,Bitmap profilePicture){
+             */
+            Bitmap profile = decodeBase64(base64Bitmap);
+            IContacts contact = new Contacts(contactId,timestamp,Integer.toString(userId),contactname,email,username,phone,profilelocation,profile);
+            Contacts.contactList.add(contact);
+        }
         return c;
+    }
+    public Bitmap decodeBase64(String input) {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
     // Get all the records
     public Cursor selectAll() {
@@ -185,7 +209,7 @@ public class DataManager {
                     + CONTACT_TABLE_BIOGRAPHY
                     + " text,"
                     + CONTACT_TABLE_BITMAP
-                    + " blob not null);";
+                    + " text not null);";
             db.execSQL(newContactsTableQueryString);
         }
         // This method only runs when increment DB_VERSION

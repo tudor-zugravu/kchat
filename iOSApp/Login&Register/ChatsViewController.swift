@@ -58,7 +58,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         var chatsAux: [ChatModel] = []
         var item:ChatModel;
-        print(chatDetails)
+        
         // parse the received JSON and save the contacts
         for i in 0 ..< chatDetails.count {
             

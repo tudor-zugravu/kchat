@@ -20,8 +20,6 @@ public class Contacts implements IContacts {
     private String email;
     private String username;
     private String phonenumber;
-    private int blocked;
-    private int session;
     private String contactPicture;
     private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
@@ -38,7 +36,7 @@ public class Contacts implements IContacts {
     }
 
     public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
-                    String username,String phonenumber,int blocked,int session,String contactPicture){
+                    String username,String phonenumber,String contactPicture){
        this.contactId=contactId;
         this.timestamp=timestamp;
         this.userId=userId;
@@ -46,13 +44,11 @@ public class Contacts implements IContacts {
         this.email=email;
         this.username=username;
         this.phonenumber=phonenumber;
-        this.blocked=blocked;
-        this.session=session;
         this.contactPicture=contactPicture;
     }
 
     public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
-                    String username,String phonenumber,int blocked,int session,String contactPicture,Bitmap profilePicture){
+                    String username,String phonenumber,String contactPicture,Bitmap profilePicture){
         this.contactId=contactId;
         this.timestamp=timestamp;
         this.userId=userId;
@@ -60,8 +56,6 @@ public class Contacts implements IContacts {
         this.email=email;
         this.username=username;
         this.phonenumber=phonenumber;
-        this.blocked=blocked;
-        this.session=session;
         this.contactPicture=contactPicture;
         this.profilePicture=profilePicture;
     }
@@ -143,26 +137,6 @@ public class Contacts implements IContacts {
     }
 
     @Override
-    public int getblcoked() {
-        return this.blocked;
-    }
-
-    @Override
-    public void setBlocked(int blockedNum) {
-        this.blocked = blockedNum;
-    }
-
-    @Override
-    public int getSessionNum() {
-        return this.session;
-    }
-
-    @Override
-    public void setSessionNum(int sessionNum) {
-    this.session =sessionNum;
-    }
-
-    @Override
     public String getContactProfile() {
         return this.contactPicture;
     }
@@ -182,15 +156,12 @@ public class Contacts implements IContacts {
     this.profilePicture = contactsBitmap;
     }
 
-
     public static ArrayList<IContacts> getSentRequests() {
         return sentRequests;
     }
-
     public static ArrayList<IContacts> getReceivedRequests() {
         return receivedRequests;
     }
-
     public static ArrayList<IContacts> getSearchList() {
         return searchList;
     }

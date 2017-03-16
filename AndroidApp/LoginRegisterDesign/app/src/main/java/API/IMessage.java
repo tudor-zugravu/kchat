@@ -1,5 +1,7 @@
 package API;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 /**
@@ -24,6 +26,10 @@ public interface IMessage {
     public void setUsername(String username);
     public int getImageId();
     public void setImageId(int imageId);
+    public String getStrTimestamp();
+    public void setStrTimestamp(String strTimestamp);
+    public Bitmap getBitmap();
+    public void setBitmap(Bitmap bitmap);
     public boolean isMe();
     public void setMe(boolean me);
 }

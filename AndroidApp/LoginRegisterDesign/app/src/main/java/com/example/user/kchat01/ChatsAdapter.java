@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -99,18 +100,22 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
         //Related to ItemView
         public TextView txtMessage, txtTime;
+        public ImageView imageProfile;
 
         //constructor
         public ChatsViewHolder(View itemView){
             super(itemView);
             txtMessage = (TextView)itemView.findViewById(R.id.textViewMessage);
             txtTime = (TextView)itemView.findViewById(R.id.textViewTime);
+            imageProfile = (ImageView)itemView.findViewById(R.id.imageProfile);
+
         }
 
         //set each data on layout file
         public void setData(IMessage current, int position) {
             this.txtMessage.setText(current.getMessage());
-            this.txtTime.setText(current.getTimestamp().toString());
+            this.txtTime.setText(current.getStrTimestamp().toString());
+            this.imageProfile.setImageBitmap(current.getBitmap());
         }
     }
 }

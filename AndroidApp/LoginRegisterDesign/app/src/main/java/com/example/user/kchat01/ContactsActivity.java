@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -51,7 +50,6 @@ import static com.example.user.kchat01.R.id.contacts;
 
 /* This is main activity to create contacts */
     // For local test, sample data is generated in "ItemContacts" class. "getObject" method calls the data in this activity.
-
 public class ContactsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageButton btn_sendRequest, btn_receiveRequest, btn_searchContacts;
@@ -62,30 +60,23 @@ public class ContactsActivity extends AppCompatActivity {
     public static int tabId;
     private BottomBar bottomBar;
     private Socket mSocket;
+    MasterUser man = new MasterUser();
+    DataManager dm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("CALLEDSTATUS","Contacts Contacts Activity was called");
+        dm = new DataManager(ContactsActivity.this);
 
-        MasterUser man = new MasterUser();
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("users_chat_status",onlineJoin);
             mSocket.on("roomcreated",stringReply);
             mSocket.connect();
-            mSocket.emit("join_own_chat", man.getuserId());
-            mSocket.emit("createroom",MasterUser.usersId);
-            mSocket.emit("adduser",MasterUser.usersId);
-//
-
         }catch (URISyntaxException e){
         }
 
         if(man.getProfileLocation()!=null) {
             try {
-                Log.d("CALLEDSTATUS","Getting the data from the server");
-
                 String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
                 String type = "getImage";
                 ArrayList<String> paramList = new ArrayList<>();
@@ -96,7 +87,6 @@ public class ContactsActivity extends AppCompatActivity {
             }catch(ExecutionException f){
             }
         }
-        Log.d("CALLEDSTATUS","resuming with the ui draw");
 
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -113,10 +103,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         this. bottomBar = (BottomBar) findViewById(R.id.bottomNavi);
-        Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
-            int bottomBarNum = bottomBar.getCurrentTabPosition();
-        Log.d("CALLEDSTATUS","bottom bar id is:" + bottomBar.getCurrentTabId());
-//3 buttons click listener
+
         btn_searchContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +128,6 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-
         adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0);
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
@@ -154,12 +140,10 @@ public class ContactsActivity extends AppCompatActivity {
             invalidateOptionsMenu();
             // getObjectList is to generate sample data in ItemContacs class.
             adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0) {
-                //By clicking a card, the username is got
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IGroups contact = Groups.getObjectList().get(position);
-                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                     Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
                     contactsIntent.putExtra("contactObj", contact.getName());
                     startActivity(contactsIntent);
@@ -194,52 +178,41 @@ public class ContactsActivity extends AppCompatActivity {
             btn_searchContacts.setVisibility(VISIBLE);
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
+            if(dm.selectAllContacts().getCount()>0){
+                dm.selectAllContacts();
+            }
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     Log.d("PRIVATECHAT","clicked on the contact");
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IContacts contact = Contacts.contactList.get(position);
-                    //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                     Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
                     String type = "contact";
                     contactsIntent.putExtra("type",type);
                     contactsIntent.putExtra("userid",contact.getUserId());
                     contactsIntent.putExtra("username",contact.getUsername());
+                    contactsIntent.putExtra("contactid",contact.getContactId());
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                     byte [] byteArray = stream.toByteArray();
                     contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
-                    mSocket.emit("adduser", Contacts.contactList.get(position).getContactId(), MasterUser.usersId);
-
+                    mSocket.emit("createroom", contact.getUserId(), man.getuserId());
+                    mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                 }
             };
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
-
         }
-
-        //set linearLayoutManager to recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         /*
         From here, search function is performed
          */
-
         searchView = (SearchView) findViewById(R.id.searchView);
-/*
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchView.setIconified(false);
-            }
-        });
-*/
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -252,7 +225,6 @@ public class ContactsActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         /*
         From here, Bottom Bar is implemented
         */
@@ -268,18 +240,12 @@ public class ContactsActivity extends AppCompatActivity {
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
-                    Log.d("CALLEDSTATUS","bottom bar chats id is:"+ ContactsActivity.tabId);
-                    //Intent chatsIntent = new Intent(getApplicationContext(),old_ChatActivity.class);
-                    //startActivity(chatsIntent);
-                    Toast.makeText(getApplicationContext(), "Chats", Toast.LENGTH_SHORT).show();
-
                     adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
                         //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IGroups contact = Groups.getObjectList().get(position);
-                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                             Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
                             contactsIntent.putExtra("username", contact.getName());
                             startActivity(contactsIntent);
@@ -302,7 +268,6 @@ public class ContactsActivity extends AppCompatActivity {
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IGroups contact = Groups.getObjectList().get(position);
-                            //makeText(getApplicationContext(), "clicked= " + contact.getUsername(), Toast.LENGTH_SHORT).show();
                             Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
                             contactsIntent.putExtra("username", contact.getName());
                             startActivity(contactsIntent);
@@ -310,9 +275,6 @@ public class ContactsActivity extends AppCompatActivity {
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
-                   // Intent groupIntent = new Intent(getApplicationContext(),GroupsActivity.class);
-                   // startActivity(groupIntent);
-                    //Toast.makeText(getApplicationContext(), "Group", Toast.LENGTH_SHORT).show();
                 }
                 if (tabId == contacts) {
                     btn_receiveRequest.setVisibility(VISIBLE);
@@ -320,22 +282,25 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_searchContacts.setVisibility(VISIBLE);
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
-                    MasterUser man = new MasterUser();
                     ContactsActivity.tabId=tabId;
-                    try{
-                    Log.d("CALLEDSTATUS", "i made a rest request");
-                    String type2 = "getcontacts";
-                    String contacts_url = "http://188.166.157.62:3000/contacts";
-                    ArrayList<String> paramList2 = new ArrayList<>();
-                    paramList2.add("userId");
-                    RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
-                    String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts",ContactsActivity.this);
+                    //dm.flushAllData();
+                    Log.d("RAR",Integer.toString(dm.selectAllContacts().getCount()));
+                    if(dm.selectAllContacts().getCount()>0){
+                    dm.selectAllContacts();
+                    }else{
+                    try {
+                        Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                        String type2 = "getcontacts";
+                        String contacts_url = "http://188.166.157.62:3000/contacts";
+                        ArrayList<String> paramList2 = new ArrayList<>();
+                        paramList2.add("userId");
+                        RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                        String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
 
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
-                }
-
+                }}
                     adapter.notifyDataSetChanged();
                     adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1){// move to profile
                         //By clicking a card, the username is got
@@ -343,25 +308,18 @@ public class ContactsActivity extends AppCompatActivity {
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.getContactList().get(position);
-                            Log.d("PRIVATECHAT","contact id part 1 is : : " + contact.getContactId());
-
-                            // move to Chat
                             Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
                             String type = "contact";
                             contactsIntent.putExtra("type",type);
                             contactsIntent.putExtra("userid",contact.getUserId());
                             contactsIntent.putExtra("username",contact.getUsername());
+                            contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                             byte [] byteArray = stream.toByteArray();
                             contactsIntent.putExtra("contactbitmap",byteArray);
-                            for(int i=0; i<Contacts.getContactList().size(); i++){
-                                Log.d("PRIVATECHAT","list id currently is " + Contacts.getContactList().get(i).getUserId());
-                            }
-                            Log.d("PRIVATECHAT","clicked on this id : " + position);
-
-                            Log.d("PRIVATECHAT","clicked on this id : " +contact.getUserId());
-                            mSocket.emit("adduser", Contacts.contactList.get(position).getUserId(), MasterUser.usersId);
+                            mSocket.emit("createroom", contact.getUserId(), man.getuserId());
+                            mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                             startActivity(contactsIntent);
                         }
                         @Override
@@ -381,18 +339,6 @@ public class ContactsActivity extends AppCompatActivity {
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
-//                    try {
-//                        Log.d("DESERIALISER", "i made a rest request");
-//                        String type = "getcontacts";
-//                        String contacts_url = "http://188.166.157.62:3000/contacts";
-//                        ArrayList<String> paramList = new ArrayList<>();
-//                        paramList.add("userId");
-//                        RESTApi backgroundasync = new RESTApi(ContactsActivity.this, contacts_url, paramList);
-//                        MasterUser man = new MasterUser();
-//                        String result = backgroundasync.execute(type, man.getuserId()).get();
-//                    }catch (InterruptedException e){
-//                    }catch (ExecutionException f){
-//                    }
                 }
                 if (tabId == R.id.profile) {
                     ContactsActivity.tabId=tabId;
@@ -412,8 +358,6 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
                 if (tabId != ContactsActivity.tabId) {
-                     //   Intent contactsIntent = new Intent(getApplicationContext(), ContactsActivity.class);
-                     //   startActivity(contactsIntent);
                 }
             }
         });
@@ -445,15 +389,12 @@ public class ContactsActivity extends AppCompatActivity {
         }
             MenuInflater menuInflater = getMenuInflater();
             menuInflater.inflate(R.menu.groups_menu, menu);
-
         return true;
     }
 
     private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            //   IMessage message = (IMessage) args[0];
-            //   IMessage message = (IMessage) args[0];
             String receivedMessage = (String) args [0];
             Log.d("PRIVATECHAT", receivedMessage);
         }

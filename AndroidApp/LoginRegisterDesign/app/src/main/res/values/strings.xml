@@ -12,6 +12,7 @@
     <string name="hint_phone">Phone Number</string>
     <string name="hint_password">Password</string>
     <string name="hint_confirm">Confirm Password</string>
+    <string name="hint_bio">Biography less than 300 characters</string>
 
     <string name="err_msg_fullname">Enter FullName</string>
     <string name="err_msg_username">Enter Username</string>
@@ -19,6 +20,7 @@
     <string name="err_msg_phone">Enter valid phone number</string>
     <string name="err_msg_password">minimum 6 characters, there must be a alphabet, number, and symbol</string>
     <string name="err_msg_confirm">Password does NOT match</string>
+    <string name="err_msg_bio">Enter Biography</string>
 
     <string name="btn_register">Register</string>
     <string name="btn_login">Login</string>

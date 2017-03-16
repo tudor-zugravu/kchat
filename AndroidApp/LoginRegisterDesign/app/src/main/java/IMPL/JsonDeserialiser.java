@@ -4,11 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.DataManager;
+import com.example.user.kchat01.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,12 +94,10 @@ public class JsonDeserialiser {
                     String email = obj.getString("email");
                     String username = obj.getString("username");
                     String phonenumber = obj.getString("phone_number");
-                    int blocked = Integer.parseInt(obj.getString("blocked"));
-                    int session = Integer.parseInt(obj.getString("session"));
                     String contactPicture = obj.getString("profile_picture");
                     String contactbiography = obj.getString("biography");
-                    dm.insert(contactName,phonenumber);
-                    IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture);
+                    String image = "";
+                    IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, contactPicture);
                     if (contactPicture != null && (!contactPicture.equals("null"))) {
                         //make a rest call to get image?
                         Bitmap contactsBitmap;
@@ -107,22 +107,22 @@ public class JsonDeserialiser {
                                     ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
                                     contactsBitmap = backgroundasync.execute(type).get();
                                     if (contactsBitmap != null){
-                                        Log.d("PROFILE","NULL BITMAP FROM THE SERVER");
                                         contact.setBitmap(contactsBitmap);
-                                        /*
-                                        byte[] image = cursor.getBlob(1);
-
-                                         */
-                                        byte [] image = getBytes(contactsBitmap);
-                                     //   dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,image);
-                                   //     adaptor.addToContactsTable(contactId, requestNum, timestamp, userId, contactName, email, username, phonenumber, blocked, session, contactPicture,contactsBitmap);
-                                    //    Log.d("DATABASETEST", adaptor.getContact(contactId).getContactName());
+                                        image = encodeToBase64(contactsBitmap,Bitmap.CompressFormat.JPEG, 100);
+                                        Log.d("DATABASE", "the client has got a image");
+                                        Log.d("PROFILE","image received from the server is :" + image);
+                                    }else{
+                                        contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
+                                        image = encodeToBase64(contactsBitmap,Bitmap.CompressFormat.JPEG, 100);
+                                        Log.d("DATABASE", "the client does not have an image");
+                                        Log.d("PROFILE","image received from the server is :" + image);
                                     }
                                 } catch (InterruptedException e) {
                                 } catch (ExecutionException f) {
                                 }
                     }
                     if(num==0) {
+                        dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,image);
                         Contacts.contactList.add(contact);
                         // Bitmap profilePicture;
                     }else if (num ==1){
@@ -132,18 +132,9 @@ public class JsonDeserialiser {
                     }
                 }
                 Log.d("CALLEDSTATUS", "object size: " + Contacts.contactList.size());
-                showData(dm.selectAll());
             }
         }catch (JSONException e){
             e.printStackTrace();
-        }
-
-    }
-    public void showData(Cursor c){
-        while (c.moveToNext()){
-            Log.i(c.getString(1), c.getString(2));
-            Log.d("DATABASERESULT",c.getString(1));
-            Log.d("DATABASERESULT",c.getString(2));
         }
     }
 
@@ -166,40 +157,10 @@ public class JsonDeserialiser {
 
     }
 
-
-    // convert from bitmap to byte array
-    public static byte[] getBytes(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
+    public String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        image.compress(compressFormat, quality, byteArrayOS);
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
-    // convert from byte array to bitmap
-    public static Bitmap getImage(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
-    }
 }
-
-
-
-//
-//    Bundle bundle = getBundleFromIntentOrWhaterver();
-//    JSONObject json = null;
-//try {
-//        json = new JSONObject(bundle.getString("json"));
-//        String key = json.getString("key");
-//        } catch (JSONException e) {
-//        e.printStackTrace();
-//        }
-
-
-//JSONArray contacts = jObject.getJSONArray("");
-// String gender = c.getString("gender");
-// Phone node is JSON Object
-//      JSONObject phone = c.getJSONObject("phone");
-//          String mobile = phone.getString("mobile");
-//            String office = phone.getString("office");
-//                while( keys.hasNext() ) {
-//            String key = keys.next();
-//            String value = jObject.getString(key);
-// Log.d("DESERIALISE VALUE", value);
