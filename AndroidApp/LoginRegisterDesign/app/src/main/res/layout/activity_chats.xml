@@ -24,6 +24,9 @@
                 android:id="@+id/textViewChatUser" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/containerChat"
         android:layout_width="match_parent"
@@ -41,12 +44,11 @@
             android:id="@+id/editTextMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@color/windowBackground"
-            android:layout_toStartOf="@+id/btn_sendMessage"
+            android:layout_toLeftOf="@+id/btn_sendMessage"
             android:paddingStart="10dp"
             android:minHeight="45dp"
-            android:layout_alignBaseline="@+id/btn_sendMessage"
+            android:layout_alignTop="@+id/btn_sendMessage"
             android:hint="Input Message" />
         <Button
             android:id="@+id/btn_sendMessage"
@@ -59,4 +61,5 @@
             android:textColor="@color/textColorPrimary"
             android:minHeight="45dp" />
     </RelativeLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

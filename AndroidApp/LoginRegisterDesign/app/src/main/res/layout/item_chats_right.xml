@@ -14,7 +14,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/image_container"
             android:paddingEnd="10dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:layout_gravity="right">
             <LinearLayout
                 android:id="@+id/bubble"
                 android:layout_width="wrap_content"

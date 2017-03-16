@@ -122,8 +122,8 @@ public class ChatsActivity extends AppCompatActivity {
                     mSocket.connect();
 
                     int latestPosition = adapter.getItemCount();
-                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1,message, String.valueOf(dateText),"user01",R.drawable.human);//This is used to add actual message
+                    dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1,message, String.valueOf(dateText),"user01",null);//This is used to add actual message
                     messageObject.setMe(true);
                     dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
@@ -162,8 +162,8 @@ public class ChatsActivity extends AppCompatActivity {
                     Log.d("MESSAGEERROR", serverresult.toString());
 
                     int latestPosition = adapter.getItemCount();
-                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1, serverresult.toString(), String.valueOf(dateText), "user01", R.drawable.human);//This is used to add actual message
+                    //dateText  = android.text.format.DateFormat.format("E, dd/MM/ mm:ss", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1, serverresult.toString(), String.valueOf(dateText), "user01", contactsBitmap);//This is used to add actual message
                     messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                     dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
@@ -183,8 +183,8 @@ public class ChatsActivity extends AppCompatActivity {
                     String receivedMessage = (String) args [1];
                     Log.d("PRIVATECHAT", receivedMessage);
                     int latestPosition = adapter.getItemCount();
-                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1, receivedMessage, String.valueOf(dateText), "user01", R.drawable.human);//This is used to add actual message
+                    dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1, receivedMessage, String.valueOf(dateText), "user01", contactsBitmap);//This is used to add actual message
                     messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                     dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);

@@ -1,8 +1,9 @@
 package IMPL;
 
+import android.graphics.Bitmap;
+
 import com.example.user.kchat01.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,6 +25,7 @@ public class Message implements IMessage {
     private boolean isMe;
     private int receiverId;
     private String strTimestamp;
+    private Bitmap bitmap;
 
     public Message(int messageId,int groupId,String message,Date timestamp,String username){
     this.messageId = messageId;
@@ -49,12 +51,12 @@ public class Message implements IMessage {
         this.imageId = imageId;
     }
 
-    public Message(int messageId, String message, String strTimestamp, String username, int imageId) {
+    public Message(int messageId, String message, String strTimestamp, String username, Bitmap bitmap) {
         this.messageId = messageId;
         this.message = message;
         this.strTimestamp = strTimestamp;
         this.username = username;
-        this.imageId = imageId;
+        this.bitmap = bitmap;
     }
 
     @Override
@@ -141,6 +143,14 @@ public class Message implements IMessage {
     @Override
     public void setStrTimestamp(String strTimestamp) {
         this.strTimestamp = strTimestamp;
+    }
+    @Override
+    public Bitmap getBitmap() {
+        return this.bitmap;
+    }
+    @Override
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     @Override
