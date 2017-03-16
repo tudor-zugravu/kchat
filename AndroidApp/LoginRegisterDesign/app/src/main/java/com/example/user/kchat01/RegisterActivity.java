@@ -27,8 +27,8 @@ public class RegisterActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
-    private TextInputEditText inputFullName,inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;
-    private TextInputLayout inputLayoutFullName,inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm;
+    private TextInputEditText inputFullName,inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm, inputBio;
+    private TextInputLayout inputLayoutFullName,inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm, inputLayoutBio;
     private Button btnRegister;
 
     // for java regular expression
@@ -53,12 +53,14 @@ public class RegisterActivity extends AppCompatActivity{
         inputLayoutPhone = (TextInputLayout)findViewById(R.id.input_layout_phone);
         inputLayoutPassword = (TextInputLayout)findViewById(R.id.input_layout_password);
         inputLayoutConfirm = (TextInputLayout)findViewById(R.id.input_layout_confirm);
+        inputLayoutBio = (TextInputLayout)findViewById(R.id.input_layout_bio);
         inputFullName = (TextInputEditText)findViewById(R.id.input_fullname);
         inputUsername = (TextInputEditText)findViewById(R.id.input_username);
         inputEmail = (TextInputEditText)findViewById(R.id.input_email);
         inputPhone = (TextInputEditText)findViewById(R.id.input_phone);
         inputPassword = (TextInputEditText)findViewById(R.id.input_password);
         inputConfirm = (TextInputEditText)findViewById(R.id.input_confirm);
+        inputBio = (TextInputEditText)findViewById(R.id.input_bio);
         btnRegister = (Button)findViewById(R.id.btn_register);
 
         // apply toolbar title
@@ -74,6 +76,7 @@ public class RegisterActivity extends AppCompatActivity{
         inputPhone.addTextChangedListener(new MyTextWatcher(inputPhone));
         inputPassword.addTextChangedListener(new MyTextWatcher(inputPassword));
         inputConfirm.addTextChangedListener(new MyTextWatcher(inputConfirm));
+        inputBio.addTextChangedListener(new MyTextWatcher(inputBio));
 
         btnRegister.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -89,6 +92,7 @@ public class RegisterActivity extends AppCompatActivity{
         inputPhone.setText("07983967714");
         inputPassword.setText("!Kings777");
         inputConfirm.setText("!Kings777");
+        inputBio.setText("This is a biography of the user");
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity{
                 paramList.add("username");
                 paramList.add("pwd");
                 paramList.add("phoneNo");
+                paramList.add("biography");
 
                 RESTApi backgroundasync = new RESTApi(RegisterActivity.this,register_url,paramList);
                 backgroundasync.execute(type,
@@ -108,7 +113,8 @@ public class RegisterActivity extends AppCompatActivity{
                         inputEmail.getText().toString(),
                         inputUsername.getText().toString(),
                         inputPassword.getText().toString(),
-                inputPhone.getText().toString());
+                        inputPhone.getText().toString(),
+                        inputBio.getText().toString());
             }
         });
     }
@@ -133,6 +139,9 @@ public class RegisterActivity extends AppCompatActivity{
         if (!validateConfirm()) {
             return;
         }
+        if (!validateBio()){
+            return;
+        }
 
 // Now, result is displayed by Toast and output each input in the Log.
 // For actual communication, required to store each variable in parameters
@@ -142,6 +151,7 @@ public class RegisterActivity extends AppCompatActivity{
         Log.i("email", inputEmail.getText().toString());
         Log.i("phone", inputPhone.getText().toString());
         Log.i("password", inputPassword.getText().toString());
+        Log.i("biography", inputBio.getText().toString());
     }
 
     //get the text in username edittext
@@ -218,10 +228,21 @@ public class RegisterActivity extends AppCompatActivity{
         return true;
     }
 
+    private boolean validateBio(){
+        if (inputBio.getText().toString().isEmpty()){
+            inputLayoutBio.setError(getString(R.string.err_msg_bio));
+            return false;
+        } else {
+            inputLayoutBio.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+
     // Button Update
     // when all fields are OK, Register button is enabled.
     private void enableButton(){
-        if (!validateUsername() || !validateEmail() || !validatePhone() || !validatePassword() || !validateConfirm()) {
+        if (!validateFullName() || !validateUsername() || !validateEmail() || !validatePhone() || !validatePassword() || !validateConfirm() || !validateBio()) {
             btnRegister.setEnabled(false);
         } else {
             btnRegister.setEnabled(true);
@@ -251,7 +272,7 @@ public class RegisterActivity extends AppCompatActivity{
         public void afterTextChanged(Editable s){
             switch (view.getId()){
                 case R.id.input_fullname:
-                    validateUsername();
+                    validateFullName();
                     break;
                 case R.id.input_username:
                     validateUsername();
@@ -267,6 +288,9 @@ public class RegisterActivity extends AppCompatActivity{
                     break;
                 case R.id.input_confirm:
                     validateConfirm();
+                    break;
+                case R.id.input_bio:
+                    validateBio();
                     break;
             }
              enableButton();

@@ -49,19 +49,17 @@ public class ChatsActivity extends AppCompatActivity {
     private String username,message;
     private Socket mSocket;
     private Bitmap contactsBitmap;
-    String contactId;
+    private String userId;
+    private int contactId;
+    private CharSequence dateText;
 
     public void onMessageReceived(IMessage message){
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("updatechat", stringReply); // -<
-        } catch (URISyntaxException e){
-        }
+
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,11 +69,21 @@ public class ChatsActivity extends AppCompatActivity {
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
             Log.d("PRIVATECHAT","reached here");
-            this.contactId = intent.getStringExtra("userid");
+            this.userId = intent.getStringExtra("userid");
             this.username = intent.getStringExtra("username");
+            this.contactId = intent.getIntExtra("contactid", 0);
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
         }
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            mSocket.connect();
+            //mSocket.on("updatechat", stringReply); // -<
+            Log.d("PRIVATE_roomId", "room"+contactId);
+            mSocket.on("room"+ contactId, stringReply); // -<
+        } catch (URISyntaxException e){
+        }
+
         textViewChatUser.setText(chatUser);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -103,10 +111,10 @@ public class ChatsActivity extends AppCompatActivity {
                     if(mSocket.connected()){
                         Date date = new Date();
 
-                        IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(contactId),message,date);
+                        IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(userId),message,date);
                         JsonSerialiser messageSerialize = new JsonSerialiser();
                        String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
-                        Log.d("PRIVATECHAT", "Reached here:" + contactId);
+                        Log.d("PRIVATECHAT", "Reached here:" + userId);
                         mSocket.emit("sendchat",message);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
@@ -114,7 +122,8 @@ public class ChatsActivity extends AppCompatActivity {
                     mSocket.connect();
 
                     int latestPosition = adapter.getItemCount();
-                    IMessage messageObject = new Message(1,message,new Date(),"user01",R.drawable.human);//This is used to add actual message
+                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1,message, String.valueOf(dateText),"user01",R.drawable.human);//This is used to add actual message
                     messageObject.setMe(true);
                     dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
@@ -153,7 +162,8 @@ public class ChatsActivity extends AppCompatActivity {
                     Log.d("MESSAGEERROR", serverresult.toString());
 
                     int latestPosition = adapter.getItemCount();
-                    IMessage messageObject = new Message(1, serverresult.toString(), new Date(), "user01", R.drawable.human);//This is used to add actual message
+                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1, serverresult.toString(), String.valueOf(dateText), "user01", R.drawable.human);//This is used to add actual message
                     messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                     dataList.add(latestPosition, messageObject);//"0" means top of array
                     recyclerView.setAdapter(adapter);
@@ -166,9 +176,22 @@ public class ChatsActivity extends AppCompatActivity {
 
     private Emitter.Listener stringReply = new Emitter.Listener() {
         @Override
-        public void call(Object... args) {
-            String receivedMessage = (String) args [0];
-            Log.d("PRIVATECHAT", receivedMessage);
+        public void call(final Object... args) {
+            ChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessage = (String) args [1];
+                    Log.d("PRIVATECHAT", receivedMessage);
+                    int latestPosition = adapter.getItemCount();
+                    dateText  = android.text.format.DateFormat.format("E, dd/MM/yyyy kk:mm:ss", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(1, receivedMessage, String.valueOf(dateText), "user01", R.drawable.human);//This is used to add actual message
+                    messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                    dataList.add(latestPosition, messageObject);//"0" means top of array
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                }
+            });
         }
     };
 

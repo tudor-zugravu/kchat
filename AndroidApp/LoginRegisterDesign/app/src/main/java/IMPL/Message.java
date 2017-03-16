@@ -2,7 +2,7 @@ package IMPL;
 
 import com.example.user.kchat01.R;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,6 +23,7 @@ public class Message implements IMessage {
     private int imageId;
     private boolean isMe;
     private int receiverId;
+    private String strTimestamp;
 
     public Message(int messageId,int groupId,String message,Date timestamp,String username){
     this.messageId = messageId;
@@ -44,6 +45,14 @@ public class Message implements IMessage {
         this.messageId = messageId;
         this.message = message;
         this.timestamp = timestamp;
+        this.username = username;
+        this.imageId = imageId;
+    }
+
+    public Message(int messageId, String message, String strTimestamp, String username, int imageId) {
+        this.messageId = messageId;
+        this.message = message;
+        this.strTimestamp = strTimestamp;
         this.username = username;
         this.imageId = imageId;
     }
@@ -125,6 +134,15 @@ public class Message implements IMessage {
     public void setImageId(int imageId) {
         this.imageId = imageId;
     }
+    @Override
+    public String getStrTimestamp() {
+        return this.strTimestamp;
+    }
+    @Override
+    public void setStrTimestamp(String strTimestamp) {
+        this.strTimestamp = strTimestamp;
+    }
+
     @Override
     public boolean isMe() {
         return isMe;

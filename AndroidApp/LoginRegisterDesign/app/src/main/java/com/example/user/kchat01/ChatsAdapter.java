@@ -110,7 +110,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         //set each data on layout file
         public void setData(IMessage current, int position) {
             this.txtMessage.setText(current.getMessage());
-            this.txtTime.setText(current.getTimestamp().toString());
+            this.txtTime.setText(current.getStrTimestamp().toString());
         }
     }
 }

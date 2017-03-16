@@ -22,8 +22,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="10dp"
                 android:layout_alignTop="@+id/bubble"
-                android:id="@+id/imageProfile"
-                android:src="@drawable/human" />
+                android:id="@+id/imageProfile" />
 
             <LinearLayout
                 android:id="@+id/bubble"

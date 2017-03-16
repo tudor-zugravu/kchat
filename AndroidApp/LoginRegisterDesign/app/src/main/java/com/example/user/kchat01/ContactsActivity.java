@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -193,13 +192,14 @@ public class ContactsActivity extends AppCompatActivity {
                     contactsIntent.putExtra("type",type);
                     contactsIntent.putExtra("userid",contact.getUserId());
                     contactsIntent.putExtra("username",contact.getUsername());
+                    contactsIntent.putExtra("contactid",contact.getContactId());
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                     byte [] byteArray = stream.toByteArray();
                     contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
-                    mSocket.emit("createroom", Contacts.contactList.get(position).getContactId());
-                    mSocket.emit("adduser", Contacts.contactList.get(position).getContactId(), man.usersId);
+                    mSocket.emit("createroom", contact.getUserId(), man.getuserId());
+                    mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                 }
             };
             adapter.notifyDataSetChanged();
@@ -313,12 +313,13 @@ public class ContactsActivity extends AppCompatActivity {
                             contactsIntent.putExtra("type",type);
                             contactsIntent.putExtra("userid",contact.getUserId());
                             contactsIntent.putExtra("username",contact.getUsername());
+                            contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                             byte [] byteArray = stream.toByteArray();
                             contactsIntent.putExtra("contactbitmap",byteArray);
-                            mSocket.emit("createroom", Contacts.contactList.get(position).getContactId());
-                            mSocket.emit("adduser", Contacts.contactList.get(position).getContactId(), man.usersId);
+                            mSocket.emit("createroom", contact.getUserId(), man.getuserId());
+                            mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                             startActivity(contactsIntent);
                         }
                         @Override

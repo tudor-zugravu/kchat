@@ -24,6 +24,8 @@ public interface IMessage {
     public void setUsername(String username);
     public int getImageId();
     public void setImageId(int imageId);
+    public String getStrTimestamp();
+    public void setStrTimestamp(String strTimestamp);
     public boolean isMe();
     public void setMe(boolean me);
 }
