@@ -51,6 +51,9 @@ public class ChatsActivity extends AppCompatActivity {
     private String userId;
     private int contactId;
     private CharSequence dateText;
+    private int counter =2;
+    public static boolean isAtTop = false;
+    public static boolean didOverscroll = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +86,57 @@ public class ChatsActivity extends AppCompatActivity {
         textViewChatUser.setText(chatUser);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
         dataList = new ArrayList<>();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+//
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//                                             @Override
+//                                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                                                 super.onScrolled(recyclerView, dx, dy);
+//                                                 {
+////                   Log.d("SCROLLING","i have reached the top");
+////                    mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20*counter);
+////                    counter++;
+//                                                 }
+//                                             }
+//                                         };
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    isAtTop = false;
+                }
+            }
+
+                @Override
+                public void onScrollStateChanged (RecyclerView recyclerView,int newState){
+                super.onScrollStateChanged(recyclerView, newState);
+
+                int firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition();
+
+                    if (newState == 0) {
+                        if (firstVisibleItem == 0) isAtTop = true;
+                        else isAtTop = false;
+                    }
+                    if (newState == 1 && isAtTop) {
+                        didOverscroll = true;
+                    }
+                    if (newState == 2 && isAtTop && didOverscroll) {
+                        mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20*counter);
+                        counter++;
+                        didOverscroll = false;
+                    }
+            }
+            });
+
 
         //when inputting to EditText and pushing send button
         Button sendButton = (Button) findViewById(R.id.btn_sendMessage);
@@ -138,19 +185,32 @@ public class ChatsActivity extends AppCompatActivity {
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
                     Log.d("MESSAGEERROR", args[0].toString());
                     int latestPosition = adapter.getItemCount();
-                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                    if(counter!=2){
+                        stupidScrolling(false);
+                    }else{
+                        stupidScrolling(true);
+
+                    }
                 }
             });
         }
     };
 
+
+    private void stupidScrolling(boolean type){
+
+        if(type==true){
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        }else{
+            recyclerView.scrollToPosition(0);
+        }
+    }
+
     private Emitter.Listener stringReply2 = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-
             String receivedMessage = (String) args [0];
             if(receivedMessage.equals("fail")){
                 // print error cannot connect
@@ -188,7 +248,7 @@ public class ChatsActivity extends AppCompatActivity {
                         dataList.add(latestPosition, messageObject);//"0" means top of array
                         recyclerView.setAdapter(adapter);
                         adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                        stupidScrolling(true);
                     } catch (ParseException e) {
                     }
                 }
