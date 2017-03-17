@@ -53,7 +53,8 @@ class ProfileViewController: UIViewController {
     //Dropdown menu Initinal
     func dropInit() {
         dropButton.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
-            print("Edit profile")
+            let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "editProfileViewController"))!
+            self.navigationController?.pushViewController(nextView , animated: true)
         }), ({ () -> (Void) in
             //push to change password page
             let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
