@@ -28,6 +28,7 @@
             android:textStyle="bold"
             android:textColor="@color/cardviewUsernameColor"
             android:layout_toEndOf="@+id/imageProfile"
+            android:maxLines="1"
             android:id="@+id/textViewUsername"/>
 
         <TextView
@@ -40,6 +41,7 @@
             android:textColor="@color/cardviewMessageColor"
             android:layout_alignLeft="@+id/textViewUsername"
             android:layout_alignStart="@+id/textViewUsername"
+            android:maxLines="1"
             android:id="@+id/textViewMessage"/>
 
     </RelativeLayout>

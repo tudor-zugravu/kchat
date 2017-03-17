@@ -20,15 +20,14 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
-import org.json.JSONArray;
-
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import API.IMessage;
 import IMPL.JsonDeserialiser;
-import IMPL.JsonSerialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
 
@@ -172,22 +171,26 @@ public class ChatsActivity extends AppCompatActivity {
             ChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    int messageid = (int) args [0];
-                    String username = (String) args [1];
-                    String message = (String) args [2];
-                    String timestamp = (String) args [3];
+                    int messageid = (int) args[0];
+                    String username = (String) args[1];
+                    String message = (String) args[2];
+                    String timestamp = (String) args[3];
                     int latestPosition = adapter.getItemCount();
-                      dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(messageid, Integer.parseInt(username), message, timestamp);//This is used to add actual message
-                    if(Integer.parseInt(username) == MasterUser.usersId){
-                        messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
-                    }else{
-                        messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                    try {
+                        Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(timestamp);
+                        String newDate = new SimpleDateFormat("dd MMM HH:mm").format(date);
+                        IMessage messageObject = new Message(messageid, Integer.parseInt(username), message, newDate);//This is used to add actual message
+                        if (Integer.parseInt(username) == MasterUser.usersId) {
+                            messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
+                        } else {
+                            messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                        }
+                        dataList.add(latestPosition, messageObject);//"0" means top of array
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                    } catch (ParseException e) {
                     }
-                    dataList.add(latestPosition, messageObject);//"0" means top of array
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                 }
             });
         }

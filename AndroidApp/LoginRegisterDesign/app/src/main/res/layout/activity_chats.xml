@@ -27,39 +27,40 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/containerChat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_marginTop="70dp">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <RelativeLayout
+            android:id="@+id/containerChat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/editTextMessage"
-            class="android.support.v7.widget.RecyclerView"/>
-        <EditText
-            android:id="@+id/editTextMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/windowBackground"
-            android:layout_toLeftOf="@+id/btn_sendMessage"
-            android:paddingStart="10dp"
-            android:minHeight="45dp"
-            android:layout_alignTop="@+id/btn_sendMessage"
-            android:hint="Input Message" />
-        <Button
-            android:id="@+id/btn_sendMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@color/colorPrimary"
-            android:text="Send"
-            android:textColor="@color/textColorPrimary"
-            android:minHeight="45dp" />
-    </RelativeLayout>
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginTop="70dp">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/editTextMessage"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                class="android.support.v7.widget.RecyclerView"/>
+            <EditText
+                android:id="@+id/editTextMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
+                android:layout_toLeftOf="@+id/btn_sendMessage"
+                android:paddingStart="10dp"
+                android:minHeight="45dp"
+                android:layout_alignTop="@+id/btn_sendMessage"
+                android:hint="Input Message" />
+            <Button
+                android:id="@+id/btn_sendMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/colorPrimary"
+                android:text="Send"
+                android:textColor="@color/textColorPrimary"
+                android:minHeight="45dp" />
+        </RelativeLayout>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
