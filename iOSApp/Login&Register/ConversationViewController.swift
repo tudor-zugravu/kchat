@@ -32,7 +32,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 60
         
         SocketIOManager.sharedInstance.setRoomCreatedListener(completionHandler: { (response) -> Void in
             if response == "fail" {
@@ -40,18 +41,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             } else {
                 print("am intrat in room");
                 SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (username, message) -> Void in
+                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
                     
-                    let item = MessageModel()
-                    item.message = message
-                    
-                    if (username == String(describing: UserDefaults.standard.value(forKey: "userId")!)) {
-                        item.sent = true
-                    } else {
-                        item.sent = false
-                    }
-                    
-                    print("\(username): \(message)")
+                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
                     
                     self.messages.append(item)
                     self.tableView.reloadData()
@@ -135,16 +127,16 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     func messagesDownloaded(_ messagesDetails: [[String:Any]]) {
         
         var messagesAux: [MessageModel] = []
-        var item:MessageModel;
         
         // parse the received JSON and save the messages
         for i in 0 ..< messagesDetails.count {
             
-            if let sent = messagesDetails[i]["sent"] as? Bool, let message = messagesDetails[i]["message"] as? String {
-                item = MessageModel()
-                item.sent = sent
-                item.message = message
-                
+            if let messageId = messagesDetails[i]["message_id"] as? Int,
+                let senderId = messagesDetails[i]["sender_id"] as? Int,
+                let message = messagesDetails[i]["message"] as? String,
+                let timestamp = messagesDetails[i]["timestmp"] as? String
+            {
+                let item = MessageModel(messageId: messageId, senderId: String(senderId), message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
         }
@@ -159,7 +151,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     @IBAction func sendButtonPressed(_ sender: Any) {
-        print("yep \(messageInputTextField.text)")
+        
         if (messageInputTextField.text != nil && messageInputTextField.text != "") {
             
             SocketIOManager.sharedInstance.sendMessage(message: messageInputTextField.text!)
@@ -190,10 +182,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             if (self.isAtTop) {
                 self.didOverscroll = true
             } else {
-                self.isAtTop = true;
+                self.isAtTop = true
             }
         } else if (scrollView.contentOffset.y <= 0) {
-            self.isAtTop = true;
+            self.isAtTop = true
         } else {
             self.isAtTop = false
             self.didOverscroll = false
@@ -203,8 +195,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if (scrollView.contentOffset.y == 0) {
             if self.didOverscroll {
-                if messages.count == self.convLimit {
+                if messages.count >= self.convLimit {
                     self.convLimit += 20
+                    
                     SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contactId), limit: String(self.convLimit))
                 }
                 self.didOverscroll = false
