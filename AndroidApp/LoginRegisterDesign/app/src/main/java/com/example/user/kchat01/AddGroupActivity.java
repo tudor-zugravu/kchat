@@ -153,7 +153,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     builder.setMessage("Please select at least one user.")
                             .setNegativeButton("Back", null)
                             .create()
-                            .show();
+                            .show();//
                 } else {
 
                     if (canvas.getDrawable() == null) {
