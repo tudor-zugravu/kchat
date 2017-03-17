@@ -28,7 +28,7 @@ public class Message implements IMessage {
 
     public Message(int messageId,int senderId,String message,String timestamp){
         this.senderId = senderId;
-    this.messageId = messageId;
+          this.messageId = messageId;
         this.message = message;
         this.timestamp = timestamp;
     }

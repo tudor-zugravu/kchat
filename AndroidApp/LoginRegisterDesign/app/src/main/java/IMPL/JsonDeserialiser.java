@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.user.kchat01.ChatsActivity;
 import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.DataManager;
 import com.example.user.kchat01.R;
@@ -23,14 +24,13 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
+import API.IMessage;
 
 /**
  * Created by tudor on 2/20/2017.
  */
 
 public class JsonDeserialiser {
-
-    ArrayList<HashMap<String, String>> messageList;
 
     JSONObject jObject;
     String serverResult;
@@ -53,13 +53,15 @@ public class JsonDeserialiser {
         }else if (deserializeType.equals("getcontacts")) {
             contactDeserializer(this.jObject,0);
         }else if (deserializeType.equals("message")) {
-            messageList = new ArrayList<>();
+            messageDeserialiser(this.jObject);
         }else if (deserializeType.equals("filterlist")) {
             userFilterDeserializer(this.jObject);
         }else if (deserializeType.equals("getcontactrequests")) {
             contactDeserializer(this.jObject, 1);
         }else if (deserializeType.equals("getcontactinvites")) {
             contactDeserializer(this.jObject, 2);
+        }else if (deserializeType.equals("chats")) {
+            chatDeserialiser(this.jObject);
         }
     }
 
@@ -69,7 +71,6 @@ public class JsonDeserialiser {
         String name=jObject.getString("name");
         String email=jObject.getString("email");
         String username=jObject.getString("username");
-        String password=jObject.getString("password");
         String phone_number=jObject.getString("phone_number");
         String blocked=jObject.getString("blocked");
         String session=jObject.getString("session");
@@ -79,6 +80,107 @@ public class JsonDeserialiser {
         Log.e("JSON ERROR","Json parsing error: "+e.getMessage());
             }
         }
+
+    private void messageDeserialiser(JSONObject jObject){
+        ChatsActivity.dataList.clear();
+        try {
+            JSONArray jArr = new JSONArray(this.serverResult);
+            for (int i = 0; i < jArr.length(); i++) {
+                JSONObject obj = jArr.getJSONObject(i);
+                String messageid = obj.getString("message_id");
+                String username = obj.getString("sender_id");
+                String message = obj.getString("message");
+                String messagetimestamp = obj.getString("timestmp");
+                IMessage messageObject = new Message(Integer.parseInt(messageid), Integer.parseInt(username), message, messagetimestamp);//This is used to add actual message
+                if(Integer.parseInt(username) == MasterUser.usersId){
+                    messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
+                }else{
+                    messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                }
+                ChatsActivity.dataList.add(0, messageObject);
+                 }
+            }catch( final JSONException e){
+                Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
+            }
+    }
+/*
+ [{"receiverId"//:34,"receiverName//":"Kensuke Tamura","receiverProfilePicture"//:"profile_picture34.jpg","//senderId":2,
+ "//senderName":"Tudor Zugravu","senderProfilePicture":"profile_picture2.jpg","message":"1111111","timestmp":"2017-03-17T14:11:24.000Z"}
+ ,{"receiverId":33,"receiverName":"Tudor Vasile","receiverProfilePicture":"profile_picture33.jpg","senderId":2,
+ "senderName":"Tudor Zugravu","senderProfilePicture":"profile_picture2.jpg","message":"Yo, Tudor!!! Hello!","timestmp":"2017-03-14T15:37:55.000Z"}]
+  */
+
+    private void chatDeserialiser(JSONObject jobject){
+        try {
+            if(this.serverResult!=null) {
+                JSONArray jArr = new JSONArray(this.serverResult);
+                for (int i = 0; i < jArr.length(); i++) {
+                    JSONObject obj = jArr.getJSONObject(i);
+                    int senderId = Integer.parseInt(obj.getString("senderId")); //check id//
+                    String receiverName = obj.getString("receiverName");//
+                    String receiverProfilePicture = obj.getString("receiverProfilePicture");//
+                    String receiverId = obj.getString("receiverId");//
+                    String senderProfilePicture = obj.getString("senderProfilePicture");
+                    String message = obj.getString("message");
+                    String senderName = obj.getString("senderName");
+
+                    IContacts contact = new Contacts();
+
+                    //save only receiverId , receiver name, receiver profile picture, message, timestamp
+                    if(senderId==MasterUser.usersId){
+                        contact.setContactId(Integer.parseInt(receiverId));
+                        contact.setContactName(receiverName);
+                        contact.setContactPicture(receiverProfilePicture);
+                        getImage(receiverProfilePicture,receiverId,contact);
+                    } else {
+                        //save senderId , sender name, sender profile picture
+                        contact.setContactId(senderId);
+                        contact.setContactName(senderName);
+                        contact.setContactPicture(senderProfilePicture);
+                        getImage(receiverProfilePicture,receiverId,contact);
+                    }
+                    Log.d("CALLEDCHAT", "object size: " + receiverName);
+                    Log.d("CALLEDCHAT", "object size: " + senderName);
+
+                    contact.setEmail(message); //
+                    Contacts.activeChat.add(contact);
+                }
+                Log.d("CALLEDCHAT", "object size: " + Contacts.activeChat.size());
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    private String getImage (String location, String userId,IContacts contact) {
+        if (location != null && (!location.equals("null"))) {
+            //make a rest call to get image?
+            Bitmap contactsBitmap;
+            String image = "";
+            try {
+                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
+                String type = "getIcon";
+                ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
+                contactsBitmap = backgroundasync.execute(type).get();
+                if (contactsBitmap != null) {
+                    contact.setBitmap(contactsBitmap);
+                    image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
+                    Log.d("DATABASE", "the client has got a image");
+                    Log.d("PROFILE", "image received from the server is :" + image);
+                    return image;
+                } else {
+                    contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
+                    image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
+                    Log.d("DATABASE", "the client does not have an image");
+                    Log.d("PROFILE", "image received from the server is :" + image);
+                    return image;
+                }
+            } catch (InterruptedException e) {
+            } catch (ExecutionException f) {
+            }
+        }
+        return null;
+    }
 
     private void contactDeserializer(JSONObject jobject ,int num){
         try {
@@ -96,33 +198,10 @@ public class JsonDeserialiser {
                     String phonenumber = obj.getString("phone_number");
                     String contactPicture = obj.getString("profile_picture");
                     String contactbiography = obj.getString("biography");
-                    String image = "";
                     IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, contactPicture);
-                    if (contactPicture != null && (!contactPicture.equals("null"))) {
-                        //make a rest call to get image?
-                        Bitmap contactsBitmap;
-                                try {
-                                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
-                                    String type = "getIcon";
-                                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
-                                    contactsBitmap = backgroundasync.execute(type).get();
-                                    if (contactsBitmap != null){
-                                        contact.setBitmap(contactsBitmap);
-                                        image = encodeToBase64(contactsBitmap,Bitmap.CompressFormat.JPEG, 100);
-                                        Log.d("DATABASE", "the client has got a image");
-                                        Log.d("PROFILE","image received from the server is :" + image);
-                                    }else{
-                                        contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
-                                        image = encodeToBase64(contactsBitmap,Bitmap.CompressFormat.JPEG, 100);
-                                        Log.d("DATABASE", "the client does not have an image");
-                                        Log.d("PROFILE","image received from the server is :" + image);
-                                    }
-                                } catch (InterruptedException e) {
-                                } catch (ExecutionException f) {
-                                }
-                    }
+                    String base64REsult = getImage(contactPicture,userId,contact);
                     if(num==0) {
-                        dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,image);
+                        dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,base64REsult);
                         Contacts.contactList.add(contact);
                         // Bitmap profilePicture;
                     }else if (num ==1){

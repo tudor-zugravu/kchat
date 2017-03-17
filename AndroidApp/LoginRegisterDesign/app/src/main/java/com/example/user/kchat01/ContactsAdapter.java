@@ -55,10 +55,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     @Override
     public void onBindViewHolder(ContactsViewHolder holder, int position) {
             if(type == 0) { // to change this to chats
-            IGroups current = (IGroups) filterList.get(position);
-            holder.imageProfile.setImageResource(current.getImageId());
-            holder.textViewUsername.setText(current.getName());
-            holder.textViewMessage.setText(current.getDescription());
+                if(!Contacts.activeChat.isEmpty()) {
+                    Log.d("CALLEDCHAT", "object size 2!: " + Contacts.activeChat.size());
+
+                    IContacts current1 = (IContacts) filterList.get(position);
+                    if(Contacts.activeChat.get(position).getBitmap()==null) {
+                        Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                        holder.imageProfile.setImageDrawable(d);
+                    }else{
+                        holder.imageProfile.setImageBitmap(current1.getBitmap());
+                    }
+                    holder.textViewUsername.setText(current1.getContactName());
+                    holder.textViewMessage.setText(current1.getEmail());
+                }
         }if (type ==1){ // contacts
             if(!Contacts.contactList.isEmpty()) {
                 IContacts current2 = (IContacts) filterList.get(position);

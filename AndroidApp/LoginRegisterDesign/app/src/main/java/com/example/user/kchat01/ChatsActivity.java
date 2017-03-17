@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import API.IMessage;
+import IMPL.JsonDeserialiser;
 import IMPL.JsonSerialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
@@ -44,7 +45,7 @@ public class ChatsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
    // private SearchView searchView;
     private ChatsAdapter adapter;
-    private ArrayList<IMessage> dataList;
+    public static ArrayList<IMessage> dataList;
     private String username,message;
     private Socket mSocket;
     public static Bitmap contactsBitmap;
@@ -129,16 +130,28 @@ public class ChatsActivity extends AppCompatActivity {
 
     private Emitter.Listener getallmessages = new Emitter.Listener() {
         @Override
-        public void call(Object... args) {
-            JSONArray jsonArray = (JSONArray) args[0]; // Exception.
-            Log.d("MESSAGEERROR", jsonArray.toString());
-
+        public void call(final Object... args) {
+            ChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dataList.clear();
+                    String receivedMessages = (String) args [0];
+                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
+                    Log.d("MESSAGEERROR", args[0].toString());
+                    int latestPosition = adapter.getItemCount();
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                }
+            });
         }
     };
 
     private Emitter.Listener stringReply2 = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+
             String receivedMessage = (String) args [0];
             if(receivedMessage.equals("fail")){
                 // print error cannot connect
@@ -146,6 +159,7 @@ public class ChatsActivity extends AppCompatActivity {
                 //the rooms id is received
                 mSocket.emit("add_user",receivedMessage,MasterUser.usersId);
                 mSocket.on(receivedMessage,messageReceiver);
+
                 mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
             }
             Log.d("PRIVATECHAT", receivedMessage);

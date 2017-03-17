@@ -63,10 +63,12 @@ public class AddGroupActivity extends AppCompatActivity {
     ArrayList<Integer> usersId = new ArrayList<>();
     ImageView camera, gallery, canvas;
     Bitmap bitmap;
+    DataManager dm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dm = new DataManager(AddGroupActivity.this);
 
         setContentView(R.layout.activity_add_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,20 +81,23 @@ public class AddGroupActivity extends AppCompatActivity {
 
         //get contactList Here
         MasterUser man = new MasterUser();
-        try{
-            Log.d("CALLEDSTATUS", "i made a rest request");
-            String type2 = "getcontacts";
-            String contacts_url = "http://188.166.157.62:3000/contacts";
-            ArrayList<String> paramList2 = new ArrayList<>();
-            paramList2.add("userId");
-            RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
-            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-            JsonDeserialiser deserialiser = new JsonDeserialiser(result2,"getcontacts",AddGroupActivity.this);
+        if(dm.selectAllContacts().getCount()>0){
+            dm.selectAllContacts();
+        }else {
+            try {
+                Log.d("CALLEDSTATUS", "i made a rest request");
+                String type2 = "getcontacts";
+                String contacts_url = "http://188.166.157.62:3000/contacts";
+                ArrayList<String> paramList2 = new ArrayList<>();
+                paramList2.add("userId");
+                RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
+                String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", AddGroupActivity.this);
 
-        }catch(InterruptedException e){
-        }catch(ExecutionException f){
+            } catch (InterruptedException e) {
+            } catch (ExecutionException f) {
+            }
         }
-
         adapter = new AddGroupAdapter(AddGroupActivity.this, Contacts.contactList);
 
         textViewDone = (TextView) findViewById(R.id.textViewDone);

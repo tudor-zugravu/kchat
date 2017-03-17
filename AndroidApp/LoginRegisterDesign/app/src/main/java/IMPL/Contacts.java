@@ -23,14 +23,23 @@ public class Contacts implements IContacts {
     private String contactPicture;
     private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
-
     public static ArrayList<IContacts> sentRequests = new ArrayList<>();
     public static ArrayList<IContacts> receivedRequests = new ArrayList<>();
     public static ArrayList<IContacts> searchList = new ArrayList<>();
 
+    public static ArrayList<IContacts> activeChat = new ArrayList<>();
+
+
     public static ArrayList<IContacts> getContactList() {
         return contactList;
     }
+ /*
+ [{"receiverId":34,"receiverName":"Kensuke Tamura","receiverProfilePicture":"profile_picture34.jpg","senderId":2,
+ "senderName":"Tudor Zugravu","senderProfilePicture":"profile_picture2.jpg","message":"1111111","timestmp":"2017-03-17T14:11:24.000Z"}
+ ,{"receiverId":33,"receiverName":"Tudor Vasile","receiverProfilePicture":"profile_picture33.jpg","senderId":2,
+ "senderName":"Tudor Zugravu","senderProfilePicture":"profile_picture2.jpg","message":"Yo, Tudor!!! Hello!","timestmp":"2017-03-14T15:37:55.000Z"}]
+  */
+
 
     public Contacts(){
     }

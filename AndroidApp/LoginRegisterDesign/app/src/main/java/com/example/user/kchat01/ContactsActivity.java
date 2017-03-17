@@ -61,6 +61,7 @@ public class ContactsActivity extends AppCompatActivity {
     private BottomBar bottomBar;
     MasterUser man = new MasterUser();
     DataManager dm;
+    private Socket mSocket;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +78,15 @@ public class ContactsActivity extends AppCompatActivity {
             }catch(InterruptedException e){
             }catch(ExecutionException f){
             }
+        }
+
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            mSocket.connect();
+            mSocket.on("sent_chats",currentChats);
+            mSocket.emit("get_chats", MasterUser.usersId);
+
+        } catch (URISyntaxException e){
         }
 
         setContentView(R.layout.activity_contacts);
@@ -130,13 +140,13 @@ public class ContactsActivity extends AppCompatActivity {
             ContactsActivity.showPlus=false;
             invalidateOptionsMenu();
             // getObjectList is to generate sample data in ItemContacs class.
-            adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0) {
+            adapter = new ContactsAdapter(ContactsActivity.this, Contacts.activeChat,0) {
                 @Override
                 public void onClick(ContactsViewHolder holder) {
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                    IGroups contact = Groups.getObjectList().get(position);
+                    IContacts contact = Contacts.activeChat.get(position);
                     Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                    contactsIntent.putExtra("contactObj", contact.getName());
+                    contactsIntent.putExtra("contactObj", contact.getContactName());
                     startActivity(contactsIntent);
                 }
             };
@@ -228,14 +238,14 @@ public class ContactsActivity extends AppCompatActivity {
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
-                    adapter = new ContactsAdapter(ContactsActivity.this, Groups.getObjectList(),0) {
+                    adapter = new ContactsAdapter(ContactsActivity.this, Contacts.activeChat,0) {
                         //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IGroups contact = Groups.getObjectList().get(position);
+                            IContacts contact = Contacts.activeChat.get(position);
                             Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                            contactsIntent.putExtra("username", contact.getName());
+                            contactsIntent.putExtra("username", contact.getContactName());
                             startActivity(contactsIntent);
                         }
                     };
@@ -349,13 +359,7 @@ public class ContactsActivity extends AppCompatActivity {
         });
 
     }
-    private Emitter.Listener onlineJoin = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            String serverresult = (String) args[0];
-            Log.d("PRIVATECHAT", serverresult.toString());
-        }
-    };
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -378,5 +382,18 @@ public class ContactsActivity extends AppCompatActivity {
         return true;
     }
 
+    private Emitter.Listener currentChats = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"chats",ContactsActivity.this);
+
+                }
+            });
+        }
+    };
 
 }
