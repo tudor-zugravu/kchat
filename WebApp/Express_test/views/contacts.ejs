@@ -100,6 +100,13 @@
                         </div>
                       </div>
                     </li>
+
+                    <li>
+                      <button type="button" onclick="viewRequests(<%=user_id %>)">
+                        <i class="fa fa-envelope-o"></i>
+                      </button>
+
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-static-side -->
@@ -119,7 +126,6 @@
                                   <i class="fa fa-search"></i>
                                   </button>
                                 </form>
-
                                 <span class="input-group-btn">
 
                             </span>
@@ -173,10 +179,17 @@
         <ul id="search_result">
 
         </ul>
+        <div id="received_requests">
+
+        </div>
           </div>
           <div id="modal">
 
           </div>
+          <div id="acceptRequest">
+
+          </div>
+
           <!--Modal to show when it's successful -->
           <div id="inviteSuccessful" style="display:none;">
             <p>Invitation Sucessful</p>
@@ -191,6 +204,11 @@
 
           <div id="deleteContact" style="display:none;">
             <p>You have succefully deleted this contact </p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+          </div>
+
+          <div id="acceptContact" style="display:none;">
+            <p>You have accept the request </p>
             <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
           </div>
 
@@ -300,11 +318,49 @@
                   //Open Invite Sucessful Modal
                   $('#deleteContact').modal();
                 }
-                
+
               });
       }
 
 
+       function viewRequests(id){
+
+         socket.emit('received_contact_requests',id);
+
+        socket.on('received_requests', function(msg){
+         var target = JSON.parse(msg);
+
+         for(var i=0; i < target.length; i++) {
+          // $('#received_requests').append($('');
+          // $('#received_requests').append($('<br><a href="#ex'+i+'" rel="modal:open">').text("username:"+target[i].username+" name:"+target[i].name ));
+
+        // $("#modal").append('<div id="ex'+i+'" style="display:none;"><p>Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'?</p><button onclick="sendRequest('+target[i].user_id+')">OK</button><button type="button" onclick="$.modal.close();" rel="modal:close">Cancel</button>');
+
+
+      //  $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text("username:"+target[i].username+" name:"+target[i].name ));
+      //  $("#modal").append('<div id="ex'+i+'" style="display:none;"><p >Send request confirmation<p><p>Do you send contact Request to '+target[i].name+'  </p <a href="#" rel="modal:close">CANCEL</a></button> <form id="send_request" k><input type="hidden" id="foo" name="zyx" value="bar" /><button type="submit"><a href="/'+target[i].user_id+'" rel="modal:close">OK</a></button></form></div>');
+         $("#received_requests").append('<div id="request'+i+'"><p>you have recieved requeets from '+target[i].name+'</p><button onclick="acceptRequest('+target[i].user_id+')">Recieve the friend request</button>');
+          }
+
+        });
+
+       }
+
+       function acceptRequest(id){
+
+          var reciever= "accepted"
+           socket.emit('accept_contact_request',currentUser, id,reciever);
+           console.log ("test"+id);
+           console.log ("test"+currentUser);
+           console.log ("test"+reciever);
+           socket.on('request_accepted', function(msg){
+           console.log(msg);
+           if(msg == reciever){
+          // $("#modal").append();
+             $('#acceptContact').modal();
+         }
+        });
+       }
 
     </script>
 </body>
