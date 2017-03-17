@@ -53,6 +53,10 @@
 		389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */; };
 		591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */; };
 		591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591100EA1E4D113C00AC77A7 /* LoginViewController.swift */; };
+		59205AF21E7C7E5400B92ABF /* DropMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59205AF11E7C7E5400B92ABF /* DropMenuButton.swift */; };
+		59205AF41E7C84B500B92ABF /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59205AF31E7C84B500B92ABF /* NewGroupViewController.swift */; };
+		59205AF61E7C84CC00B92ABF /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59205AF51E7C84CC00B92ABF /* GroupViewController.swift */; };
+		59205AF81E7C864900B92ABF /* GroupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59205AF71E7C864900B92ABF /* GroupModel.swift */; };
 		5926C3C01E5C974600E4DBF2 /* IndividualTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */; };
 		59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4C1E492C8700E91DF3 /* AppDelegate.swift */; };
 		59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E4E1E492C8700E91DF3 /* InitialViewController.swift */; };
@@ -128,6 +132,10 @@
 		389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordModel.swift; sourceTree = "<group>"; };
 		591100E61E4BE6CD00AC77A7 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		591100EA1E4D113C00AC77A7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		59205AF11E7C7E5400B92ABF /* DropMenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropMenuButton.swift; sourceTree = "<group>"; };
+		59205AF31E7C84B500B92ABF /* NewGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
+		59205AF51E7C84CC00B92ABF /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
+		59205AF71E7C864900B92ABF /* GroupModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupModel.swift; sourceTree = "<group>"; };
 		5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndividualTableViewController.swift; sourceTree = "<group>"; };
 		59334E491E492C8700E91DF3 /* Login&Register.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Login&Register.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		59334E4C1E492C8700E91DF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -215,6 +223,7 @@
 		38938EE31E548EC7009F1973 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				59205AF71E7C864900B92ABF /* GroupModel.swift */,
 				38938EE51E54A775009F1973 /* LogInModel.swift */,
 				388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */,
 				389CB7B01E59FC5B00B5FDEE /* ChangePasswordModel.swift */,
@@ -230,6 +239,8 @@
 		38938EE41E548ECD009F1973 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				59205AF31E7C84B500B92ABF /* NewGroupViewController.swift */,
+				59205AF51E7C84CC00B92ABF /* GroupViewController.swift */,
 				5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */,
 				59334E4E1E492C8700E91DF3 /* InitialViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
@@ -250,6 +261,7 @@
 			children = (
 				3810AC081E743CBF005A98EB /* Source */,
 				389CB7AC1E59D4BE00B5FDEE /* Utils.swift */,
+				59205AF11E7C7E5400B92ABF /* DropMenuButton.swift */,
 				3810AC391E743CF2005A98EB /* SocketIOManager.swift */,
 			);
 			name = Utils;
@@ -455,6 +467,7 @@
 				3810AC051E74382A005A98EB /* FilteredContactModel.swift in Sources */,
 				3810AC351E743CBF005A98EB /* SocketStringReader.swift in Sources */,
 				3810AC361E743CBF005A98EB /* SocketTypes.swift in Sources */,
+				59205AF81E7C864900B92ABF /* GroupModel.swift in Sources */,
 				3810AC231E743CBF005A98EB /* SocketAnyEvent.swift in Sources */,
 				389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */,
 				389CB7AF1E59FA4B00B5FDEE /* ChangePasswordViewController.swift in Sources */,
@@ -463,6 +476,7 @@
 				3810AC261E743CBF005A98EB /* SocketEngineClient.swift in Sources */,
 				59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */,
 				3810AC271E743CBF005A98EB /* SocketEnginePacketType.swift in Sources */,
+				59205AF61E7C84CC00B92ABF /* GroupViewController.swift in Sources */,
 				3816822E1E5CB3F000B637E8 /* ContactsModel.swift in Sources */,
 				3810AC2B1E743CBF005A98EB /* SocketEventHandler.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
@@ -477,6 +491,7 @@
 				389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */,
 				384D31DF1E783A43003DA0B1 /* ChatsViewController.swift in Sources */,
 				3810AC371E743CBF005A98EB /* SSLSecurity.swift in Sources */,
+				59205AF21E7C7E5400B92ABF /* DropMenuButton.swift in Sources */,
 				384D31DB1E7739F3003DA0B1 /* ContactRequestsViewController.swift in Sources */,
 				3810AC331E743CBF005A98EB /* SocketPacket.swift in Sources */,
 				384D31DD1E7839D8003DA0B1 /* ChatsTableViewCell.swift in Sources */,
@@ -484,6 +499,7 @@
 				3810AC2A1E743CBF005A98EB /* SocketEngineWebsocket.swift in Sources */,
 				3810AC3A1E743CF2005A98EB /* SocketIOManager.swift in Sources */,
 				3847247B1E5C903F00611EA2 /* ContactsTableViewCell.swift in Sources */,
+				59205AF41E7C84B500B92ABF /* NewGroupViewController.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,
 				3810AC381E743CBF005A98EB /* WebSocket.swift in Sources */,
 				3810AC291E743CBF005A98EB /* SocketEngineSpec.swift in Sources */,

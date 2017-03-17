@@ -19,6 +19,12 @@ class ChatsTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.layer.cornerRadius = 30
+        self.layer.shadowColor=UIColor.lightGray.cgColor
+        self.layer.shadowOffset = CGSize(width:-3, height:3)
+        self.layer.shadowRadius=4
+        self.layer.shadowOpacity=0.4
+        self.clipsToBounds=false
     }
     
     func configureCell(_ receiverName: String, lastMessage: String, timestamp: String, profilePic: String) {

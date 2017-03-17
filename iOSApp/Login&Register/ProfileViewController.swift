@@ -16,11 +16,13 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var phoneNoLabel: UILabel!
     
+    @IBOutlet weak var dropButton: DropMenuButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.dropInit()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,11 +37,36 @@ class ProfileViewController: UIViewController {
         }
     }
 
-    @IBAction func changePassword(_ sender: Any) {
+    @IBAction func menuPressed(_ sender: Any) {
+        self.dropInit()
+    }
+    //touch the space and hide drop down menu
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.dropButton.table.isHidden = true
         
     }
 
-    @IBAction func logOut(_ sender: Any) {
+    
+    @IBAction func changePassword(_ sender: Any) {
+        
+    }
+    //Dropdown menu Initinal
+    func dropInit() {
+        dropButton.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
+            print("Edit profile")
+        }), ({ () -> (Void) in
+            //push to change password page
+            let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
+            self.navigationController?.pushViewController(nextView , animated: true)
+        }), ({ () -> (Void) in
+            print("Change Profile image")
+        }),({ () -> (Void) in
+            self.logOut(Any.self)
+        })])
+        
+
+    }
+   func logOut(_ sender: Any) {
         
         // Delete profile picture
         do {

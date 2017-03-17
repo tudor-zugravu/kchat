@@ -43,12 +43,27 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
+            //cell layout
+            cell.layer.cornerRadius = 30
+            cell.layer.shadowColor=UIColor.lightGray.cgColor
+            cell.layer.shadowOffset = CGSize(width:-3, height:3)
+            cell.layer.shadowRadius=4
+            cell.layer.shadowOpacity=0.4
+            cell.clipsToBounds=false
+            
             if contacts.count == 0 {
                 cell.configureCell("", email: "", profilePic: "")
             } else {
                 let item: ContactModel = contacts[indexPath.row]
                 cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
             }
+            //press cell
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
+            tapGesture.numberOfTapsRequired = 1
+            cell.addGestureRecognizer(tapGesture)
+            cell.addGestureRecognizer(longPress)
+            
             return cell
         } else {
             return ContactsTableViewCell()
@@ -120,6 +135,27 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         self.tableView.reloadData()
     }
+    // long and short press
+    func shortPress(){
+        //turn to message page
+        let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController"))!
+        self.navigationController?.pushViewController(nextView , animated: true)
+    }
+    
+    func longPress(sender : UIGestureRecognizer){
+        print("Long tap")
+        if sender.state == .ended {
+            print("UIGestureRecognizerStateEnded")
+            //Do Whatever You want on End of Gesture
+            //Turn to profile page
+            
+        }
+        else if sender.state == .began {
+            print("UIGestureRecognizerStateBegan")
+            //Do Whatever You want on Began of Gesture
+        }
+    }
+
     
     @IBAction func sentRequestsPressed(_ sender: Any) {
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
