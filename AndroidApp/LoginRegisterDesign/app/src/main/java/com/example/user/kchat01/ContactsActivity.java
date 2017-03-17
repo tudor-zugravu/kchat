@@ -88,7 +88,6 @@ public class ContactsActivity extends AppCompatActivity {
 
         } catch (URISyntaxException e){
         }
-
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,9 +128,6 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-        adapter = new ContactsAdapter(ContactsActivity.this, Groups.testList,0);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
 
         if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
             btn_receiveRequest.setVisibility(GONE);

@@ -111,6 +111,7 @@ public class JsonDeserialiser {
   */
 
     private void chatDeserialiser(JSONObject jobject){
+        Contacts.activeChat.clear();
         try {
             if(this.serverResult!=null) {
                 JSONArray jArr = new JSONArray(this.serverResult);
