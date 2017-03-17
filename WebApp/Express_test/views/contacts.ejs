@@ -46,7 +46,7 @@
 </head>
 
 <body>
-  <P id="user_id" style="visibility: hidden"><%=user_id %></p>
+  <P id="user_id"  style="visibility: invisible"><%=user_id %></p>
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -133,6 +133,7 @@
                                 <li><a href="/contacts/<%= contacts[i].user_id %>"><%= contacts[i].username %> (<%= contacts[i].name %>)</a></li>
 
                                 <% } %>
+
                               </ul>
                             </div>
                           </div>
@@ -167,6 +168,7 @@
 
                     <p><%= contacts[pointer].phone_number %></p>
                 </div>
+                  <button type="button" onclick="deleteContact(<%=user_id %>,<%= contacts[pointer].user_id %>)">Delete contact</button>
         </div>
         <ul id="search_result">
 
@@ -184,6 +186,11 @@
           <!--Modal to show when it's error -->
           <div id="inviteError" style="display:none;">
             <p>Invitation Error. Please Try Again.</p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+          </div>
+
+          <div id="deleteContact" style="display:none;">
+            <p>You have succefully deleted this contact </p>
             <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
           </div>
 
@@ -217,7 +224,7 @@
         var currentUser = $("#user_id").text();;
         $(function () {
 
-        var currentUser= "";
+
         var FriendUser="";
       //jquery fuction
       $('#search_user').submit(function(){
@@ -273,6 +280,29 @@
        });
 
      }
+      function deleteContact(currentUser, id){
+        var test="success"
+        socket.emit('delete_contact_request', currentUser, id,test);
+         console.log (currentUser);
+         console.log (id);
+              socket.on('request_deleted', function(msg){
+                console.log ("test6");
+                console.log(msg);
+                console.log ("test7");
+                if(msg == "fail"){
+                  //Close openning modal
+
+                  //Open Invite Error Modal
+
+                }else{
+                  //Close openning modal
+                  $.modal.close();
+                  //Open Invite Sucessful Modal
+                  $('#deleteContact').modal();
+                }
+                
+              });
+      }
 
 
 
