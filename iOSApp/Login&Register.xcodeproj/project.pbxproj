@@ -42,6 +42,10 @@
 		384D31DD1E7839D8003DA0B1 /* ChatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31DC1E7839D8003DA0B1 /* ChatsTableViewCell.swift */; };
 		384D31DF1E783A43003DA0B1 /* ChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31DE1E783A43003DA0B1 /* ChatsViewController.swift */; };
 		384D31E11E783B44003DA0B1 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31E01E783B44003DA0B1 /* ChatModel.swift */; };
+		384D31E31E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31E21E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift */; };
+		384D31E51E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31E41E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift */; };
+		384D31E71E799B05003DA0B1 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31E61E799B05003DA0B1 /* ConversationViewController.swift */; };
+		384D31E91E799E3C003DA0B1 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384D31E81E799E3C003DA0B1 /* MessageModel.swift */; };
 		388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */; };
 		38938EE61E54A775009F1973 /* LogInModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38938EE51E54A775009F1973 /* LogInModel.swift */; };
 		389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389CB7AC1E59D4BE00B5FDEE /* Utils.swift */; };
@@ -113,6 +117,10 @@
 		384D31DC1E7839D8003DA0B1 /* ChatsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatsTableViewCell.swift; sourceTree = "<group>"; };
 		384D31DE1E783A43003DA0B1 /* ChatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatsViewController.swift; sourceTree = "<group>"; };
 		384D31E01E783B44003DA0B1 /* ChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatModel.swift; sourceTree = "<group>"; };
+		384D31E21E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationSentMessageTableViewCell.swift; sourceTree = "<group>"; };
+		384D31E41E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationReceivedMessageTableViewCell.swift; sourceTree = "<group>"; };
+		384D31E61E799B05003DA0B1 /* ConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
+		384D31E81E799E3C003DA0B1 /* MessageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 		388D0E1C1E5607A000EDADA2 /* RegisterModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterModel.swift; sourceTree = "<group>"; };
 		38938EE51E54A775009F1973 /* LogInModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInModel.swift; sourceTree = "<group>"; };
 		389CB7AC1E59D4BE00B5FDEE /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -198,6 +206,8 @@
 			children = (
 				3847247A1E5C903F00611EA2 /* ContactsTableViewCell.swift */,
 				384D31DC1E7839D8003DA0B1 /* ChatsTableViewCell.swift */,
+				384D31E21E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift */,
+				384D31E41E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -212,6 +222,7 @@
 				380C173B1E64C08C00813821 /* ContactModel.swift */,
 				3810AC041E74382A005A98EB /* FilteredContactModel.swift */,
 				384D31E01E783B44003DA0B1 /* ChatModel.swift */,
+				384D31E81E799E3C003DA0B1 /* MessageModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -229,6 +240,7 @@
 				3810AC021E742DD2005A98EB /* AddContactViewController.swift */,
 				384D31DA1E7739F3003DA0B1 /* ContactRequestsViewController.swift */,
 				384D31DE1E783A43003DA0B1 /* ChatsViewController.swift */,
+				384D31E61E799B05003DA0B1 /* ConversationViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -432,9 +444,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				384D31E71E799B05003DA0B1 /* ConversationViewController.swift in Sources */,
 				3810AC301E743CBF005A98EB /* SocketIOClientSpec.swift in Sources */,
 				3810AC311E743CBF005A98EB /* SocketIOClientStatus.swift in Sources */,
 				591100EB1E4D113C00AC77A7 /* LoginViewController.swift in Sources */,
+				384D31E51E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift in Sources */,
 				384D31E11E783B44003DA0B1 /* ChatModel.swift in Sources */,
 				3847247F1E5C915D00611EA2 /* ContactsViewController.swift in Sources */,
 				38938EE61E54A775009F1973 /* LogInModel.swift in Sources */,
@@ -475,6 +489,8 @@
 				3810AC291E743CBF005A98EB /* SocketEngineSpec.swift in Sources */,
 				3810AC2C1E743CBF005A98EB /* SocketExtensions.swift in Sources */,
 				3810AC341E743CBF005A98EB /* SocketParsable.swift in Sources */,
+				384D31E91E799E3C003DA0B1 /* MessageModel.swift in Sources */,
+				384D31E31E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift in Sources */,
 				3810AC241E743CBF005A98EB /* SocketClientManager.swift in Sources */,
 				5926C3C01E5C974600E4DBF2 /* IndividualTableViewController.swift in Sources */,
 				59334E4D1E492C8700E91DF3 /* AppDelegate.swift in Sources */,

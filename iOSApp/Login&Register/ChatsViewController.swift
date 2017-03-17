@@ -19,14 +19,16 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
+        
+        SocketIOManager.sharedInstance.setGetChatsListener(completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.chatsDownloaded(userList!)
             })
         })
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -51,6 +53,10 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
+        self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
     // The function called at the arival of the response from the server
@@ -64,33 +70,47 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
             
             if let receiverId = chatDetails[i]["receiverId"] as? Int,
                 let receiverName = chatDetails[i]["receiverName"] as? String,
+                let senderId = chatDetails[i]["senderId"] as? Int,
                 let senderName = chatDetails[i]["senderName"] as? String,
                 let lastMessage = chatDetails[i]["message"] as? String,
                 let timestamp = chatDetails[i]["timestmp"] as? String
             {
+                var ppicture = ""
                 item = ChatModel()
-                item.receiverId = receiverId
-                item.receiverName = receiverName
+                if senderId == UserDefaults.standard.value(forKey: "userId")! as! Int {
+                    item.receiverId = receiverId
+                    item.receiverName = receiverName
+                    ppicture = "receiverProfilePicture";
+                } else {
+                    item.receiverId = senderId
+                    item.receiverName = senderName
+                    ppicture = "senderProfilePicture";
+                }
                 item.senderName = senderName
                 item.lastMessage = lastMessage
-                item.timestamp = timestamp
+                let separators = CharacterSet(charactersIn: "T.")
+                item.timestamp = timestamp.components(separatedBy: separators)[1]
                 
-                if let profilePicture = chatDetails[i]["profilePicture"] as? String {
+                if let profilePicture = chatDetails[i][ppicture] as? String {
                     
-                    // Download the profile picture, if exists
-                    if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
-                        if let data = try? Data(contentsOf: url) {
-                            var profileImg: UIImage
-                            profileImg = UIImage(data: data)!
-                            if let data = UIImagePNGRepresentation(profileImg) {
-                                let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
-                                try? data.write(to: filename)
-                                item.profilePicture = profilePicture
+                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
+                    if FileManager.default.fileExists(atPath: filename.path) {
+                        item.profilePicture = profilePicture
+                    } else {
+                        // Download the profile picture, if exists
+                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
+                            if let data = try? Data(contentsOf: url) {
+                                var profileImg: UIImage
+                                profileImg = UIImage(data: data)!
+                                if let data = UIImagePNGRepresentation(profileImg) {
+                                    try? data.write(to: filename)
+                                    item.profilePicture = profilePicture
+                                } else {
+                                    item.profilePicture = ""
+                                }
                             } else {
                                 item.profilePicture = ""
                             }
-                        } else {
-                            item.profilePicture = ""
                         }
                     }
                 } else {

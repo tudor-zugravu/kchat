@@ -87,20 +87,24 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
-                    // Download the profile picture, if exists
-                    if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
-                        if let data = try? Data(contentsOf: url) {
-                            var profileImg: UIImage
-                            profileImg = UIImage(data: data)!
-                            if let data = UIImagePNGRepresentation(profileImg) {
-                                let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
-                                try? data.write(to: filename)
-                                item.profilePicture = profilePicture
+                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
+                    if FileManager.default.fileExists(atPath: filename.path) {
+                        item.profilePicture = profilePicture
+                    } else {
+                        // Download the profile picture, if exists
+                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
+                            if let data = try? Data(contentsOf: url) {
+                                var profileImg: UIImage
+                                profileImg = UIImage(data: data)!
+                                if let data = UIImagePNGRepresentation(profileImg) {
+                                    try? data.write(to: filename)
+                                    item.profilePicture = profilePicture
+                                } else {
+                                    item.profilePicture = ""
+                                }
                             } else {
                                 item.profilePicture = ""
                             }
-                        } else {
-                            item.profilePicture = ""
                         }
                     }
                 } else {

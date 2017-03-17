@@ -21,6 +21,38 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
+        
+        SocketIOManager.sharedInstance.setRequestAcceptedListener(completionHandler: { (response) -> Void in
+            if(response != "fail") {
+                self.contacts.remove(at: Int(response)!)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+        
+        SocketIOManager.sharedInstance.setReceivedRequestsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+        
+        SocketIOManager.sharedInstance.setRequestDeletedListener(completionHandler: { (response) -> Void in
+            if(response != "fail") {
+                self.contacts.remove(at: Int(response)!)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+        
+        SocketIOManager.sharedInstance.setSentRequestsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,18 +60,10 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         if let value = passedValue {
             if value == true {
                 titleLabel.text = "Sent Requests"
-                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.contactsDownloaded(userList!)
-                    })
-                })
+                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
             } else {
                 titleLabel.text = "Received Requests"
-                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.contactsDownloaded(userList!)
-                    })
-                })
+                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
             }
         }
         
@@ -122,20 +146,24 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
-                    // Download the profile picture, if exists
-                    if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
-                        if let data = try? Data(contentsOf: url) {
-                            var profileImg: UIImage
-                            profileImg = UIImage(data: data)!
-                            if let data = UIImagePNGRepresentation(profileImg) {
-                                let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
-                                try? data.write(to: filename)
-                                item.profilePicture = profilePicture
+                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
+                    if FileManager.default.fileExists(atPath: filename.path) {
+                        item.profilePicture = profilePicture
+                    } else {
+                        // Download the profile picture, if exists
+                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
+                            if let data = try? Data(contentsOf: url) {
+                                var profileImg: UIImage
+                                profileImg = UIImage(data: data)!
+                                if let data = UIImagePNGRepresentation(profileImg) {
+                                    try? data.write(to: filename)
+                                    item.profilePicture = profilePicture
+                                } else {
+                                    item.profilePicture = ""
+                                }
                             } else {
                                 item.profilePicture = ""
                             }
-                        } else {
-                            item.profilePicture = ""
                         }
                     }
                 } else {
@@ -152,26 +180,12 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     
     func deleteRequest(receiver: Int) {
         
-        SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), completionHandler: { (response) -> Void in
-            if(response == true) {
-                self.contacts.remove(at: receiver)
-                self.tableView.reloadData()
-            } else {
-                print("error")
-            }
-        })
+        SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
     }
     
     func acceptContact(receiver: Int) {
         
-        SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), completionHandler: { (response) -> Void in
-            if(response == true) {
-                self.contacts.remove(at: receiver)
-                self.tableView.reloadData()
-            } else {
-                print("error")
-            }
-        })
+        SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
     }
     
     func dismissKeyboard() {

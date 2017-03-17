@@ -19,6 +19,23 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
+        
+        SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
+            if(response == true) {
+                self.contacts = []
+                self.tableView.reloadData()
+                self.searchBar.text = ""
+            } else {
+                print("error")
+            }
+        })
+        
+        SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,11 +46,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.contactsDownloaded(userList!)
-            })
-        })
+        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
     }
 
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -97,15 +110,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     
     func addContact(receiver: Int) {
         
-        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(receiver), completionHandler: { (response) -> Void in
-            if(response == true) {
-                self.contacts = []
-                self.tableView.reloadData()
-                self.searchBar.text = ""
-            } else {
-                print("error")
-            }
-        })
+        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(receiver))
     }
     
     func dismissKeyboard() {
