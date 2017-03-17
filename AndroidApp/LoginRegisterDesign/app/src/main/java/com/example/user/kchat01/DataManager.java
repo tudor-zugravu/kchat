@@ -9,8 +9,6 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
-
 import API.IContacts;
 import IMPL.Contacts;
 
@@ -35,18 +33,24 @@ public class DataManager {
     public static final String CONTACT_TABLE_BIOGRAPHY = "biography";
     public static final String CONTACT_TABLE_BITMAP = "bitmap";
 
+    public static final String PRIVATE_MESSAGES_MESSAGEID = "messageid";
+    public static final String PRIVATE_MESSAGES_SENDERID = "sender";
+    public static final String PRIVATE_MESSAGES_RECEIVERID = "receiver";
+    public static final String PRIVATE_MESSAGES_MESSAGE = "message";
+    public static final String PRIVATE_MESSAGES_TIMESTAMP = "timestamp";
+
+    public static final String GROUP_MESSAGES_MESSAGEID = "messageid";
+    public static final String GROUP_MESSAGES_SENDERID = "sender";
+    public static final String GROUP_MESSAGES_RECEIVERID = "receiver";
+    public static final String GROUP_MESSAGES_MESSAGE = "message";
+    public static final String GROUP_MESSAGES_TIMESTAMP = "timestamp";
+
     private static final String CLIENT_DATABASE = "kchat_db"; // db
     private static final String CONTACTS_TABLE = "contacts"; // table name
+    private static final String PRIVATE_MESSAGES_TABLE = "privatemessages"; // table name
+    private static final String GROUP_MESSAGES_TABLE = "groupmessages"; // table name
 
-    //name of rows
-    public static final String TABLE_ROW_ID = "_id";
-    public static final String TABLE_ROW_NAME = "name";
-    public static final String TABLE_ROW_AGE = "age";
-
-    private static final String DB_NAME = "address_book_db"; // db
     private static final int DB_VERSION = 1;
-    private static final String TABLE_N_AND_A = "names_and_addresses"; // table name
-    // This is the actual database
     private SQLiteDatabase db;
 
     public DataManager(Context context) {//CustomSQLiteOpenHelper class
@@ -79,19 +83,6 @@ public class DataManager {
                 "'" + profileDirectory + "'" + ", " +
                 "'" + biography + "'" + ", " +
                 "'" + usersImage + "'" +
-                "); ";
-        Log.i("insert() = ", query);
-        db.execSQL(query);
-    }
-
-    public void insert(String name, String age){
-// Add all the details to the table
-        String query = "INSERT INTO " + TABLE_N_AND_A + " (" +
-                TABLE_ROW_NAME + ", " +
-                TABLE_ROW_AGE + ") " +
-                "VALUES (" +
-                "'" + name + "'" + ", " +
-                "'" + age + "'" +
                 "); ";
         Log.i("insert() = ", query);
         db.execSQL(query);
@@ -140,30 +131,12 @@ public class DataManager {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
-    // Get all the records
-    public Cursor selectAll() {
-        Cursor c = db.rawQuery("SELECT *" +" from " +
-                TABLE_N_AND_A, null);
-        return c;
-    }
 
     public Cursor searchContact(String name) {
         String query = "SELECT *" +
                 " from " +
                 CONTACTS_TABLE + " WHERE " +
                 CONTACT_TABLE_ID + " = '" + name + "';";
-        Log.i("searchName() = ", query);
-        Cursor c = db.rawQuery(query, null);
-        return c;
-    }
-    public Cursor searchName(String name) {
-        String query = "SELECT " +
-                TABLE_ROW_ID + ", " +
-                TABLE_ROW_NAME +
-                ", " + TABLE_ROW_AGE +
-                " from " +
-                TABLE_N_AND_A + " WHERE " +
-                TABLE_ROW_NAME + " = '" + name + "';";
         Log.i("searchName() = ", query);
         Cursor c = db.rawQuery(query, null);
         return c;
@@ -177,16 +150,6 @@ public class DataManager {
         // This method only runs the first time the database is created
         @Override
         public void onCreate(SQLiteDatabase db) {// Creates a table for clients details
-
-            String newTableQueryString = "create table "
-                    + TABLE_N_AND_A + " ("
-                    + TABLE_ROW_ID
-                    + " integer primary key autoincrement not null,"
-                    + TABLE_ROW_NAME
-                    + " text not null,"
-                    + TABLE_ROW_AGE
-                    + " text not null);";
-            db.execSQL(newTableQueryString);
 
             String newContactsTableQueryString = "create table "
                     + CONTACTS_TABLE + " ("
@@ -211,6 +174,34 @@ public class DataManager {
                     + CONTACT_TABLE_BITMAP
                     + " text not null);";
             db.execSQL(newContactsTableQueryString);
+
+            String newMessageTableQueryString = "create table "
+                    + PRIVATE_MESSAGES_TABLE + " ("
+                    + PRIVATE_MESSAGES_MESSAGEID
+                    + " integer primary key not null,"
+                    + PRIVATE_MESSAGES_SENDERID
+                    + " integer not null,"
+                    + PRIVATE_MESSAGES_RECEIVERID
+                    + " integer not null,"
+                    + PRIVATE_MESSAGES_MESSAGE
+                    + " text not null,"
+                    + PRIVATE_MESSAGES_TIMESTAMP
+                    + " text not null);";
+            db.execSQL(newMessageTableQueryString);
+
+            String newgroupTableQueryString = "create table "
+                    + GROUP_MESSAGES_TABLE + " ("
+                    + GROUP_MESSAGES_MESSAGEID
+                    + " integer primary key not null,"
+                    + GROUP_MESSAGES_SENDERID
+                    + " integer not null,"
+                    + GROUP_MESSAGES_RECEIVERID
+                    + " integer not null,"
+                    + GROUP_MESSAGES_MESSAGE
+                    + " text not null,"
+                    + GROUP_MESSAGES_TIMESTAMP
+                    + " text not null);";
+            db.execSQL(newgroupTableQueryString);
         }
         // This method only runs when increment DB_VERSION
         @Override

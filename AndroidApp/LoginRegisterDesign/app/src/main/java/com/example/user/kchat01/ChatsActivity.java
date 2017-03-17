@@ -44,22 +44,17 @@ public class ChatsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
    // private SearchView searchView;
     private ChatsAdapter adapter;
-    private IMessage messageObject; // This is the object that represents each chat
     private ArrayList<IMessage> dataList;
     private String username,message;
     private Socket mSocket;
-    private Bitmap contactsBitmap;
+    public static Bitmap contactsBitmap;
     private String userId;
     private int contactId;
     private CharSequence dateText;
 
-    public void onMessageReceived(IMessage message){
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +63,6 @@ public class ChatsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
-            Log.d("PRIVATECHAT","reached here");
             this.userId = intent.getStringExtra("userid");
             this.username = intent.getStringExtra("username");
             this.contactId = intent.getIntExtra("contactid", 0);
@@ -78,9 +72,11 @@ public class ChatsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
-            //mSocket.on("updatechat", stringReply); // -<
-            Log.d("PRIVATE_roomId", "room"+contactId);
-            mSocket.on("room"+ contactId, stringReply); // -<
+            mSocket.on("room_created",stringReply2);
+            mSocket.emit("create_room", userId, MasterUser.usersId);
+            mSocket.on("update_chat", serverReplyLogs); // sends server messages
+            mSocket.on("send_recent_messages", getallmessages); // sends server messages
+
         } catch (URISyntaxException e){
         }
 
@@ -109,111 +105,79 @@ public class ChatsActivity extends AppCompatActivity {
                     //before i am outputting to the screen i will take the text of the message and any other user related information
                     //and i will send it to the server using the socket.io
                     if(mSocket.connected()){
-                        Date date = new Date();
-
-                        IMessage messageobj = new Message(MasterUser.usersId,0,Integer.parseInt(userId),message,date);
-                        JsonSerialiser messageSerialize = new JsonSerialiser();
-                       String messageResult= messageSerialize.serialiseMessage(messageobj,"0");
-                        Log.d("PRIVATECHAT", "Reached here:" + userId);
-                        mSocket.emit("sendchat",message);
+                        mSocket.emit("send_chat",message);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
                     }
-                    mSocket.connect();
-
-                    int latestPosition = adapter.getItemCount();
-                    dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1,message, String.valueOf(dateText),"user01",null);//This is used to add actual message
-                    messageObject.setMe(true);
-                    dataList.add(latestPosition, messageObject);//"0" means top of array
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                    recyclerView.scrollToPosition(adapter.getItemCount()-1);
                 }
             }
         });
-        /*
-        From here, search function is performed
-         */
-        /*
-        searchView = (SearchView) findViewById(searchView);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                adapter.getFilter().filter(query);
-                return false;
-            }
-        });
-        */
     }
 
-    private Emitter.Listener messageRetreiver = new Emitter.Listener() {
+    private Emitter.Listener serverReplyLogs = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             ChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String serverresult = (String) args[0];
-                    Log.d("MESSAGEERROR", serverresult.toString());
-
-                    int latestPosition = adapter.getItemCount();
-                    //dateText  = android.text.format.DateFormat.format("E, dd/MM/ mm:ss", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1, serverresult.toString(), String.valueOf(dateText), "user01", contactsBitmap);//This is used to add actual message
-                    messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
-                    dataList.add(latestPosition, messageObject);//"0" means top of array
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener stringReply = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            ChatsActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String receivedMessage = (String) args [1];
+                    String receivedMessage = (String) args [0];
                     Log.d("PRIVATECHAT", receivedMessage);
-                    int latestPosition = adapter.getItemCount();
-                    dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
-                    IMessage messageObject = new Message(1, receivedMessage, String.valueOf(dateText), "user01", contactsBitmap);//This is used to add actual message
-                    messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
-                    dataList.add(latestPosition, messageObject);//"0" means top of array
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                 }
             });
         }
     };
 
-    private Emitter.Listener jsonReply = new Emitter.Listener() {
+    private Emitter.Listener getallmessages = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-           // JSONObject data = (JSONObject) args[0];
             JSONArray jsonArray = (JSONArray) args[0]; // Exception.
             Log.d("MESSAGEERROR", jsonArray.toString());
 
         }
-
-
-            //JSONObject data = (JSONObject) args[0];
-            // Log.d("MESSAGEERROR", data.toString());
-
-            //  int numUsers;
-//            try {
-//               // numUsers = data.getInt("numUsers");
-//            } catch (JSONException e) {
-//                return;
-//            }
-
     };
+
+    private Emitter.Listener stringReply2 = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            String receivedMessage = (String) args [0];
+            if(receivedMessage.equals("fail")){
+                // print error cannot connect
+            }else {
+                //the rooms id is received
+                mSocket.emit("add_user",receivedMessage,MasterUser.usersId);
+                mSocket.on(receivedMessage,messageReceiver);
+                mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
+            }
+            Log.d("PRIVATECHAT", receivedMessage);
+        }
+    };
+
+    private Emitter.Listener messageReceiver = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int messageid = (int) args [0];
+                    String username = (String) args [1];
+                    String message = (String) args [2];
+                    String timestamp = (String) args [3];
+                    int latestPosition = adapter.getItemCount();
+                      dateText  = android.text.format.DateFormat.format("E, kk:mm", java.util.Calendar.getInstance());
+                    IMessage messageObject = new Message(messageid, Integer.parseInt(username), message, timestamp);//This is used to add actual message
+                    if(Integer.parseInt(username) == MasterUser.usersId){
+                        messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
+                    }else{
+                        messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
+                    }
+                    dataList.add(latestPosition, messageObject);//"0" means top of array
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                }
+            });
+        }
+    };
+
+
 }

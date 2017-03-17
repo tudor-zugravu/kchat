@@ -20,16 +20,14 @@ public interface IMessage {
     public void setGroupId(int GroupId);
     public String getMessage();
     public void setMessage(String message);
-    public Date getTimestamp();
-    public void setTimestamp(Date timestamp);
+    public String getTimestamp();
+    public void setTimestamp(String timestamp);
     public String getUsername();
     public void setUsername(String username);
     public int getImageId();
     public void setImageId(int imageId);
     public String getStrTimestamp();
     public void setStrTimestamp(String strTimestamp);
-    public Bitmap getBitmap();
-    public void setBitmap(Bitmap bitmap);
     public boolean isMe();
     public void setMe(boolean me);
 }

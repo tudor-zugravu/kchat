@@ -59,7 +59,6 @@ public class ContactsActivity extends AppCompatActivity {
     ContactsAdapter adapter;
     public static int tabId;
     private BottomBar bottomBar;
-    private Socket mSocket;
     MasterUser man = new MasterUser();
     DataManager dm;
 
@@ -67,15 +66,7 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ContactsActivity.this);
-
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.on("roomcreated",stringReply);
-            mSocket.connect();
-        }catch (URISyntaxException e){
-        }
-
-        if(man.getProfileLocation()!=null) {
+             if(man.getProfileLocation()!=null) {
             try {
                 String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
                 String type = "getImage";
@@ -184,7 +175,6 @@ public class ContactsActivity extends AppCompatActivity {
             adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
                 @Override
                 public void onClick(ContactsViewHolder holder) {
-                    Log.d("PRIVATECHAT","clicked on the contact");
                     int position = recyclerView.getChildAdapterPosition(holder.itemView);
                     IContacts contact = Contacts.contactList.get(position);
                     Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
@@ -198,8 +188,6 @@ public class ContactsActivity extends AppCompatActivity {
                     byte [] byteArray = stream.toByteArray();
                     contactsIntent.putExtra("contactbitmap",byteArray);
                     startActivity(contactsIntent);
-                    mSocket.emit("createroom", contact.getUserId(), man.getuserId());
-                    mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                 }
             };
             adapter.notifyDataSetChanged();
@@ -318,8 +306,6 @@ public class ContactsActivity extends AppCompatActivity {
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
                             byte [] byteArray = stream.toByteArray();
                             contactsIntent.putExtra("contactbitmap",byteArray);
-                            mSocket.emit("createroom", contact.getUserId(), man.getuserId());
-                            mSocket.emit("adduser", "room"+contact.getContactId(), man.usersId);
                             startActivity(contactsIntent);
                         }
                         @Override
@@ -391,14 +377,6 @@ public class ContactsActivity extends AppCompatActivity {
             menuInflater.inflate(R.menu.groups_menu, menu);
         return true;
     }
-
-    private Emitter.Listener stringReply = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            String receivedMessage = (String) args [0];
-            Log.d("PRIVATECHAT", receivedMessage);
-        }
-    };
 
 
 }
