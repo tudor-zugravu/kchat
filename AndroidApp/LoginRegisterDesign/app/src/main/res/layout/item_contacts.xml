@@ -37,7 +37,6 @@
             android:layout_toRightOf="@+id/imageProfile"
             android:layout_below="@+id/textViewUsername"
             android:textSize="14sp"
-            android:maxLines="1"
             android:textColor="@color/cardviewMessageColor"
             android:layout_alignLeft="@+id/textViewUsername"
             android:layout_alignStart="@+id/textViewUsername"
