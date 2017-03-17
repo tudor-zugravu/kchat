@@ -19,7 +19,7 @@ var changePass= require('./routes/changePass');
 var loginError=require('./routes/loginError');
 var contacts=require('./routes/contacts');
 var app = express();
-var mysql = require('mysql');
+
 var client = new Client();
 
 var io = socket_io();
