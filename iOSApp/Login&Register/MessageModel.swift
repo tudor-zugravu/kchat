@@ -11,8 +11,10 @@ import Foundation
 class MessageModel: NSObject {
     
     //properties
+    var messageId: Int?
     var sent: Bool?
     var message: String?
+    var timestamp: String?
 
     //empty constructor
     override init()
@@ -21,15 +23,25 @@ class MessageModel: NSObject {
     }
 
     //construct with @name, @email and @telephone parameters
-    init(sent: Bool, message: String) {
+    init(messageId: Int, senderId: String, message: String, timestamp: String) {
         
-        self.sent = sent
+        self.messageId = messageId
+        
+        if senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
+            self.sent = true
+        } else {
+            self.sent = false
+        }
+
         self.message = message
+        
+        let separators = CharacterSet(charactersIn: " ")
+        self.timestamp = timestamp.components(separatedBy: separators)[1]
     }
 
     //prints object's current state
     override var description: String {
-        return "Sent: \(sent), Message: \(message)"
+        return "Message Id: \(messageId), Sent: \(sent), Message: \(message), Timestamp: \(timestamp)"
     }
 
 }

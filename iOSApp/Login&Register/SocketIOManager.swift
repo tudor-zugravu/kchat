@@ -27,7 +27,7 @@ class SocketIOManager: NSObject {
             self.pendingEmits.removeAll()
         }
         
-        socket.on("updatechat") { ( dataArray, ack) -> Void in
+        socket.on("update_chat") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             print(responseString)
         }
@@ -183,8 +183,8 @@ class SocketIOManager: NSObject {
     }
     
     func setRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
-        socket.off("roomcreated")
-        socket.on("roomcreated") { ( dataArray, ack) -> Void in
+        socket.off("room_created")
+        socket.on("room_created") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
@@ -192,23 +192,25 @@ class SocketIOManager: NSObject {
     }
     
     func createRoom(receiverId: String, userId: String) {
-        socket.emit("createroom", receiverId, userId)
+        socket.emit("create_room", receiverId, userId)
     }
     
     func addUser(roomId: String, userId: String) {
-        socket.emit("adduser", roomId, userId)
+        socket.emit("add_user", roomId, userId)
     }
     
     func sendMessage(message: String) {
-        socket.emit("sendchat", message)
+        socket.emit("send_chat", message)
     }
     
-    func setRoomListener(room: String, completionHandler: @escaping (_ username: String, _ message: String) -> Void) {
+    func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
         socket.on(room) { ( dataArray, ack) -> Void in
             
-            let username = dataArray[0] as! String
-            let message = dataArray[1] as! String
-            completionHandler(username, message)
+            let messageId = dataArray[0] as! Int
+            let username = dataArray[1] as! String
+            let message = dataArray[2] as! String
+            let timestamp = dataArray[3] as! String
+            completionHandler(messageId, username, message, timestamp)
         }
     }
     
