@@ -327,15 +327,14 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
     public int updateGroup(IGroups group) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id", group.getGroupId());
+        values.put("id", group.getOwnerId());
         values.put("name", group.getName());
         values.put("description", group.getDescription());
-        values.put("type", group.getType());
 
         int i = db.update("contacts", //table
                 values, // column/value
                 "id = ?", // selections
-                new String[] { String.valueOf(group.getGroupId()) });
+                new String[] { String.valueOf(group.getOwnerId()) });
 
         db.close();
         return i;
@@ -363,7 +362,7 @@ public class DatabaseAdaptor extends SQLiteOpenHelper implements IAdaptors  {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("groups", //table name
                 "id"+" = ?",  // selections
-                new String[] { String.valueOf(group.getGroupId()) }); //selections args
+                new String[] { String.valueOf(group.getOwnerId()) }); //selections args
         db.close();
         Log.d("deleteBook", group.toString());
     }

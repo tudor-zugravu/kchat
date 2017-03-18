@@ -12,21 +12,17 @@ public interface IGroups {
 
     public void setDescription(String description);
 
-    public int getGroupId();
+    public int getOwnerId();
 
-    public void setGroupId(int groupId);
-
-    public int getType();
-
-    public void setType(int type);
+    public void setOwnerId(int ownerId);
 
     public String getName();
 
     public void setName(String name);
 
-    public int getImageId();
+    public String getImageLocation();
 
-    public void setImageId(int imageId);
+    public void setImageLocation(String pictureLocation);
 
     public Bitmap getGroupImage();
 

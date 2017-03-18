@@ -2,8 +2,6 @@ package IMPL;
 
 import android.graphics.Bitmap;
 
-import com.example.user.kchat01.R;
-
 import java.util.ArrayList;
 
 import API.IGroups;
@@ -15,51 +13,31 @@ import API.IGroups;
 public class Groups implements IGroups {
 
    private String description;
-    private int groupId;
-    private int type;
+    private int ownerId;
     private String name;
-    private int imageId;
+    private String pictureLocation;
     private ArrayList<Integer> usersAsID;
     private Bitmap groupImage;
-
     public static ArrayList<IGroups> groupList = new ArrayList<>();
 
-    public static ArrayList<IGroups> testList = new ArrayList<>();
-
-
-    public Groups (int groupId, String name, String description, int type){
-    this.description = description;
-        this.groupId = groupId;
-        this.type=type;
-        this.name=name;
-    }
-
-    public Groups (int groupId, String name, String description, int type,ArrayList<Integer> usersAsID){
+    //used for test
+    public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId){
+        this.name = groupName;
         this.description = description;
-        this.groupId = groupId;
-        this.type=type;
-        this.name=name;
-        this.usersAsID = usersAsID;
+        this.ownerId = ownerId;
+        this.pictureLocation=pictureLocation;
+        this.usersAsID = usersId;
     }
 
     //used for test
-    public Groups (String name, String description, int type, int imageId){
+    public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId,Bitmap groupImage){
+        this.name = groupName;
         this.description = description;
-        this.groupId = groupId;
-        this.type=type;
-        this.name=name;
+        this.ownerId = ownerId;
+        this.pictureLocation=pictureLocation;
+        this.usersAsID = usersId;
+        groupImage = groupImage;
     }
-
-    //used for test
-    public Groups (int groupId, String name, String description, int type,ArrayList<Integer> usersAsID, Bitmap groupImage){
-        this.description = description;
-        this.groupId = groupId;
-        this.type=type;
-        this.name=name;
-        this.usersAsID = usersAsID;
-        this.groupImage = groupImage;
-    }
-
 
     @Override
     public String getDescription() {
@@ -71,24 +49,12 @@ public class Groups implements IGroups {
         this.description = description;
     }
 
-    @Override
-    public int getGroupId() {
-        return this.groupId;
+    public int getOwnerId() {
+        return this.ownerId;
     }
 
-    @Override
-    public void setGroupId(int groupId) {
-    this.groupId=groupId;
-    }
-
-    @Override
-    public int getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(int type) {
-        this.type=type;
+    public void setOwnerId(int ownerId) {
+    this.ownerId = ownerId;
     }
 
     @Override
@@ -102,30 +68,13 @@ public class Groups implements IGroups {
     }
 
     @Override
-    public int getImageId() {
-        return imageId;
+    public String getImageLocation() {
+        return this.pictureLocation;
     }
 
     @Override
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
-    }
-
-    public static ArrayList<IGroups> getObjectList() {
-       // ArrayList<IGroups> dataList = new ArrayList<>();
-        for (int i = 0; i <= 2; i++) {
-            IGroups group = new Groups("name of group" +i,"Description message of group" + i,0,R.drawable.human);
-            group.setImageId(R.drawable.human);
-            testList.add(group);
-        }
-        IGroups group2 = new Groups("group","Description message of group",0,R.drawable.human);
-        group2.setImageId(R.drawable.human);
-        testList.add(group2);
-        IGroups group3 = new Groups("agroup","Description message of group",0,R.drawable.human);
-        group3.setImageId(R.drawable.human);
-        testList.add(group3);
-        return testList;
-
+    public void setImageLocation(String pictureLocation) {
+        this.pictureLocation = pictureLocation;
     }
 
     public static ArrayList<IGroups> getGroupList() {
