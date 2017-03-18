@@ -72,6 +72,10 @@ public class ChatsActivity extends AppCompatActivity {
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
         }
+        Log.d("CHATSTATUS","IHAVE GOT my id: " + MasterUser.usersId);
+
+        Log.d("CHATSTATUS","IHAVE GOT the contacts id " + userId  +"  ---  "+ contactId);
+
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
@@ -94,19 +98,6 @@ public class ChatsActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-//
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//                                             @Override
-//                                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                                                 super.onScrolled(recyclerView, dx, dy);
-//                                                 {
-////                   Log.d("SCROLLING","i have reached the top");
-////                    mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20*counter);
-////                    counter++;
-//                                                 }
-//                                             }
-//                                         };
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
@@ -180,6 +171,7 @@ public class ChatsActivity extends AppCompatActivity {
             ChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("CHATSTATUS","IHAVE GOT THEMESSAGES");
                     dataList.clear();
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
@@ -218,7 +210,6 @@ public class ChatsActivity extends AppCompatActivity {
                 //the rooms id is received
                 mSocket.emit("add_user",receivedMessage,MasterUser.usersId);
                 mSocket.on(receivedMessage,messageReceiver);
-
                 mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
             }
             Log.d("PRIVATECHAT", receivedMessage);

@@ -235,14 +235,35 @@ public class ContactsActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     adapter = new ContactsAdapter(ContactsActivity.this, Contacts.activeChat,0) {
-                        //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
                             IContacts contact = Contacts.activeChat.get(position);
-                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                            contactsIntent.putExtra("username", contact.getContactName());
+                            Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
+                            String type = "contact";
+                            contactsIntent.putExtra("type",type);
+                            contactsIntent.putExtra("userid",Integer.toString(contact.getContactId()));
+                            contactsIntent.putExtra("username",contact.getUsername());
+                            contactsIntent.putExtra("contactid",contact.getContactId());
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
+                            byte [] byteArray = stream.toByteArray();
+                            contactsIntent.putExtra("contactbitmap",byteArray);
                             startActivity(contactsIntent);
+                        }
+                        @Override
+                        public void onLongClick(ContactsViewHolder holder){
+                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                            IContacts contact = Contacts.getContactList().get(position);
+                            // move to Profile
+                            Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
+                            profileIntent.putExtra("contact_username", contact.getUsername());
+                            profileIntent.putExtra("contact_email", contact.getEmail());
+                            profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
+                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
+                            profileIntent.putExtra("type", "contactsprofile");
+                            startActivity(profileIntent);
                         }
                     };
                     adapter.notifyDataSetChanged();
