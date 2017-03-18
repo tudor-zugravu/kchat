@@ -298,7 +298,6 @@ public class ContactsActivity extends AppCompatActivity {
                     ContactsActivity.showPlus=false;
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
-                    //dm.flushAllData();
                     Log.d("RAR",Integer.toString(dm.selectAllContacts().getCount()));
                     if(dm.selectAllContacts().getCount()>0){
                     dm.selectAllContacts();

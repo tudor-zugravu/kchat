@@ -1,8 +1,10 @@
 package com.example.user.kchat01;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,6 +36,8 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
     private AddGroupViewHolder holder;
     private AddGroupFilter filter;
     Context context;
+    private int groupLimit = 0;
+
 
     //constructor
     public AddGroupAdapter(Context context, ArrayList<IContacts> objectList) {
@@ -80,12 +86,37 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
             public void onItemClick(View view, int position) {
                 CheckBox cb = (CheckBox) view;
 
+
                 if(cb.isChecked()){
+                    groupLimit = groupLimit + 1;
+
+                    if(groupLimit>1){
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+                        AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
+                        builder1.setTitle("Cannot create Group");
+                        builder1.setMessage("You have added too many contacts, please choose less than 6 contacts.");
+                        builder1.setCancelable(true);
+                        builder1.setPositiveButton(
+                                "Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+                    }else{
+                        AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+
+                    }
                     checkedUsers.add(current);
-                    //Toast.makeText(view.getContext(), "Clicked", Toast.LENGTH_SHORT).show();
                 }else if (!cb.isChecked()){
+                    groupLimit = groupLimit - 1 ;
+                    if(groupLimit>1){
+                        AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
+                    }else{
+                        AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                    }
                     checkedUsers.remove(current);
-                    //Toast.makeText(view.getContext(), "UnClicked", Toast.LENGTH_SHORT).show();
                 }
             }
         });

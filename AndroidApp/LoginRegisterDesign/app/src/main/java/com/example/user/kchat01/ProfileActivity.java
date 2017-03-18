@@ -68,10 +68,6 @@ public class ProfileActivity extends CustomActivity {
         toolbarTitle.setText("Profile");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
-/*
-        REST get profile image, username, email, phone and biography
-*/
-
         //set username to textview
         tvUsername.setTextSize(18);
         //set email to txtview

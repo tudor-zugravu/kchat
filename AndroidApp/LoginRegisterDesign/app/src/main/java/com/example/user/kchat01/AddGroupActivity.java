@@ -52,7 +52,8 @@ import IMPL.RESTApi;
 
 public class AddGroupActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private TextView toolbarTitle, textViewDone; //"textViewDone" is clickable tv on toolbar
+    private TextView toolbarTitle;
+    public static  TextView textViewDone; //"textViewDone" is clickable tv on toolbar
     private EditText editTextGroupNmame, editTextDescription;
     private RecyclerView recyclerView;
     private SearchView searchView;

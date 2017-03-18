@@ -72,9 +72,6 @@ public class ChatsActivity extends AppCompatActivity {
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
         }
-        Log.d("CHATSTATUS","IHAVE GOT my id: " + MasterUser.usersId);
-
-        Log.d("CHATSTATUS","IHAVE GOT the contacts id " + userId  +"  ---  "+ contactId);
 
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
@@ -171,7 +168,6 @@ public class ChatsActivity extends AppCompatActivity {
             ChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("CHATSTATUS","IHAVE GOT THEMESSAGES");
                     dataList.clear();
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);

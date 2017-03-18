@@ -30,6 +30,7 @@ public class CustomActivity extends AppCompatActivity {
     private EditText etCurrentPassword, etNewPassword, etConfirm;
     private String newValue;
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
+    private DataManager dm;
 
     /*
   Top menu
@@ -39,6 +40,7 @@ public class CustomActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_menu, menu);
+        dm = new DataManager(CustomActivity.this);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -107,6 +109,7 @@ public class CustomActivity extends AppCompatActivity {
                 logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);
                 finish();
+                dm.flushAllData();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
