@@ -203,11 +203,11 @@ class SocketIOManager: NSObject {
         socket.emit("send_chat", message)
     }
     
-    func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
+    func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: Int, _ message: String, _ timestamp: String) -> Void) {
         socket.on(room) { ( dataArray, ack) -> Void in
             
             let messageId = dataArray[0] as! Int
-            let username = dataArray[1] as! String
+            let username = dataArray[1] as! Int
             let message = dataArray[2] as! String
             let timestamp = dataArray[3] as! String
             completionHandler(messageId, username, message, timestamp)
@@ -281,4 +281,28 @@ class SocketIOManager: NSObject {
             }
         }
     }
+    
+    func getRecentGroupMessages(groupId: Int, limit: String) {
+        socket.emit("get_recent_group_messages", groupId, limit)
+    }
+    
+    func setGetRecentGroupMessagesListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.on("send_recent_group_messages") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            if responseString == "fail" {
+                completionHandler([[:]])
+            } else {
+                if let data = responseString.data(using: .utf8) {
+                    do {
+                        let parsedData = try JSONSerialization.jsonObject(with: data, options: []) as! [[String:Any]]
+                        completionHandler(parsedData)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+
 }

@@ -12,7 +12,7 @@ class MessageModel: NSObject {
     
     //properties
     var messageId: Int?
-    var sent: Bool?
+    var senderId: Int?
     var message: String?
     var timestamp: String?
 
@@ -23,16 +23,10 @@ class MessageModel: NSObject {
     }
 
     //construct with @name, @email and @telephone parameters
-    init(messageId: Int, senderId: String, message: String, timestamp: String) {
+    init(messageId: Int, senderId: Int, message: String, timestamp: String) {
         
         self.messageId = messageId
-        
-        if senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
-            self.sent = true
-        } else {
-            self.sent = false
-        }
-
+        self.senderId = senderId
         self.message = message
         
         let separators = CharacterSet(charactersIn: " ")
@@ -41,7 +35,7 @@ class MessageModel: NSObject {
 
     //prints object's current state
     override var description: String {
-        return "Message Id: \(messageId), Sent: \(sent), Message: \(message), Timestamp: \(timestamp)"
+        return "Message Id: \(messageId), senderId: \(senderId), Message: \(message), Timestamp: \(timestamp)"
     }
 
 }
