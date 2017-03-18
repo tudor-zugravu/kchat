@@ -243,7 +243,6 @@
 			children = (
 				59205AF91E7C965800B92ABF /* EditProfileViewController.swift */,
 				59205AF31E7C84B500B92ABF /* NewGroupViewController.swift */,
-				C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */,
 				5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */,
 				59334E4E1E492C8700E91DF3 /* InitialViewController.swift */,
 				591100EA1E4D113C00AC77A7 /* LoginViewController.swift */,
@@ -255,6 +254,7 @@
 				384D31DA1E7739F3003DA0B1 /* ContactRequestsViewController.swift */,
 				384D31DE1E783A43003DA0B1 /* ChatsViewController.swift */,
 				384D31E61E799B05003DA0B1 /* ConversationViewController.swift */,
+				C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";

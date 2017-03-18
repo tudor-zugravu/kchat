@@ -20,7 +20,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         tableView.dataSource = self
         searchBar.delegate = self
         
-        SocketIOManager.sharedInstance.setGetChatsListener(completionHandler: { (userList) -> Void in
+        SocketIOManager.sharedInstance.setGetGroupChatsListener(completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.chatsDownloaded(userList!)
             })
@@ -28,7 +28,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -54,9 +54,11 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
-        self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        print("tap on \(chats[indexPath.row].receiverName!), \(chats[indexPath.row].receiverId!)");
+        
+//        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+//        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
+//        self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
     // The function called at the arival of the response from the server
@@ -68,30 +70,21 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         // parse the received JSON and save the contacts
         for i in 0 ..< chatDetails.count {
             
-            if let receiverId = chatDetails[i]["receiverId"] as? Int,
-                let receiverName = chatDetails[i]["receiverName"] as? String,
-                let senderId = chatDetails[i]["senderId"] as? Int,
-                let senderName = chatDetails[i]["senderName"] as? String,
+            if let groupId = chatDetails[i]["group_id"] as? Int,
+                let groupName = chatDetails[i]["name"] as? String,
                 let lastMessage = chatDetails[i]["message"] as? String,
                 let timestamp = chatDetails[i]["timestmp"] as? String
             {
-                var ppicture = ""
+                
                 item = ChatModel()
-                if senderId == UserDefaults.standard.value(forKey: "userId")! as! Int {
-                    item.receiverId = receiverId
-                    item.receiverName = receiverName
-                    ppicture = "receiverProfilePicture";
-                } else {
-                    item.receiverId = senderId
-                    item.receiverName = senderName
-                    ppicture = "senderProfilePicture";
-                }
-                item.senderName = senderName
+                
+                item.receiverId = groupId
+                item.receiverName = groupName
                 item.lastMessage = lastMessage
                 let separators = CharacterSet(charactersIn: "T.")
                 item.timestamp = timestamp.components(separatedBy: separators)[1]
                 
-                if let profilePicture = chatDetails[i][ppicture] as? String {
+                if let profilePicture = chatDetails[i]["group_picture"] as? String {
                     
                     let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
                     if FileManager.default.fileExists(atPath: filename.path) {

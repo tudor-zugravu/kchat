@@ -236,4 +236,37 @@ class SocketIOManager: NSObject {
             }
         }
     }
+    
+    func setGetGroupChatsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.on("sent_group_chats") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            if responseString == "fail" {
+                completionHandler([[:]])
+            } else {
+                if let data = responseString.data(using: .utf8) {
+                    do {
+                        let parsedData = try JSONSerialization.jsonObject(with: data, options: []) as! [[String:Any]]
+                        completionHandler(parsedData)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getGroupChats(userId: String) {
+        if socket.status.rawValue == 3 {
+            socket.emit("get_group_chats", userId)
+        } else {
+            if !pendingEmits.contains(where: { (event, params) -> Bool in
+                if (event == "get_chats") {
+                    return true
+                }
+                return false
+            }) {
+                pendingEmits.append(("get_chats", userId))
+            }
+        }
+    }
 }
