@@ -118,6 +118,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     askForPermission(Manifest.permission.CAMERA, CAMERA);
                 } else {
                     Toast.makeText(AddGroupActivity.this, "" + Manifest.permission.CAMERA + " is already granted.", Toast.LENGTH_SHORT).show();
+
                     if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
                         activity = (Activity) ((ContextWrapper) v.getContext()).getBaseContext();
                     }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
