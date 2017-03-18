@@ -182,17 +182,17 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func setRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
-        socket.off("room_created")
-        socket.on("room_created") { ( dataArray, ack) -> Void in
+    func setPrivateRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("private_room_created")
+        socket.on("private_room_created") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
         }
     }
     
-    func createRoom(receiverId: String, userId: String) {
-        socket.emit("create_room", receiverId, userId)
+    func createPrivateRoom(receiverId: String, userId: String) {
+        socket.emit("create_private_room", receiverId, userId)
     }
     
     func addUser(roomId: String, userId: String) {
@@ -201,6 +201,10 @@ class SocketIOManager: NSObject {
     
     func sendMessage(message: String) {
         socket.emit("send_chat", message)
+    }
+    
+    func sendGroupMessage(message: String) {
+        socket.emit("send_group_chat", message)
     }
     
     func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: Int, _ message: String, _ timestamp: String) -> Void) {
@@ -303,6 +307,19 @@ class SocketIOManager: NSObject {
                 }
             }
         }
+    }
+    
+    func setGroupRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("group_room_created")
+        socket.on("group_room_created") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func createGroupRoom(groupId: String) {
+        socket.emit("create_group_room", groupId)
     }
 
 }

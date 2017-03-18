@@ -35,37 +35,38 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
         
-//        SocketIOManager.sharedInstance.setRoomCreatedListener(completionHandler: { (response) -> Void in
-//            if response == "fail" {
-//                print("room create error")
-//            } else {
-//                print("am intrat in room");
-//                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-//                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
-//                    
-//                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
-//                    
-//                    self.messages.append(item)
-//                    self.tableView.reloadData()
-//                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
-//                })
+        SocketIOManager.sharedInstance.setGroupRoomCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("room create error")
+            } else {
+                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
+                    
+                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
+                    print(item.description)
+                    self.messages.append(item)
+                    self.tableView.reloadData()
+                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+                })
                 SocketIOManager.sharedInstance.setGetRecentGroupMessagesListener(completionHandler: { (messagesList) -> Void in
                     DispatchQueue.main.async(execute: { () -> Void in
                         self.messagesDownloaded(messagesList!)
                     })
                 })
-//            }
-//        })
+            }
+        })
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
+            
             titleLabel.text = value.groupName
+            descriptionLabel.text = value.groupDescription
             self.groupId = value.groupId
             
-//            SocketIOManager.sharedInstance.createRoom(receiverId: String(value.groupId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+            SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
             SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(convLimit))
         }
         
@@ -127,7 +128,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         for i in 0 ..< messagesDetails.count {
             
             if let messageId = messagesDetails[i]["message_id"] as? Int,
-                let senderId = messagesDetails[i]["sender_id"] as? Int,
+                let senderId = messagesDetails[i]["user_id"] as? Int,
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
@@ -146,14 +147,13 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     }
     
     @IBAction func sendButtonPressed(_ sender: Any) {
-        
         if (messageInputTextField.text != nil && messageInputTextField.text != "") {
             
-            SocketIOManager.sharedInstance.sendMessage(message: messageInputTextField.text!)
+            SocketIOManager.sharedInstance.sendGroupMessage(message: messageInputTextField.text!)
             messageInputTextField.text = ""
         }
     }
-    
+  
     func tableViewScrollToBottom(topOrBottom: Bool, animated: Bool, delay: Int) {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(delay)) {
@@ -185,7 +185,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if (scrollView.contentOffset.y == 0) {
             if self.didOverscroll {
-                if messages.count >= self.convLimit {
+                if self.messages.count >= self.convLimit {
                     self.convLimit += 20
                     
                     SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
