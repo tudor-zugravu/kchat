@@ -17,7 +17,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var navigationView: UIView!
     
-    var isAtTop: Bool = false
     var didOverscroll: Bool = false
     var convLimit: Int = 20
     var contactId: Int = 0;
@@ -179,15 +178,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView.contentOffset.y <= -50) {
-            if (self.isAtTop) {
                 self.didOverscroll = true
-            } else {
-                self.isAtTop = true
-            }
         } else if (scrollView.contentOffset.y <= 0) {
-            self.isAtTop = true
+            self.didOverscroll = false
         } else {
-            self.isAtTop = false
             self.didOverscroll = false
         }
     }
@@ -202,9 +196,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 }
                 self.didOverscroll = false
             }
-            self.isAtTop = true
         } else {
-            self.isAtTop = false
             self.didOverscroll = false
         }
     }

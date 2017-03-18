@@ -15,16 +15,17 @@ class ChatsTableViewCell: UITableViewCell {
     @IBOutlet weak var lastMessageLabel: UILabel!
     @IBOutlet weak var profilePicture: UIImageView!
     @IBOutlet weak var timestampLabel: UILabel!
+    @IBOutlet weak var containerView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        self.layer.cornerRadius = 30
-        self.layer.shadowColor=UIColor.lightGray.cgColor
-        self.layer.shadowOffset = CGSize(width:-3, height:3)
-        self.layer.shadowRadius=4
-        self.layer.shadowOpacity=0.4
-        self.clipsToBounds=false
+        containerView.layer.cornerRadius = 10
+        containerView.layer.shadowColor = UIColor.lightGray.cgColor
+        containerView.layer.shadowOffset = CGSize(width:-2, height:2)
+        containerView.layer.shadowRadius = 3
+        containerView.layer.shadowOpacity = 0.6
+        containerView.clipsToBounds = false
     }
     
     func configureCell(_ receiverName: String, lastMessage: String, timestamp: String, profilePic: String) {

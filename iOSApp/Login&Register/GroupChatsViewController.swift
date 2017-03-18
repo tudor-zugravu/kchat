@@ -20,6 +20,8 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         tableView.dataSource = self
         searchBar.delegate = self
         
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
         SocketIOManager.sharedInstance.setGetGroupChatsListener(completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.chatsDownloaded(userList!)
