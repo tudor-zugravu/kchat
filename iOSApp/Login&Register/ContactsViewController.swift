@@ -43,13 +43,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
-            //cell layout
-            cell.layer.cornerRadius = 30
-            cell.layer.shadowColor=UIColor.lightGray.cgColor
-            cell.layer.shadowOffset = CGSize(width:-3, height:3)
-            cell.layer.shadowRadius=4
-            cell.layer.shadowOpacity=0.4
-            cell.clipsToBounds=false
             
             if contacts.count == 0 {
                 cell.configureCell("", email: "", profilePic: "")
