@@ -12,7 +12,7 @@ class MessageModel: NSObject {
     
     //properties
     var messageId: Int?
-    var senderId: Int?
+    var senderId: String?
     var message: String?
     var timestamp: String?
 
@@ -23,7 +23,7 @@ class MessageModel: NSObject {
     }
 
     //construct with @name, @email and @telephone parameters
-    init(messageId: Int, senderId: Int, message: String, timestamp: String) {
+    init(messageId: Int, senderId: String, message: String, timestamp: String) {
         
         self.messageId = messageId
         self.senderId = senderId

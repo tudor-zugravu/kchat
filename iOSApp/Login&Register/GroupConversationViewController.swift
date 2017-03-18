@@ -97,7 +97,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 return ConversationSentMessageTableViewCell()
             }
         } else {
-            if messages[indexPath.row].senderId == UserDefaults.standard.value(forKey: "userId") as? Int {
+            if messages[indexPath.row].senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
@@ -132,7 +132,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                let item = MessageModel(messageId: messageId, senderId: senderId, message: message, timestamp: timestamp)
+                let item = MessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
         }

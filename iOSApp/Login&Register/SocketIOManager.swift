@@ -207,11 +207,11 @@ class SocketIOManager: NSObject {
         socket.emit("send_group_chat", message)
     }
     
-    func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: Int, _ message: String, _ timestamp: String) -> Void) {
+    func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
         socket.on(room) { ( dataArray, ack) -> Void in
             
             let messageId = dataArray[0] as! Int
-            let username = dataArray[1] as! Int
+            let username = dataArray[1] as! String
             let message = dataArray[2] as! String
             let timestamp = dataArray[3] as! String
             completionHandler(messageId, username, message, timestamp)

@@ -94,7 +94,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 return ConversationSentMessageTableViewCell()
             }
         } else {
-            if messages[indexPath.row].senderId == UserDefaults.standard.value(forKey: "userId") as? Int {
+            print("got here.. \(messages[indexPath.row].senderId) \(String(describing: UserDefaults.standard.value(forKey: "userId")!))")
+            if messages[indexPath.row].senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
+                print("didn't get here")
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
@@ -126,6 +128,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         
         var messagesAux: [MessageModel] = []
         
+        print(messagesDetails)
+        
         // parse the received JSON and save the messages
         for i in 0 ..< messagesDetails.count {
             
@@ -134,7 +138,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                let item = MessageModel(messageId: messageId, senderId: senderId, message: message, timestamp: timestamp)
+                print("yep... \(senderId)")
+                let item = MessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
         }
