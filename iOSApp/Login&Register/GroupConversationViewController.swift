@@ -1,17 +1,18 @@
 //
-//  ConversationViewController.swift
+//  GroupConversationViewController.swift
 //  Login&Register
 //
-//  Created by Tudor Zugravu on 3/15/17.
+//  Created by Tudor Zugravu on 18/03/2017.
 //  Copyright © 2017 骧小爷. All rights reserved.
 //
 
 import UIKit
 
-class ConversationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class GroupConversationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var messageInputTextField: UITextField!
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
@@ -19,9 +20,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     var didOverscroll: Bool = false
     var convLimit: Int = 20
-    var contactId: Int = 0;
+    var groupId: Int = 0;
     var messages: [MessageModel] = []
-    var passedValue: (contactName: String, contactId: Int)?
+    var passedValue: (groupName: String, groupId: Int, groupDescription: String)?
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -34,38 +35,38 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
         
-        SocketIOManager.sharedInstance.setRoomCreatedListener(completionHandler: { (response) -> Void in
-            if response == "fail" {
-                print("room create error")
-            } else {
-                print("am intrat in room");
-                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
-                    
-                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
-                    
-                    self.messages.append(item)
-                    self.tableView.reloadData()
-                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
-                })
-                SocketIOManager.sharedInstance.setGetRecentMessagesListener(completionHandler: { (messagesList) -> Void in
+//        SocketIOManager.sharedInstance.setRoomCreatedListener(completionHandler: { (response) -> Void in
+//            if response == "fail" {
+//                print("room create error")
+//            } else {
+//                print("am intrat in room");
+//                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+//                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
+//                    
+//                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
+//                    
+//                    self.messages.append(item)
+//                    self.tableView.reloadData()
+//                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+//                })
+                SocketIOManager.sharedInstance.setGetRecentGroupMessagesListener(completionHandler: { (messagesList) -> Void in
                     DispatchQueue.main.async(execute: { () -> Void in
                         self.messagesDownloaded(messagesList!)
                     })
                 })
-            }
-        })
+//            }
+//        })
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
-            titleLabel.text = value.contactName
-            self.contactId = value.contactId
+            titleLabel.text = value.groupName
+            self.groupId = value.groupId
             
-            SocketIOManager.sharedInstance.createRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-            SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(convLimit))
+//            SocketIOManager.sharedInstance.createRoom(receiverId: String(value.groupId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+            SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(convLimit))
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
@@ -117,11 +118,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
     // The function called at the arival of the response from the server
     func messagesDownloaded(_ messagesDetails: [[String:Any]]) {
         
@@ -135,7 +131,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                print(senderId)
                 let item = MessageModel(messageId: messageId, senderId: senderId, message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
@@ -179,7 +174,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView.contentOffset.y <= -50) {
-                self.didOverscroll = true
+            self.didOverscroll = true
         } else if (scrollView.contentOffset.y <= 0) {
             self.didOverscroll = false
         } else {
@@ -193,7 +188,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 if messages.count >= self.convLimit {
                     self.convLimit += 20
                     
-                    SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contactId), limit: String(self.convLimit))
+                    SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
                 }
                 self.didOverscroll = false
             }

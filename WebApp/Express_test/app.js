@@ -18,12 +18,16 @@ var register = require('./routes/register');
 var changePass= require('./routes/changePass');
 var loginError=require('./routes/loginError');
 var contacts=require('./routes/contacts');
+var individualChat= require('./routes/individualChat')
 var app = express();
 
 var client = new Client();
 
 var io = socket_io();
 app.io = io;
+//var socket = new io.Socket();
+//socket.connect('http://188.166.157.62:3000');
+//var socket = io.connect('http://188.166.157.62:3000');
 
 
 /*var con = mysql.createConnection({
@@ -109,7 +113,7 @@ app.post('/authenticate', function(req,res){
           var contacts = data;
            console.log(contacts);
            var send = { contacts , profilePicture:"DummyDummy" , chats : [ {message : "Dummy"} ], pointer : 0};
-           res.render('contacts',send);
+           res.render('individualChat',send);
         });
     };
 
@@ -204,13 +208,15 @@ io.on('connection', function(socket){
   });
 });
 
+
+
 app.use('/users', users);
 app.use('/login',login);
 app.use('/register',register);
 app.use('/changePass',changePass);
 app.use('/loginError',loginError);
 app.use('/contacts',contacts);
-
+app.use('/individualChat',individualChat);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

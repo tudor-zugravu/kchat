@@ -13,7 +13,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var chats: [ChatModel] = []
+    var chats: [GroupChatModel] = []
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -26,6 +26,14 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
             DispatchQueue.main.async(execute: { () -> Void in
                 self.chatsDownloaded(userList!)
             })
+        })
+        
+        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("group create error")
+            } else {
+                print(response);
+            }
         })
     }
     
@@ -44,8 +52,8 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
             if chats.count == 0 {
                 cell.configureCell("", lastMessage: "", timestamp: "", profilePic: "")
             } else {
-                let item: ChatModel = chats[indexPath.row]
-                cell.configureCell(item.receiverName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.profilePicture!)
+                let item: GroupChatModel = chats[indexPath.row]
+                cell.configureCell(item.groupName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.groupPicture!)
             }
             return cell
         } else {
@@ -56,60 +64,67 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print("tap on \(chats[indexPath.row].receiverName!), \(chats[indexPath.row].receiverId!)");
+        print("tap on \(chats[indexPath.row].groupName!), \(chats[indexPath.row].groupId!), \(chats[indexPath.row].groupDescription!)");
         
-//        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-//        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
-//        self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        let groupConversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "groupConversationViewController") as? GroupConversationViewController
+        groupConversationViewController?.passedValue = (chats[indexPath.row].groupName!, chats[indexPath.row].groupId!, chats[indexPath.row].groupDescription!)
+        self.navigationController?.pushViewController(groupConversationViewController!, animated: true)
     }
     
     // The function called at the arival of the response from the server
     func chatsDownloaded(_ chatDetails: [[String:Any]]) {
         
-        var chatsAux: [ChatModel] = []
-        var item:ChatModel;
+        var chatsAux: [GroupChatModel] = []
+        var item: GroupChatModel;
         
         // parse the received JSON and save the contacts
         for i in 0 ..< chatDetails.count {
             
             if let groupId = chatDetails[i]["group_id"] as? Int,
                 let groupName = chatDetails[i]["name"] as? String,
-                let lastMessage = chatDetails[i]["message"] as? String,
-                let timestamp = chatDetails[i]["timestmp"] as? String
+                let groupDescription = chatDetails[i]["description"] as? String
             {
                 
-                item = ChatModel()
+                item = GroupChatModel()
                 
-                item.receiverId = groupId
-                item.receiverName = groupName
-                item.lastMessage = lastMessage
-                let separators = CharacterSet(charactersIn: "T.")
-                item.timestamp = timestamp.components(separatedBy: separators)[1]
+                item.groupId = groupId
+                item.groupName = groupName
+                item.groupDescription = groupDescription
                 
-                if let profilePicture = chatDetails[i]["group_picture"] as? String {
+                if let lastMessage = chatDetails[i]["message"] as? String,
+                    let timestamp = chatDetails[i]["timestmp"] as? String {
+                    item.lastMessage = lastMessage
+                    let separators = CharacterSet(charactersIn: "T.")
+                    item.timestamp = timestamp.components(separatedBy: separators)[1]
+                } else {
+                    item.lastMessage = groupDescription
+                    item.timestamp = ""
+                }
+                
+                if let groupPicture = chatDetails[i]["group_picture"] as? String {
                     
-                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
+                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(groupPicture)")
                     if FileManager.default.fileExists(atPath: filename.path) {
-                        item.profilePicture = profilePicture
+                        item.groupPicture = groupPicture
                     } else {
                         // Download the profile picture, if exists
-                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
+                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(groupPicture)") {
                             if let data = try? Data(contentsOf: url) {
                                 var profileImg: UIImage
                                 profileImg = UIImage(data: data)!
                                 if let data = UIImagePNGRepresentation(profileImg) {
                                     try? data.write(to: filename)
-                                    item.profilePicture = profilePicture
+                                    item.groupPicture = groupPicture
                                 } else {
-                                    item.profilePicture = ""
+                                    item.groupPicture = ""
                                 }
                             } else {
-                                item.profilePicture = ""
+                                item.groupPicture = ""
                             }
                         }
                     }
                 } else {
-                    item.profilePicture = ""
+                    item.groupPicture = ""
                 }
                 
                 chatsAux.append(item)
@@ -120,4 +135,8 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         self.tableView.reloadData()
     }
     
+    @IBAction func createGroupButtonPressed(_ sender: Any) {
+        let members: [Int] = [2, 33, 36]
+        SocketIOManager.sharedInstance.createGroup(name: "test", description: "this group is meant to be used for testing", ownerId: 34, group_picture: "group_picture1.jpg", members: members)
+    }
 }
