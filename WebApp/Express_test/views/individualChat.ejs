@@ -120,42 +120,22 @@
       </div>
 
         <div id="page-wrapper">
-        <div class="col-md-12 col-xs-12 login_control">
+         <div id="chatContent">
 
-
-                <div class="control">
-                    <i class="fa fa-user-circle-o" ></i>
-                    <p><%= contacts[pointer].username %></p>
-                </div>
-
-								<div class="control">
-
-                    <i class="fa fa-envelope" ></i>
-
-                    <p><%= contacts[pointer].email %></p>
-                </div>
-
-								<div class="control">
-
-                    <i class="fa fa-phone" ></i>
-
-                    <p><%= contacts[pointer].phone_number %></p>
-                </div>
-                  <button type="button" onclick="deleteContact(<%=user_id %>,<%= contacts[pointer].user_id %>)">Delete contact</button>
-        </div>
-        <ul id="search_result">
-
-        </ul>
-        <div id="received_requests">
+         </div>
+        <div class="col-md-12 col-xs-12 login_control" style="position:fixed;bottom: 0;width: 100%;">
+          <form id="send_chat" action="">
+            <input id="message" autocomplete="off" / placeholder="Enter Message Here">
+            <button class="btn btn-default" type="submit" href="/search">
+              send message
+              </button>
+            </form>
 
         </div>
-          </div>
-          <div id="modal">
+
 
           </div>
-          <div id="acceptRequest">
 
-          </div>
 
           <!--Modal to show when it's successful -->
           <div id="inviteSuccessful" style="display:none;">
@@ -222,6 +202,7 @@
        for(var i=0; i < target.length; i++) {
 
         console.log(target[i]);
+        console.log(target[i].senderName);
          $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].receiverId+')">'+target[i].receiverName+target[i].message+'<hr>'+'<br>');
          //$('#list1').append('<br><a href="#chat'+i+'">').text("reviever:"+target[i].receiverName+" time:"+target[i].timestmp );
           // $('#received_requests').append($('');
@@ -240,8 +221,34 @@
        }
 
        function chat(id){
+
+         //console.log(id_2);
          console.log(id);
-       }
+         socket.emit('get_recent_messages',currentUser,id,10);
+         console.log("send success");
+         socket.on('send_recent_messages', function(msg){
+           $("#chatContent").empty();
+        var target = JSON.parse(msg);
+        console.log(target.length);
+        console.log(target[0]);
+          console.log(target[0].message);
+
+        for(var i=0; i < target.length; i++) {
+
+            if(target[i].sender_id==currentUser){
+              console.log("send:"+target[i].message);
+              $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px">'+target[i].message+'<br>');
+            }
+            else {
+                $('#chatContent').append('<div class="recieveChat" style=" background-color: green;border=1px">'+target[i].message+'<br>');
+            }
+        }
+
+
+
+
+       })
+     }
 
 
     </script>
