@@ -2,12 +2,14 @@ package com.example.user.kchat01;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -58,6 +60,7 @@ public class AddGroupActivity extends AppCompatActivity {
     private ArrayList<IContacts> memberList;
     private StringBuffer checkedString=null;
     private Socket mSocket;
+    private Activity activity;
     ArrayList<Integer> usersId = new ArrayList<>();
     ImageView camera, gallery, canvas;
     Bitmap bitmap;
@@ -115,7 +118,11 @@ public class AddGroupActivity extends AppCompatActivity {
                     askForPermission(Manifest.permission.CAMERA, CAMERA);
                 } else {
                     Toast.makeText(AddGroupActivity.this, "" + Manifest.permission.CAMERA + " is already granted.", Toast.LENGTH_SHORT).show();
-                    Activity activity = (Activity) v.getContext();
+                    if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
+                        activity = (Activity) ((ContextWrapper) v.getContext()).getBaseContext();
+                    }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        activity = (Activity) v.getContext();
+                    }
                     takePhoto(activity, 150);
                     //startActivityForResult(intent,SELECTED_PICTURE);
                 }
@@ -125,7 +132,11 @@ public class AddGroupActivity extends AppCompatActivity {
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = (Activity) v.getContext();
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
+                    activity = (Activity) ((ContextWrapper) v.getContext()).getBaseContext();
+                }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    activity = (Activity) v.getContext();
+                }
                 showFileChooser(activity, 100);
             }
         });
@@ -176,6 +187,7 @@ public class AddGroupActivity extends AppCompatActivity {
                         Groups.groupList.add(group);
                         //after sending data, back to contact page
                         Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
+                        Log.d("AddGroup_userId", usersId.toString());
                         Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
                         startActivity(myIntent);
                     }
