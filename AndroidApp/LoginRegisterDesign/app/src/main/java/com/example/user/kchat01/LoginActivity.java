@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import IMPL.DatabaseAdaptor;
 import IMPL.InfoRetreiver;
 import IMPL.RESTApi;
 
@@ -32,11 +31,14 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnGoRegister, btnLogin;
     BottomNavigationView bottomNavigationView;
     CustomActivity customActivity;
+    private DataManager dm;
 
     public static SharedPreferences pref;
     public static SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        dm = new DataManager(LoginActivity.this);
+        dm.flushAllData();
 
         //before any work is done on creating the activity i will check to see if the user is still in session
         //if the user is in session then send him to the chat menu but first check with the server
@@ -58,8 +60,6 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        DatabaseAdaptor myAdaptor = new DatabaseAdaptor(this);
-        myAdaptor.checkTable();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

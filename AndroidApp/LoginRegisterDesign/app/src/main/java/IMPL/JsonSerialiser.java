@@ -39,6 +39,7 @@ public class JsonSerialiser {
         return this.json.toString();
     }
 
+
     public String serialiseProfileImage(String usersid, String base64Image){
         try {
             json.put("type", "profileImageChange");

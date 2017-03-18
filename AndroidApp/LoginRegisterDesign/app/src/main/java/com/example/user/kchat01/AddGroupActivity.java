@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -29,9 +30,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONArray;
+
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +46,7 @@ import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
 import IMPL.JsonDeserialiser;
+import IMPL.JsonSerialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
 
@@ -62,19 +69,28 @@ public class AddGroupActivity extends AppCompatActivity {
     private StringBuffer checkedString=null;
     private Socket mSocket;
     private Activity activity;
-    ArrayList<Integer> usersId = new ArrayList<>();
+    ArrayList<Integer> usersId;
     ImageView camera, gallery, canvas;
     Bitmap bitmap;
     DataManager dm;
+    Socket getmSocket;
+    String groupId ,groupName, description;
 
-    static final Integer WRITE_EXST = 0x3;
-    static final Integer READ_EXST = 0x4;
     static final Integer CAMERA = 0x5;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dm = new DataManager(AddGroupActivity.this);
+        usersId = new ArrayList<>();
+
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            mSocket.connect();
+            mSocket.on("group_created",getGroupId);
+
+        } catch (URISyntaxException e){
+        }
 
         setContentView(R.layout.activity_add_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -115,6 +131,8 @@ public class AddGroupActivity extends AppCompatActivity {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Activity activity = (Activity)v.getContext();
+                askForPermission(Manifest.permission.CAMERA,CAMERA);
                 if (ContextCompat.checkSelfPermission(AddGroupActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     askForPermission(Manifest.permission.CAMERA, CAMERA);
                 } else {
@@ -125,8 +143,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                         activity = (Activity) v.getContext();
                     }
-                    takePhoto(activity, 150);
-                    //startActivityForResult(intent,SELECTED_PICTURE);
+                    ImageUpload.takePhoto(activity, 150);
                 }
             }
         });
@@ -146,13 +163,17 @@ public class AddGroupActivity extends AppCompatActivity {
         textViewDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-        // set listener on "Done" text view in toolbar to get user list checked
+                usersId.clear();
                 // get Group Name and Description
                 editTextGroupNmame = (EditText) findViewById(R.id.editTextGroupName);
                 editTextDescription = (EditText) findViewById(R.id.editTextGroupDescription);
-                String groupName = editTextGroupNmame.getText().toString();
-                String description = editTextDescription.getText().toString();
+                 groupName = editTextGroupNmame.getText().toString();
+                 description = editTextDescription.getText().toString();
 
+                //name, description, ownerId, group_picture, userIds
+                for (int i = 0; i < AddGroupAdapter.checkedUsers.size(); i++) {
+                    usersId.add(Integer.parseInt(AddGroupAdapter.checkedUsers.get(i).getUserId()));
+                }
                 // get Checkbox condition of adding group member. checking is operated in AddGroupAdapter class.
                 // "checkedString" keep usernames to be checked
                 checkedString = new StringBuffer();
@@ -160,40 +181,9 @@ public class AddGroupActivity extends AppCompatActivity {
                     checkedString.append(contact.getContactName());
                     checkedString.append("\n");
                 }
-
-                if (groupName.isEmpty() || description.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AddGroupActivity.this);
-                    builder.setMessage("Group Name and Description fields are required.")
-                            .setNegativeButton("Back", null)
-                            .create()
-                            .show();
-                } else if (adapter.checkedUsers.size() == 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AddGroupActivity.this);
-                    builder.setMessage("Please select at least one user.")
-                            .setNegativeButton("Back", null)
-                            .create()
-                            .show();//
-                } else {
-
-                    if (canvas.getDrawable() == null) {
-                        return;
-                    } else {
-                        bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                    }
-
-                    if (AddGroupAdapter.checkedUsers != null) {
-                        for (int i = 0; i < AddGroupAdapter.checkedUsers.size(); i++) {
-                            usersId.add(Integer.parseInt(AddGroupAdapter.checkedUsers.get(i).getUserId()));
-                        }
-                        IGroups group = new Groups(1, groupName, description, 1, usersId, bitmap);
-                        Groups.groupList.add(group);
-                        //after sending data, back to contact page
-                        Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
-                        Log.d("AddGroup_userId", usersId.toString());
-                        Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
-                        startActivity(myIntent);
-                    }
-                }
+                Log.d("USERSLIST", Integer.toString(usersId.size()));
+                JSONArray jsonArray = new JSONArray(usersId);
+                mSocket.emit("create_group", groupName, description, MasterUser.usersId, "true", jsonArray);
             }
         });
 
@@ -208,9 +198,6 @@ public class AddGroupActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    public static void takePhoto(Activity activity, int requestCode){
-        activity.startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), requestCode);
-    }
     private static void showFileChooser(Activity activity, int requestCode){ // shows the gallery to the user where he can select the image
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -223,24 +210,12 @@ public class AddGroupActivity extends AppCompatActivity {
         if (requestCode == 100 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
-                //Getting the Bitmap from Gallery
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 canvas.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (requestCode == 150 && resultCode == RESULT_OK) {
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            canvas.setImageBitmap(bitmap);
-        } else if (requestCode == 200 && resultCode == RESULT_OK) {
-            Uri filePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                canvas.setImageBitmap(bitmap);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }else if (requestCode == 250 && resultCode == RESULT_OK) {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             canvas.setImageBitmap(bitmap);
         }
@@ -289,5 +264,69 @@ public class AddGroupActivity extends AppCompatActivity {
             Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private Emitter.Listener getGroupId = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            AddGroupActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    if(receivedMessages.equals("fail")){
+                        Log.d("USERSLIST", receivedMessages);
+
+                    }else {
+                        Log.d("USERSLIST", " i have received from server    "+receivedMessages);
+                        groupId = receivedMessages;
+
+                        if (groupName.isEmpty() || description.isEmpty()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AddGroupActivity.this);
+                            builder.setMessage("Group Name and Description fields are required.").setNegativeButton("Back", null).create().show();
+                        } else if (adapter.checkedUsers.size() == 0) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AddGroupActivity.this);
+                            builder.setMessage("Please select at least one user.").setNegativeButton("Back", null).create().show();//
+                        } else {
+
+                            if (canvas.getDrawable() == null) {
+                                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.add_group);
+                                return;
+                            } else {
+                                bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
+                                if(bitmap!=null){
+                                    Log.d("USERSLIST", " i am sending the groups picture");
+                                    Bitmap bitmap = ((BitmapDrawable)canvas.getDrawable()).getBitmap();
+                                    String codedImage = ImageUpload.getStringImage(bitmap);
+                                    JsonSerialiser imageSerialiser = new JsonSerialiser();
+                                    MasterUser man = new MasterUser();
+                                    String imagetosend = imageSerialiser.serialiseProfileImage(groupId,codedImage);
+                                    String type = "updateImage";
+                                    String login_url = "http://188.166.157.62:3000/groupImageUpload";
+                                    ArrayList<String> paramList= new ArrayList<>();
+                                    paramList.add("request");
+                                    paramList.add("json");
+                                    RESTApi backgroundasync = new RESTApi(AddGroupActivity.this,login_url,paramList);
+                                    backgroundasync.execute(type, "profileImageChange", imagetosend);
+                                }
+                            }
+
+                            if (AddGroupAdapter.checkedUsers != null) {
+
+                                String imageLocation = "group_picture"+groupId+".jpg";
+                                IGroups group = new Groups(groupName,description,MasterUser.usersId,imageLocation,usersId);
+                                group.setGroupImage(bitmap);
+                                Groups.groupList.add(group);
+                                //after sending data, back to contact page
+                                Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
+                                Log.d("AddGroup_userId", usersId.toString());
+                                Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
+                                startActivity(myIntent);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    };
+
 
 }

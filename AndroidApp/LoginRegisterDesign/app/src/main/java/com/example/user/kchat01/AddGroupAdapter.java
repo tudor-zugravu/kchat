@@ -60,9 +60,6 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
     //bind data to view including listener to obtain user checked box
     @Override
     public void onBindViewHolder(AddGroupViewHolder holder, int position) {
-        //final IContacts current = objectList.get(position);
-        //holder.textViewUsername.setText(current.getUsername());
-        //holder.checkBox.setChecked(current.isSelected());
         for (int i = 0; i < Contacts.contactList.size(); i++) {
             String result = Contacts.contactList.get(i).getContactName();
             Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
@@ -75,17 +72,13 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
         }else{
             holder.imageProfile.setImageBitmap(current.getBitmap());
         }
-
-        //holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
         holder.textViewUsername.setText(current.getContactName());
         holder.checkBox.setTag(current);
 
-        //set listener whether each item checked on or off
         holder.setAddGroupListener(new AddGroupViewHolder.AddGroupListener() {
             @Override
             public void onItemClick(View view, int position) {
                 CheckBox cb = (CheckBox) view;
-
 
                 if(cb.isChecked()){
                     groupLimit = groupLimit + 1;
@@ -96,17 +89,15 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
                         builder1.setTitle("Cannot create Group");
                         builder1.setMessage("You have added too many contacts, please choose less than 6 contacts.");
                         builder1.setCancelable(true);
-                        builder1.setPositiveButton(
-                                "Ok", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
                         AlertDialog alert11 = builder1.create();
                         alert11.show();
                     }else{
                         AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
-
                     }
                     checkedUsers.add(current);
                 }else if (!cb.isChecked()){
@@ -126,7 +117,6 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
     public int getItemCount() {
         //return objectList.size();
         return filterList.size();
-
     }
 
     // return selected user list to MainActivity after being checked

@@ -142,7 +142,7 @@ public class ImageUpload extends AppCompatActivity {
         }
     }
 
-    private static String getStringImage(Bitmap bmp){//encoding the image to base 64 string  via compression
+    public static String getStringImage(Bitmap bmp){//encoding the image to base 64 string  via compression
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
         byte []imageBytes = byteArrayOutputStream.toByteArray();

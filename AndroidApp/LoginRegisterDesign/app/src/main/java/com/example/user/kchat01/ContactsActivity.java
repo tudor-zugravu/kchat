@@ -128,7 +128,7 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-
+       // if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
             btn_receiveRequest.setVisibility(GONE);
             btn_sendRequest.setVisibility(GONE);
             btn_searchContacts.setVisibility(GONE);
@@ -147,7 +147,58 @@ public class ContactsActivity extends AppCompatActivity {
             };
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
+        /*
+        }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
+                        btn_receiveRequest.setVisibility(GONE);
+                        btn_sendRequest.setVisibility(GONE);
+                        btn_searchContacts.setVisibility(GONE);
+                        ContactsActivity.showPlus=true;
+                        invalidateOptionsMenu();
+                        adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
+                //By clicking a card, the username is got
+                        @Override
+                public void onClick(ContactsViewHolder holder) {
+                                        int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                                      //  IGroups contact = Groups.getObjectList().get(position);
+                                        Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
+                                       // contactsIntent.putExtra("username", contact.getName());
+                                        startActivity(contactsIntent);
+                                    }
+            };
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
 
+                            }else if (ContactsActivity.tabId==2131624159) { // for contacts
+                        btn_receiveRequest.setVisibility(VISIBLE);
+                        btn_sendRequest.setVisibility(VISIBLE);
+                        btn_searchContacts.setVisibility(VISIBLE);
+                        ContactsActivity.showPlus=false;
+                        invalidateOptionsMenu();
+                        if(dm.selectAllContacts().getCount()>0){
+                                dm.selectAllContacts();
+                            }
+                        adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
+                @Override
+                public void onClick(ContactsViewHolder holder) {
+                                        int position = recyclerView.getChildAdapterPosition(holder.itemView);
+                                        IContacts contact = Contacts.contactList.get(position);
+                                        Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
+                                        String type = "contact";
+                                      contactsIntent.putExtra("type",type);
+                                        contactsIntent.putExtra("userid",contact.getUserId());
+                                        contactsIntent.putExtra("username",contact.getUsername());
+                                       contactsIntent.putExtra("contactid",contact.getContactId());
+                                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                        contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
+                                       byte [] byteArray = stream.toByteArray();
+                                        contactsIntent.putExtra("contactbitmap",byteArray);
+                                      startActivity(contactsIntent);
+                                   }
+            };
+                       adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+        }
+        */
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -217,6 +268,7 @@ public class ContactsActivity extends AppCompatActivity {
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
+
                 }
                 if (tabId == R.id.groups) {
                     btn_receiveRequest.setVisibility(GONE);
