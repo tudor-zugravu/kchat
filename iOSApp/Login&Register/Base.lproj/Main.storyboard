@@ -2167,7 +2167,7 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <segue destination="56p-Ne-eR4" kind="show" id="xHX-Lm-yiM"/>
+                                            <action selector="createGroupButtonPressed:" destination="tJt-CO-Qsj" eventType="touchUpInside" id="dPd-L1-dIJ"/>
                                         </connections>
                                     </button>
                                 </subviews>

@@ -27,6 +27,14 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
                 self.chatsDownloaded(userList!)
             })
         })
+        
+        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("group create error")
+            } else {
+                print(response);
+            }
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -120,4 +128,8 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         self.tableView.reloadData()
     }
     
+    @IBAction func createGroupButtonPressed(_ sender: Any) {
+        var members: [Int] = [2, 33, 36]
+        SocketIOManager.sharedInstance.createGroup(name: "test", description: "this group is meant to be used for testing", ownerId: 34, group_picture: "group_picture1.jpg", members: members)
+    }
 }

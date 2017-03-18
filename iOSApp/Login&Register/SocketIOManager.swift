@@ -237,6 +237,18 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func createGroup(name: String, description: String, ownerId: Int, group_picture: String, members: [Int]) {
+        socket.emit("create_group", name, description, ownerId, group_picture, members)
+    }
+    
+    func setGroupCreatedListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.on("group_created") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
     func setGetGroupChatsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
         socket.on("sent_group_chats") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
