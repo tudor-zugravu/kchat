@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
@@ -15,6 +16,7 @@ class SocketIOManager: NSObject {
     
     var pendingEmits: [(event: String, param: String)] = []
     private var currentRoom: String = ""
+    var player: AVAudioPlayer?
     
     override init() {
         super.init()
@@ -23,7 +25,7 @@ class SocketIOManager: NSObject {
     func establishConnection() {
         socket.connect()
         socket.on("connect") {data, ack in
-            self.socket.emit("authenticate", UserDefaults.standard.value(forKey: "userId") as! Int)
+            self.socket.emit("authenticate", UserDefaults.standard.value(forKey: "userId") as! Int, UserDefaults.standard.value(forKey: "fullName") as! String)
         }
         
         socket.on("authenticated") {data, ack in
@@ -37,15 +39,7 @@ class SocketIOManager: NSObject {
                 print(responseString)
             }
             
-            self.socket.on("global_messages") { ( dataArray, ack) -> Void in
-            
-                let messageId = dataArray[0] as! Int
-                let username = dataArray[1] as! String
-                let message = dataArray[2] as! String
-                let timestamp = dataArray[3] as! String
-                print("\(messageId), \(username), \(message), \(timestamp)")
-                print("current room is: \(self.currentRoom)")
-            }
+            self.setGlobalPrivateListener()
         }
     }
     
@@ -240,6 +234,30 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func setGlobalPrivateListener() {
+        
+        self.socket.off("global_private_messages")
+        self.socket.on("global_private_messages") { ( dataArray, ack) -> Void in
+            
+            let room = dataArray[0] as! String
+            
+            if (room != self.currentRoom) {
+                
+                Utils.instance.newPrivateMessages += 1
+                print("yep \(Utils.instance.newPrivateMessages)")
+                AudioServicesPlaySystemSound (1016)
+                print("sound played")
+                
+//                let messageId = dataArray[1] as! Int
+//                let username = dataArray[2] as! String
+//                let message = dataArray[3] as! String
+//                let timestamp = dataArray[4] as! String
+//                completionHandler(messageId, username, message, timestamp)
+            }
+        }
+
+    }
+    
     func getRecentMessage(userId: String, receiverId: String, limit: String) {
         socket.emit("get_recent_messages", userId, receiverId, limit)
     }
@@ -343,5 +361,4 @@ class SocketIOManager: NSObject {
     func createGroupRoom(groupId: String) {
         socket.emit("create_group_room", groupId)
     }
-
 }

@@ -54,7 +54,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 })
             }
         })
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {

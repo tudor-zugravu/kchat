@@ -14,7 +14,6 @@ import android.widget.Filterable;
 import java.util.ArrayList;
 
 import API.IContacts;
-import API.IGroups;
 import IMPL.Contacts;
 import IMPL.Groups;
 
