@@ -9,17 +9,24 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import IMPL.MasterUser;
 
+import static android.view.View.GONE;
 import static com.example.user.kchat01.R.id.editTextNewProfile;
 import static com.example.user.kchat01.R.id.textViewCurrentProfile;
 
@@ -36,12 +43,15 @@ public class ProfileActivity extends CustomActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle, tvUsername, tvEmail, tvPhone, tvBio, textViewField;
     private ImageView imageProfile;
+    private Button btnDelete;
     private AlertDialog alertDialog;
     private View alertView;
     private EditText editTextField;
-    private String fieldName; //filed name to edit Profile
+    private String fieldName, contacts_username, contacts_contactname, contacts_userid; //filed name to edit Profile
     private String newValue=null; //store new username, email or phone
     private boolean self=false; //Profile data is her/himself or not
+    private int contacts_contactid, contacts_position;
+    private Socket mSocket;
 
     //check new Email and Phone
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$");
@@ -50,6 +60,12 @@ public class ProfileActivity extends CustomActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+            //mSocket.connect();
+        } catch (URISyntaxException e){
+        }
+
         setContentView(R.layout.activity_profile);
         Intent intent= getIntent();
         Bundle bundle = intent.getExtras();
@@ -63,10 +79,7 @@ public class ProfileActivity extends CustomActivity {
         tvEmail = (TextView) findViewById(R.id.textViewEmail);
         tvPhone = (TextView) findViewById(R.id.textViewPhone);
         tvBio = (TextView) findViewById(R.id.textViewBio);
-
-        // apply toolbar title
-        toolbarTitle.setText("Profile");
-        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+        btnDelete = (Button)findViewById(R.id.btn_delete);
 
         //set username to textview
         tvUsername.setTextSize(18);
@@ -80,7 +93,11 @@ public class ProfileActivity extends CustomActivity {
         if(bundle!=null) {
             String type =(String) bundle.get("type");
             if (type.equals("contactsprofile")){
-                String contacts_username = (String) bundle.get("contact_username");
+                contacts_username = (String) bundle.get("contact_username");
+                contacts_userid = (String)bundle.get("contact_userid");
+                contacts_contactname = (String) bundle.get("contact_contactname");
+                contacts_contactid = intent.getIntExtra("contact_contactid", 0);
+                contacts_position = intent.getIntExtra("position", 0);
                 String contacts_email = (String) bundle.get("contact_email");
                 String contacts_phonenumber = (String) bundle.get("contact_phonenumber");
                 String contacts_biography = (String) bundle.get("contact_biography");
@@ -90,18 +107,63 @@ public class ProfileActivity extends CustomActivity {
                 }else {
                     imageProfile.setImageResource(R.drawable.human);
                 }
+                if (!contacts_username.equals("")) {
+                    toolbarTitle.setText(contacts_username + "'s Profile");
+                }else{
+                    toolbarTitle.setText("Profile");
+                }
+                toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                 tvUsername.setText(contacts_username);
                 tvEmail.setText(contacts_email);
                 tvPhone.setText(contacts_phonenumber);
                 tvBio.setText(contacts_biography);
                 self = false;
+                //set listener on DELETE Button
+                btnDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileActivity.this);
+                        builder1.setTitle("Delete Contact Confirmation");
+                        builder1.setMessage("Do you delete "+contacts_contactname+" from your Contact list?");
+                        builder1.setCancelable(true);
+                        builder1.setPositiveButton(
+                                "Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Log.d("REMOVE_CONTACT ", contacts_username);
+                                        Log.d("REMOVE_CONTACTNAME ", contacts_contactname);
+                                        Log.d("REMOVE_USERID", contacts_userid);
+                                        Log.d("REMOVE_MASTERID", String.valueOf(MasterUser.usersId));
+                                        Log.d("REMOVE_CONTACT_POSI", String.valueOf(contacts_position));
+                                        // remove process
+                                        //mSocket.emit("delete_contact_request", contacts_userid, MasterUser.usersId, "success");
+                                        dialog.cancel();
+                                        // check deletion
+                                        // OK: temporarily-> if (!contactList.contains(contacts_contactname)){
+                                            Toast.makeText(ProfileActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                                            btnDelete.setVisibility(GONE);
+                                        // intent to ContactsActivity??
+                                        // NG: } else{
+                                        //    Toast.makeText(ProfileActivity.this, "Failed to delete", Toast.LENGTH_SHORT).show();
+                                        //}
+                                    }
+                                });
+                        builder1.setNegativeButton("No", null);
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+                    }
+                });
+
+
             }else if (type.equals("usersprofile")) {
+                toolbarTitle.setText("My Profile");
+                toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                 MasterUser man = new MasterUser();
                 if(man.getProfileLocation()!=null) {
                     imageProfile.setImageBitmap(man.getUsersprofile());
                 }else {
                     imageProfile.setImageResource(R.drawable.human);
                 }
+                btnDelete.setVisibility(GONE);
                 String users_username = (String) bundle.get("users_username");
                 String users_email = (String) bundle.get("users_email");
                 String users_phonenumber = (String) bundle.get("users_phonenumber");
@@ -121,7 +183,26 @@ public class ProfileActivity extends CustomActivity {
         imageProfile.setOnLongClickListener(
                 new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
-                        Toast.makeText(ProfileActivity.this, "profile image was clicked", Toast.LENGTH_SHORT).show();
+                        fieldName = "Image";
+                        if (!self){
+                            createErrorDialog(fieldName);
+                        } else if (self){
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileActivity.this);
+                            builder1.setTitle("Change Image Confirmation");
+                            builder1.setMessage("Do you change your Profile image?");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton(
+                                    "Yes", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            Intent imageuploaderIntent = new Intent(ProfileActivity.this, ImageUpload.class);
+                                            startActivity(imageuploaderIntent);
+                                        }
+                                    });
+                            builder1.setNegativeButton("No", null);
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        }
                         return true;
                     }
                 }
@@ -133,10 +214,8 @@ public class ProfileActivity extends CustomActivity {
                     public boolean onLongClick(View v) {
                         fieldName = "Username";
                         if (!self){
-                            // other user's Username, error dialog
                             createErrorDialog(fieldName);
                         } else if (self){
-                            // her/his Username, Change Username
                             createDialog(fieldName);
                         }
                         return true;
@@ -150,10 +229,8 @@ public class ProfileActivity extends CustomActivity {
                     public boolean onLongClick(View v) {
                         fieldName = "Email";
                         if (!self){
-                            // other user's Email, error dialog
                             createErrorDialog(fieldName);
                         } else if (self){
-                            // her/his own Email, change Email
                             createDialog(fieldName);
                         }
                         return true;
@@ -167,10 +244,8 @@ public class ProfileActivity extends CustomActivity {
                     public boolean onLongClick(View v) {
                         fieldName = "Phone";
                         if (!self){
-                            // other user's Phone, error dialog
                             createErrorDialog(fieldName);
                         } else if (self){
-                            // her/his Phone, change Phone
                             createDialog(fieldName);
                         }
                         return true;
@@ -184,10 +259,8 @@ public class ProfileActivity extends CustomActivity {
                     public boolean onLongClick(View v) {
                         fieldName = "Biography";
                         if (!self){
-                            // other user's Bio, error dialog
                             createErrorDialog(fieldName);
                         } else if (self){
-                            // her/his Phone, change Phone
                             Toast.makeText(ProfileActivity.this,"To change "+fieldName, Toast.LENGTH_SHORT).show();
                         }
                         return true;

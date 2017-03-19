@@ -71,6 +71,12 @@ public class ChatsActivity extends AppCompatActivity {
             this.contactId = intent.getIntExtra("contactid", 0);
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+            if (!username.equals("")) {
+                textViewChatUser.setText(username);
+            }else{
+                textViewChatUser.setText("");
+            }
+            textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
 
         try {
@@ -84,8 +90,6 @@ public class ChatsActivity extends AppCompatActivity {
         } catch (URISyntaxException e){
         }
 
-        textViewChatUser.setText(chatUser);
-        textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         dataList = new ArrayList<>();

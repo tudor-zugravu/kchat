@@ -95,9 +95,6 @@ public class ContactsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        // apply toolbar title
-        toolbarTitle.setText("Contacts");
-        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         btn_sendRequest = (ImageButton)findViewById(R.id.btn_sendRequest);
         btn_receiveRequest = (ImageButton)findViewById(R.id.btn_receiveRequest);
@@ -234,6 +231,8 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=false;
+                    toolbarTitle.setText("Chats");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     adapter = new ContactsAdapter(ContactsActivity.this, Contacts.activeChat,0) {
@@ -277,6 +276,8 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=true;
+                    toolbarTitle.setText("Groups");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
@@ -301,6 +302,8 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_sendRequest.setVisibility(VISIBLE);
                     btn_searchContacts.setVisibility(VISIBLE);
                     ContactsActivity.showPlus=false;
+                    toolbarTitle.setText("Contacts");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("RAR",Integer.toString(dm.selectAllContacts().getCount()));
@@ -346,6 +349,10 @@ public class ContactsActivity extends AppCompatActivity {
                             // move to Profile
                             Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
                             profileIntent.putExtra("contact_username", contact.getUsername());
+                            profileIntent.putExtra("contact_userid", contact.getUserId());
+                            profileIntent.putExtra("contact_contactname", contact.getContactName());
+                            profileIntent.putExtra("contact_contactid",contact.getContactId());
+                            profileIntent.putExtra("position", position);
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
                             profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
