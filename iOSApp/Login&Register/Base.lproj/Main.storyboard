@@ -2486,6 +2486,7 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
+                                            <action selector="sendButtonPressed:" destination="lq3-Ze-bej" eventType="touchUpInside" id="ILf-2N-eRL"/>
                                             <action selector="sendButtonPressed:" destination="YNM-sM-qCk" eventType="touchUpInside" id="tp5-QY-aSv"/>
                                         </connections>
                                     </button>

@@ -93,7 +93,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 
                 userDefaults.synchronize();
             }
-            
+            SocketIOManager.sharedInstance.establishConnection()
             performSegue(withIdentifier: "loginTabBarViewController", sender: nil)
         }
     }

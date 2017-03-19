@@ -23,6 +23,7 @@ class InitialViewController: UIViewController {
         
         // If a user is already logged in, proceed to the messages view
         if UserDefaults.standard.bool(forKey: "hasLoginKey") == true {
+            SocketIOManager.sharedInstance.establishConnection()
             self.performSegue(withIdentifier: "initialTabBarViewController", sender: nil)
         } else {
             self.performSegue(withIdentifier: "loginView", sender: self)

@@ -64,8 +64,6 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print("tap on \(chats[indexPath.row].groupName!), \(chats[indexPath.row].groupId!), \(chats[indexPath.row].groupDescription!)");
-        
         let groupConversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "groupConversationViewController") as? GroupConversationViewController
         groupConversationViewController?.passedValue = (chats[indexPath.row].groupName!, chats[indexPath.row].groupId!, chats[indexPath.row].groupDescription!)
         self.navigationController?.pushViewController(groupConversationViewController!, animated: true)
