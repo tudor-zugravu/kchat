@@ -11,8 +11,10 @@ import UIKit
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
     
-    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:3000")! as URL)//, config: [.log(true)])
+    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
+    
     var pendingEmits: [(event: String, param: String)] = []
+    private var currentRoom: String = ""
     
     override init() {
         super.init()
@@ -21,20 +23,38 @@ class SocketIOManager: NSObject {
     func establishConnection() {
         socket.connect()
         socket.on("connect") {data, ack in
+            self.socket.emit("authenticate", UserDefaults.standard.value(forKey: "userId") as! Int)
+        }
+        
+        socket.on("authenticated") {data, ack in
             for currEmit in self.pendingEmits {
                 self.socket.emit(currEmit.event, currEmit.param)
             }
             self.pendingEmits.removeAll()
-        }
-        
-        socket.on("update_chat") { ( dataArray, ack) -> Void in
-            let responseString = dataArray[0] as! String
-            print(responseString)
+            
+            self.socket.on("update_chat") { ( dataArray, ack) -> Void in
+                let responseString = dataArray[0] as! String
+                print(responseString)
+            }
+            
+            self.socket.on("global_messages") { ( dataArray, ack) -> Void in
+            
+                let messageId = dataArray[0] as! Int
+                let username = dataArray[1] as! String
+                let message = dataArray[2] as! String
+                let timestamp = dataArray[3] as! String
+                print("\(messageId), \(username), \(message), \(timestamp)")
+                print("current room is: \(self.currentRoom)")
+            }
         }
     }
     
     func closeConnection() {
         socket.disconnect()
+    }
+    
+    func setCurrentRoom (room: String) {
+        self.currentRoom = room
     }
     
     func setSearchUserReceivedListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
@@ -208,6 +228,8 @@ class SocketIOManager: NSObject {
     }
     
     func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
+        
+        currentRoom = room
         socket.on(room) { ( dataArray, ack) -> Void in
             
             let messageId = dataArray[0] as! Int

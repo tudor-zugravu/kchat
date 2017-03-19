@@ -43,7 +43,6 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
                     
                     let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
-                    print(item.description)
                     self.messages.append(item)
                     self.tableView.reloadData()
                     self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)

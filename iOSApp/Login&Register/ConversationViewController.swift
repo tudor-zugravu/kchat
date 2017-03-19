@@ -77,6 +77,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        SocketIOManager.sharedInstance.setCurrentRoom(room: "")
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -94,9 +95,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 return ConversationSentMessageTableViewCell()
             }
         } else {
-            print("got here.. \(messages[indexPath.row].senderId) \(String(describing: UserDefaults.standard.value(forKey: "userId")!))")
             if messages[indexPath.row].senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
-                print("didn't get here")
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
@@ -128,8 +127,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         
         var messagesAux: [MessageModel] = []
         
-        print(messagesDetails)
-        
         // parse the received JSON and save the messages
         for i in 0 ..< messagesDetails.count {
             
@@ -138,7 +135,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                print("yep... \(senderId)")
                 let item = MessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
