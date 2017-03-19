@@ -1,6 +1,5 @@
 package com.example.user.kchat01;
 
-import android.util.Log;
 import android.widget.Filter;
 
 import java.util.ArrayList;
@@ -15,8 +14,8 @@ import API.IGroups;
 public class ContactsFilter extends Filter {
 
     ContactsAdapter adapter;
-    private ArrayList filterList;
-    private ArrayList filteredContacts;
+    ArrayList filterList;
+    ArrayList filteredContacts;
 
     public ContactsFilter(ArrayList<?> filterList, ContactsAdapter adapter){
         this.adapter = adapter;
@@ -63,7 +62,6 @@ public class ContactsFilter extends Filter {
         adapter.notifyDataSetChanged();
         adapter.notifyItemRemoved(0);
         adapter.filterList = (ArrayList)results.values;
-        Log.d("GROUPN_Filter", String.valueOf(adapter.filterList));
         adapter.notifyItemRangeChanged(0,results.count);
     }
 }
