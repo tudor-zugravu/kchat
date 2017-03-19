@@ -74,7 +74,7 @@ public class ChatsActivity extends AppCompatActivity {
             if (username!=null) {
                 textViewChatUser.setText(username);
             }else{
-                textViewChatUser.setText("");
+                textViewChatUser.setText("Chats");
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }

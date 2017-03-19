@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.util.Log;
 import android.widget.Filter;
 
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ import API.IGroups;
 public class ContactsFilter extends Filter {
 
     ContactsAdapter adapter;
-    ArrayList filterList;
-    ArrayList filteredContacts;
+    private ArrayList filterList;
+    private ArrayList filteredContacts;
 
     public ContactsFilter(ArrayList<?> filterList, ContactsAdapter adapter){
         this.adapter = adapter;
@@ -35,7 +36,7 @@ public class ContactsFilter extends Filter {
                 for (int i=0; i < filterList.size();i++){
                     if (group.get(i).getName().toUpperCase().startsWith((String) constraint) ) {
                         filteredContacts.add(filterList.get(i));
-                       }
+                    }
                 }
 
             }else if(!filterList.isEmpty() && filterList.get(0) instanceof IContacts) {
@@ -43,7 +44,7 @@ public class ContactsFilter extends Filter {
                 for (int i=0; i < filterList.size();i++){
                     if (contact.get(i).getContactName().toUpperCase().startsWith((String)constraint)){
                         filteredContacts.add(filterList.get(i));
-                        }
+                    }
                 }
             }
 
@@ -62,7 +63,7 @@ public class ContactsFilter extends Filter {
         adapter.notifyDataSetChanged();
         adapter.notifyItemRemoved(0);
         adapter.filterList = (ArrayList)results.values;
-        adapter.notifyDataSetChanged();
-
+        Log.d("GROUPN_Filter", String.valueOf(adapter.filterList));
+        adapter.notifyItemRangeChanged(0,results.count);
     }
 }
