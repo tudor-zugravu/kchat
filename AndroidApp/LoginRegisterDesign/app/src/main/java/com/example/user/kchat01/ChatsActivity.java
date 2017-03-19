@@ -73,7 +73,7 @@ public class ChatsActivity extends AppCompatActivity {
             if (username!=null) {
                 textViewChatUser.setText(username);
             }else{
-                textViewChatUser.setText("Chats");
+                textViewChatUser.setText("");
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
@@ -217,7 +217,6 @@ public class ChatsActivity extends AppCompatActivity {
                 mSocket.off(receivedMessage);
                 mSocket.on(receivedMessage,messageReceiver);
                 mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
-
             }
             Log.d("PRIVATECHAT", receivedMessage);
         }
