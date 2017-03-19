@@ -58,7 +58,7 @@ public class GroupChatsActivity extends AppCompatActivity {
     private ArrayList<Integer> usernames;
     public static boolean isAtTop = false;
     public static boolean didOverscroll = false;
-    private ArrayList <IContacts> contactsInChat;
+    public static ArrayList <IContacts> contactsInChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,9 @@ public class GroupChatsActivity extends AppCompatActivity {
             mSocket.emit("get_group_members", ownerId);
             Log.d("GROUPFUNCTION"," sent id to the server is :   "+ownerId);
          //   mSocket.on("update_chat", serverReplyLogs); // sends server messages
+
+
+            mSocket.on("update_chat", serverReplyLogs); // sends server messages
             mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
             mSocket.on("group_room_created",stringReply2);
             mSocket.emit("create_group_room", ownerId);
@@ -96,7 +99,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        adapter = new ChatsAdapter(GroupChatsActivity.this,dataList);
+        adapter = new ChatsAdapter(GroupChatsActivity.this,dataList,0);
         recyclerView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -144,7 +147,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                     //before i am outputting to the screen i will take the text of the message and any other user related information
                     //and i will send it to the server using the socket.io
                     if(mSocket.connected()){
-                        mSocket.emit("send_chat",message);
+                        mSocket.emit("send_group_chat",message);
                     }else{
                         Log.d("MESSAGEERROR", "Cannot send message:" + message);
                     }
@@ -207,7 +210,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                 // print error cannot connect
             }else {
                 //the rooms id is received
-                mSocket.emit("add_user",receivedMessage,ownerId);
                 mSocket.on(receivedMessage,messageReceiver);
                 mSocket.emit("get_recent_group_messages",ownerId,20);
             }
@@ -261,6 +263,5 @@ public class GroupChatsActivity extends AppCompatActivity {
             });
         }
     };
-
 
 }

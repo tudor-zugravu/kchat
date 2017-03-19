@@ -83,6 +83,8 @@ public class ContactsActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
+            mSocket.on("connect",startConnection);
+            mSocket.on("authenticated",authenticate);
             mSocket.on("sent_chats",currentChats);
             mSocket.on("sent_group_chats",currentGroups);
             mSocket.emit("get_chats", MasterUser.usersId);
@@ -418,6 +420,71 @@ public class ContactsActivity extends AppCompatActivity {
                 public void run() {
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"chats",ContactsActivity.this);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener startConnection = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MasterUser man = new MasterUser();
+                   mSocket.emit("authenticate",man.getuserId(),man.getUsername());
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener authenticate = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mSocket.on("update_chat",chatUpdater);
+                    mSocket.on("global_private_messages",notifications);
+
+                }
+            });
+        }
+    };
+    public static String roomnumber="";
+
+    private Emitter.Listener notifications = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0]; // room number
+                    if(!roomnumber.equals(receivedMessages)){
+                        int receivedMessages2 = (Integer) args [1]; // message id
+                        Log.d("UPDATECHAT",Integer.toString(receivedMessages2));
+                        String receivedMessages3 = (String) args [2]; // username
+                        Log.d("UPDATECHAT",receivedMessages3);
+                        String receivedMessages4 = (String) args [3]; // message
+                        Log.d("UPDATECHAT",receivedMessages4);
+                        String receivedMessages5 = (String) args [4]; // timestamp
+                        Log.d("UPDATECHAT",receivedMessages5);
+                        Log.d("UPDATECHAT","global2222!!!");
+                    }
+
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener chatUpdater = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("UPDATECHAT",receivedMessages);
                 }
             });
         }

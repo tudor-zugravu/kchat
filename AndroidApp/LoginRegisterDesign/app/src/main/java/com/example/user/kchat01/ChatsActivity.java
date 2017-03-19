@@ -42,7 +42,6 @@ public class ChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textViewChatUser;
     private RecyclerView recyclerView;
-   // private SearchView searchView;
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
     private String username,message;
@@ -62,7 +61,7 @@ public class ChatsActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
-        // and show chatting username on toolber
+
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
@@ -78,7 +77,6 @@ public class ChatsActivity extends AppCompatActivity {
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
-
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
@@ -128,7 +126,6 @@ public class ChatsActivity extends AppCompatActivity {
                     }
             }
             });
-
 
         //when inputting to EditText and pushing send button
         Button sendButton = (Button) findViewById(R.id.btn_sendMessage);
@@ -180,9 +177,9 @@ public class ChatsActivity extends AppCompatActivity {
                     recyclerView.setAdapter(adapter);
                     adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     if(counter!=2){
-                        stupidScrolling(false);
+                        scrolling(false);
                     }else{
-                        stupidScrolling(true);
+                        scrolling(true);
 
                     }
                 }
@@ -191,13 +188,22 @@ public class ChatsActivity extends AppCompatActivity {
     };
 
 
-    private void stupidScrolling(boolean type){
+    private void scrolling(boolean type){
 
         if(type==true){
             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
         }else{
             recyclerView.scrollToPosition(0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataList.clear();
+        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
+        mSocket.off( ContactsActivity.roomnumber);
+        ContactsActivity.roomnumber = "";
     }
 
     private Emitter.Listener stringReply2 = new Emitter.Listener() {
@@ -207,10 +213,11 @@ public class ChatsActivity extends AppCompatActivity {
             if(receivedMessage.equals("fail")){
                 // print error cannot connect
             }else {
-                //the rooms id is received
-                mSocket.emit("add_user",receivedMessage,MasterUser.usersId);
+                ContactsActivity.roomnumber = receivedMessage;
+                mSocket.off(receivedMessage);
                 mSocket.on(receivedMessage,messageReceiver);
                 mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
+
             }
             Log.d("PRIVATECHAT", receivedMessage);
         }
@@ -237,9 +244,12 @@ public class ChatsActivity extends AppCompatActivity {
                             messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                         }
                         dataList.add(latestPosition, messageObject);//"0" means top of array
+                        Log.d("DATALIST","Size of my list is111111111:" + dataList.size());
+                        adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                         adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                        stupidScrolling(true);
+                        scrolling(true);
                     } catch (ParseException e) {
                     }
                 }
