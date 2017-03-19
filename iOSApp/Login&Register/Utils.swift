@@ -12,7 +12,14 @@ private let _instance = Utils()
 
 class Utils: NSObject {
     
+    var newPrivateMessages: Int
+    var newGroupMessages: Int
+    var newContactRequests: Int
+    
     fileprivate override init() {
+        newPrivateMessages = 0
+        newGroupMessages = 0
+        newContactRequests = 0
     }
     
     class var instance: Utils {
