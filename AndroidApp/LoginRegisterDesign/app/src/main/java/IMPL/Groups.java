@@ -20,7 +20,6 @@ public class Groups implements IGroups {
     private Bitmap groupImage;
     public static ArrayList<IGroups> groupList = new ArrayList<>();
 
-    //used for test
     public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId){
         this.name = groupName;
         this.description = description;
@@ -29,7 +28,6 @@ public class Groups implements IGroups {
         this.usersAsID = usersId;
     }
 
-    //used for test
     public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId,Bitmap groupImage){
         this.name = groupName;
         this.description = description;

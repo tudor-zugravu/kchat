@@ -86,8 +86,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
                 Log.d("DATACHECKER", " Ihave got here for the data checker");
 
                 if(Groups.groupList.get(position).getGroupImage()==null) {
-                    Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
-                    Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                  //  Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.add_group);
                     holder.imageProfile.setImageDrawable(d);
                 }else{
                     //holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
@@ -95,7 +95,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
                 }
                 holder.textViewUsername.setText(Groups.groupList.get(position).getName());
                 holder.textViewMessage.setText(String.valueOf(Groups.groupList.get(position).getDescription()));
-
             }
 
         }
@@ -112,12 +111,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     public void onLongClick(ContactsViewHolder holder){
     }
 
-
     @Override
     public int getItemCount() {
         return filterList.size();
     }
-
 
     //filter
     @Override

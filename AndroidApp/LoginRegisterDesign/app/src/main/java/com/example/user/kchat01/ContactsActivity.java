@@ -84,7 +84,9 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
             mSocket.on("sent_chats",currentChats);
+            mSocket.on("sent_group_chats",currentGroups);
             mSocket.emit("get_chats", MasterUser.usersId);
+            mSocket.emit("get_group_chats", MasterUser.usersId);
 
         } catch (URISyntaxException e){
         }
@@ -279,14 +281,16 @@ public class ContactsActivity extends AppCompatActivity {
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
                     adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
-                        //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                          //  IGroups contact = Groups.getObjectList().get(position);
-                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                            contactsIntent.putExtra("username", "blah");
-                            startActivity(contactsIntent);
+                            IGroups group = Groups.groupList.get(position);
+                            Intent groupIntent = new Intent(ContactsActivity.this, GroupChatsActivity.class);
+                            groupIntent.putExtra("ownerId",Integer.toString(group.getOwnerId()));
+                            groupIntent.putExtra("usernames",group.getUsersAsID());
+                            groupIntent.putExtra("groupName",group.getName());
+                            groupIntent.putExtra("groupDesc",group.getDescription());
+                            startActivity(groupIntent);
                         }
                     };
                     adapter.notifyDataSetChanged();
@@ -407,7 +411,20 @@ public class ContactsActivity extends AppCompatActivity {
                 public void run() {
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"chats",ContactsActivity.this);
+                }
+            });
+        }
+    };
 
+    private Emitter.Listener currentGroups = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("GROUPSRECEIVED",receivedMessages);
+                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"groups",ContactsActivity.this);
                 }
             });
         }

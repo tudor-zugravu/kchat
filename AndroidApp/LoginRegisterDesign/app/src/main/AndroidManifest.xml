@@ -32,6 +32,7 @@
         <activity android:name=".CustomActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".ChatsActivity" />
+        <activity android:name=".GroupChatsActivity" />
         <activity android:name=".SearchRequestActivity"/>
         <activity android:name=".AddGroupActivity"
             android:exported="true"

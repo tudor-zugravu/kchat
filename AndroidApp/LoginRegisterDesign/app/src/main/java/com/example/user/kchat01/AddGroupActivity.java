@@ -274,8 +274,8 @@ public class AddGroupActivity extends AppCompatActivity {
                     String receivedMessages = (String) args [0];
                     if(receivedMessages.equals("fail")){
                         Log.d("USERSLIST", receivedMessages);
-
                     }else {
+                        receivedMessages = receivedMessages.substring(5);
                         Log.d("USERSLIST", " i have received from server    "+receivedMessages);
                         groupId = receivedMessages;
 

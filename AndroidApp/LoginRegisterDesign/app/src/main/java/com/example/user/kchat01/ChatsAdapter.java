@@ -108,7 +108,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
             txtMessage = (TextView)itemView.findViewById(R.id.textViewMessage);
             txtTime = (TextView)itemView.findViewById(R.id.textViewTime);
             imageProfile = (ImageView)itemView.findViewById(R.id.imageProfile);
-
         }
 
         //set each data on layout file
