@@ -48,30 +48,28 @@ public class JsonDeserialiser {
             this.jObject = new JSONObject(serverResult);
         } catch (final JSONException e) {
             Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
-            // Toast.makeText(this.context, "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         if(deserializeType.equals("login")){
             loginDeserializer(this.jObject);
         }else if (deserializeType.equals("getcontacts")) {
-            contactDeserializer(this.jObject,0);
+            contactDeserializer(0);
         }else if (deserializeType.equals("message")) {
-            messageDeserialiser(this.jObject,0,"sender_id");
+            messageDeserialiser(0,"sender_id");
         }else if (deserializeType.equals("filterlist")) {
-            userFilterDeserializer(this.jObject);
+            userFilterDeserializer();
         }else if (deserializeType.equals("getcontactrequests")) {
-            contactDeserializer(this.jObject, 1);
+            contactDeserializer(1);
         }else if (deserializeType.equals("getcontactinvites")) {
-            contactDeserializer(this.jObject, 2);
+            contactDeserializer(2);
         }else if (deserializeType.equals("chats")) {
-            chatDeserialiser(this.jObject);
+            chatDeserialiser();
         }else if (deserializeType.equals("groups")) {
-            groupDeserialiser(this.jObject);
+            groupDeserialiser();
         }else if (deserializeType.equals("getgroupcontacts")){
             //groupContactDdeserialiser();
         }else if (deserializeType.equals("groupmessage")) {
-            messageDeserialiser(this.jObject,1,"user_id");
+            messageDeserialiser(1,"user_id");
         }
-
     }
 
     private void loginDeserializer(JSONObject jObject){
@@ -90,7 +88,7 @@ public class JsonDeserialiser {
             }
         }
 
-    private void messageDeserialiser(JSONObject jObject,int type,String value){
+    private void messageDeserialiser(int type,String value){
         if(ChatsActivity.dataList!=null && type ==0 )ChatsActivity.dataList.clear();
         if(GroupChatsActivity.dataList!=null && type ==1 )GroupChatsActivity.dataList.clear();
         try {
@@ -117,13 +115,12 @@ public class JsonDeserialiser {
                     GroupChatsActivity.dataList.add(0, messageObject);
                 }
             }
-
         }catch( final JSONException e){
                 Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
             }
     }
 
-private void groupDeserialiser(JSONObject jobject){
+private void groupDeserialiser(){
     Groups.groupList.clear();
     try {
         if(this.serverResult!=null) {
@@ -136,21 +133,18 @@ private void groupDeserialiser(JSONObject jobject){
                 String description = obj.getString("description");//
                 String message = obj.getString("message");
                 String timestamp = obj.getString("timestmp");
-
-                //    public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId){
                 IGroups groups = new Groups(groupName,message,groupId,groupPicture,null);
                 Log.d("GROUPSRECEIVED", "object size: " + groupId);
                 Log.d("GROUPSRECEIVED", "object size: " + description);
                 Groups.groupList.add(groups);
             }
-
         }
     }catch (JSONException e){
         e.printStackTrace();
     }
 }
 
-    private void chatDeserialiser(JSONObject jobject){
+    private void chatDeserialiser(){
         Contacts.activeChat.clear();
         try {
             if(this.serverResult!=null) {
@@ -194,7 +188,6 @@ private void groupDeserialiser(JSONObject jobject){
 
     private String getImage (String location, String userId,IContacts contact) {
         if (location != null && (!location.equals("null"))) {
-            //make a rest call to get image?
             Bitmap contactsBitmap;
             String image = "";
             try {
@@ -246,7 +239,7 @@ private void groupDeserialiser(JSONObject jobject){
         return null;
     }
 
-    private void contactDeserializer(JSONObject jobject ,int num){
+    private void contactDeserializer(int num){
         try {
             if(this.serverResult!=null) {
                 Contacts.contactList.clear();
@@ -267,7 +260,6 @@ private void groupDeserialiser(JSONObject jobject){
                     if(num==0) {
                         dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,base64REsult);
                         Contacts.contactList.add(contact);
-                        // Bitmap profilePicture;
                     }else if (num ==1){
                         Contacts.sentRequests.add(contact);
                     }else if (num ==2){
@@ -281,7 +273,7 @@ private void groupDeserialiser(JSONObject jobject){
         }
     }
 
-     private void userFilterDeserializer(JSONObject jobject){
+     private void userFilterDeserializer(){
         try {
             if(this.serverResult!=null) {
                 JSONArray jArr = new JSONArray(this.serverResult);

@@ -71,7 +71,7 @@ public class ChatsActivity extends AppCompatActivity {
             this.contactId = intent.getIntExtra("contactid", 0);
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
-            if (!username.equals("")) {
+            if (username!=null) {
                 textViewChatUser.setText(username);
             }else{
                 textViewChatUser.setText("");

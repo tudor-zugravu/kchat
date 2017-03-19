@@ -107,7 +107,7 @@ public class ProfileActivity extends CustomActivity {
                 }else {
                     imageProfile.setImageResource(R.drawable.human);
                 }
-                if (!contacts_username.equals("")) {
+                if (contacts_username!=null) {
                     toolbarTitle.setText(contacts_username + "'s Profile");
                 }else{
                     toolbarTitle.setText("Profile");

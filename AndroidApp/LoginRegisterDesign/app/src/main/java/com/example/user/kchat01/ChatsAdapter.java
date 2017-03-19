@@ -83,7 +83,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         } else {
             return RECEIVER;
         }
-
     }
 
     //filter
