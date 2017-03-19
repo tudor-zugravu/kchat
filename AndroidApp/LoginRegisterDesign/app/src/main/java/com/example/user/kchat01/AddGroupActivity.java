@@ -131,20 +131,13 @@ public class AddGroupActivity extends AppCompatActivity {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = (Activity)v.getContext();
-                askForPermission(Manifest.permission.CAMERA,CAMERA);
-                if (ContextCompat.checkSelfPermission(AddGroupActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    askForPermission(Manifest.permission.CAMERA, CAMERA);
-                } else {
-                    Toast.makeText(AddGroupActivity.this, "" + Manifest.permission.CAMERA + " is already granted.", Toast.LENGTH_SHORT).show();
-
-                    if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
-                        activity = (Activity) ((ContextWrapper) v.getContext()).getBaseContext();
-                    }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        activity = (Activity) v.getContext();
-                    }
-                    ImageUpload.takePhoto(activity, 150);
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT){
+                    activity = (Activity) ((ContextWrapper) v.getContext()).getBaseContext();
+                }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    activity = (Activity) v.getContext();
                 }
+                askForPermission(Manifest.permission.CAMERA,CAMERA);
+                ImageUpload.takePhoto(activity, 150);
             }
         });
 
@@ -222,13 +215,18 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void askForPermission(String permission, Integer requestCode) {
-        // Should we show an explanation?
-        if (ActivityCompat.shouldShowRequestPermissionRationale(AddGroupActivity.this, permission)) {
-            //This is called if user has denied the permission before
-            //In this case I am just asking the permission again
-            ActivityCompat.requestPermissions(AddGroupActivity.this, new String[]{permission}, requestCode);
-        } else {
-            ActivityCompat.requestPermissions(AddGroupActivity.this, new String[]{permission}, requestCode);
+        if (ContextCompat.checkSelfPermission(AddGroupActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AddGroupActivity.this, permission)) {
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(AddGroupActivity.this, new String[]{permission}, requestCode);
+            } else {
+                ActivityCompat.requestPermissions(AddGroupActivity.this, new String[]{permission}, requestCode);
+            }
+        }else {
+            Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
 
