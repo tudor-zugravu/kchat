@@ -12,6 +12,8 @@ import com.example.user.kchat01.ChatsActivity;
 import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.DataManager;
 import com.example.user.kchat01.GroupChatsActivity;
+import com.example.user.kchat01.InternetHandler;
+import com.example.user.kchat01.LoginActivity;
 import com.example.user.kchat01.R;
 
 import org.json.JSONArray;
@@ -187,29 +189,33 @@ private void groupDeserialiser(){
     }
 
     private String getImage (String location, String userId,IContacts contact) {
-        if (location != null && (!location.equals("null"))) {
-            Bitmap contactsBitmap;
-            String image = "";
-            try {
-                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
-                String type = "getIcon";
-                ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
-                contactsBitmap = backgroundasync.execute(type).get();
-                if (contactsBitmap != null) {
-                    contact.setBitmap(contactsBitmap);
-                    image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
-                    Log.d("DATABASE", "the client has got a image");
-                    Log.d("PROFILE", "image received from the server is :" + image);
-                    return image;
-                } else {
-                    contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
-                    image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
-                    Log.d("DATABASE", "the client does not have an image");
-                    Log.d("PROFILE", "image received from the server is :" + image);
-                    return image;
+        if(InternetHandler.hasInternetConnection(context)==false){
+
+        }else {
+            if (location != null && (!location.equals("null"))) {
+                Bitmap contactsBitmap;
+                String image = "";
+                try {
+                    String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + userId + ".jpg";
+                    String type = "getIcon";
+                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
+                    contactsBitmap = backgroundasync.execute(type).get();
+                    if (contactsBitmap != null) {
+                        contact.setBitmap(contactsBitmap);
+                        image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
+                        Log.d("DATABASE", "the client has got a image");
+                        Log.d("PROFILE", "image received from the server is :" + image);
+                        return image;
+                    } else {
+                        contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
+                        image = encodeToBase64(contactsBitmap, Bitmap.CompressFormat.JPEG, 100);
+                        Log.d("DATABASE", "the client does not have an image");
+                        Log.d("PROFILE", "image received from the server is :" + image);
+                        return image;
+                    }
+                } catch (InterruptedException e) {
+                } catch (ExecutionException f) {
                 }
-            } catch (InterruptedException e) {
-            } catch (ExecutionException f) {
             }
         }
         return null;

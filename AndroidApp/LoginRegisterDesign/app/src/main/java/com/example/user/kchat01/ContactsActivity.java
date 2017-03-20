@@ -74,16 +74,19 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ContactsActivity.this);
              if(man.getProfileLocation()!=null) {
-            try {
-                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
-                String type = "getImage";
-                ArrayList<String> paramList = new ArrayList<>();
-                paramList.add("picture");
-                RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
-                String result = backgroundasync.execute(type).get();
-            }catch(InterruptedException e){
-            }catch(ExecutionException f){
-            }
+                 if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+                 }else {
+                     try {
+                         String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
+                         String type = "getImage";
+                         ArrayList<String> paramList = new ArrayList<>();
+                         paramList.add("picture");
+                         RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
+                         String result = backgroundasync.execute(type).get();
+                     } catch (InterruptedException e) {
+                     } catch (ExecutionException f) {
+                     }
+                 }
         }
 
         try {
@@ -270,15 +273,18 @@ public class ContactsActivity extends AppCompatActivity {
                     dm.selectAllContacts();
                     }else{
                     try {
-                        Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
-                        String type2 = "getcontacts";
-                        String contacts_url = "http://188.166.157.62:3000/contacts";
-                        ArrayList<String> paramList2 = new ArrayList<>();
-                        paramList2.add("userId");
-                        RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
-                        String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
 
+                        }else {
+                            Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                            String type2 = "getcontacts";
+                            String contacts_url = "http://188.166.157.62:3000/contacts";
+                            ArrayList<String> paramList2 = new ArrayList<>();
+                            paramList2.add("userId");
+                            RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        }
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
                 }}
@@ -345,7 +351,6 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

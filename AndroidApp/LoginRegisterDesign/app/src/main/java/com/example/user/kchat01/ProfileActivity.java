@@ -134,17 +134,11 @@ public class ProfileActivity extends CustomActivity {
                                         Log.d("REMOVE_USERID", contacts_userid);
                                         Log.d("REMOVE_MASTERID", String.valueOf(MasterUser.usersId));
                                         Log.d("REMOVE_CONTACT_POSI", String.valueOf(contacts_position));
-                                        // remove process
-                                        //mSocket.emit("delete_contact_request", contacts_userid, MasterUser.usersId, "success");
                                         dialog.cancel();
-                                        // check deletion
-                                        // OK: temporarily-> if (!contactList.contains(contacts_contactname)){
+
                                             Toast.makeText(ProfileActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                                             btnDelete.setVisibility(GONE);
-                                        // intent to ContactsActivity??
-                                        // NG: } else{
-                                        //    Toast.makeText(ProfileActivity.this, "Failed to delete", Toast.LENGTH_SHORT).show();
-                                        //}
+
                                     }
                                 });
                         builder1.setNegativeButton("No", null);
@@ -303,7 +297,6 @@ public class ProfileActivity extends CustomActivity {
 
         alertDialog = builder.create();
         alertDialog.show();
-        //Initially the positive button is disable
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
         return true;
     }

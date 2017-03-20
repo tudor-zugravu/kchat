@@ -88,7 +88,6 @@ public class AddGroupActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
             mSocket.on("group_created",getGroupId);
-
         } catch (URISyntaxException e){
         }
 
@@ -106,18 +105,22 @@ public class AddGroupActivity extends AppCompatActivity {
         if(dm.selectAllContacts().getCount()>0){
             dm.selectAllContacts();
         }else {
-            try {
-                Log.d("CALLEDSTATUS", "i made a rest request");
-                String type2 = "getcontacts";
-                String contacts_url = "http://188.166.157.62:3000/contacts";
-                ArrayList<String> paramList2 = new ArrayList<>();
-                paramList2.add("userId");
-                RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
-                String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-                JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", AddGroupActivity.this);
+            if(InternetHandler.hasInternetConnection(AddGroupActivity.this)==false){
 
-            } catch (InterruptedException e) {
-            } catch (ExecutionException f) {
+            }else {
+                try {
+                    Log.d("CALLEDSTATUS", "i made a rest request");
+                    String type2 = "getcontacts";
+                    String contacts_url = "http://188.166.157.62:3000/contacts";
+                    ArrayList<String> paramList2 = new ArrayList<>();
+                    paramList2.add("userId");
+                    RESTApi backgroundasync2 = new RESTApi(AddGroupActivity.this, contacts_url, paramList2);
+                    String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                    JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", AddGroupActivity.this);
+
+                } catch (InterruptedException e) {
+                } catch (ExecutionException f) {
+                }
             }
         }
         adapter = new AddGroupAdapter(AddGroupActivity.this, Contacts.contactList);
@@ -290,20 +293,24 @@ public class AddGroupActivity extends AppCompatActivity {
                                 return;
                             } else {
                                 bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                                if(bitmap!=null){
-                                    Log.d("USERSLIST", " i am sending the groups picture");
-                                    Bitmap bitmap = ((BitmapDrawable)canvas.getDrawable()).getBitmap();
-                                    String codedImage = ImageUpload.getStringImage(bitmap);
-                                    JsonSerialiser imageSerialiser = new JsonSerialiser();
-                                    MasterUser man = new MasterUser();
-                                    String imagetosend = imageSerialiser.serialiseProfileImage(groupId,codedImage);
-                                    String type = "updateImage";
-                                    String login_url = "http://188.166.157.62:3000/groupImageUpload";
-                                    ArrayList<String> paramList= new ArrayList<>();
-                                    paramList.add("request");
-                                    paramList.add("json");
-                                    RESTApi backgroundasync = new RESTApi(AddGroupActivity.this,login_url,paramList);
-                                    backgroundasync.execute(type, "profileImageChange", imagetosend);
+                                if(InternetHandler.hasInternetConnection(AddGroupActivity.this)==false){
+
+                                }else {
+                                    if (bitmap != null) {
+                                        Log.d("USERSLIST", " i am sending the groups picture");
+                                        Bitmap bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
+                                        String codedImage = ImageUpload.getStringImage(bitmap);
+                                        JsonSerialiser imageSerialiser = new JsonSerialiser();
+                                        MasterUser man = new MasterUser();
+                                        String imagetosend = imageSerialiser.serialiseProfileImage(groupId, codedImage);
+                                        String type = "updateImage";
+                                        String login_url = "http://188.166.157.62:3000/groupImageUpload";
+                                        ArrayList<String> paramList = new ArrayList<>();
+                                        paramList.add("request");
+                                        paramList.add("json");
+                                        RESTApi backgroundasync = new RESTApi(AddGroupActivity.this, login_url, paramList);
+                                        backgroundasync.execute(type, "profileImageChange", imagetosend);
+                                    }
                                 }
                             }
 

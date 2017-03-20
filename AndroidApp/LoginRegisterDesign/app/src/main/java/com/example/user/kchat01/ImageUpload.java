@@ -69,24 +69,29 @@ public class ImageUpload extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(canvas.getDrawable()==null){
-                return;
-            }else{
-                Bitmap bitmap = ((BitmapDrawable)canvas.getDrawable()).getBitmap();
-                String codedImage = getStringImage(bitmap);
-                JsonSerialiser imageSerialiser = new JsonSerialiser();
-                MasterUser man = new MasterUser();
-                String imagetosend = imageSerialiser.serialiseProfileImage(man.getuserId(),codedImage);
-                String type = "updateImage";
-                String login_url = "http://188.166.157.62:3000/imageupload";
-                ArrayList<String> paramList= new ArrayList<>();
-                paramList.add("request");
-                paramList.add("json");
-                RESTApi backgroundasync = new RESTApi(ImageUpload.this,login_url,paramList);
-                backgroundasync.execute(type, "profileImageChange", imagetosend);
-             }
+                if(InternetHandler.hasInternetConnection(ImageUpload.this)==false){
+
+                }else {
+                    if (canvas.getDrawable() == null) {
+                        return;
+                    } else {
+                        Bitmap bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
+                        String codedImage = getStringImage(bitmap);
+                        JsonSerialiser imageSerialiser = new JsonSerialiser();
+                        MasterUser man = new MasterUser();
+                        String imagetosend = imageSerialiser.serialiseProfileImage(man.getuserId(), codedImage);
+                        String type = "updateImage";
+                        String login_url = "http://188.166.157.62:3000/imageupload";
+                        ArrayList<String> paramList = new ArrayList<>();
+                        paramList.add("request");
+                        paramList.add("json");
+                        RESTApi backgroundasync = new RESTApi(ImageUpload.this, login_url, paramList);
+                        backgroundasync.execute(type, "profileImageChange", imagetosend);
+                    }
+                }
             }
         });
+
     }
 
     public static void takePhoto(Activity activity, int requestCode){
@@ -183,32 +188,4 @@ public class ImageUpload extends AppCompatActivity {
         }
     }
 
-
-
 }
-
-
-
-//
-//
-//    private static boolean bitmapProfileChecker(Context context){
-//
-//        if(profileOption.getDrawable() == null){
-//            Drawable myDrawable = context.getResources().getDrawable(R.drawable.navybluewallpaper3);
-//            // Bitmap bitmap= ((BitmapDrawable) myDrawable).getBitmap();
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    private static boolean bitmapBackgroundChecker(Context context){
-//
-//        if(backgroundOption.getDrawable() == null){
-//            Drawable myDrawable = context.getResources().getDrawable(R.drawable.navybluewallpaper3);
-//            // Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//

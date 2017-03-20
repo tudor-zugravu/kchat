@@ -176,7 +176,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                     recyclerView.setAdapter(adapter);
                   //  adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     adapter.notifyDataSetChanged();
-
                     if(counter!=2){
                         scrolling(false);
                     }else{

@@ -36,7 +36,6 @@ public class AddGroupViewHolder extends RecyclerView.ViewHolder implements View.
         checkBox.setOnClickListener(this);
     }
 
-
     public void setAddGroupListener(AddGroupListener viewholderlistener){
         this.addGroupListener = viewholderlistener;
     }
@@ -46,20 +45,6 @@ public class AddGroupViewHolder extends RecyclerView.ViewHolder implements View.
         this.addGroupListener.onItemClick(v, getLayoutPosition());
     }
 
-    /*
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId()==R.id.checkBox)
-
-            //set listener to each item
-        //when clicking item, set checkbox on or off
-
-        if (viewholderlistener!=null){
-            this.viewholderlistener.onClick(this);
-        }
-    }
-*/
     public interface AddGroupListener {
         void onItemClick(View view, int position);
     }

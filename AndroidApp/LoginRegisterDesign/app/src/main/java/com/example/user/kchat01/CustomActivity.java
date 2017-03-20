@@ -32,10 +32,6 @@ public class CustomActivity extends AppCompatActivity {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
     private DataManager dm;
 
-    /*
-  Top menu
-   */
-    // deploy menu button
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

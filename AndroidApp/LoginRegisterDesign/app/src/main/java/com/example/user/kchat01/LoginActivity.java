@@ -17,7 +17,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import IMPL.Contacts;
-import IMPL.InfoRetreiver;
 import IMPL.RESTApi;
 
 /**
@@ -121,31 +120,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-        //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        //customActivity = new CustomActivity();
-        //customActivity.startActivity();
-
-        //Intent bottomIntent = new Intent(this, CustomActivity.class);
-        //this.startActivity(bottomIntent);
     }
 
     public void onLogin(String usr, String pass) {
-        String type = "login";
-        String login_url = "http://188.166.157.62:3000/login";
-        ArrayList<String> paramList= new ArrayList<>();
-        paramList.add("username");
-        paramList.add("password");
-        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url,paramList);
-        backgroundasync.execute(type, usr, pass);
-    }
+        if(InternetHandler.hasInternetConnection(LoginActivity.this)==false){
 
-    public void getJsonData(){
-        String type = "weather";
-        String login_url = "http://api.androidhive.info/contacts/";
-        InfoRetreiver backgroundasync = new InfoRetreiver(login_url,LoginActivity.this);
-        backgroundasync.execute(type, login_url);
+        }else {
+            String type = "login";
+            String login_url = "http://188.166.157.62:3000/login";
+            ArrayList<String> paramList = new ArrayList<>();
+            paramList.add("username");
+            paramList.add("password");
+            RESTApi backgroundasync = new RESTApi(LoginActivity.this, login_url, paramList);
+            backgroundasync.execute(type, usr, pass);
+        }
     }
 
     @Override
