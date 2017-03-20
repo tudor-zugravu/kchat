@@ -106,7 +106,10 @@ public class JsonDeserialiser {
                 }
                 String message = obj.getString("message");
                 String messagetimestamp = obj.getString("timestmp");
-                IMessage messageObject = new Message(Integer.parseInt(messageid), Integer.parseInt(username), message, messagetimestamp);//This is used to add actual message
+                StringBuilder sb = new StringBuilder(messagetimestamp);
+                sb.delete(5,10);     sb.delete(11,14);
+                String messagetimestamp2 = sb.toString();
+                IMessage messageObject = new Message(Integer.parseInt(messageid), Integer.parseInt(username), message, messagetimestamp2);//This is used to add actual message
                 if(Integer.parseInt(username) == MasterUser.usersId){
                     messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
                 }else{

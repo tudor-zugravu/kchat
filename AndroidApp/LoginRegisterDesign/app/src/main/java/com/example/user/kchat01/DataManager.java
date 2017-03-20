@@ -38,12 +38,14 @@ public class DataManager {
     public static final String PRIVATE_MESSAGES_RECEIVERID = "receiver";
     public static final String PRIVATE_MESSAGES_MESSAGE = "message";
     public static final String PRIVATE_MESSAGES_TIMESTAMP = "timestamp";
+    public static final String PRIVATE_MESSAGES_TYPE = "type";
 
     public static final String GROUP_MESSAGES_MESSAGEID = "messageid";
     public static final String GROUP_MESSAGES_SENDERID = "sender";
     public static final String GROUP_MESSAGES_RECEIVERID = "receiver";
     public static final String GROUP_MESSAGES_MESSAGE = "message";
     public static final String GROUP_MESSAGES_TIMESTAMP = "timestamp";
+    public static final String GROUP_MESSAGES_TYPE = "type";
 
     private static final String CLIENT_DATABASE = "kchat_db"; // db
     private static final String CONTACTS_TABLE = "contacts"; // table name
@@ -58,9 +60,7 @@ public class DataManager {
         db = helper.getWritableDatabase();
     }
 
-    // Insert a record
     public void insertContact(int contactid, String timestamp, int userid, String contactName, String email, String username, String phone, String profileDirectory, String biography,String usersImage){
-// Add all the details to the table
         String query = "INSERT INTO " + CONTACTS_TABLE + " (" +
                 CONTACT_TABLE_ID + ", " +
                 CONTACT_TABLE_TIMESTAMP + ", " +
@@ -87,6 +87,47 @@ public class DataManager {
         Log.i("insert() = ", query);
         db.execSQL(query);
     }
+
+    public void insertPrivateMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
+        String query = "INSERT INTO " + PRIVATE_MESSAGES_TABLE + " (" +
+                PRIVATE_MESSAGES_MESSAGEID + ", " +
+                PRIVATE_MESSAGES_SENDERID + ", " +
+                PRIVATE_MESSAGES_RECEIVERID + ", " +
+                PRIVATE_MESSAGES_MESSAGE + ", " +
+                PRIVATE_MESSAGES_TIMESTAMP + ", " +
+                PRIVATE_MESSAGES_TYPE + ") " +
+                "VALUES (" +
+                "'" + messageId + "'" + ", " +
+                "'" + senderId + "'" + ", " +
+                "'" + receiverId + "'" + ", " +
+                "'" + message + "'" + ", " +
+                "'" + timestamp + "'" + ", " +
+                "'" + type + "'" + ", " +
+                "); ";
+        Log.i("insert() = ", query);
+        db.execSQL(query);
+    }
+
+    public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
+        String query = "INSERT INTO " + GROUP_MESSAGES_TABLE + " (" +
+                GROUP_MESSAGES_MESSAGEID + ", " +
+                GROUP_MESSAGES_SENDERID + ", " +
+                GROUP_MESSAGES_RECEIVERID + ", " +
+                GROUP_MESSAGES_MESSAGE + ", " +
+                GROUP_MESSAGES_TIMESTAMP + ", " +
+                GROUP_MESSAGES_TYPE + ") " +
+                "VALUES (" +
+                "'" + messageId + "'" + ", " +
+                "'" + senderId + "'" + ", " +
+                "'" + receiverId + "'" + ", " +
+                "'" + message + "'" + ", " +
+                "'" + timestamp + "'" + ", " +
+                "'" + type + "'" + ", " +
+                "); ";
+        Log.i("insert() = ", query);
+        db.execSQL(query);
+    }
+
     public void flushAllData(){ //logout to delete all
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  CONTACTS_TABLE+ ";";
@@ -117,10 +158,7 @@ public class DataManager {
             String profilelocation = c.getString(7);
             String biography = c.getString(8);
             String base64Bitmap = c.getString(9);
-            /*
-            public Contacts(int contactId, String timestamp,String userId,String contactName,String email,
-                    String username,String phonenumber,String contactPicture,Bitmap profilePicture){
-             */
+
             Bitmap profile = decodeBase64(base64Bitmap);
             IContacts contact = new Contacts(contactId,timestamp,Integer.toString(userId),contactname,email,username,phone,profilelocation,profile);
             Contacts.contactList.add(contact);
@@ -186,6 +224,8 @@ public class DataManager {
                     + PRIVATE_MESSAGES_MESSAGE
                     + " text not null,"
                     + PRIVATE_MESSAGES_TIMESTAMP
+                    + " text not null,"
+                    + PRIVATE_MESSAGES_TYPE
                     + " text not null);";
             db.execSQL(newMessageTableQueryString);
 
@@ -200,6 +240,8 @@ public class DataManager {
                     + GROUP_MESSAGES_MESSAGE
                     + " text not null,"
                     + GROUP_MESSAGES_TIMESTAMP
+                    + " text not null,"
+                    + GROUP_MESSAGES_TYPE
                     + " text not null);";
             db.execSQL(newgroupTableQueryString);
         }
