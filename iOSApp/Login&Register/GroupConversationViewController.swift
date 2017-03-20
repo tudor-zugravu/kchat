@@ -39,7 +39,6 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             if response == "fail" {
                 print("room create error")
             } else {
-                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
                 SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
                     
                     let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
@@ -52,6 +51,9 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                         self.messagesDownloaded(messagesList!)
                     })
                 })
+                if self.passedValue != nil {
+                    SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
+                }
             }
         })
         
@@ -66,7 +68,6 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             self.groupId = value.groupId
             
             SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
-            SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(convLimit))
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap

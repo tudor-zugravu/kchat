@@ -38,7 +38,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             if response == "fail" {
                 print("room create error")
             } else {
-                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
                 SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
                     
                     let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
@@ -52,6 +51,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                         self.messagesDownloaded(messagesList!)
                     })
                 })
+                if let value = self.passedValue {
+                    SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(self.convLimit))
+                }
             }
         })
     }
@@ -63,7 +65,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             self.contactId = value.contactId
             
             SocketIOManager.sharedInstance.createPrivateRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-            SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(convLimit))
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap

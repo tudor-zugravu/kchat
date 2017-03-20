@@ -39,6 +39,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     
     override func viewWillAppear(_ animated: Bool) {
         SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
