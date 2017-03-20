@@ -22,9 +22,11 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import IMPL.MasterUser;
+import IMPL.RESTApi;
 
 import static android.view.View.GONE;
 import static com.example.user.kchat01.R.id.editTextNewProfile;
@@ -268,7 +270,7 @@ public class ProfileActivity extends CustomActivity {
         LayoutInflater inflater = LayoutInflater.from(ProfileActivity.this);
         alertView = inflater.inflate(R.layout.dialog_change_profile, null);
         builder.setView(alertView);
-        builder.setTitle("Change "+fieldName);
+        builder.setTitle("Change "+fieldName);//Username----Email---Phone----Biography
         textViewField = (TextView) alertView.findViewById(textViewCurrentProfile);
         editTextField = (EditText) alertView.findViewById(editTextNewProfile);
         // input check
@@ -280,11 +282,35 @@ public class ProfileActivity extends CustomActivity {
                         // String fieldname has "Username", Email" or "Phone"
                         // new data is stored in "newValue"
                         // If server error, return false
-                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                        LoginActivity.editor.clear();
-                        LoginActivity.editor.commit(); // commit changes
-                        startActivity(intent);
-                        Toast.makeText(ProfileActivity.this,fieldName+"was changed to "+newValue,Toast.LENGTH_SHORT).show();
+                        if(InternetHandler.hasInternetConnection(ProfileActivity.this)==false){
+                        }else {
+                            String type = "profileUpdate";
+                            String login_url = "http://188.166.157.62:3000/";
+                            ArrayList<String> paramList = new ArrayList<>();
+
+                            switch (fieldName) {
+                                case "Username":
+                                    login_url = login_url+"changeUsername";
+                                    paramList.add("changeUsername");
+                                    break;
+                                case "Email":
+                                    login_url = login_url+"changeEmail";
+                                    paramList.add("changeEmail");
+                                    break;
+                                case "Phone":
+                                    login_url = login_url+"changePhoneNumber";
+                                    paramList.add("changePhoneNumber");
+                                    break;
+                                case "Biography":
+                                    login_url = login_url+"changebiography";
+                                    paramList.add("changeBiography");
+                                    break;
+                            }
+
+                            RESTApi backgroundasync = new RESTApi(ProfileActivity.this, login_url, paramList);
+                            backgroundasync.execute(type, newValue);
+                        }
+                     //   Toast.makeText(ProfileActivity.this,fieldName+"was changed to "+newValue,Toast.LENGTH_SHORT).show();
                     }
                 });
         builder.setNegativeButton("Cancel",

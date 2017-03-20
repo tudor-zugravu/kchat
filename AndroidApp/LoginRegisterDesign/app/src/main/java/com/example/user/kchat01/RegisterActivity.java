@@ -109,7 +109,6 @@ public class RegisterActivity extends AppCompatActivity{
                     paramList.add("pwd");
                     paramList.add("phoneNo");
                     paramList.add("biography");
-
                     RESTApi backgroundasync = new RESTApi(RegisterActivity.this, register_url, paramList);
                     backgroundasync.execute(type,
                             inputFullName.getText().toString(),

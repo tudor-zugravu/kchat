@@ -13,7 +13,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import IMPL.MasterUser;
+import IMPL.RESTApi;
 
 import static com.example.user.kchat01.R.id.currentPassword;
 import static com.example.user.kchat01.R.id.newPassword;
@@ -68,13 +72,30 @@ public class CustomActivity extends AppCompatActivity {
                 builder.setPositiveButton("Change",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+
+                                if(InternetHandler.hasInternetConnection(CustomActivity.this)==false){
+                                }else {
+                                    String newPassword = etCurrentPassword.getText().toString();
+                                   // String oldPassword = etOldPassword.getText().toString();
+
+                                    String type = "profileUpdate";
+                                    String login_url = "http://188.166.157.62:3000/changePass";
+                                    ArrayList<String> paramList = new ArrayList<>();
+                                    paramList.add("newPassword");
+                                    paramList.add("username");
+                                    paramList.add("password"); // to get the old password
+
+                                    RESTApi backgroundasync = new RESTApi(CustomActivity.this, login_url, paramList);
+                                    backgroundasync.execute(type, newPassword); // myusername and old password
+                                }
                                 //Send request for changing password to the server
                                 // New password is stored in variable of "newValue"
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 LoginActivity.editor.clear();
                                 LoginActivity.editor.commit(); // commit changes
                                 startActivity(intent);
-                                Toast.makeText(getApplicationContext(),"Password was changed to "+newValue, Toast.LENGTH_SHORT).show();
+
+                               // Toast.makeText(getApplicationContext(),"Password was changed to "+newValue, Toast.LENGTH_SHORT).show();
                             }
                         });
 
