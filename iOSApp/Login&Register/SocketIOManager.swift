@@ -12,7 +12,7 @@ import AVFoundation
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
     
-    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
+    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:3000")! as URL)
     
     var pendingEmits: [(event: String, param: String)] = []
     private var currentRoom: String = ""
@@ -40,6 +40,11 @@ class SocketIOManager: NSObject {
             }
             
             self.setGlobalPrivateListener()
+        }
+        
+        self.socket.on("disconnected") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            print(responseString)
         }
     }
     
@@ -209,10 +214,6 @@ class SocketIOManager: NSObject {
         socket.emit("create_private_room", receiverId, userId)
     }
     
-    func addUser(roomId: String, userId: String) {
-        socket.emit("add_user", roomId, userId)
-    }
-    
     func sendMessage(message: String) {
         socket.emit("send_chat", message)
     }
@@ -240,13 +241,9 @@ class SocketIOManager: NSObject {
         self.socket.on("global_private_messages") { ( dataArray, ack) -> Void in
             
             let room = dataArray[0] as! String
-            
             if (room != self.currentRoom) {
-                
                 Utils.instance.newPrivateMessages += 1
-                print("yep \(Utils.instance.newPrivateMessages)")
-                AudioServicesPlaySystemSound (1016)
-                print("sound played")
+                AudioServicesPlaySystemSound (1334)
                 
 //                let messageId = dataArray[1] as! Int
 //                let username = dataArray[2] as! String

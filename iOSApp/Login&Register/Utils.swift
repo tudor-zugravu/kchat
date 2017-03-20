@@ -33,4 +33,54 @@ class Utils: NSObject {
         return documentsDirectory
     }
     
+    func setTabBarValues(tabBarController: TabBarController) {
+        if (self.newPrivateMessages > 0) {
+            tabBarController.tabBar.items?.first?.badgeValue = String(self.newPrivateMessages)
+        } else {
+            tabBarController.tabBar.items?.first?.badgeValue = nil
+        }
+        if (self.newGroupMessages > 0) {
+            tabBarController.tabBar.items?[1].badgeValue = String(self.newGroupMessages)
+        } else {
+            tabBarController.tabBar.items?[1].badgeValue = nil
+        }
+        if (self.newContactRequests > 0) {
+            tabBarController.tabBar.items?[2].badgeValue = String(self.newContactRequests)
+        } else {
+            tabBarController.tabBar.items?[2].badgeValue = nil
+        }
+        tabBarController.reloadInputViews()
+    }
+    
+    func logOut() {
+        // Delete profile picture
+        do {
+            let fileManager = FileManager.default
+            let fileName = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))").path
+            
+            if fileManager.fileExists(atPath: fileName) {
+                try fileManager.removeItem(atPath: fileName)
+            } else {
+                print("File does not exist")
+            }
+        }
+        catch let error as NSError {
+            print("An error took place: \(error)")
+        }
+        
+        // Delete stored user data
+        let userDefaults = UserDefaults.standard;
+        userDefaults.removeObject(forKey: "email")
+        userDefaults.removeObject(forKey:"userId")
+        userDefaults.removeObject(forKey: "username")
+        userDefaults.removeObject(forKey: "phoneNo")
+        userDefaults.removeObject(forKey: "password")
+        userDefaults.removeObject(forKey: "fullName")
+        userDefaults.removeObject(forKey: "profilePicture")
+        userDefaults.removeObject(forKey: "contacts")
+        userDefaults.set(false, forKey: "hasLoginKey")
+        userDefaults.set(false, forKey: "hasProfilePicture")
+        UserDefaults.standard.synchronize()
+    }
+    
 }

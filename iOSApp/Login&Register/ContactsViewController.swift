@@ -24,6 +24,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         contactsModel.downloadContacts()
     }
     

@@ -69,6 +69,7 @@
 		C333136C1E7D5C8500B8F229 /* GroupChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */; };
 		C333136E1E7D8C4100B8F229 /* GroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */; };
 		C33313701E7D8DCD00B8F229 /* GroupChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */; };
+		C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35C91E51E7EEA6900D6555B /* TabBarController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +158,7 @@
 		C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatsViewController.swift; sourceTree = "<group>"; };
 		C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupConversationViewController.swift; sourceTree = "<group>"; };
 		C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatModel.swift; sourceTree = "<group>"; };
+		C35C91E51E7EEA6900D6555B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +248,7 @@
 		38938EE41E548ECD009F1973 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C35C91E51E7EEA6900D6555B /* TabBarController.swift */,
 				59205AF91E7C965800B92ABF /* EditProfileViewController.swift */,
 				59205AF31E7C84B500B92ABF /* NewGroupViewController.swift */,
 				5926C3BF1E5C974600E4DBF2 /* IndividualTableViewController.swift */,
@@ -488,6 +491,7 @@
 				3816822E1E5CB3F000B637E8 /* ContactsModel.swift in Sources */,
 				3810AC2B1E743CBF005A98EB /* SocketEventHandler.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
+				C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */,
 				C333136E1E7D8C4100B8F229 /* GroupConversationViewController.swift in Sources */,
 				C333136C1E7D5C8500B8F229 /* GroupChatsViewController.swift in Sources */,
 				3810AC281E743CBF005A98EB /* SocketEnginePollable.swift in Sources */,

@@ -1825,7 +1825,7 @@
         <!--tabBarController-->
         <scene sceneID="BXL-tQ-cjy">
             <objects>
-                <tabBarController title="tabBarController" id="t2a-SF-f7M" sceneMemberID="viewController">
+                <tabBarController title="tabBarController" id="t2a-SF-f7M" customClass="TabBarController" customModule="Login_Register" customModuleProvider="target" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="SBw-GM-FN5">
