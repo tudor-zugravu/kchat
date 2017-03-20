@@ -1,12 +1,16 @@
 package com.example.user.kchat01;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,6 +66,8 @@ public class ContactsActivity extends AppCompatActivity {
     MasterUser man = new MasterUser();
     DataManager dm;
     private Socket mSocket;
+    NotificationCompat.Builder notification;
+    public static final int uniqueId = 45611;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,6 +98,8 @@ public class ContactsActivity extends AppCompatActivity {
 
         } catch (URISyntaxException e){
         }
+        notification = new NotificationCompat.Builder(this);
+        notification.setAutoCancel(true);
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +137,7 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-       // if(ContactsActivity.tabId==2131624157){ // id for defaults and chat
+
             btn_receiveRequest.setVisibility(GONE);
             btn_sendRequest.setVisibility(GONE);
             btn_searchContacts.setVisibility(GONE);
@@ -148,58 +156,7 @@ public class ContactsActivity extends AppCompatActivity {
             };
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
-        /*
-        }else if (ContactsActivity.tabId==2131624158) { //tab id for groups
-                        btn_receiveRequest.setVisibility(GONE);
-                        btn_sendRequest.setVisibility(GONE);
-                        btn_searchContacts.setVisibility(GONE);
-                        ContactsActivity.showPlus=true;
-                        invalidateOptionsMenu();
-                        adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
-                //By clicking a card, the username is got
-                        @Override
-                public void onClick(ContactsViewHolder holder) {
-                                        int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                                      //  IGroups contact = Groups.getObjectList().get(position);
-                                        Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                                       // contactsIntent.putExtra("username", contact.getName());
-                                        startActivity(contactsIntent);
-                                    }
-            };
-                        adapter.notifyDataSetChanged();
-                        recyclerView.setAdapter(adapter);
 
-                            }else if (ContactsActivity.tabId==2131624159) { // for contacts
-                        btn_receiveRequest.setVisibility(VISIBLE);
-                        btn_sendRequest.setVisibility(VISIBLE);
-                        btn_searchContacts.setVisibility(VISIBLE);
-                        ContactsActivity.showPlus=false;
-                        invalidateOptionsMenu();
-                        if(dm.selectAllContacts().getCount()>0){
-                                dm.selectAllContacts();
-                            }
-                        adapter = new ContactsAdapter(ContactsActivity.this, Contacts.contactList,1) {
-                @Override
-                public void onClick(ContactsViewHolder holder) {
-                                        int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                                        IContacts contact = Contacts.contactList.get(position);
-                                        Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
-                                        String type = "contact";
-                                      contactsIntent.putExtra("type",type);
-                                        contactsIntent.putExtra("userid",contact.getUserId());
-                                        contactsIntent.putExtra("username",contact.getUsername());
-                                       contactsIntent.putExtra("contactid",contact.getContactId());
-                                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                        contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
-                                       byte [] byteArray = stream.toByteArray();
-                                        contactsIntent.putExtra("contactbitmap",byteArray);
-                                      startActivity(contactsIntent);
-                                   }
-            };
-                       adapter.notifyDataSetChanged();
-                        recyclerView.setAdapter(adapter);
-        }
-        */
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -387,7 +344,6 @@ public class ContactsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
 
@@ -470,12 +426,27 @@ public class ContactsActivity extends AppCompatActivity {
                         String receivedMessages5 = (String) args [4]; // timestamp
                         Log.d("UPDATECHAT",receivedMessages5);
                         Log.d("UPDATECHAT","global2222!!!");
+                        notification.setSmallIcon(R.drawable.profile_logo);
+                        notification.setTicker("This is the ticker");
+                        notification.setWhen(System.currentTimeMillis());
+                        notification.setContentTitle("Message from:" +receivedMessages3);
+                        notification.setContentText(receivedMessages4);
+                        notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
+                        showNotification();
                     }
-
                 }
             });
         }
     };
+
+    private void showNotification (){
+        Intent intent = new Intent(this,ContactsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(uniqueId,notification.build());
+
+    }
 
     private Emitter.Listener chatUpdater = new Emitter.Listener() {
         @Override
@@ -504,4 +475,10 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
+    }
 }

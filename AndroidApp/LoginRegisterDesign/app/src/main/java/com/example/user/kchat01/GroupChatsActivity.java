@@ -74,18 +74,11 @@ public class GroupChatsActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
             mSocket.connect();
             mSocket.on("send_group_members",groupList);
-            JSONArray userArray = new JSONArray(usernames);
-
             mSocket.emit("get_group_members", ownerId);
-            Log.d("GROUPFUNCTION"," sent id to the server is :   "+ownerId);
-         //   mSocket.on("update_chat", serverReplyLogs); // sends server messages
-
-
             mSocket.on("update_chat", serverReplyLogs); // sends server messages
             mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
             mSocket.on("group_room_created",stringReply2);
             mSocket.emit("create_group_room", ownerId);
-
 
         } catch (URISyntaxException e){
         }
@@ -113,7 +106,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                     isAtTop = false;
                 }
             }
-
                 @Override
                 public void onScrollStateChanged (RecyclerView recyclerView,int newState){
                 super.onScrollStateChanged(recyclerView, newState);
@@ -126,7 +118,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                         didOverscroll = true;
                     }
                     if (newState == 2 && isAtTop && didOverscroll) {
-                        mSocket.emit("get_recent_messages",MasterUser.usersId,ownerId,20*counter);
+                        mSocket.emit("get_recent_group_messages",ownerId,20*counter);
                         counter++;
                         didOverscroll = false;
                     }
@@ -182,7 +174,9 @@ public class GroupChatsActivity extends AppCompatActivity {
 
                     int latestPosition = adapter.getItemCount();
                     recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                  //  adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    adapter.notifyDataSetChanged();
+
                     if(counter!=2){
                         scrolling(false);
                     }else{
@@ -222,7 +216,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         public void call(Object... args) {
             String receivedMessage = (String) args [0];
             if(receivedMessage.equals("fail")){
-                // print error cannot connect
+
             }else {
               Log.d("GROUPFUNCTION",receivedMessage);
                 JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessage,"getgroupcontacts",GroupChatsActivity.this);
@@ -255,7 +249,8 @@ public class GroupChatsActivity extends AppCompatActivity {
                         }
                         dataList.add(latestPosition, messageObject);//"0" means top of array
                         recyclerView.setAdapter(adapter);
-                        adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                        //adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                        adapter.notifyDataSetChanged();
                         scrolling(true);
                     } catch (ParseException e) {
                     }

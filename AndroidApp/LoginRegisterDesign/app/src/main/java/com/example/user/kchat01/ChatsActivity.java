@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -175,7 +176,8 @@ public class ChatsActivity extends AppCompatActivity {
                     Log.d("MESSAGEERROR", args[0].toString());
                     int latestPosition = adapter.getItemCount();
                     recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    adapter.notifyDataSetChanged();
+                   // adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     if(counter!=2){
                         scrolling(false);
                     }else{
@@ -204,6 +206,8 @@ public class ChatsActivity extends AppCompatActivity {
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
         mSocket.off( ContactsActivity.roomnumber);
         ContactsActivity.roomnumber = "";
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
     }
 
     private Emitter.Listener stringReply2 = new Emitter.Listener() {
@@ -247,7 +251,7 @@ public class ChatsActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
-                        adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                       // adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                         scrolling(true);
                     } catch (ParseException e) {
                     }
