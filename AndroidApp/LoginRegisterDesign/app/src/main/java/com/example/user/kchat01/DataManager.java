@@ -10,7 +10,9 @@ import android.util.Base64;
 import android.util.Log;
 
 import API.IContacts;
+import API.IMessage;
 import IMPL.Contacts;
+import IMPL.Message;
 
 /**
  * Created by Tudor Vasile on 3/11/2017.
@@ -88,8 +90,9 @@ public class DataManager {
         db.execSQL(query);
     }
 
+    static int counter = 0;
     public void insertPrivateMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
-        String query = "INSERT INTO " + PRIVATE_MESSAGES_TABLE + " (" +
+        String query = "INSERT OR REPLACE INTO " + PRIVATE_MESSAGES_TABLE + " (" +
                 PRIVATE_MESSAGES_MESSAGEID + ", " +
                 PRIVATE_MESSAGES_SENDERID + ", " +
                 PRIVATE_MESSAGES_RECEIVERID + ", " +
@@ -106,6 +109,8 @@ public class DataManager {
                 " ); ";
         Log.i("insert() = ", query);
         db.execSQL(query);
+        counter = counter + 1;
+        Log.d("OFFLINE TESTER", "this was called  " + counter + " times");
     }
 
     public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
@@ -146,7 +151,7 @@ public class DataManager {
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+
                 " WHERE " + PRIVATE_MESSAGES_SENDERID +
-                " = '" + senderId + "AND" +
+                " = '" + senderId + "' AND " +
                 PRIVATE_MESSAGES_RECEIVERID +
                 " = '" + receiverId+"';";
         Log.i("delete() = ", query);
@@ -154,7 +159,7 @@ public class DataManager {
 
         String query2 = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+
                 " WHERE " + PRIVATE_MESSAGES_SENDERID +
-                " = '" + receiverId + "AND" +
+                " = '" + receiverId + "' AND " +
                 PRIVATE_MESSAGES_RECEIVERID +
                 " = '" + senderId+"';";
         Log.i("delete() = ", query);
@@ -192,6 +197,30 @@ public class DataManager {
         }
         return c;
     }
+
+    public Cursor selectAllPrivateMessages(int name) {
+        Log.d("OFFLINE TESTER", "the name is  " + name);
+
+        Cursor c = db.rawQuery("SELECT *" +" from " + PRIVATE_MESSAGES_TABLE +
+                " WHERE " + PRIVATE_MESSAGES_SENDERID +
+                " = '" + name + "';", null);
+        ChatsActivity.dataList.clear();
+
+        while (c.moveToNext()){
+            int messageId = c.getInt(0);
+            int sender_id = c.getInt(1);
+            String message= c.getString(2);
+            String timestamp = c.getString(3);
+           // String type = c.getString(4);
+           // Bitmap profile = decodeBase64(base64Bitmap);
+
+            IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
+            ChatsActivity.dataList.add(messageStored);
+        }
+        Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
+        return c;
+    }
+
     public Bitmap decodeBase64(String input) {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);

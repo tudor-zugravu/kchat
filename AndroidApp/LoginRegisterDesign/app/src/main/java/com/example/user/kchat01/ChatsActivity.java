@@ -60,7 +60,8 @@ public class ChatsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ChatsActivity.this);
-        dm.flushAllMessageData();
+
+
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,6 +81,12 @@ public class ChatsActivity extends AppCompatActivity {
                 textViewChatUser.setText("");
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+        }
+        if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
+            //get messages and then add to list
+            dm.selectAllPrivateMessages(Integer.parseInt(userId));
+        }else {
+            dm.flushAllMessageData();
         }
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
@@ -174,6 +181,7 @@ public class ChatsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     dataList.clear();
+                    dm.deletePrivateContactMessages(userId,Integer.toString(MasterUser.usersId));
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
                     Log.d("MESSAGEERROR", args[0].toString());
