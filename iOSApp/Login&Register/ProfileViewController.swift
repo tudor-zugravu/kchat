@@ -15,8 +15,12 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var fullNameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var phoneNoLabel: UILabel!
+    @IBOutlet weak var aboutLabel: UILabel!
+    @IBOutlet weak var deleteContactButton: UIButton!
     
     @IBOutlet weak var dropButton: DropMenuButton!
+    
+    var passedValue: ContactModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,16 +36,20 @@ class ProfileViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
-        usernameLabel.text = UserDefaults.standard.value(forKey: "username") as! String?
-        fullNameLabel.text = UserDefaults.standard.value(forKey: "fullName") as! String?
-        emailLabel.text = UserDefaults.standard.value(forKey: "email") as! String?
-        phoneNoLabel.text = UserDefaults.standard.value(forKey: "phoneNo") as! String?
-        
-        if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
-            let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
-            profilePictureImageView.image = image
+        if let value = passedValue {
+            
+        } else {
+            usernameLabel.text = UserDefaults.standard.value(forKey: "username") as! String?
+            fullNameLabel.text = UserDefaults.standard.value(forKey: "fullName") as! String?
+            emailLabel.text = UserDefaults.standard.value(forKey: "email") as! String?
+            phoneNoLabel.text = UserDefaults.standard.value(forKey: "phoneNo") as! String?
+            
+            if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
+                let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
+                profilePictureImageView.image = image
+            }
         }
+        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
     }
 
     @IBAction func menuPressed(_ sender: Any) {
