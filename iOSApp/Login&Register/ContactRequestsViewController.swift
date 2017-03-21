@@ -150,6 +150,12 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
                 item.contactId = contactId
                 item.timestamp = timestamp
                 
+                if let about = contactDetails[i]["biography"] as? String {
+                    item.about = about
+                } else {
+                    item.about = ""
+                }
+                
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
                     let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")

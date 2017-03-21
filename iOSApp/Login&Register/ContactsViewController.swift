@@ -22,8 +22,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     class MyLongPressGestureRecognizer: UILongPressGestureRecognizer {
-        var selectedName: String?
-        var selectedId: Int?
+        var selectedContact: ContactModel?
     }
     
     override func viewDidLoad() {
@@ -77,8 +76,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 cell.addGestureRecognizer(tapGesture)
                 
                 let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
-                longPress.selectedId = item.userId!
-                longPress.selectedName = item.name!
+                longPress.selectedContact = item
                 tapGesture.numberOfTouchesRequired = 1
                 cell.addGestureRecognizer(longPress)
             }
@@ -97,7 +95,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         var contactsAux: [ContactModel] = []
         var item:ContactModel;
-
+        
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
             
@@ -116,7 +114,13 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 item.phoneNo = phoneNo
                 item.userId = userId
                 item.contactId = contactId
-                item.timestamp = timestamp
+                item.phoneNo = phoneNo
+                
+                if let about = contactDetails[i]["biography"] as? String {
+                    item.about = about
+                } else {
+                    item.about = ""
+                }
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
@@ -162,9 +166,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func longPress(sender : MyLongPressGestureRecognizer){
         if sender.state == .ended {
-            
-            print("long press \(sender.selectedId!) \(sender.selectedName!)")
-            
+            let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "profileViewController") as? ProfileViewController
+            profileViewController?.passedValue = sender.selectedContact
+            self.navigationController?.pushViewController(profileViewController!, animated: true)
         }
     }
 

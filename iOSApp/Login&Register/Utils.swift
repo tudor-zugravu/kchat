@@ -77,7 +77,7 @@ class Utils: NSObject {
         userDefaults.removeObject(forKey: "password")
         userDefaults.removeObject(forKey: "fullName")
         userDefaults.removeObject(forKey: "profilePicture")
-        userDefaults.removeObject(forKey: "contacts")
+        userDefaults.removeObject(forKey: "about")
         userDefaults.set(false, forKey: "hasLoginKey")
         userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
