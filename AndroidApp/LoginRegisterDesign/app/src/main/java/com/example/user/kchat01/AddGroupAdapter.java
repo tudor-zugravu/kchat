@@ -14,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,11 +31,13 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
     private LayoutInflater inflater;
     //public ArrayList<IContacts> objectList;
     public ArrayList<IContacts> filterList;
+    public ArrayList<Integer> groupUsersId;
     public static ArrayList<IContacts> checkedUsers=new ArrayList<>();
     private AddGroupViewHolder holder;
-    private AddGroupFilter filter;
+    AddGroupFilter filter;
     Context context;
     private int groupLimit = 0;
+    private int type=-1;
 
 
     //constructor
@@ -45,6 +46,15 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
       //  this.objectList = objectList;
         this.filterList = objectList;
         this.context = context;
+    }
+
+    //constructor
+    public AddGroupAdapter(Context context, ArrayList<IContacts> objectList, int type) {
+        inflater = LayoutInflater.from(context);
+        //  this.objectList = objectList;
+        this.filterList = objectList;
+        this.context = context;
+        this.type = type;
     }
 
     //create view holder
@@ -64,9 +74,9 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
             String result = Contacts.contactList.get(i).getContactName();
             Log.d("DATACHECKER", " Iha here for the data checker --->>>" + result );
         }
-        final IContacts current = Contacts.contactList.get(position);
+        final IContacts current = (IContacts)filterList.get(position);
 
-        if(current.getBitmap()==null) {
+        if(Contacts.contactList.get(position).getBitmap()==null) {
             Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
             holder.imageProfile.setImageDrawable(d);
         }else{
@@ -82,30 +92,59 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
 
                 if(cb.isChecked()){
                     groupLimit = groupLimit + 1;
-
-                    if(groupLimit>1){
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                        AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
-                        builder1.setTitle("Cannot create Group");
-                        builder1.setMessage("You have added too many contacts, please choose less than 6 contacts.");
-                        builder1.setCancelable(true);
-                        builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                        AlertDialog alert11 = builder1.create();
-                        alert11.show();
-                    }else{
-                        AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                    if (type == -1) { // ADD Group
+                        if (groupLimit > 1) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+                            AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
+                            builder1.setTitle("Cannot create Group");
+                            builder1.setMessage("You have added too many contacts, please choose less than 6 contacts.");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        } else {
+                            AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                        }
+                    }else if (type == 1){ // Add Contact to group
+                        checkedUsers.clear();
+                        // TO check the number of current members in group
+//                        Log.d("ADDCONTACT_GROUP_MEM", String.valueOf(groupUsersId.size()));
+                        if (groupLimit > 1) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+                            AddContactActivity.textViewDone.setVisibility(TextView.GONE);
+                            builder1.setTitle("Cannot add the contact");
+                            builder1.setMessage("This group will have too many contacts, please choose less than 6 contacts.");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        } else {
+                            AddContactActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                        }
                     }
                     checkedUsers.add(current);
                 }else if (!cb.isChecked()){
                     groupLimit = groupLimit - 1 ;
-                    if(groupLimit>1){
-                        AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
-                    }else{
-                        AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                    if (type == -1) { //ADD Group
+                        if (groupLimit > 1) {
+                            AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
+                        } else {
+                            AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                        }
+                    }else if (type == 1){  //Add Contact to group
+                        if (groupLimit > 1) {
+                            AddContactActivity.textViewDone.setVisibility(TextView.GONE);
+                        } else {
+                            AddContactActivity.textViewDone.setVisibility(TextView.VISIBLE);
+                        }
                     }
                     checkedUsers.remove(current);
                 }

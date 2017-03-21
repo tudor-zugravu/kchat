@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -209,7 +208,8 @@ public class ContactsActivity extends AppCompatActivity {
                             String type = "contact";
                             contactsIntent.putExtra("type",type);
                             contactsIntent.putExtra("userid",Integer.toString(contact.getContactId()));
-                            contactsIntent.putExtra("username",contact.getUsername());
+                            //contactsIntent.putExtra("username",contact.getUsername());
+                            contactsIntent.putExtra("contactname",contact.getContactName());
                             contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
@@ -220,13 +220,13 @@ public class ContactsActivity extends AppCompatActivity {
                         @Override
                         public void onLongClick(ContactsViewHolder holder){
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IContacts contact = Contacts.getContactList().get(position);
+                            IContacts contact = Contacts.activeChat.get(position);
                             // move to Profile
                             Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
                             profileIntent.putExtra("contact_username", contact.getUsername());
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            //profileIntent.putExtra("contact_biography", "NOTHING");
                             profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
                             profileIntent.putExtra("type", "contactsprofile");
                             startActivity(profileIntent);
@@ -323,7 +323,7 @@ public class ContactsActivity extends AppCompatActivity {
                             profileIntent.putExtra("position", position);
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            //profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
                             profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
                             profileIntent.putExtra("type", "contactsprofile");
                             startActivity(profileIntent);
@@ -439,7 +439,7 @@ public class ContactsActivity extends AppCompatActivity {
                         notification.setWhen(System.currentTimeMillis());
                         notification.setContentTitle("Message from:" +receivedMessages3);
                         notification.setContentText(receivedMessages4);
-                        notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
+                        //notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
                         showNotification();
                     }
                 }

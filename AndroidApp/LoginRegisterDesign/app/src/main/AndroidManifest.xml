@@ -37,6 +37,7 @@
         <activity android:name=".ChatsActivity" />
         <activity android:name=".GroupChatsActivity" />
         <activity android:name=".SearchRequestActivity"/>
+        <activity android:name=".AddContactActivity"/>
         <activity android:name=".AddGroupActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan"/>
