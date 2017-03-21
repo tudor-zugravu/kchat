@@ -65,7 +65,7 @@ public class ChatsActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
-
+        dataList = new ArrayList<>();
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
@@ -87,8 +87,8 @@ public class ChatsActivity extends AppCompatActivity {
         }
         if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
             //get messages and then add to list
-            dm.selectAllPrivateMessages(Integer.parseInt(userId));
             mSocket.disconnect();
+            dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
         }else {
                 mSocket.connect();
                 mSocket.on("private_room_created", stringReply2);
@@ -101,7 +101,6 @@ public class ChatsActivity extends AppCompatActivity {
         if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false) {
             recyclerView.setNestedScrollingEnabled(false);
         }
-        dataList = new ArrayList<>();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -181,7 +180,7 @@ public class ChatsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     dataList.clear();
-                    dm.deletePrivateContactMessages(userId,Integer.toString(MasterUser.usersId));
+                 //   dm.deletePrivateContactMessages(userId,Integer.toString(MasterUser.usersId));
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
                     Log.d("MESSAGEERROR", args[0].toString());
@@ -193,7 +192,6 @@ public class ChatsActivity extends AppCompatActivity {
                         scrolling(false);
                     }else{
                         scrolling(true);
-
                     }
                 }
             });
@@ -202,7 +200,6 @@ public class ChatsActivity extends AppCompatActivity {
 
 
     private void scrolling(boolean type){
-
         if(type==true){
             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
         }else{

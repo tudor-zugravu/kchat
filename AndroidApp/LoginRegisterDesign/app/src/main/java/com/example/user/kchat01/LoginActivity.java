@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         dm = new DataManager(LoginActivity.this);
         dm.flushAllData();
+        dm.flushAllMessageData();
         Contacts.activeChat.clear();
         Contacts.activeChat.clear();
         //before any work is done on creating the activity i will check to see if the user is still in session

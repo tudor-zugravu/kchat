@@ -12,6 +12,7 @@ import android.util.Log;
 import API.IContacts;
 import API.IMessage;
 import IMPL.Contacts;
+import IMPL.MasterUser;
 import IMPL.Message;
 
 /**
@@ -99,7 +100,8 @@ public class DataManager {
                 PRIVATE_MESSAGES_MESSAGE + ", " +
                 PRIVATE_MESSAGES_TIMESTAMP + ", " +
                 PRIVATE_MESSAGES_TYPE + " ) " +
-                " VALUES (" +
+                " VALUES (" + //  public Message(int messageId,int senderId,String message,String timestamp){
+
                 "'" + messageId + "'" + ", " +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
@@ -198,24 +200,41 @@ public class DataManager {
         return c;
     }
 
-    public Cursor selectAllPrivateMessages(int name) {
+    public Cursor selectAllPrivateMessages(int name, int myID) { ///name = 34 ken //myId is 2 Tudor
         Log.d("OFFLINE TESTER", "the name is  " + name);
 
-        Cursor c = db.rawQuery("SELECT *" +" from " + PRIVATE_MESSAGES_TABLE +
-                " WHERE " + PRIVATE_MESSAGES_SENDERID +
-                " = '" + name + "';", null);
-        ChatsActivity.dataList.clear();
-
+        /*
+          public static final String PRIVATE_MESSAGES_MESSAGEID = "messageid";
+    public static final String PRIVATE_MESSAGES_SENDERID = "sender";
+    public static final String PRIVATE_MESSAGES_RECEIVERID = "receiver";
+    public static final String PRIVATE_MESSAGES_MESSAGE = "message";
+    public static final String PRIVATE_MESSAGES_TIMESTAMP = "timestamp";
+    public static final String PRIVATE_MESSAGES_TYPE = "type";
+         */
+        //message_id, sender_id, receiver_id, message, DATE_FORMAT(timestmp, '%d-%m-%Y %H:%i:%s') as timestmp
+        Cursor c = db.rawQuery("SELECT DISTINCT * " +
+                " FROM " + PRIVATE_MESSAGES_TABLE +
+                " WHERE" + "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + name +"' )"+
+                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
+                "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + myID +"' )"+
+                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + name +"' )"+
+                " ORDER BY datetime(timestamp) DESC ;", null);
+        if(ChatsActivity.dataList!=null) {
+            ChatsActivity.dataList.clear();
+        }
         while (c.moveToNext()){
             int messageId = c.getInt(0);
             int sender_id = c.getInt(1);
-            String message= c.getString(2);
-            String timestamp = c.getString(3);
-           // String type = c.getString(4);
-           // Bitmap profile = decodeBase64(base64Bitmap);
+            String message= c.getString(3);
+            String timestamp = c.getString(4);
 
             IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
-            ChatsActivity.dataList.add(messageStored);
+            if(sender_id == MasterUser.usersId){
+                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            }else{
+                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
+            }
+            if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
         }
         Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
         return c;
