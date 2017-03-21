@@ -168,13 +168,11 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
 
-    
     @IBAction func sentRequestsPressed(_ sender: Any) {
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
         contactRequestsViewController?.passedValue = true
         self.navigationController?.pushViewController(contactRequestsViewController!, animated: true)
     }
-    
     @IBAction func receivedRequestsPressed(_ sender: Any) {
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
         contactRequestsViewController?.passedValue = false

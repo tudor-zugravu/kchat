@@ -20,6 +20,8 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         tableView.dataSource = self
         searchBar.delegate = self
         
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
         SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
             if(response == true) {
                 self.contacts = []
