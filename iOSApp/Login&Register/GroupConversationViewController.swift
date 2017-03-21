@@ -56,6 +56,11 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 }
             }
         })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
         
     }
     

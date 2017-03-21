@@ -35,6 +35,12 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
                 self.contactsDownloaded(userList!)
             })
         })
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
 
     }
     

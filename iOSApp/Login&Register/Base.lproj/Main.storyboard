@@ -521,7 +521,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qnh-nH-ZmZ">
-                                                    <rect key="frame" x="10" y="4" width="570" height="66"/>
+                                                    <rect key="frame" x="10" y="3" width="582" height="66"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile-logo" translatesAutoresizingMaskIntoConstraints="NO" id="2xa-AA-So8">
                                                             <rect key="frame" x="8" y="8" width="50" height="50"/>
@@ -569,9 +569,9 @@
                                                 </view>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Qnh-nH-ZmZ" secondAttribute="trailing" constant="10" id="l8N-Yb-vBj"/>
-                                                <constraint firstItem="Qnh-nH-ZmZ" firstAttribute="leading" secondItem="Mcg-gy-ngY" secondAttribute="leadingMargin" constant="10" id="qcI-ZF-lra"/>
-                                                <constraint firstItem="Qnh-nH-ZmZ" firstAttribute="top" secondItem="Mcg-gy-ngY" secondAttribute="topMargin" constant="2" id="sd9-W1-8uM"/>
+                                                <constraint firstItem="Qnh-nH-ZmZ" firstAttribute="leading" secondItem="Mcg-gy-ngY" secondAttribute="leading" constant="10" id="OgD-sK-ccC"/>
+                                                <constraint firstItem="Qnh-nH-ZmZ" firstAttribute="top" secondItem="Mcg-gy-ngY" secondAttribute="top" constant="2" id="SB8-It-Tkk"/>
+                                                <constraint firstAttribute="trailing" secondItem="Qnh-nH-ZmZ" secondAttribute="trailing" constant="10" id="n7g-ZB-CKQ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>

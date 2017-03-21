@@ -21,6 +21,14 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.dataSource = self
         contactsModel.delegate = self
         searchBar.delegate = self
+        
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {

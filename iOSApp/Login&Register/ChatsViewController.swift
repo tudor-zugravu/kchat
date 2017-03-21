@@ -27,6 +27,11 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 self.chatsDownloaded(userList!)
             })
         })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
