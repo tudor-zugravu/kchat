@@ -22,6 +22,8 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         tableView.dataSource = self
         searchBar.delegate = self
         
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
         SocketIOManager.sharedInstance.setRequestAcceptedListener(completionHandler: { (response) -> Void in
             if(response != "fail") {
                 self.contacts.remove(at: Int(response)!)
@@ -127,6 +129,8 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         
         var contactsAux: [ContactModel] = []
         var item:ContactModel;
+        
+        print(contactDetails)
         
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
