@@ -282,7 +282,7 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="center" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="nBP-fa-7jI">
-                                <rect key="frame" x="143" y="93" width="255" height="338"/>
+                                <rect key="frame" x="143" y="93" width="255" height="378"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="Mp5-sh-UzQ">
                                         <rect key="frame" x="2.5" y="0.0" width="250" height="178"/>
@@ -299,7 +299,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geB-S2-Mhd">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tudor Zugravu" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geB-S2-Mhd">
                                                 <rect key="frame" x="0.0" y="155" width="250" height="23"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="250" id="uML-ow-hrP"/>
@@ -311,7 +311,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="k96-Tb-5Du">
-                                        <rect key="frame" x="0.0" y="218" width="255" height="120"/>
+                                        <rect key="frame" x="0.0" y="218" width="255" height="160"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="aPu-Xg-YBh">
                                                 <rect key="frame" x="0.0" y="0.0" width="255" height="40"/>
@@ -323,15 +323,26 @@
                                                             <constraint firstAttribute="height" constant="40" id="Cyg-Zs-dyh"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Full Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ySw-Bk-Aje">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="n4R-ZW-lWW">
                                                         <rect key="frame" x="55" y="0.0" width="200" height="40"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="200" id="lv2-9t-nUs"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
-                                                        <nil key="textColor"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Username" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ySw-Bk-Aje">
+                                                                <rect key="frame" x="0.0" y="0.0" width="200" height="20.5"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="200" id="lv2-9t-nUs"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="14"/>
+                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="tudor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YFC-lj-So1">
+                                                                <rect key="frame" x="0.0" y="20.5" width="200" height="19.5"/>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="UkF-Ic-ilm">
@@ -344,15 +355,26 @@
                                                             <constraint firstAttribute="height" constant="40" id="ivn-Yu-ekd"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hyl-Iy-bJF">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="fou-Jg-jCg">
                                                         <rect key="frame" x="55" y="0.0" width="200" height="40"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="200" id="U9d-3c-4Gt"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
-                                                        <nil key="textColor"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="adb-6J-0Pn">
+                                                                <rect key="frame" x="0.0" y="0.0" width="200" height="20.5"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="200" id="66o-GI-s7R"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="14"/>
+                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="tudor.zugravu@kcl.ac.uk" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gLU-l9-PR1">
+                                                                <rect key="frame" x="0.0" y="20.5" width="200" height="19.5"/>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="N7K-GF-wmu">
@@ -365,15 +387,59 @@
                                                             <constraint firstAttribute="width" constant="40" id="V1g-t9-kYE"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Phone Number" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LOc-34-R3e">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="fCo-BY-aNw">
                                                         <rect key="frame" x="55" y="0.0" width="200" height="40"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Phone Number" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YjE-tP-Ncw">
+                                                                <rect key="frame" x="0.0" y="0.0" width="200" height="20.5"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="200" id="gxf-64-toJ"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="14"/>
+                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="07761666912" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uZt-eM-IaO">
+                                                                <rect key="frame" x="0.0" y="20.5" width="200" height="19.5"/>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="rZe-Pm-yWk">
+                                                <rect key="frame" x="0.0" y="120" width="255" height="40"/>
+                                                <subviews>
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="phone-logo" translatesAutoresizingMaskIntoConstraints="NO" id="UvM-TA-4iL">
+                                                        <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="200" id="oho-UN-Tux"/>
+                                                            <constraint firstAttribute="width" constant="40" id="IXH-rg-A6A"/>
+                                                            <constraint firstAttribute="height" constant="40" id="RGa-s3-18o"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
-                                                        <nil key="textColor"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
+                                                    </imageView>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NeV-sd-QSC">
+                                                        <rect key="frame" x="55" y="0.0" width="200" height="40"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Biography" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9YA-xl-iyf">
+                                                                <rect key="frame" x="0.0" y="0.0" width="200" height="16"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="200" id="8N9-8A-4gF"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="14"/>
+                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z7E-lk-5HM">
+                                                                <rect key="frame" x="0.0" y="16" width="200" height="24"/>
+                                                                <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat pellentesque nunc, faucibus dapibus velit vulputate eget. Ut quis ornare urna.</string>
+                                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
                                                 </subviews>
                                             </stackView>
                                         </subviews>
@@ -409,9 +475,7 @@
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
                         <outlet property="dropButton" destination="nPv-3E-O3s" id="vvz-2b-x2x"/>
-                        <outlet property="emailLabel" destination="Hyl-Iy-bJF" id="WNt-Ik-YoO"/>
                         <outlet property="fullNameLabel" destination="ySw-Bk-Aje" id="61d-YL-hdx"/>
-                        <outlet property="phoneNoLabel" destination="LOc-34-R3e" id="E7e-l8-5jW"/>
                         <outlet property="profilePictureImageView" destination="rCA-xX-blG" id="HHc-w7-iJE"/>
                         <outlet property="usernameLabel" destination="geB-S2-Mhd" id="N7h-sm-0w2"/>
                         <segue destination="pYg-4Q-uX8" kind="show" identifier="profileLogInViewController" id="H7j-u5-fed"/>
