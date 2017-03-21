@@ -16,6 +16,16 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     var contacts: [ContactModel] = []
     let contactsModel = ContactsModel()
     
+    class MyTapGestureRecognizer: UITapGestureRecognizer {
+        var selectedName: String?
+        var selectedId: Int?
+    }
+    
+    class MyLongPressGestureRecognizer: UILongPressGestureRecognizer {
+        var selectedName: String?
+        var selectedId: Int?
+    }
+    
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -37,11 +47,11 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.contacts.filter { (contact) -> Bool in
-            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
-            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
-        }
-        self.tableView.reloadData()
+//        self.contacts.filter { (contact) -> Bool in
+//            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
+//            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
+//        }
+//        self.tableView.reloadData()
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -58,14 +68,20 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             } else {
                 let item: ContactModel = contacts[indexPath.row]
                 cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
+                
+                // Press gestures for cells
+                let tapGesture = MyTapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
+                tapGesture.selectedId = item.userId!
+                tapGesture.selectedName = item.name!
+                tapGesture.numberOfTapsRequired = 1
+                cell.addGestureRecognizer(tapGesture)
+                
+                let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
+                longPress.selectedId = item.userId!
+                longPress.selectedName = item.name!
+                tapGesture.numberOfTouchesRequired = 1
+                cell.addGestureRecognizer(longPress)
             }
-            //press cell
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
-            tapGesture.numberOfTapsRequired = 1
-            cell.addGestureRecognizer(tapGesture)
-            cell.addGestureRecognizer(longPress)
-            
             return cell
         } else {
             return ContactsTableViewCell()
@@ -137,24 +153,18 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         self.tableView.reloadData()
     }
-    // long and short press
-    func shortPress(){
-        //turn to message page
-        let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController"))!
-        self.navigationController?.pushViewController(nextView , animated: true)
+    
+    func shortPress(gestureRecognizer: MyTapGestureRecognizer){
+        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!)
+        self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
-    func longPress(sender : UIGestureRecognizer){
-        print("Long tap")
+    func longPress(sender : MyLongPressGestureRecognizer){
         if sender.state == .ended {
-            print("UIGestureRecognizerStateEnded")
-            //Do Whatever You want on End of Gesture
-            //Turn to profile page
             
-        }
-        else if sender.state == .began {
-            print("UIGestureRecognizerStateBegan")
-            //Do Whatever You want on Began of Gesture
+            print("long press \(sender.selectedId!) \(sender.selectedName!)")
+            
         }
     }
 
