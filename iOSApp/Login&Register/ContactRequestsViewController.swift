@@ -130,8 +130,6 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         var contactsAux: [ContactModel] = []
         var item:ContactModel;
         
-        print(contactDetails)
-        
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
             

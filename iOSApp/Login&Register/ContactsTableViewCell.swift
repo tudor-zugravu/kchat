@@ -34,6 +34,8 @@ class ContactsTableViewCell: UITableViewCell {
         if (profilePic != "") {
             let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePic)").path
             profilePicture.image = UIImage(contentsOfFile: filename)
+        } else {
+            profilePicture.image = UIImage(named: "profile-logo.png")
         }
     }
     
