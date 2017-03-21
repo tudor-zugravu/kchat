@@ -23,6 +23,12 @@ class ProfileViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         self.dropInit()
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,7 +77,6 @@ class ProfileViewController: UIViewController {
    func logOut(_ sender: Any) {
         
     Utils.instance.logOut()
-    navigationController?.popToRootViewController(animated: true)
-//    self.performSegue(withIdentifier: "profileLogInViewController", sender: self)
+    _ = self.navigationController?.popToRootViewController(animated: true)
     }
 }

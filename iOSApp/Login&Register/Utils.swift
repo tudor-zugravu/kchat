@@ -81,6 +81,8 @@ class Utils: NSObject {
         userDefaults.set(false, forKey: "hasLoginKey")
         userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
+        
+        SocketIOManager.sharedInstance.closeConnection()
     }
     
 }

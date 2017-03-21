@@ -12,7 +12,7 @@ import AVFoundation
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
     
-    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:3000")! as URL)
+    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
     
     var pendingEmits: [(event: String, param: String)] = []
     private var currentRoom: String = ""
@@ -23,6 +23,7 @@ class SocketIOManager: NSObject {
     }
     
     func establishConnection() {
+        socket = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
         socket.connect()
         socket.on("connect") {data, ack in
             self.socket.emit("authenticate", UserDefaults.standard.value(forKey: "userId") as! Int, UserDefaults.standard.value(forKey: "fullName") as! String)
@@ -40,11 +41,6 @@ class SocketIOManager: NSObject {
             }
             
             self.setGlobalPrivateListener()
-        }
-        
-        self.socket.on("disconnected") { ( dataArray, ack) -> Void in
-            let responseString = dataArray[0] as! String
-            print(responseString)
         }
     }
     
@@ -253,6 +249,12 @@ class SocketIOManager: NSObject {
             }
         }
 
+    }
+    
+    func setDisconnectedListener(completionHandler: @escaping () -> Void) {
+        self.socket.on("disconnected") { ( dataArray, ack) -> Void in
+            completionHandler()
+        }
     }
     
     func getRecentMessage(userId: String, receiverId: String, limit: String) {
