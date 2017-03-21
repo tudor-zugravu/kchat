@@ -90,16 +90,22 @@ public class ContactsActivity extends AppCompatActivity {
         }
 
         try {
+
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("connect",startConnection);
-            mSocket.on("authenticated",authenticate);
-            mSocket.on("sent_chats",currentChats);
-            mSocket.on("sent_group_chats",currentGroups);
-            mSocket.emit("get_chats", MasterUser.usersId);
-            mSocket.emit("get_group_chats", MasterUser.usersId);
 
         } catch (URISyntaxException e){
+        }
+        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+            mSocket.disconnect();
+        }else {
+            mSocket.connect();
+
+            mSocket.on("connect", startConnection);
+            mSocket.on("authenticated", authenticate);////
+            mSocket.on("sent_chats", currentChats);
+            mSocket.on("sent_group_chats", currentGroups);
+            mSocket.emit("get_chats", MasterUser.usersId);
+            mSocket.emit("get_group_chats", MasterUser.usersId);
         }
         notification = new NotificationCompat.Builder(this);
         notification.setAutoCancel(true);

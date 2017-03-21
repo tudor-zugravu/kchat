@@ -61,7 +61,6 @@ public class ChatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ChatsActivity.this);
 
-
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,25 +81,26 @@ public class ChatsActivity extends AppCompatActivity {
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
+        try {
+            mSocket = IO.socket("http://188.166.157.62:3000");
+        } catch (URISyntaxException e) {
+        }
         if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
             //get messages and then add to list
             dm.selectAllPrivateMessages(Integer.parseInt(userId));
+            mSocket.disconnect();
         }else {
-            dm.flushAllMessageData();
+                mSocket.connect();
+                mSocket.on("private_room_created", stringReply2);
+                mSocket.emit("create_private_room", userId, MasterUser.usersId);
+                mSocket.on("update_chat", serverReplyLogs); // sends server messages
+                mSocket.on("send_recent_messages", getallmessages); // sends server messages
+                Log.d("OFFLINE TESTER", "Did i reach here?");
         }
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("private_room_created",stringReply2);
-            mSocket.emit("create_private_room", userId, MasterUser.usersId);
-            mSocket.on("update_chat", serverReplyLogs); // sends server messages
-            mSocket.on("send_recent_messages", getallmessages); // sends server messages
-
-        } catch (URISyntaxException e){
-        }
-
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
+        if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false) {
+            recyclerView.setNestedScrollingEnabled(false);
+        }
         dataList = new ArrayList<>();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
@@ -215,7 +215,9 @@ public class ChatsActivity extends AppCompatActivity {
         super.onDestroy();
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
-        mSocket.off( ContactsActivity.roomnumber);
+        if(mSocket!=null) {
+            mSocket.off(ContactsActivity.roomnumber);
+        }
         ContactsActivity.roomnumber = "";
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
