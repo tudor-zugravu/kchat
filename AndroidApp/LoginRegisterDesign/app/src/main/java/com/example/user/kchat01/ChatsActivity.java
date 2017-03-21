@@ -54,10 +54,13 @@ public class ChatsActivity extends AppCompatActivity {
     private int counter =2;
     public static boolean isAtTop = false;
     public static boolean didOverscroll = false;
+    DataManager dm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dm = new DataManager(ChatsActivity.this);
+        dm.flushAllMessageData();
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

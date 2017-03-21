@@ -95,15 +95,15 @@ public class DataManager {
                 PRIVATE_MESSAGES_RECEIVERID + ", " +
                 PRIVATE_MESSAGES_MESSAGE + ", " +
                 PRIVATE_MESSAGES_TIMESTAMP + ", " +
-                PRIVATE_MESSAGES_TYPE + ") " +
-                "VALUES (" +
+                PRIVATE_MESSAGES_TYPE + " ) " +
+                " VALUES (" +
                 "'" + messageId + "'" + ", " +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
                 "'" + message + "'" + ", " +
                 "'" + timestamp + "'" + ", " +
-                "'" + type + "'" + ", " +
-                "); ";
+                "'" + type + "'" +
+                " ); ";
         Log.i("insert() = ", query);
         db.execSQL(query);
     }
@@ -122,7 +122,7 @@ public class DataManager {
                 "'" + receiverId + "'" + ", " +
                 "'" + message + "'" + ", " +
                 "'" + timestamp + "'" + ", " +
-                "'" + type + "'" + ", " +
+                "'" + type + "'" +
                 "); ";
         Log.i("insert() = ", query);
         db.execSQL(query);
@@ -134,6 +134,33 @@ public class DataManager {
         Log.i("delete() = ", query);
         db.execSQL(query);
     }
+
+    public void flushAllMessageData(){ //logout to delete all
+// Delete the details from the table if already exists
+        String query = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query);
+        db.execSQL(query);
+    }
+
+    public void deletePrivateContactMessages(String senderId,String receiverId){
+// Delete the details from the table if already exists
+        String query = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+
+                " WHERE " + PRIVATE_MESSAGES_SENDERID +
+                " = '" + senderId + "AND" +
+                PRIVATE_MESSAGES_RECEIVERID +
+                " = '" + receiverId+"';";
+        Log.i("delete() = ", query);
+        db.execSQL(query);
+
+        String query2 = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+
+                " WHERE " + PRIVATE_MESSAGES_SENDERID +
+                " = '" + receiverId + "AND" +
+                PRIVATE_MESSAGES_RECEIVERID +
+                " = '" + senderId+"';";
+        Log.i("delete() = ", query);
+        db.execSQL(query2);
+    }
+
     public void deleteContact(String name){
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  CONTACTS_TABLE+

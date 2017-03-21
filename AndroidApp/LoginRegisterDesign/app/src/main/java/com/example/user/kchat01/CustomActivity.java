@@ -36,7 +36,6 @@ public class CustomActivity extends AppCompatActivity {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
     private DataManager dm;
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_menu, menu);
@@ -146,7 +145,6 @@ Compare the hash value of input strings with that of current actual password
 //        }
         return true;
     }
-
 
     private boolean newPasswordCheck() {
         newValue = etNewPassword.getText().toString().trim();
