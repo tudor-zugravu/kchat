@@ -86,9 +86,9 @@ public class ChatsActivity extends AppCompatActivity {
         } catch (URISyntaxException e) {
         }
         if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
-            //get messages and then add to list
             mSocket.disconnect();
             dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
+            recyclerView.setNestedScrollingEnabled(false);
         }else {
                 mSocket.connect();
                 mSocket.on("private_room_created", stringReply2);
@@ -98,9 +98,7 @@ public class ChatsActivity extends AppCompatActivity {
                 Log.d("OFFLINE TESTER", "Did i reach here?");
         }
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false) {
-            recyclerView.setNestedScrollingEnabled(false);
-        }
+
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -119,9 +117,7 @@ public class ChatsActivity extends AppCompatActivity {
                 @Override
                 public void onScrollStateChanged (RecyclerView recyclerView,int newState){
                 super.onScrollStateChanged(recyclerView, newState);
-
                 int firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition();
-
                     if (newState == 0) {
                         if (firstVisibleItem == 0) isAtTop = true;
                         else isAtTop = false;

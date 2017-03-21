@@ -54,6 +54,7 @@ public class DataManager {
     private static final String CONTACTS_TABLE = "contacts"; // table name
     private static final String PRIVATE_MESSAGES_TABLE = "privatemessages"; // table name
     private static final String GROUP_MESSAGES_TABLE = "groupmessages"; // table name
+    private static final String BUFFER_MESSAGES_TABLE = "buffermessages"; // table name
 
     private static final int DB_VERSION = 1;
     private SQLiteDatabase db;
@@ -200,24 +201,42 @@ public class DataManager {
         return c;
     }
 
-    public Cursor selectAllPrivateMessages(int name, int myID) { ///name = 34 ken //myId is 2 Tudor
-        Log.d("OFFLINE TESTER", "the name is  " + name);
-
-        /*
-          public static final String PRIVATE_MESSAGES_MESSAGEID = "messageid";
-    public static final String PRIVATE_MESSAGES_SENDERID = "sender";
-    public static final String PRIVATE_MESSAGES_RECEIVERID = "receiver";
-    public static final String PRIVATE_MESSAGES_MESSAGE = "message";
-    public static final String PRIVATE_MESSAGES_TIMESTAMP = "timestamp";
-    public static final String PRIVATE_MESSAGES_TYPE = "type";
-         */
-        //message_id, sender_id, receiver_id, message, DATE_FORMAT(timestmp, '%d-%m-%Y %H:%i:%s') as timestmp
+    public Cursor selectAllPrivateMessages(int senderId, int myID) { ///name = 34 ken //myId is 2 Tudor
         Cursor c = db.rawQuery("SELECT DISTINCT * " +
                 " FROM " + PRIVATE_MESSAGES_TABLE +
-                " WHERE" + "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + name +"' )"+
+                " WHERE" + "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + senderId +"' )"+
                 " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
                 "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + myID +"' )"+
-                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + name +"' )"+
+                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + senderId +"' )"+
+                " ORDER BY datetime(timestamp) DESC ;", null);
+        if(ChatsActivity.dataList!=null) {
+            ChatsActivity.dataList.clear();
+        }
+        while (c.moveToNext()){
+            int messageId = c.getInt(0);
+            int sender_id = c.getInt(1);
+            String message= c.getString(3);
+            String timestamp = c.getString(4);
+
+            IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
+            if(sender_id == MasterUser.usersId){
+                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            }else{
+                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
+            }
+            if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
+        }
+        Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
+        return c;
+    }
+
+    public Cursor selectAllGroupMessages(int groupId, int myID) { ///name = 34 ken //myId is 2 Tudor
+        Cursor c = db.rawQuery("SELECT DISTINCT * " +
+                " FROM " + GROUP_MESSAGES_TABLE +
+                " WHERE" + "( "+ GROUP_MESSAGES_SENDERID + " = '" + groupId +"' )"+
+                " AND ( " + GROUP_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
+                "( "+ GROUP_MESSAGES_SENDERID + " = '" + myID +"' )"+
+                " AND ( " + GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
                 " ORDER BY datetime(timestamp) DESC ;", null);
         if(ChatsActivity.dataList!=null) {
             ChatsActivity.dataList.clear();
@@ -319,6 +338,22 @@ public class DataManager {
                     + GROUP_MESSAGES_TYPE
                     + " text not null);";
             db.execSQL(newgroupTableQueryString);
+
+            String bufferMessageTableQueryString = "create table "
+                    + BUFFER_MESSAGES_TABLE + " ("
+                    + PRIVATE_MESSAGES_MESSAGEID
+                    + " integer primary key not null,"
+                    + PRIVATE_MESSAGES_SENDERID
+                    + " integer not null,"
+                    + PRIVATE_MESSAGES_RECEIVERID
+                    + " integer not null,"
+                    + PRIVATE_MESSAGES_MESSAGE
+                    + " text not null,"
+                    + PRIVATE_MESSAGES_TIMESTAMP
+                    + " text not null,"
+                    + PRIVATE_MESSAGES_TYPE
+                    + " text not null);";
+            db.execSQL(bufferMessageTableQueryString);
         }
         // This method only runs when increment DB_VERSION
         @Override

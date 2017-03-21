@@ -59,6 +59,7 @@ public class GroupChatsActivity extends AppCompatActivity {
     public static boolean isAtTop = false;
     public static boolean didOverscroll = false;
     public static ArrayList <IContacts> contactsInChat;
+    DataManager dm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +70,26 @@ public class GroupChatsActivity extends AppCompatActivity {
         this.groupName = intent.getStringExtra("groupName");
         this.groupDescription = intent.getStringExtra("groupDesc");
         dataList = new ArrayList<>();
+        dm = new DataManager(GroupChatsActivity.this);
 
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("send_group_members",groupList);
-            mSocket.emit("get_group_members", ownerId);
-            mSocket.on("update_chat", serverReplyLogs); // sends server messages
-            mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
-            mSocket.on("group_room_created",stringReply2);
-            mSocket.emit("create_group_room", ownerId);
-
         } catch (URISyntaxException e){
         }
+
+            if(InternetHandler.hasInternetConnection(GroupChatsActivity.this)==false){
+                mSocket.disconnect();
+               // dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
+                recyclerView.setNestedScrollingEnabled(false);
+            }else {
+                mSocket.connect();
+                mSocket.on("send_group_members", groupList);
+                mSocket.emit("get_group_members", ownerId);
+                mSocket.on("update_chat", serverReplyLogs); // sends server messages
+                mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
+                mSocket.on("group_room_created", stringReply2);
+                mSocket.emit("create_group_room", ownerId);
+            }
 
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
