@@ -99,7 +99,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     {
         if messages.count == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
-                cell.configureCell("")
+                cell.configureCell("", "")
                 return cell
             } else {
                 return ConversationSentMessageTableViewCell()
@@ -109,7 +109,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!)
                     return cell
                 } else {
                     return ConversationSentMessageTableViewCell()
@@ -118,7 +118,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "receivedMessageCell") as? ConversationReceivedMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!, "")
                     return cell
                 } else {
                     return ConversationReceivedMessageTableViewCell()

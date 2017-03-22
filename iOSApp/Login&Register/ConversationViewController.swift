@@ -21,16 +21,16 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     var convLimit: Int = 20
     var contactId: Int = 0;
     var messages: [MessageModel] = []
-    var passedValue: (contactName: String, contactId: Int)?
+    var passedValue: (contactName: String, contactId: Int, contactImage: String)?
     var cameFrom: Bool?
     
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+//        
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
@@ -94,8 +94,8 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         SocketIOManager.sharedInstance.setCurrentRoom(room: "")
     }
     
@@ -108,7 +108,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     {
         if messages.count == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
-                cell.configureCell("")
+                cell.configureCell("", "")
                 return cell
             } else {
                 return ConversationSentMessageTableViewCell()
@@ -118,7 +118,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!)
                     return cell
                 } else {
                     return ConversationSentMessageTableViewCell()
@@ -127,7 +127,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "receivedMessageCell") as? ConversationReceivedMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!, (passedValue?.contactImage)!)
                     return cell
                 } else {
                     return ConversationReceivedMessageTableViewCell()
