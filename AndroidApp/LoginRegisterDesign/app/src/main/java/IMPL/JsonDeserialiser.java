@@ -263,7 +263,7 @@ private void groupDeserialiser(){
         }
         return null;
     }
-
+//
     private void contactDeserializer(int num){
         try {
             if(this.serverResult!=null) {
