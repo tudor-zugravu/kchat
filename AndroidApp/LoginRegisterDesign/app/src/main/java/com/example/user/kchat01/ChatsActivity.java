@@ -1,21 +1,26 @@
 package com.example.user.kchat01;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -43,10 +48,11 @@ import IMPL.Message;
 public class ChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textViewChatUser;
+    private ImageButton imageUpload;
     private RecyclerView recyclerView;
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
-    private String username,message;
+    private String username,contactname,message;
     private Socket mSocket;
     public static Bitmap contactsBitmap;
     private String userId;
@@ -65,6 +71,7 @@ public class ChatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
         dataList = new ArrayList<>();
         Intent intent = getIntent();
@@ -72,11 +79,12 @@ public class ChatsActivity extends AppCompatActivity {
         if(chatUser!=null&&chatUser.equals("contact")){
             this.userId = intent.getStringExtra("userid");
             this.username = intent.getStringExtra("username");
+            this.contactname = intent.getStringExtra("contactname");
             this.contactId = intent.getIntExtra("contactid", 0);
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
-            if (username!=null) {
-                textViewChatUser.setText(username);
+            if (contactname!=null) {
+                textViewChatUser.setText(contactname);
             }else{
                 textViewChatUser.setText("");
             }
@@ -164,6 +172,36 @@ public class ChatsActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+        });
+        imageUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                String[] str_items = {
+                        "CAMERA",
+                        "FOLDER",
+                        "CANCEL"};
+                new AlertDialog.Builder(ChatsActivity.this)
+                        .setTitle("What type of image to upload")
+                        .setItems(str_items, new DialogInterface.OnClickListener(){
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch(which)
+                                        {
+                                            case 0:
+                                                //Camera
+                                                Toast.makeText(ChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 1:
+                                                //Folder
+                                                Toast.makeText(ChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            default:
+                                                //Cancel
+                                                break;
+                                        }
+                                    }
+                                }
+                        ).show();
             }
         });
     }
@@ -277,6 +315,35 @@ public class ChatsActivity extends AppCompatActivity {
             });
         }
     };
+    //MENU
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.report) {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(ChatsActivity.this);
+            builder1.setTitle("Report Confirmation");
+            builder1.setMessage("Do you report conversation?");
+            builder1.setCancelable(true);
+            builder1.setPositiveButton(
+                    "Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Need to implement REPORT TO SERVER
+                            dialog.cancel();
+                        }
+                    });
+            builder1.setNegativeButton("Cancel", null);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

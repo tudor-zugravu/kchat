@@ -1,26 +1,29 @@
 package com.example.user.kchat01;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-
-import org.json.JSONArray;
 
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
@@ -31,10 +34,11 @@ import java.util.Date;
 
 import API.IContacts;
 import API.IMessage;
-import IMPL.Contacts;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
+
+import static com.example.user.kchat01.R.id.leaveGroup;
 
 /**
  * Created by user on 22/02/2017.
@@ -46,6 +50,7 @@ import IMPL.Message;
 public class GroupChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textViewChatUser;
+    private ImageButton imageUpload;
     private RecyclerView recyclerView;
    // private SearchView searchView;
     private ChatsAdapter adapter;
@@ -96,11 +101,42 @@ public class GroupChatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
 
-        textViewChatUser.setText(ownerId);
+        textViewChatUser.setText(groupName);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        imageUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                String[] str_items = {
+                        "CAMERA",
+                        "FOLDER",
+                        "CANCEL"};
+                new AlertDialog.Builder(GroupChatsActivity.this)
+                        .setTitle("What type of image to upload")
+                        .setItems(str_items, new DialogInterface.OnClickListener(){
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch(which)
+                                        {
+                                            case 0:
+                                                //Camera
+                                                Toast.makeText(GroupChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 1:
+                                                //Folder
+                                                Toast.makeText(GroupChatsActivity.this,"Folder Selected", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            default:
+                                                //Cancel
+                                                break;
+                                        }
+                                    }
+                                }
+                        ).show();
+            }
+        });
 
         adapter = new ChatsAdapter(GroupChatsActivity.this,dataList,0);
         recyclerView.setAdapter(adapter);
@@ -277,6 +313,66 @@ public class GroupChatsActivity extends AppCompatActivity {
             });
         }
     };
+    //MENU
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_group_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == leaveGroup) {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupChatsActivity.this);
+            builder1.setTitle("Leave Group Confirmation");
+            builder1.setMessage("Do you want to leave group: " + groupName + " ?");
+            builder1.setCancelable(true);
+            builder1.setPositiveButton(
+                    "Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Toast.makeText(GroupChatsActivity.this, "GroupID: " + ownerId + "\n UserID: " + MasterUser.usersId, Toast.LENGTH_SHORT).show();
+//                            if(mSocket.connected()){
+//                                mSocket.emit("key of leave group",groupid, userID);
+//                            }else{
+//                                Log.d("MESSAGEERROR", "Cannot leave group");
+//                            }
+                            dialog.cancel();
+                        }
+                    });
+            builder1.setNegativeButton("Cancel", null);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+            return true;
+        } else if (id == R.id.addContact) {
+//            Log.d("ADDCONTACT_usernames", String.valueOf(usernames.size()));
+            Intent addContactIntent = new Intent(getApplicationContext(), AddContactActivity.class);
+            addContactIntent.putExtra("ownerId", ownerId);
+            addContactIntent.putExtra("usernames", usernames);
+            addContactIntent.putExtra("groupName", groupName);
+            startActivity(addContactIntent);
+            return true;
+        } else if (id == R.id.report) {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupChatsActivity.this);
+            builder1.setTitle("Report Confirmation");
+            builder1.setMessage("Do you report conversation?");
+            builder1.setCancelable(true);
+            builder1.setPositiveButton(
+                    "Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Need to implement REPORT TO SERVER
+                            dialog.cancel();
+                        }
+                    });
+            builder1.setNegativeButton("Cancel", null);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     protected void onDestroy() {
         super.onDestroy();
