@@ -66,6 +66,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     override func viewWillAppear(_ animated: Bool) {
         
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
         SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
             if (enemy == String(describing: (self.passedValue?.contactId)!)) {

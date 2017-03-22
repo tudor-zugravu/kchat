@@ -36,16 +36,14 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewWillAppear(_ animated: Bool) {
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
-            print("hmmmm")
-            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
             SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         })
         SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
             SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
 
         SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int

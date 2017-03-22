@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import UserNotifications
 
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
@@ -236,17 +237,30 @@ class SocketIOManager: NSObject {
             
             let room = dataArray[0] as! String
             if (room != self.currentRoom) {
-                Utils.instance.newPrivateMessages += 1
+              
                 AudioServicesPlaySystemSound (1334)
                 
-//                let messageId = dataArray[1] as! Int
-//                let username = dataArray[2] as! String
-//                let message = dataArray[3] as! String
-//                let timestamp = dataArray[4] as! String
+                let username = dataArray[2] as! String
+                let message = dataArray[3] as! String
+
+                let content = UNMutableNotificationContent()
+                content.title = username
+                content.body = message
+                content.categoryIdentifier = "newMessage.category"
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                let request = UNNotificationRequest(identifier: "newMessage", content: content, trigger: trigger)
+                
+                UNUserNotificationCenter.current().add(request){
+                    (error) in
+                    if error != nil{
+                        print ("Add notification error: \(error?.localizedDescription)")
+                    }
+                }
                 completionHandler()
             }
         }
     }
+
     
     func setIWasDeletedListener(completionHandler: @escaping (_ enemy: String) -> Void) {
         
@@ -255,6 +269,51 @@ class SocketIOManager: NSObject {
             
             let enemy = dataArray[0] as! String
             completionHandler(enemy)
+        }
+    }
+    
+    func setIReceivedContactRequestListener(completionHandler: @escaping () -> Void) {
+        
+        self.socket.off("you_received_contact_request")
+        self.socket.on("you_received_contact_request") { ( dataArray, ack) -> Void in
+            
+            let friend = dataArray[0] as! String
+            AudioServicesPlaySystemSound (1334)
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Contact Request Received"
+            content.body = "\(friend) wants to add you as a contact!"
+            content.categoryIdentifier = "newContact.category"
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+            let request = UNNotificationRequest(identifier: "newContact", content: content, trigger: trigger)
+            
+            UNUserNotificationCenter.current().add(request){
+                (error) in
+                if error != nil{
+                    print ("Add notification error: \(error?.localizedDescription)")
+                }
+            }
+            completionHandler()
+        }
+    }
+    
+    func setNoMoreContactRequestListener(completionHandler: @escaping () -> Void) {
+        
+        self.socket.off("no_more_contact_request")
+        self.socket.on("no_more_contact_request") { ( dataArray, ack) -> Void in
+        
+            AudioServicesPlaySystemSound (1334)
+            completionHandler()
+        }
+    }
+    
+    func setMyRequestAcceptedListener(completionHandler: @escaping () -> Void) {
+        
+        self.socket.off("accepted_my_contact_request")
+        self.socket.on("accepted_my_contact_request") { ( dataArray, ack) -> Void in
+            print("yeeeeeep")
+            AudioServicesPlaySystemSound (1334)
+            completionHandler()
         }
     }
     

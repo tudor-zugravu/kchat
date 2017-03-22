@@ -66,6 +66,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     override func viewWillAppear(_ animated: Bool) {
         
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
         
         if let value = passedValue {
             
