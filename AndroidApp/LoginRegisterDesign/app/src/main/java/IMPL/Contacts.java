@@ -21,6 +21,7 @@ public class Contacts implements IContacts {
     private String username;
     private String phonenumber;
     private String contactPicture;
+    private String contactBiography;
     private Bitmap profilePicture;
     public static ArrayList<IContacts> contactList = new ArrayList<>();
     public static ArrayList<IContacts> sentRequests = new ArrayList<>();
@@ -165,6 +166,15 @@ public class Contacts implements IContacts {
     this.profilePicture = contactsBitmap;
     }
 
+    @Override
+    public void setBiography(String biography) {
+        this.contactBiography = biography;
+    }
+
+    @Override
+    public String getBiography() {
+        return this.contactBiography;
+    }
     public static ArrayList<IContacts> getSentRequests() {
         return sentRequests;
     }

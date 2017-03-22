@@ -62,6 +62,8 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("CONTACTLIST", "I have data here 98765432");
+
         dm = new DataManager(AddContactActivity.this);
         usersId = new ArrayList<>();
 
@@ -88,7 +90,6 @@ public class AddContactActivity extends AppCompatActivity {
 
             } else {
                 try {
-                    Log.d("CALLEDSTATUS", "i made a rest request");
                     String type2 = "getcontacts";
                     String contacts_url = "http://188.166.157.62:3000/contacts";
                     ArrayList<String> paramList2 = new ArrayList<>();

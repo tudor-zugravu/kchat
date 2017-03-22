@@ -93,6 +93,7 @@ public class ProfileActivity extends CustomActivity {
         if(bundle!=null) {
             String type =(String) bundle.get("type");
             if (type.equals("contactsprofile")){
+
                 contacts_username = (String) bundle.get("contact_username");
                 contacts_userid = (String)bundle.get("contact_userid");
                 contacts_contactname = (String) bundle.get("contact_contactname");
@@ -100,7 +101,7 @@ public class ProfileActivity extends CustomActivity {
                 contacts_position = intent.getIntExtra("position", 0);
                 contacts_email = (String) bundle.get("contact_email");
                 contacts_phonenumber = (String) bundle.get("contact_phonenumber");
-                //String contacts_biography = (String) bundle.get("contact_biography");
+                String contacts_biography = (String) bundle.get("contact_biography");
                 Bitmap contacts_bitmap =(Bitmap) bundle.get("contacts_bitmap");
                 if(contacts_bitmap!=null) {
                     imageProfile.setImageBitmap(contacts_bitmap);
@@ -116,7 +117,7 @@ public class ProfileActivity extends CustomActivity {
                 tvUsername.setText(contacts_username);
                 tvEmail.setText(contacts_email);
                 tvPhone.setText(contacts_phonenumber);
-                //tvBio.setText(contacts_biography);
+                tvBio.setText(contacts_biography);
                 self = false;
                 //set listener on DELETE Button
                 btnDelete.setOnClickListener(new View.OnClickListener() {

@@ -43,4 +43,9 @@ public interface IContacts {
     public Bitmap getBitmap();
 
     public void setBitmap(Bitmap contactsBitmap);
+
+    public void setBiography(String biography);
+
+    public String getBiography();
+
 }

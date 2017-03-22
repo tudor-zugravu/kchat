@@ -2,6 +2,7 @@ package com.example.user.kchat01;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
@@ -65,7 +66,7 @@ public class DataManager {
     }
 
     public void insertContact(int contactid, String timestamp, int userid, String contactName, String email, String username, String phone, String profileDirectory, String biography,String usersImage){
-        String query = "INSERT INTO " + CONTACTS_TABLE + " (" +
+        String query = "INSERT OR REPLACE INTO " + CONTACTS_TABLE + " (" +
                 CONTACT_TABLE_ID + ", " +
                 CONTACT_TABLE_TIMESTAMP + ", " +
                 CONTACT_TABLE_USERID + ", " +
@@ -105,7 +106,7 @@ public class DataManager {
                 "'" + messageId + "'" + ", " +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
-                "'" + message + "'" + ", " +
+                "" + DatabaseUtils.sqlEscapeString(message) + "" + ", " +
                 "'" + timestamp + "'" + ", " +
                 "'" + type + "'" +
                 " ); ";
@@ -116,21 +117,21 @@ public class DataManager {
     }
 
     public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
-        String query = "INSERT OR REPLACE INTO " + GROUP_MESSAGES_TABLE + " (" +
+        String query = "INSERT OR REPLACE INTO " + GROUP_MESSAGES_TABLE + " ( " +
                 GROUP_MESSAGES_MESSAGEID + ", " +
                 GROUP_MESSAGES_SENDERID + ", " +
                 GROUP_MESSAGES_RECEIVERID + ", " +
                 GROUP_MESSAGES_MESSAGE + ", " +
                 GROUP_MESSAGES_TIMESTAMP + ", " +
-                GROUP_MESSAGES_TYPE + ") " +
-                "VALUES (" +
+                GROUP_MESSAGES_TYPE + " ) " +
+                " VALUES ( " +
                 "'" + messageId + "'" + ", " +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
-                "'" + message + "'" + ", " +
+                "" + DatabaseUtils.sqlEscapeString(message) + "" + ", " +
                 "'" + timestamp + "'" + ", " +
                 "'" + type + "'" +
-                "); ";
+                " ); ";
         Log.i("insert() = ", query);
         db.execSQL(query);
     }
@@ -145,7 +146,7 @@ public class DataManager {
                 "VALUES (" +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
-                "'" + message + "'" + ", " +
+                "" + DatabaseUtils.sqlEscapeString(message) + "" + ", " +
                 "'" + timestamp + "'" + ", " +
                 "'" + type + "'" +
                 "); ";
@@ -221,6 +222,7 @@ public class DataManager {
 
             Bitmap profile = decodeBase64(base64Bitmap);
             IContacts contact = new Contacts(contactId,timestamp,Integer.toString(userId),contactname,email,username,phone,profilelocation,profile);
+            contact.setBiography(biography);
             Contacts.contactList.add(contact);
         }
         return c;

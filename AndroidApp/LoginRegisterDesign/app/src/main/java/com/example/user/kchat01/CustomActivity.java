@@ -44,6 +44,9 @@ public class CustomActivity extends AppCompatActivity {
         MenuItem itemDeleteAccount = menu.findItem(R.id.deleteAccount);
         MenuItem itemPasswordChange = menu.findItem(R.id.changePassword);
         if (ProfileActivity.self==false) {
+
+            MenuItem item = menu.findItem(R.id.logout);
+            item.setVisible(false);
             itemDeleteAccount.setVisible(false);
             itemPasswordChange.setVisible(false);
         }

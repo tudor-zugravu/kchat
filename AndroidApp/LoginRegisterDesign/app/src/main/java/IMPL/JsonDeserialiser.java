@@ -283,6 +283,7 @@ private void groupDeserialiser(){
                     String contactPicture = obj.getString("profile_picture");
                     String contactbiography = obj.getString("biography");
                     IContacts contact = new Contacts(contactId, timestamp, userId, contactName, email, username, phonenumber, contactPicture);
+                    contact.setBiography(contactbiography);
                     String base64REsult = getImage(contactPicture,userId,contact);
                     if(num==0) {
                         dm.insertContact(contactId,timestamp,Integer.parseInt(userId),contactName,email,username,phonenumber,contactPicture,contactbiography,base64REsult);

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -146,7 +147,7 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-//
+
             btn_receiveRequest.setVisibility(GONE);
             btn_sendRequest.setVisibility(GONE);
             btn_searchContacts.setVisibility(GONE);
@@ -330,7 +331,7 @@ public class ContactsActivity extends AppCompatActivity {
                             profileIntent.putExtra("position", position);
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            //profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            profileIntent.putExtra("contact_biography", contact.getBiography());//need to implement contact.getBiography()
                             profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
                             profileIntent.putExtra("type", "contactsprofile");
                             startActivity(profileIntent);
@@ -466,7 +467,7 @@ public class ContactsActivity extends AppCompatActivity {
                         notification.setWhen(System.currentTimeMillis());
                         notification.setContentTitle("Message from:" +receivedMessages3);
                         notification.setContentText(receivedMessages4);
-                        //notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
+                        notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
                         showNotification();
                     }
                 }
@@ -510,11 +511,11 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        //recyclerView.getRecycledViewPool().clear();
-//       // adapter.notifyDataSetChanged();
-//      //  mSocket.disconnect();
-//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
+        mSocket.disconnect();
+    }
 }
