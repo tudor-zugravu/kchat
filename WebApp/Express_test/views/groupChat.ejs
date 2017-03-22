@@ -114,7 +114,7 @@
 
          </div>
         <div class="col-md-12 col-xs-12 login_control" style="position:fixed; bottom:20px; width: 100%;">
-          <form id="send_chat" action="" onsubmit="return privateChat();" >
+          <form id="send_chat" action="" onsubmit="return groupChat();" >
             <input id="message" autocomplete="off" / placeholder="Enter Message Here" style="width:60%;order-radius: 50px;">
             <button class="btn btn-default" type="submit" style="border-radius: 50px;" >
               send message
@@ -161,15 +161,28 @@
 
 
         function viewchats(id,name){
+
         socket.emit('connection');
       socket.emit('authenticate', id,name);
       socket.on('authenticated',function(msg){
         console.log("autenticated"+msg);
       });
+      socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time){
+       $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+fullName+': '+message+'<br>');
+        console.log("global_provate_message_room "+socketRoom);
+        console.log("global_provate_message_insertId "+insertId);
+        console.log("global_provate_message_fullName "+fullName);
+        console.log("global_provate_message_Message "+message);
+        console.log("global_provate_message_time "+time);
+      });
+       console.log("roomnow  "+room);
+       socket.on(room,function(insertId,username,message,time){
 
-
-
-
+         console.log("RoomMessage_id "+insertId);
+         console.log("RoomMessage_username "+username);
+         console.log("RoomMessage_message "+message);
+         console.log("RoomMessage_time "+time);
+       });
 
        socket.emit('get_group_chats',currentUser);
 
@@ -180,73 +193,64 @@
 
     for(var i=0; i < target.length; i++) {
          console.log(currentUser);
-         console.log(target[i].receiverId);
-
-            console.log("case1");
+          console.log("case1");
            $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+')">'+target[i].name+target[i].message+'<hr>'+'<br>');
 
-}
+         }
 
-         });
+          });
 
-        }
+    }
 
-    /*    function chat(firstPersonID,firstPersonName,secondPersonName){
 
-          //console.log(fistPersonID,_2);
-
-          socket.emit('get_recent_messages',currentUser,firstPersonID,15);
-
-          socket.on('send_recent_messages', function(msg){
-            console.log("recent message:"+msg);
-            $("#chatContent").empty();
+      function chat(group_id){
+        var groupMembers;
+        socket.emit('get_group_members',group_id);
+      socket.on('send_group_members', function(msg){
+        console.log(msg);
+        groupMembers= JSON.parse(msg);
+      console.log(groupMembers.length);
+      for(var i=0; i < groupMembers.length; i++) {
+        console.log(groupMembers[i]);
+      }
+      });
+      socket.emit('get_recent_group_messages',group_id,10);
+      socket.on('send_recent_group_messages', function(msg){
+         console.log(msg);
+         $("#chatContent").empty();
          var target = JSON.parse(msg);
-          console.log("target:"+msg);
-         //for(var i=target.length-1; i>0; i--) {
          for(var i=0; i < target.length; i++) {
           console.log(target[i]);
-             if(target[i].sender_id==currentUser){
+          if(target[i].user_id==currentUser){
 
-               $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+secondPersonName+': '+target[i].message+'<br>');
-             }
-             else {
-                 $('#chatContent').append('<div class="recieveChat" style=" background-color: green;border=1px;">'+firstPersonName+': '+target[i].message+'<br>');
-             }
-         }
-         socket.emit('authenticate', currentUser,name);
-         socket.on('authenticated',function(msg){
-           console.log("autenticated"+msg);
-         });
-         socket.emit('create_private_room',firstPersonID,currentUser);
+            $('#chatContent').prepend('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+target[i].user_id+': '+target[i].message+'<br>');
+          }
+          else {
+              $('#chatContent').prepend('<div class="recieveChat" style=" background-color: green;border=1px;">'+target[i].user_id+': '+target[i].message+'<br>');
+          }
+        }
+      });
+
+      socket.emit('create_group_room',group_id);
       socket.on('update_chat',function(msg){
         console.log("updatechat: "+msg);
-
       });
-
-
-      socket.on('private_room_created',function(msg){
-        console.log("private_room_created: "+msg);
+      socket.on('group_room_created',function(msg){
+        console.log("group_room_created: "+msg);
         room=msg;
-        console.log("private_room:  "+msg);
+        console.log("group_room:  "+room);
       });
+    }
 
-        })
-      }
+    function groupChat(){
+      var mes=$("#message").val();
+      //console.log(mes);
+      socket.emit('send_group_chat',mes);
 
-      function privateChat(){
-        var mes=$("#message").val();
-        //console.log(mes);
-        socket.emit('send_chat',mes);
-        socket.on('global_private_messages',function(msg){
-          $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+name+': '+mes+'<br>');
-          console.log("global_provate_message"+msg);
-        });
-         console.log("roomnow  "+room);
-         socket.on(room,function(msg){
-           console.log (msg);
-         });
-        return false;
-      }*/
+
+
+      return false;
+    }
 
 
     </script>
