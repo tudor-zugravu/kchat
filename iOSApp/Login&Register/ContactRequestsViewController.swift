@@ -68,9 +68,19 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
             if value == true {
                 titleLabel.text = "Sent Requests"
                 SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+                SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
             } else {
                 titleLabel.text = "Received Requests"
                 SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
+                SocketIOManager.sharedInstance.setNoMoreContactRequestListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
             }
         }
         

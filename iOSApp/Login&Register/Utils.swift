@@ -12,14 +12,14 @@ private let _instance = Utils()
 
 class Utils: NSObject {
     
-    var newPrivateMessages: Int
-    var newGroupMessages: Int
-    var newContactRequests: Int
+//    var newPrivateMessages: Int
+//    var newGroupMessages: Int
+//    var newContactRequests: Int
     
     fileprivate override init() {
-        newPrivateMessages = 0
-        newGroupMessages = 0
-        newContactRequests = 0
+//        newPrivateMessages = 0
+//        newGroupMessages = 0
+//        newContactRequests = 0
     }
     
     class var instance: Utils {
@@ -33,25 +33,24 @@ class Utils: NSObject {
         return documentsDirectory
     }
     
-    func setTabBarValues(tabBarController: TabBarController) {
-        if (self.newPrivateMessages > 0) {
-            tabBarController.tabBar.items?.first?.badgeValue = String(self.newPrivateMessages)
-        } else {
-            tabBarController.tabBar.items?.first?.badgeValue = nil
-        }
-        if (self.newGroupMessages > 0) {
-            tabBarController.tabBar.items?[1].badgeValue = String(self.newGroupMessages)
-        } else {
-            tabBarController.tabBar.items?[1].badgeValue = nil
-        }
-        if (self.newContactRequests > 0) {
-            tabBarController.tabBar.items?[2].badgeValue = String(self.newContactRequests)
-        } else {
-            tabBarController.tabBar.items?[2].badgeValue = nil
-        }
-        tabBarController.reloadInputViews()
-//        print("\(tabBarController.tabBar.items?.first?.badgeValue) \(tabBarController.tabBar.items?[1].badgeValue) \(tabBarController.tabBar.items?[2].badgeValue)")
-    }
+//    func setTabBarValues(tabBarController: TabBarController) {
+//        if (self.newPrivateMessages > 0) {
+//            tabBarController.tabBar.items?.first?.badgeValue = String(self.newPrivateMessages)
+//        } else {
+//            tabBarController.tabBar.items?.first?.badgeValue = nil
+//        }
+//        if (self.newGroupMessages > 0) {
+//            tabBarController.tabBar.items?[1].badgeValue = String(self.newGroupMessages)
+//        } else {
+//            tabBarController.tabBar.items?[1].badgeValue = nil
+//        }
+//        if (self.newContactRequests > 0) {
+//            tabBarController.tabBar.items?[2].badgeValue = String(self.newContactRequests)
+//        } else {
+//            tabBarController.tabBar.items?[2].badgeValue = nil
+//        }
+//        tabBarController.reloadInputViews()
+//    }
     
     func logOut() {
         // Delete profile picture

@@ -46,19 +46,11 @@ class ProfileViewController: UIViewController {
                 self.present(alertView, animated: true, completion: nil)
             }
         })
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
-            if self.passedValue != nil {
-                Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
-            }
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
-            if self.passedValue != nil {
-                Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
-            }
-        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
         if let value = passedValue {
             usernameLabel.text = value.username
             fullNameLabel.text = value.name
@@ -100,7 +92,6 @@ class ProfileViewController: UIViewController {
             dropButton.isHidden = false
             otherBottomView.isHidden = true
             backButton.isHidden = true
-            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         }
     }
 

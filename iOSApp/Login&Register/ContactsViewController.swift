@@ -41,13 +41,14 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
-            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
-        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
         SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
             self.contactsModel.downloadContacts()
         })
-        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
+        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
+            self.contactsModel.downloadContacts()
+        })
         contactsModel.downloadContacts()
     }
     

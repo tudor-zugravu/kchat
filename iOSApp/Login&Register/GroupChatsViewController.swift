@@ -44,10 +44,10 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     
     override func viewWillAppear(_ animated: Bool) {
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
-            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         })
         SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int

@@ -44,6 +44,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
             _ = self.navigationController?.popToRootViewController(animated: true)
         })
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
     override func viewWillAppear(_ animated: Bool) {
