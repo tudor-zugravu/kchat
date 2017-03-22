@@ -206,7 +206,7 @@ public class DataManager {
     public Cursor selectAllContacts() {
         Cursor c = db.rawQuery("SELECT *" +" from " +
                 CONTACTS_TABLE, null);
-        Contacts.contactList.clear();
+       Contacts.contactList.clear();
         while (c.moveToNext()){
             int contactId = c.getInt(0);
             String timestamp = c.getString(1);

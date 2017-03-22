@@ -56,7 +56,6 @@ public class GroupChatsActivity extends AppCompatActivity {
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
     private String username,message,groupName,groupDescription;
-    private Socket mSocket;
     public static Bitmap contactsBitmap;
     private String ownerId;
     private CharSequence dateText;
@@ -79,23 +78,19 @@ public class GroupChatsActivity extends AppCompatActivity {
         dataList = new ArrayList<>();
         dm = new DataManager(GroupChatsActivity.this);
         groupId = ownerId;
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-        } catch (URISyntaxException e){
-        }
 
             if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,0)==false){
-                mSocket.disconnect();
+                ContactsActivity.mSocket.disconnect();
                dm.selectAllGroupMessages(Integer.parseInt(groupId),MasterUser.usersId);
 //                recyclerView.setNestedScrollingEnabled(false);
             }else {
-                mSocket.connect();
-                mSocket.on("send_group_members", groupList);
-                mSocket.emit("get_group_members", ownerId);
-                mSocket.on("update_chat", serverReplyLogs); // sends server messages
-                mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
-                mSocket.on("group_room_created", stringReply2);
-                mSocket.emit("create_group_room", ownerId);
+                ContactsActivity.mSocket.connect();
+                ContactsActivity.mSocket.on("send_group_members", groupList);
+                ContactsActivity.mSocket.emit("get_group_members", ownerId);
+                ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
+                ContactsActivity.mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
+                ContactsActivity.mSocket.on("group_room_created", stringReply2);
+                ContactsActivity.mSocket.emit("create_group_room", ownerId);
             }
 
         setContentView(R.layout.activity_chats);
@@ -164,7 +159,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                         didOverscroll = true;
                     }
                     if (newState == 2 && isAtTop && didOverscroll) {
-                        mSocket.emit("get_recent_group_messages",ownerId,20*counter);
+                        ContactsActivity.mSocket.emit("get_recent_group_messages",ownerId,20*counter);
                         counter++;
                         didOverscroll = false;
                     }
@@ -193,8 +188,8 @@ public class GroupChatsActivity extends AppCompatActivity {
                     } else {
                         //before i am outputting to the screen i will take the text of the message and any other user related information
                         //and i will send it to the server using the socket.io
-                        if (mSocket.connected()) {
-                            mSocket.emit("send_group_chat", message);
+                        if (ContactsActivity.mSocket.connected()) {
+                            ContactsActivity.mSocket.emit("send_group_chat", message);
                         } else {
                             Log.d("MESSAGEERROR", "Cannot send message:" + message);
                         }
@@ -224,6 +219,8 @@ public class GroupChatsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     dataList.clear();
+                    Log.d("GROUPFUNCTION", "-----ihave reached here----");
+
                     String receivedMessages = (String) args [0];
                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"groupmessage",GroupChatsActivity.this);
                     Log.d("GROUPFUNCTION", "-----"+ args[0].toString());
@@ -256,11 +253,13 @@ public class GroupChatsActivity extends AppCompatActivity {
         public void call(Object... args) {
             String receivedMessage = (String) args [0];
             if(receivedMessage.equals("fail")){
-                // print error cannot connect
+                Log.d("GROUPFUNCTION", "---I HAVE FAILED HERE -----");
+
             }else {
                 //the rooms id is received
-                mSocket.on(receivedMessage,messageReceiver);
-                mSocket.emit("get_recent_group_messages",ownerId,20);
+                ContactsActivity.mSocket.on(receivedMessage,messageReceiver);
+                Log.d("GROUPFUNCTION", "---REACHED HERE PART 0-----");
+                ContactsActivity.mSocket.emit("get_recent_group_messages",ownerId,20);
             }
             Log.d("GROUPFUNCTION", receivedMessage);
         }
@@ -379,8 +378,8 @@ public class GroupChatsActivity extends AppCompatActivity {
         groupId =null;
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
-        if(mSocket!=null) {
-            mSocket.off(ContactsActivity.roomnumber);
+        if(ContactsActivity.mSocket!=null) {
+            ContactsActivity.mSocket.off(ContactsActivity.roomnumber);
         }
         ContactsActivity.roomnumber = "";
         recyclerView.getRecycledViewPool().clear();

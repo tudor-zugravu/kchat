@@ -56,7 +56,7 @@ public class ProfileActivity extends CustomActivity {
     private String newValue=null; //store new username, email or phone
     public static boolean self=false; //Profile data is her/himself or not
     private int contacts_contactid, contacts_position;
-    private Socket mSocket;
+
 
     //check new Email and Phone
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$");
@@ -65,11 +65,6 @@ public class ProfileActivity extends CustomActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            //mSocket.connect();
-        } catch (URISyntaxException e){
-        }
 
         setContentView(R.layout.activity_profile);
         Intent intent= getIntent();

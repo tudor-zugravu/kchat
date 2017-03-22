@@ -49,7 +49,6 @@ public class AddContactActivity extends AppCompatActivity {
     private AddGroupAdapter adapter;
     private ArrayList<IContacts> memberList;
     private StringBuffer checkedString = null;
-    private Socket mSocket;
     private Activity activity;
     ArrayList<Integer> usersId, groupUsersId;
     ImageView camera, gallery, canvas;
@@ -88,7 +87,6 @@ public class AddContactActivity extends AppCompatActivity {
             if (InternetHandler.hasInternetConnection(AddContactActivity.this,0) == false) {
 
             } else {
-
                 try {
                     Log.d("CALLEDSTATUS", "i made a rest request");
                     String type2 = "getcontacts";
@@ -106,7 +104,6 @@ public class AddContactActivity extends AppCompatActivity {
             }
 
             }
-
             adapter = new AddGroupAdapter(AddContactActivity.this, Contacts.contactList, 1);// "1" : AddContactActivity
 
             textViewDone = (TextView) findViewById(R.id.textViewDone);

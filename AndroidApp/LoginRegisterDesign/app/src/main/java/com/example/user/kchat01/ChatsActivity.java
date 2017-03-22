@@ -53,7 +53,6 @@ public class ChatsActivity extends AppCompatActivity {
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
     private String username,contactname,message;
-    private Socket mSocket;
     public static Bitmap contactsBitmap;
     private String userId;
     private int contactId;
@@ -81,6 +80,7 @@ public class ChatsActivity extends AppCompatActivity {
             this.username = intent.getStringExtra("username");
             this.contactname = intent.getStringExtra("contactname");
             this.contactId = intent.getIntExtra("contactid", 0);
+
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
             if (contactname!=null) {
@@ -90,20 +90,18 @@ public class ChatsActivity extends AppCompatActivity {
             }
             textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-        } catch (URISyntaxException e) {
-        }
+
+
         if(InternetHandler.hasInternetConnection(ChatsActivity.this,0)==false){
-            mSocket.disconnect();
+            ContactsActivity.mSocket.disconnect();
             dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
           //  recyclerView.setNestedScrollingEnabled(false);
         }else {
-                mSocket.connect();
-                mSocket.on("private_room_created", stringReply2);
-                mSocket.emit("create_private_room", userId, MasterUser.usersId);
-                mSocket.on("update_chat", serverReplyLogs); // sends server messages
-                mSocket.on("send_recent_messages", getallmessages); // sends server messages
+            ContactsActivity.mSocket.connect();
+            ContactsActivity.mSocket.on("private_room_created", stringReply2);
+            ContactsActivity.mSocket.emit("create_private_room", userId, MasterUser.usersId);
+            ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
+            ContactsActivity.mSocket.on("send_recent_messages", getallmessages); // sends server messages
                 Log.d("OFFLINE TESTER", "Did i reach here?");
         }
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -135,7 +133,7 @@ public class ChatsActivity extends AppCompatActivity {
                         didOverscroll = true;
                     }
                     if (newState == 2 && isAtTop && didOverscroll) {
-                        mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20*counter);
+                        ContactsActivity.mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20*counter);
                         counter++;
                         didOverscroll = false;
                     }
@@ -165,8 +163,8 @@ public class ChatsActivity extends AppCompatActivity {
                     } else {
                         //before i am outputting to the screen i will take the text of the message and any other user related information
                         //and i will send it to the server using the socket.io
-                        if (mSocket.connected()) {
-                            mSocket.emit("send_chat", message);
+                        if (  ContactsActivity.mSocket.connected()) {
+                            ContactsActivity.mSocket.emit("send_chat", message);
                         } else {
                             Log.d("MESSAGEERROR", "Cannot send message:" + message);
                         }
@@ -258,8 +256,8 @@ public class ChatsActivity extends AppCompatActivity {
         super.onDestroy();
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
-        if(mSocket!=null) {
-            mSocket.off(ContactsActivity.roomnumber);
+        if(  ContactsActivity.mSocket!=null) {
+            ContactsActivity.mSocket.off(ContactsActivity.roomnumber);
         }
         ContactsActivity.roomnumber = "";
         recyclerView.getRecycledViewPool().clear();
@@ -274,9 +272,9 @@ public class ChatsActivity extends AppCompatActivity {
                 // print error cannot connect
             }else {
                 ContactsActivity.roomnumber = receivedMessage;
-                mSocket.off(receivedMessage);
-                mSocket.on(receivedMessage,messageReceiver);
-                mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
+                ContactsActivity.mSocket.off(receivedMessage);
+                ContactsActivity.mSocket.on(receivedMessage,messageReceiver);
+                ContactsActivity.mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
             }
             Log.d("PRIVATECHAT", receivedMessage);
         }

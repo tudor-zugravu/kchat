@@ -41,16 +41,12 @@ public class SearchRequestActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     SearchRequestAdapter adapter;
-    private static Socket mSocket;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Contacts.searchList.clear();
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-        }catch (URISyntaxException e){
-        }
+
+        ContactsActivity.mSocket.connect();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_request);
@@ -70,15 +66,15 @@ public class SearchRequestActivity extends AppCompatActivity {
             adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0);
 
         }else if (type.equals("sendRequest")){
-            mSocket.emit("sent_contact_requests",MasterUser.usersId);
-            mSocket.on("sent_requests",contactManagement);
+            ContactsActivity.mSocket.emit("sent_contact_requests",MasterUser.usersId);
+            ContactsActivity.mSocket.on("sent_requests",contactManagement);
             toolbarTitle.setText("Sent Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
         }else if (type.equals("receiveRequest")){
 
-            mSocket.emit("received_contact_requests",MasterUser.usersId);
-            mSocket.on("received_requests",contactManagement2);
+            ContactsActivity.mSocket.emit("received_contact_requests",MasterUser.usersId);
+            ContactsActivity.mSocket.on("received_requests",contactManagement2);
             //make a request and show
             toolbarTitle.setText("Received Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
@@ -109,8 +105,8 @@ public class SearchRequestActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String query) {
                 MasterUser man = new MasterUser();
-                mSocket.emit("search_user_filter",query,man.getuserId());
-                mSocket.on("search_user_received",onlineJoin);
+                ContactsActivity.mSocket.emit("search_user_filter",query,man.getuserId());
+                ContactsActivity.mSocket.on("search_user_received",onlineJoin);
                 adapter.getFilter().filter(query);
                 adapter.notifyDataSetChanged();
                 return false;
@@ -149,8 +145,8 @@ public class SearchRequestActivity extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // to change this to send request operation
-                                        mSocket.emit("send_contact_request",MasterUser.usersId,filteredContact.getUserId());
-                                        mSocket.on("sent_request",onlineJoin);
+                                        ContactsActivity.mSocket.emit("send_contact_request",MasterUser.usersId,filteredContact.getUserId());
+                                        ContactsActivity.mSocket.on("sent_request",onlineJoin);
                                         searchView.setQuery(null,false);
                                         Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
                                     }
@@ -195,8 +191,8 @@ public class SearchRequestActivity extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // to change this to send request operation
-                                        mSocket.emit("delete_contact_request", MasterUser.usersId, filteredContact.getUserId(), "success");
-                                        mSocket.on("request_deleted", contactManagement);
+                                        ContactsActivity.mSocket.emit("delete_contact_request", MasterUser.usersId, filteredContact.getUserId(), "success");
+                                        ContactsActivity.mSocket.on("request_deleted", contactManagement);
                                         Log.d("DELETE", Integer.toString(position));
                                         Contacts.sentRequests.remove(position);
                                         adapter.notifyDataSetChanged();
@@ -250,8 +246,8 @@ public class SearchRequestActivity extends AppCompatActivity {
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // to change this to send request operation
-                                    mSocket.emit("accept_contact_request",filteredContact.getUserId(),MasterUser.usersId,"success");
-                                    mSocket.on("request_accepted",contactManagement2);
+                                    ContactsActivity.mSocket.emit("accept_contact_request",filteredContact.getUserId(),MasterUser.usersId,"success");
+                                    ContactsActivity.mSocket.on("request_accepted",contactManagement2);
                                     Contacts.receivedRequests.remove(position);
                                     adapter.notifyDataSetChanged();
                                     recyclerView.setAdapter(adapter);

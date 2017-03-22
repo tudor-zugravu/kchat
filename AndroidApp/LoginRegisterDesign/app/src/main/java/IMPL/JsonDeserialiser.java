@@ -131,6 +131,7 @@ public class JsonDeserialiser {
                 }
                 if(GroupChatsActivity.dataList!=null && type ==1 ) {
                     GroupChatsActivity.dataList.add(0, messageObject);
+                    Log.d("GROUPFUNCTION", "size of the list is : " + GroupChatsActivity.dataList.size());
                     dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 }
             }
@@ -266,8 +267,10 @@ private void groupDeserialiser(){
     private void contactDeserializer(int num){
         try {
             if(this.serverResult!=null) {
-                Contacts.contactList.clear();
                 JSONArray jArr = new JSONArray(this.serverResult);
+                if(num==0) {
+                    Contacts.contactList.clear();
+                }
                 for (int i = 0; i < jArr.length(); i++) {
                     JSONObject obj = jArr.getJSONObject(i);
                     int contactId = Integer.parseInt(obj.getString("contact_id"));

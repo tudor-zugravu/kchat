@@ -64,7 +64,7 @@ public class ContactsActivity extends AppCompatActivity {
     private BottomBar bottomBar;
     MasterUser man = new MasterUser();
     DataManager dm;
-    private Socket mSocket;
+    public static Socket mSocket;
     NotificationCompat.Builder notification;
     public static final int uniqueId = 45611;
 
@@ -87,8 +87,8 @@ public class ContactsActivity extends AppCompatActivity {
                      }
                  }
         }
-            IO.Options opts = new IO.Options();
-            opts.forceNew = true;
+        IO.Options opts = new IO.Options();
+        opts.forceNew = true;
             try {
                 mSocket = IO.socket("http://188.166.157.62:3000",opts);
                 Log.d("SOCKETSTATUS", mSocket.toString());
@@ -278,6 +278,7 @@ public class ContactsActivity extends AppCompatActivity {
                     Log.d("RAR",Integer.toString(dm.selectAllContacts().getCount()));
                     if(dm.selectAllContacts().getCount()>0){
                     dm.selectAllContacts();
+                        Log.d("CONTACTSSIZE", "i reached here");
                     }else{
                     try {
                         if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
@@ -301,7 +302,9 @@ public class ContactsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IContacts contact = Contacts.getContactList().get(position);
+                            Log.d("CONTACTSSIZE", "the size of the contacts list is "+Integer.toString(Contacts.contactList.size()));
+                            Log.d("CONTACTSSIZE", "the position is is "+Integer.toString(position));
+                            IContacts contact = Contacts.contactList.get(position);
                             Intent contactsIntent = new Intent(ContactsActivity.this, ChatsActivity.class);
                             String type = "contact";
                             contactsIntent.putExtra("type",type);
@@ -507,11 +510,11 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        recyclerView.getRecycledViewPool().clear();
-        adapter.notifyDataSetChanged();
-        mSocket.disconnect();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        //recyclerView.getRecycledViewPool().clear();
+//       // adapter.notifyDataSetChanged();
+//      //  mSocket.disconnect();
+//    }
 }

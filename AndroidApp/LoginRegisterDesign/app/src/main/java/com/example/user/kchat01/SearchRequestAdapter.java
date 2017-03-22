@@ -19,7 +19,6 @@ import API.IContacts;
 import API.IGroups;
 import IMPL.Contacts;
 
-import static IMPL.Contacts.contactList;
 
 /**
  * Created by user on 08/03/2017.

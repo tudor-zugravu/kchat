@@ -67,7 +67,6 @@ public class AddGroupActivity extends AppCompatActivity {
     private AddGroupAdapter adapter;
     private ArrayList<IContacts> memberList;
     private StringBuffer checkedString=null;
-    private Socket mSocket;
     private Activity activity;
     ArrayList<Integer> usersId;
     ImageView camera, gallery, canvas;
@@ -83,12 +82,9 @@ public class AddGroupActivity extends AppCompatActivity {
         dm = new DataManager(AddGroupActivity.this);
         usersId = new ArrayList<>();
 
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("group_created",getGroupId);
-        } catch (URISyntaxException e){
-        }
+            ContactsActivity.mSocket.connect();
+            ContactsActivity.mSocket.on("group_created",getGroupId);
+
 
         setContentView(R.layout.activity_add_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -178,7 +174,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 }
                 Log.d("USERSLIST", Integer.toString(usersId.size()));
                 JSONArray jsonArray = new JSONArray(usersId);
-                mSocket.emit("create_group", groupName, description, MasterUser.usersId, "true", jsonArray);
+                ContactsActivity.mSocket.emit("create_group", groupName, description, MasterUser.usersId, "true", jsonArray);
             }
         });
 
