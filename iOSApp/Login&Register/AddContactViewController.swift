@@ -43,7 +43,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
         })
-
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
     }
     
     override func viewWillAppear(_ animated: Bool) {

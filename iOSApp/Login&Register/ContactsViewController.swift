@@ -41,7 +41,12 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        print("AHAHAHA - appear - contacts")
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
+            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
+        })
+        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
+            self.contactsModel.downloadContacts()
+        })
         Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         contactsModel.downloadContacts()
     }

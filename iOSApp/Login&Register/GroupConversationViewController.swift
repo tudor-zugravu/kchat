@@ -61,10 +61,11 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
         })
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
         
         if let value = passedValue {
             
@@ -80,6 +81,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         tap.cancelsTouchesInView = false
         navigationView.addGestureRecognizer(tap)
         tableView.addGestureRecognizer(tap)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

@@ -66,6 +66,18 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     override func viewWillAppear(_ animated: Bool) {
         
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
+            if (enemy == String(describing: (self.passedValue?.contactId)!)) {
+                let _ = self.navigationController?.popViewController(animated: true)
+                if self.cameFrom! == true {
+                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
+                } else {
+                    self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+                }
+            }
+        })
+        
         if let value = passedValue {
             titleLabel.text = value.contactName
             self.contactId = value.contactId

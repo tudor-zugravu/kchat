@@ -39,8 +39,6 @@ class SocketIOManager: NSObject {
                 let responseString = dataArray[0] as! String
                 print(responseString)
             }
-            
-            self.setGlobalPrivateListener()
         }
     }
     
@@ -231,7 +229,7 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func setGlobalPrivateListener() {
+    func setGlobalPrivateListener(completionHandler: @escaping () -> Void) {
         
         self.socket.off("global_private_messages")
         self.socket.on("global_private_messages") { ( dataArray, ack) -> Void in
@@ -245,10 +243,19 @@ class SocketIOManager: NSObject {
 //                let username = dataArray[2] as! String
 //                let message = dataArray[3] as! String
 //                let timestamp = dataArray[4] as! String
-//                completionHandler(messageId, username, message, timestamp)
+                completionHandler()
             }
         }
-
+    }
+    
+    func setIWasDeletedListener(completionHandler: @escaping (_ enemy: String) -> Void) {
+        
+        self.socket.off("you_were_deleted")
+        self.socket.on("you_were_deleted") { ( dataArray, ack) -> Void in
+            
+            let enemy = dataArray[0] as! String
+            completionHandler(enemy)
+        }
     }
     
     func setDisconnectedListener(completionHandler: @escaping () -> Void) {
@@ -349,7 +356,6 @@ class SocketIOManager: NSObject {
     }
     
     func deleteContact(userId: Int, otherUserId: Int) {
-        print("yep \(userId) \(otherUserId)")
         socket.emit("delete_contact", userId, otherUserId)
     }
     

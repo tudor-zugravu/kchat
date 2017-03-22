@@ -24,6 +24,7 @@ class NewGroupViewController: UIViewController {
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
         })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
     }
 
     @IBAction func backButtonPressed(_ sender: Any) {
