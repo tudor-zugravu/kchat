@@ -28,6 +28,7 @@ class ProfileViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         self.dropInit()
+        self.dropButton.table.isHidden = true
         
         SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
             print("disconnected");
@@ -96,18 +97,22 @@ class ProfileViewController: UIViewController {
     }
 
     @IBAction func menuPressed(_ sender: Any) {
-        self.dropInit()
-    }
-    //touch the space and hide drop down menu
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.dropButton.table.isHidden = true
+        if self.dropButton.table.isHidden {
+            self.dropInit()
+            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissMenu))
+            tap.cancelsTouchesInView = false
+            self.view.addGestureRecognizer(tap)
+        }
         
     }
-
     
-    @IBAction func changePassword(_ sender: Any) {
-        
+    //touch the space and hide drop down menu
+    func dismissMenu(gestureRecognizer: UITapGestureRecognizer) {
+        if !self.dropButton.table.frame.contains(gestureRecognizer.location(in: self.view)) {
+            self.dropButton.table.isHidden = true
+        }
     }
+    
     //Dropdown menu Initinal
     func dropInit() {
         dropButton.initMenu(["Delete Account", "Change Password", "Logout"],actions: [({ () -> (Void) in
@@ -119,8 +124,6 @@ class ProfileViewController: UIViewController {
         }), ({ () -> (Void) in
             self.logOut(Any.self)
         })])
-        
-
     }
     func logOut(_ sender: Any) {
         

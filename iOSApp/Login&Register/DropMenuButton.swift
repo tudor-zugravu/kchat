@@ -73,12 +73,15 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
         
         var tableFrameHeight = CGFloat()
         
-        
-        tableFrameHeight = self.frame.height * 3
-        table.layer.cornerRadius=10
+        tableFrameHeight = self.frame.height * 3 - 1
+        table.layer.cornerRadius = 10
         table.frame = CGRect(x: 200, y: 20 + self.frame.height, width: 150, height:tableFrameHeight)
         table.rowHeight = self.frame.height
-        
+        table.layer.borderColor = UIColor.lightGray.cgColor
+        table.layer.borderWidth = 1
+        table.layer.shadowOpacity = 0.6
+        table.clipsToBounds = true
+
         table.reloadData()
         
     }
