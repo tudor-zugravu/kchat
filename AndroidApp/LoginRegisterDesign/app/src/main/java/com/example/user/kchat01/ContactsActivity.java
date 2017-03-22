@@ -146,7 +146,7 @@ public class ContactsActivity extends AppCompatActivity {
                 ContactsActivity.this.startActivity(registerIntent);
             }
         });
-
+//
             btn_receiveRequest.setVisibility(GONE);
             btn_sendRequest.setVisibility(GONE);
             btn_searchContacts.setVisibility(GONE);
