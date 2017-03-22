@@ -31,18 +31,7 @@
 <!-- for Modal part (pop up send contact request page) -->
 
 <link rel="stylesheet" href="/jquery-modal/jquery.modal.css" type="text/css" media="screen" />
-
-
-    <!-- Custom Fonts -->
-
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+<link rel="stylesheet" href="/stylesheets/mainPage.css" type="text/css">
 </head>
 
 <body onLoad="viewchats(<%=user_id %>)">
@@ -68,12 +57,12 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li >
-                        <a href="/chat" class="active">
+                        <a href="/chat" >
                             <img src="/images/chat.png" width="40" height="40">
                     </a>
                     </li>
                     <li>
-                        <a href="/groupChat">
+                        <a href="/groupChat" class="active">
                             <img src="/images/group.png" width="40" height="40">
                         </a>
                     </li>
@@ -107,7 +96,7 @@
                         </li>
                         <div id="list1">
                           <div class="ioslist-group-container">
-                            <div class="ioslist-group-header">Chat List</div>
+                            <div class="ioslist-group-header">Group Chat List</div>
 
                             </div>
                           </div>
@@ -178,52 +167,31 @@
         console.log("autenticated"+msg);
       });
 
-      socket.on('global_private_messages',function(socketRoom,insertId,Fullname,message,time){
-       $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+Fullname+': '+message+'<br>');
-        console.log("global_provate_message_room "+socketRoom);
-        console.log("global_provate_message_insertId "+insertId);
-        console.log("global_provate_message_fullName "+Fullname);
-        console.log("global_provate_message_Message "+message);
-        console.log("global_provate_message_time "+time);
-      });
-       console.log("roomnow  "+room);
-       socket.on(room,function(insertId,username,message,time){
-
-         console.log("RoomMessage_id "+insertId);
-         console.log("RoomMessage_username "+username);
-         console.log("RoomMessage_message "+message);
-         console.log("RoomMessage_time "+time);
-       });
 
 
 
 
-       socket.emit('get_chats',id);
+       socket.emit('get_group_chats',currentUser);
 
-       socket.on('sent_chats', function(msg){
+       socket.on('sent_group_chats', function(msg){
         var target = JSON.parse(msg);
         console.log(target);
 
 
-       for(var i=0; i < target.length; i++) {
+    for(var i=0; i < target.length; i++) {
          console.log(currentUser);
          console.log(target[i].receiverId);
-         if (target[i].receiverId==currentUser){
-            console.log("case1");
-           $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].senderId+',\''+target[i].senderName+'\',\''+target[i].receiverName+'\')">'+target[i].senderName+target[i].message+'<hr>'+'<br>');
 
-         }
-          else{
-            console.log("case2");
-            $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].receiverId+',\''+target[i].receiverName+'\',\''+target[i].senderName+'\')">'+target[i].receiverName+target[i].message+'<hr>'+'<br>');
-          }
-        }
+            console.log("case1");
+           $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+')">'+target[i].name+target[i].message+'<hr>'+'<br>');
+
+}
 
          });
 
         }
 
-        function chat(firstPersonID,firstPersonName,secondPersonName){
+    /*    function chat(firstPersonID,firstPersonName,secondPersonName){
 
           //console.log(fistPersonID,_2);
 
@@ -239,10 +207,10 @@
           console.log(target[i]);
              if(target[i].sender_id==currentUser){
 
-               $('#chatContent').prepend('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+secondPersonName+': '+target[i].message+'<br>');
+               $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+secondPersonName+': '+target[i].message+'<br>');
              }
              else {
-                 $('#chatContent').prepend('<div class="recieveChat" style=" background-color: green;border=1px;">'+firstPersonName+': '+target[i].message+'<br>');
+                 $('#chatContent').append('<div class="recieveChat" style=" background-color: green;border=1px;">'+firstPersonName+': '+target[i].message+'<br>');
              }
          }
          socket.emit('authenticate', currentUser,name);
@@ -269,9 +237,16 @@
         var mes=$("#message").val();
         //console.log(mes);
         socket.emit('send_chat',mes);
-
+        socket.on('global_private_messages',function(msg){
+          $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+name+': '+mes+'<br>');
+          console.log("global_provate_message"+msg);
+        });
+         console.log("roomnow  "+room);
+         socket.on(room,function(msg){
+           console.log (msg);
+         });
         return false;
-      }
+      }*/
 
 
     </script>

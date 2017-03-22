@@ -9,6 +9,7 @@ var Client = require('node-rest-client').Client;
 
 var http = require('http').Server(app);
 var socket_io = require('socket.io');
+var socket_io_cli = require('socket.io-client')('http://188.166.157.62:3000');
 //var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -18,7 +19,10 @@ var register = require('./routes/register');
 var changePass= require('./routes/changePass');
 var loginError=require('./routes/loginError');
 var contacts=require('./routes/contacts');
-var individualChat= require('./routes/individualChat')
+var individualChat= require('./routes/individualChat');
+var groupChat=require('./routes/groupChat');
+var chat=require('./routes/Chat');
+
 var app = express();
 
 var client = new Client();
@@ -197,8 +201,12 @@ app.get('/contacts/:id', function(req,res){
     res.render('contacts',send);
 });
 
-app.get('/sockettest', function(req, res){
-  res.render('socket');
+app.get('/chat', function(req, res){
+  res.render('individualChat');
+});
+
+app.get('/groupChat', function(req, res){
+  res.render('groupChat');
 });
 
 io.on('connection', function(socket){
@@ -209,6 +217,26 @@ io.on('connection', function(socket){
 });
 
 
+app.get('/test', function(req, res){
+  var id = 2;
+  socket_io_cli.emit('get_chats',id);
+  socket_io_cli.on('sent_chats', function(msg){
+  var target = JSON.parse(msg);
+  console.log(target);
+  });
+
+  var id = 37;
+  var currentUser = 2;
+  socket_io_cli.emit('get_recent_messages',currentUser,id,10);
+  socket_io_cli.on('send_recent_messages', function(msg){
+  console.log(msg);
+    });
+  $("#chatContent").empty();
+  var target = JSON.parse(msg);
+  console.log(target.length);
+  console.log(target[0]);
+});
+
 
 app.use('/users', users);
 app.use('/login',login);
@@ -217,6 +245,8 @@ app.use('/changePass',changePass);
 app.use('/loginError',loginError);
 app.use('/contacts',contacts);
 app.use('/individualChat',individualChat);
+app.use('/groupChat',groupChat);
+app.use('/chat',chat);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
