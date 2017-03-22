@@ -23,6 +23,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     var groupId: Int = 0;
     var messages: [MessageModel] = []
     var passedValue: (groupName: String, groupId: Int, groupDescription: String)?
+    var members = [String: String]()
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -46,13 +47,18 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                     self.tableView.reloadData()
                     self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
                 })
+                SocketIOManager.sharedInstance.setGotGroupMembersListener(completionHandler: { (membersList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.membersDownloaded(membersList!)
+                    })
+                })
                 SocketIOManager.sharedInstance.setGetRecentGroupMessagesListener(completionHandler: { (messagesList) -> Void in
                     DispatchQueue.main.async(execute: { () -> Void in
                         self.messagesDownloaded(messagesList!)
                     })
                 })
                 if self.passedValue != nil {
-                    SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
+                    SocketIOManager.sharedInstance.getGroupMembers(groupId: String(self.groupId))
                 }
             }
         })
@@ -99,7 +105,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     {
         if messages.count == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
-                cell.configureCell("")
+                cell.configureCell("", "")
                 return cell
             } else {
                 return ConversationSentMessageTableViewCell()
@@ -109,7 +115,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!)
                     return cell
                 } else {
                     return ConversationSentMessageTableViewCell()
@@ -118,13 +124,52 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "receivedMessageCell") as? ConversationReceivedMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!)
+                    cell.configureCell(item.message!, item.timestamp!, members[item.senderId!]!)
                     return cell
                 } else {
                     return ConversationReceivedMessageTableViewCell()
                 }
             }
         }
+    }
+    
+    // The function called at the arival of the response from the server
+    func membersDownloaded(_ membersDetails: [[String:Any]]) {
+        
+        // parse the received JSON and save the contacts
+        for i in 0 ..< membersDetails.count {
+            
+            if let userId = membersDetails[i]["user_id"] as? Int
+            {
+                var picture = ""
+                if let profilePicture = membersDetails[i]["profile_picture"] as? String {
+                    let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
+                    if FileManager.default.fileExists(atPath: filename.path) {
+                        picture = profilePicture
+                    } else {
+                        // Download the profile picture, if exists
+                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(profilePicture)") {
+                            if let data = try? Data(contentsOf: url) {
+                                var profileImg: UIImage
+                                profileImg = UIImage(data: data)!
+                                if let data = UIImagePNGRepresentation(profileImg) {
+                                    try? data.write(to: filename)
+                                    picture = profilePicture
+                                } else {
+                                    picture = ""
+                                }
+                            } else {
+                                picture = ""
+                            }
+                        }
+                    }
+                } else {
+                    picture = ""
+                }
+                members[String(userId)] = picture
+            }
+        }
+        SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
     }
     
     // The function called at the arival of the response from the server

@@ -70,7 +70,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.deselectRow(at: indexPath, animated: true)
         
         let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
+        conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!, chats[indexPath.row].profilePicture!)
         conversationViewController?.cameFrom = true
         self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }

@@ -29,7 +29,8 @@ class MessageModel: NSObject {
         self.senderId = senderId
         self.message = message
         
-        let separators = CharacterSet(charactersIn: " ")
+        let separators = CharacterSet(charactersIn: " -:")
+        print("\(timestamp.components(separatedBy: separators)[0]) \(timestamp.components(separatedBy: separators)[1]) \(timestamp.components(separatedBy: separators)[2]) \(timestamp.components(separatedBy: separators)[3]) \(timestamp.components(separatedBy: separators)[4]) \(timestamp.components(separatedBy: separators)[5])")
         self.timestamp = timestamp.components(separatedBy: separators)[1]
     }
 

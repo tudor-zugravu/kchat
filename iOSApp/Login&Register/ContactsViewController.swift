@@ -19,6 +19,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     class MyTapGestureRecognizer: UITapGestureRecognizer {
         var selectedName: String?
         var selectedId: Int?
+        var selectedPicture: String?
     }
     
     class MyLongPressGestureRecognizer: UILongPressGestureRecognizer {
@@ -79,6 +80,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 let tapGesture = MyTapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
                 tapGesture.selectedId = item.userId!
                 tapGesture.selectedName = item.name!
+                tapGesture.selectedPicture = item.profilePicture!
                 tapGesture.numberOfTapsRequired = 1
                 cell.addGestureRecognizer(tapGesture)
                 
@@ -167,7 +169,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func shortPress(gestureRecognizer: MyTapGestureRecognizer){
         let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!)
+        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
         conversationViewController?.cameFrom = false
         self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }

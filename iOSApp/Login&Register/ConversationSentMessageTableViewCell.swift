@@ -11,13 +11,17 @@ import UIKit
 class ConversationSentMessageTableViewCell: UITableViewCell {
 
     @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var timestampLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
     
-    func configureCell(_ message: String) {
+    func configureCell(_ message: String, _ timestamp: String) {
         messageLabel.text = message
+        timestampLabel.text = timestamp
+//        messageLabel.sizeToFit()
+        
     }
 }
