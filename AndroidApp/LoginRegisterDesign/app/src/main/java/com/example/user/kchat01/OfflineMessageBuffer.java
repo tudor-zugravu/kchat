@@ -12,5 +12,9 @@ public class OfflineMessageBuffer {
 
     public static ArrayList<IMessage> dataList;
 
+    public OfflineMessageBuffer(){
+        dataList = new ArrayList<>();
+
+    }
 
 }

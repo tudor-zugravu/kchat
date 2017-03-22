@@ -87,16 +87,20 @@ public class ContactsActivity extends AppCompatActivity {
                      }
                  }
         }
+            IO.Options opts = new IO.Options();
+            opts.forceNew = true;
+            try {
+                mSocket = IO.socket("http://188.166.157.62:3000",opts);
+                Log.d("SOCKETSTATUS", mSocket.toString());
+            } catch (URISyntaxException e) {
+            }
 
-        try {
-            mSocket = IO.socket("http://188.166.157.62:3000");
-        } catch (URISyntaxException e){
-        }
         if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
             mSocket.disconnect();
         }else {
             mSocket.connect();
             mSocket.on("connect", startConnection);
+            mSocket.on("disconnected", disconnectManager);
             mSocket.on("authenticated", authenticate);////
             mSocket.on("sent_chats", currentChats);
             mSocket.on("sent_group_chats", currentGroups);
@@ -375,6 +379,26 @@ public class ContactsActivity extends AppCompatActivity {
             menuInflater.inflate(R.menu.groups_menu, menu);
         return true;
     }
+    private Emitter.Listener disconnectManager = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0]; // room number
+                    Log.d("AUTHENTICATE", "REACHHHH1");
+
+                    Log.d("AUTHENTICATE", receivedMessages);
+                    if(receivedMessages!=null&&receivedMessages.equals("disconnect")){
+                        mSocket.disconnect();
+                        Intent loginIntent = new Intent(ContactsActivity.this,LoginActivity.class);
+                        startActivity(loginIntent);
+                        finish();
+                    }
+                }
+            });
+        }
+    };
 
     private Emitter.Listener currentChats = new Emitter.Listener() {
         @Override
@@ -410,14 +434,6 @@ public class ContactsActivity extends AppCompatActivity {
                 public void run() {
                     mSocket.on("update_chat",chatUpdater);
                     mSocket.on("global_private_messages",notifications);
-
-                    String receivedMessages = (String) args [0]; // room number
-                        if(receivedMessages!=null&&receivedMessages.equals("disconnect")){
-                            mSocket.disconnect();
-                            Intent loginIntent = new Intent(ContactsActivity.this,LoginActivity.class);
-                            startActivity(loginIntent);
-                            finish();
-                        }
 
                 }
             });
@@ -496,5 +512,6 @@ public class ContactsActivity extends AppCompatActivity {
         super.onDestroy();
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
+        mSocket.disconnect();
     }
 }
