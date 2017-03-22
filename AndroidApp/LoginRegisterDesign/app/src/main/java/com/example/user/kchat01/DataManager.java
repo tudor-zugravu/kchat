@@ -117,7 +117,7 @@ public class DataManager {
     }
 
     public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
-        String query = "INSERT INTO " + GROUP_MESSAGES_TABLE + " (" +
+        String query = "INSERT OR REPLACE INTO " + GROUP_MESSAGES_TABLE + " (" +
                 GROUP_MESSAGES_MESSAGEID + ", " +
                 GROUP_MESSAGES_SENDERID + ", " +
                 GROUP_MESSAGES_RECEIVERID + ", " +
@@ -148,6 +148,10 @@ public class DataManager {
         String query = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+ ";";
         Log.i("delete() = ", query);
         db.execSQL(query);
+
+        String query2 = "DELETE FROM " +  GROUP_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query2);
+        db.execSQL(query2);
     }
 
     public void deletePrivateContactMessages(String senderId,String receiverId){
@@ -233,13 +237,10 @@ public class DataManager {
     public Cursor selectAllGroupMessages(int groupId, int myID) { ///name = 34 ken //myId is 2 Tudor
         Cursor c = db.rawQuery("SELECT DISTINCT * " +
                 " FROM " + GROUP_MESSAGES_TABLE +
-                " WHERE" + "( "+ GROUP_MESSAGES_SENDERID + " = '" + groupId +"' )"+
-                " AND ( " + GROUP_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
-                "( "+ GROUP_MESSAGES_SENDERID + " = '" + myID +"' )"+
-                " AND ( " + GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
+                " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
                 " ORDER BY datetime(timestamp) DESC ;", null);
-        if(ChatsActivity.dataList!=null) {
-            ChatsActivity.dataList.clear();
+        if(GroupChatsActivity.dataList!=null) {
+            GroupChatsActivity.dataList.clear();
         }
         while (c.moveToNext()){
             int messageId = c.getInt(0);
@@ -248,14 +249,14 @@ public class DataManager {
             String timestamp = c.getString(4);
 
             IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
-            if(sender_id == MasterUser.usersId){
+            if(sender_id == myID){
                 messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
             }else{
                 messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
             }
-            if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
+            if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
         }
-        Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
+        Log.d("OFFLINE TESTER", "size of the offline list is  " + GroupChatsActivity.dataList.size());
         return c;
     }
 

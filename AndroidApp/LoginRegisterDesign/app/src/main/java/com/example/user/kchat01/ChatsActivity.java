@@ -88,7 +88,7 @@ public class ChatsActivity extends AppCompatActivity {
         if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
             mSocket.disconnect();
             dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
-            recyclerView.setNestedScrollingEnabled(false);
+          //  recyclerView.setNestedScrollingEnabled(false);
         }else {
                 mSocket.connect();
                 mSocket.on("private_room_created", stringReply2);

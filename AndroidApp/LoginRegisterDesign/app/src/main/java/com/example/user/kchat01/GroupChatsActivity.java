@@ -60,6 +60,7 @@ public class GroupChatsActivity extends AppCompatActivity {
     public static boolean didOverscroll = false;
     public static ArrayList <IContacts> contactsInChat;
     DataManager dm;
+    public static String groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         this.groupDescription = intent.getStringExtra("groupDesc");
         dataList = new ArrayList<>();
         dm = new DataManager(GroupChatsActivity.this);
-
+        groupId = ownerId;
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
         } catch (URISyntaxException e){
@@ -79,8 +80,8 @@ public class GroupChatsActivity extends AppCompatActivity {
 
             if(InternetHandler.hasInternetConnection(GroupChatsActivity.this)==false){
                 mSocket.disconnect();
-               // dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
-                recyclerView.setNestedScrollingEnabled(false);
+               dm.selectAllGroupMessages(Integer.parseInt(groupId),MasterUser.usersId);
+//                recyclerView.setNestedScrollingEnabled(false);
             }else {
                 mSocket.connect();
                 mSocket.on("send_group_members", groupList);
@@ -266,4 +267,16 @@ public class GroupChatsActivity extends AppCompatActivity {
         }
     };
 
+    protected void onDestroy() {
+        super.onDestroy();
+        groupId =null;
+        dataList.clear();
+        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
+        if(mSocket!=null) {
+            mSocket.off(ContactsActivity.roomnumber);
+        }
+        ContactsActivity.roomnumber = "";
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
+    }
 }

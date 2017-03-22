@@ -103,25 +103,38 @@ public class JsonDeserialiser {
                     username = obj.getString(value);
                 }else if(type==1){
                     username = obj.getString(value);
+                    Log.d("GROUPFUNCTION", "username is : " + username);
                 }
-                String receiver = obj.getString("receiver_id");
+                String receiver;
+                if(GroupChatsActivity.groupId!=null ){
+                     receiver = GroupChatsActivity.groupId;
+                    Log.d("GROUPFUNCTION", "receiver_ id is : " + receiver);
+                }else {
+                     receiver = obj.getString("receiver_id");
+                    Log.d("GROUPFUNCTION", "receiver_ id is : " + receiver);
+                }
                 String message = obj.getString("message");
                 String messagetimestamp = obj.getString("timestmp");
                 StringBuilder sb = new StringBuilder(messagetimestamp);
                 sb.delete(5,10);     sb.delete(11,14);
                 String messagetimestamp2 = sb.toString();
-                dm.insertPrivateMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 IMessage messageObject = new Message(Integer.parseInt(messageid), Integer.parseInt(username), message, messagetimestamp2);//This is used to add actual message
                 if(Integer.parseInt(username) == MasterUser.usersId){
                     messageObject.setMe(true);//if the message is sender, set "true". if not, set "false".
                 }else{
                     messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                 }
-                if(ChatsActivity.dataList!=null && type ==0 )ChatsActivity.dataList.add(0, messageObject);
+
+                if(ChatsActivity.dataList!=null && type ==0 ){
+                    ChatsActivity.dataList.add(0, messageObject);
+                    dm.insertPrivateMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
+                }
                 if(GroupChatsActivity.dataList!=null && type ==1 ) {
                     GroupChatsActivity.dataList.add(0, messageObject);
+                    dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 }
             }
+
         }catch( final JSONException e){
                 Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
             }

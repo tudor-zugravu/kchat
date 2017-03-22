@@ -411,6 +411,12 @@ public class ContactsActivity extends AppCompatActivity {
                     mSocket.on("update_chat",chatUpdater);
                     mSocket.on("global_private_messages",notifications);
 
+                    String receivedMessages = (String) args [0]; // room number
+                        if(receivedMessages!=null&&receivedMessages.equals("disconnect")){
+                            mSocket.disconnect();
+
+                        }
+
                 }
             });
         }
