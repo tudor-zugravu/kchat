@@ -55,7 +55,7 @@ public class GroupChatsActivity extends AppCompatActivity {
    // private SearchView searchView;
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
-    private String username,message,groupName,groupDescription;
+    private String username,message, groupName,groupDescription;
     private Socket mSocket;
     public static Bitmap contactsBitmap;
     private String ownerId;
@@ -107,37 +107,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         textViewChatUser.setText(groupName);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        imageUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                String[] str_items = {
-                        "CAMERA",
-                        "FOLDER",
-                        "CANCEL"};
-                new AlertDialog.Builder(GroupChatsActivity.this)
-                        .setTitle("What type of image to upload")
-                        .setItems(str_items, new DialogInterface.OnClickListener(){
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        switch(which)
-                                        {
-                                            case 0:
-                                                //Camera
-                                                Toast.makeText(GroupChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 1:
-                                                //Folder
-                                                Toast.makeText(GroupChatsActivity.this,"Folder Selected", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            default:
-                                                //Cancel
-                                                break;
-                                        }
-                                    }
-                                }
-                        ).show();
-            }
-        });
-
+        imageUpload.setOnClickListener(new ImageListener(this,"GroupChat"));
         adapter = new ChatsAdapter(GroupChatsActivity.this,dataList,0);
         recyclerView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);

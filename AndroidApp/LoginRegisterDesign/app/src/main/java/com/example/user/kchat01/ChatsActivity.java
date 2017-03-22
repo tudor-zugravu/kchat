@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -174,36 +173,7 @@ public class ChatsActivity extends AppCompatActivity {
                 }
             }
         });
-        imageUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                String[] str_items = {
-                        "CAMERA",
-                        "FOLDER",
-                        "CANCEL"};
-                new AlertDialog.Builder(ChatsActivity.this)
-                        .setTitle("What type of image to upload")
-                        .setItems(str_items, new DialogInterface.OnClickListener(){
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        switch(which)
-                                        {
-                                            case 0:
-                                                //Camera
-                                                Toast.makeText(ChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 1:
-                                                //Folder
-                                                Toast.makeText(ChatsActivity.this,"Camera Selected", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            default:
-                                                //Cancel
-                                                break;
-                                        }
-                                    }
-                                }
-                        ).show();
-            }
-        });
+        imageUpload.setOnClickListener(new ImageListener(this, "PrivateChat"));
     }
 
     private Emitter.Listener serverReplyLogs = new Emitter.Listener() {
