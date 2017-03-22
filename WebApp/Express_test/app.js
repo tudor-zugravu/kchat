@@ -21,7 +21,7 @@ var loginError=require('./routes/loginError');
 var contacts=require('./routes/contacts');
 var individualChat= require('./routes/individualChat');
 var groupChat=require('./routes/groupChat');
-var chat=require('./routes/Chat');
+var chat=require('./routes/chat');
 
 var app = express();
 
