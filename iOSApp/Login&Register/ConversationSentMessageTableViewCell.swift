@@ -21,7 +21,7 @@ class ConversationSentMessageTableViewCell: UITableViewCell {
     func configureCell(_ message: String, _ timestamp: String) {
         messageLabel.text = message
         timestampLabel.text = timestamp
-        messageLabel.sizeToFit()
+//        messageLabel.sizeToFit()
         
     }
 }

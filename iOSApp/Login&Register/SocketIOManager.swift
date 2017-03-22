@@ -391,6 +391,39 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func setGotGroupMembersListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.on("send_group_members") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            if responseString == "fail" {
+                completionHandler([[:]])
+            } else {
+                if let data = responseString.data(using: .utf8) {
+                    do {
+                        let parsedData = try JSONSerialization.jsonObject(with: data, options: []) as! [[String:Any]]
+                        completionHandler(parsedData)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getGroupMembers(groupId: String) {
+        if socket.status.rawValue == 3 {
+            socket.emit("get_group_members", groupId)
+        } else {
+            if !pendingEmits.contains(where: { (event, params) -> Bool in
+                if (event == "get_group_members") {
+                    return true
+                }
+                return false
+            }) {
+                pendingEmits.append(("get_chats", groupId))
+            }
+        }
+    }
+    
     func getRecentGroupMessages(groupId: Int, limit: String) {
         socket.emit("get_recent_group_messages", groupId, limit)
     }

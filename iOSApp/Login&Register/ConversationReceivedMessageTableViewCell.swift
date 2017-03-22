@@ -28,7 +28,7 @@ class ConversationReceivedMessageTableViewCell: UITableViewCell {
         } else {
             profilePicture.image = UIImage(named: "profile-logo.png")
         }
-        messageLabel.sizeToFit()
+//        messageLabel.sizeToFit()
         
     }
 }
