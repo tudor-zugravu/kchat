@@ -66,7 +66,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
-            print("\(value.contactName) \(value.contactId)")
             titleLabel.text = value.contactName
             self.contactId = value.contactId
             

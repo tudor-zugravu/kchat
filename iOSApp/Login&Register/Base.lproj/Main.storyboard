@@ -240,7 +240,7 @@
                         <viewControllerLayoutGuide type="bottom" id="0o2-8H-N4Y"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="yUB-A7-Qe2">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hdi-vP-j8w" userLabel="NavigationView">
@@ -299,6 +299,17 @@
                                     <constraint firstAttribute="bottom" secondItem="gKM-7G-5DT" secondAttribute="bottom" constant="8" id="jLf-zN-g5a"/>
                                     <constraint firstItem="c5K-Mj-8n2" firstAttribute="centerX" secondItem="hdi-vP-j8w" secondAttribute="centerX" id="sn2-yZ-ZfO"/>
                                     <constraint firstAttribute="height" constant="70" id="x9F-AK-H2P"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8l-xZ-LSO" userLabel="TopBorder">
+                                <rect key="frame" x="-113" y="71" width="600" height="2"/>
+                                <color key="backgroundColor" red="0.80392156859999997" green="0.84313725490000002" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="8WM-hQ-ICt"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="JJ8-2Y-Mke"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="2" id="Ptq-Kx-4l1"/>
+                                    <constraint firstAttribute="height" constant="2" id="Qce-d4-k4f"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="W9x-3i-Sxe"/>
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="nBP-fa-7jI">
@@ -494,55 +505,77 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8l-xZ-LSO" userLabel="TopBorder">
-                                <rect key="frame" x="-113" y="71" width="600" height="2"/>
-                                <color key="backgroundColor" red="0.80392156859999997" green="0.84313725490000002" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k8a-C2-hvZ">
+                                <rect key="frame" x="0.0" y="572" width="600" height="128"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CI3-KA-eNl" userLabel="BottomBorder">
+                                        <rect key="frame" x="0.0" y="86" width="600" height="2"/>
+                                        <color key="backgroundColor" red="0.80392156859999997" green="0.84313725490000002" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="2" id="Qhu-l3-mH6"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mro-Xh-Amf" userLabel="BottomView">
+                                        <rect key="frame" x="0.0" y="88" width="600" height="40"/>
+                                        <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="ujU-Zk-wm4"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2VA-dC-khn">
+                                        <rect key="frame" x="200" y="24" width="200" height="40"/>
+                                        <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="200" id="dld-QB-Hny"/>
+                                            <constraint firstAttribute="height" constant="40" id="q1u-3t-sRu"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
+                                        <state key="normal" title="Delete contact">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="5"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="deleteContactPressed:" destination="k9Z-Mx-5De" eventType="touchUpInside" id="ns3-S7-XMB"/>
+                                            <action selector="registerButton:" destination="hhq-jd-lsx" eventType="touchUpInside" id="UFZ-Xa-XWT"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="8WM-hQ-ICt"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="JJ8-2Y-Mke"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="2" id="Ptq-Kx-4l1"/>
-                                    <constraint firstAttribute="height" constant="2" id="Qce-d4-k4f"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="2" id="W9x-3i-Sxe"/>
+                                    <constraint firstAttribute="height" constant="120" id="421-Sy-R0j"/>
+                                    <constraint firstItem="mro-Xh-Amf" firstAttribute="leading" secondItem="k8a-C2-hvZ" secondAttribute="leading" id="Fek-Hz-nf0"/>
+                                    <constraint firstItem="CI3-KA-eNl" firstAttribute="leading" secondItem="k8a-C2-hvZ" secondAttribute="leading" id="FrC-JQ-kFz"/>
+                                    <constraint firstAttribute="trailing" secondItem="mro-Xh-Amf" secondAttribute="trailing" id="VP9-Rb-JRN"/>
+                                    <constraint firstItem="2VA-dC-khn" firstAttribute="centerX" secondItem="k8a-C2-hvZ" secondAttribute="centerX" id="Wim-VG-fmD"/>
+                                    <constraint firstAttribute="trailing" secondItem="CI3-KA-eNl" secondAttribute="trailing" id="fzd-ou-1Zm"/>
+                                    <constraint firstAttribute="bottom" secondItem="mro-Xh-Amf" secondAttribute="bottom" id="mDM-ZI-wWq"/>
+                                    <constraint firstItem="mro-Xh-Amf" firstAttribute="top" secondItem="CI3-KA-eNl" secondAttribute="bottom" id="pQU-3J-rNf"/>
+                                    <constraint firstItem="CI3-KA-eNl" firstAttribute="top" secondItem="2VA-dC-khn" secondAttribute="bottom" constant="18" id="tuh-VD-BU5"/>
                                 </constraints>
                             </view>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2VA-dC-khn">
-                                <rect key="frame" x="195" y="541" width="200" height="40"/>
-                                <color key="backgroundColor" red="0.8862745098" green="0.13725490200000001" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="dld-QB-Hny"/>
-                                    <constraint firstAttribute="height" constant="40" id="q1u-3t-sRu"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
-                                <state key="normal" title="Delete contact">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="5"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="registerButton:" destination="hhq-jd-lsx" eventType="touchUpInside" id="UFZ-Xa-XWT"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="hdi-vP-j8w" firstAttribute="leading" secondItem="yUB-A7-Qe2" secondAttribute="leading" id="8Sb-9W-AoB"/>
+                            <constraint firstAttribute="trailing" secondItem="k8a-C2-hvZ" secondAttribute="trailing" id="ESb-6d-aa3"/>
                             <constraint firstItem="nBP-fa-7jI" firstAttribute="centerX" secondItem="yUB-A7-Qe2" secondAttribute="centerX" id="G9g-MX-GcC"/>
+                            <constraint firstItem="0o2-8H-N4Y" firstAttribute="top" secondItem="k8a-C2-hvZ" secondAttribute="bottom" id="LVR-b7-Xi4"/>
                             <constraint firstAttribute="trailing" secondItem="hdi-vP-j8w" secondAttribute="trailing" id="Q6Z-7G-bQ8"/>
                             <constraint firstAttribute="trailing" secondItem="y8l-xZ-LSO" secondAttribute="trailing" id="Wqd-1Z-GdI"/>
+                            <constraint firstItem="k8a-C2-hvZ" firstAttribute="leading" secondItem="yUB-A7-Qe2" secondAttribute="leading" id="YDp-Cz-UFy"/>
                             <constraint firstItem="y8l-xZ-LSO" firstAttribute="leading" secondItem="yUB-A7-Qe2" secondAttribute="leading" id="agX-Br-v3C"/>
                             <constraint firstItem="hdi-vP-j8w" firstAttribute="top" secondItem="yUB-A7-Qe2" secondAttribute="top" id="beT-HD-UrK"/>
-                            <constraint firstItem="0o2-8H-N4Y" firstAttribute="top" secondItem="2VA-dC-khn" secondAttribute="bottom" constant="50" id="cbd-a9-EiV"/>
-                            <constraint firstItem="2VA-dC-khn" firstAttribute="centerX" secondItem="yUB-A7-Qe2" secondAttribute="centerX" id="irL-DJ-aJE"/>
                             <constraint firstItem="nBP-fa-7jI" firstAttribute="centerY" secondItem="yUB-A7-Qe2" secondAttribute="centerY" id="ro3-EL-CND"/>
                             <constraint firstItem="y8l-xZ-LSO" firstAttribute="top" secondItem="hdi-vP-j8w" secondAttribute="bottom" id="ylN-Pd-PDI"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Profile" image="login-logo" selectedImage="login-logo" id="PpP-m2-dVK"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="600"/>
+                    <size key="freeformSize" width="600" height="700"/>
                     <connections>
                         <outlet property="aboutLabel" destination="z7E-lk-5HM" id="zmZ-nc-7xA"/>
                         <outlet property="backButton" destination="gKM-7G-5DT" id="Exu-yI-k7N"/>
@@ -550,6 +583,7 @@
                         <outlet property="dropButton" destination="nPv-3E-O3s" id="vvz-2b-x2x"/>
                         <outlet property="emailLabel" destination="gLU-l9-PR1" id="h9W-c0-AdC"/>
                         <outlet property="fullNameLabel" destination="geB-S2-Mhd" id="f6w-ji-228"/>
+                        <outlet property="otherBottomView" destination="k8a-C2-hvZ" id="QIs-mO-aR8"/>
                         <outlet property="phoneNoLabel" destination="uZt-eM-IaO" id="2eO-YV-o52"/>
                         <outlet property="profilePictureImageView" destination="rCA-xX-blG" id="HHc-w7-iJE"/>
                         <outlet property="usernameLabel" destination="YFC-lj-So1" id="xL6-Re-x14"/>

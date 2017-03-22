@@ -40,7 +40,14 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         })
     }
     
+//    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+//        print("AHAHAHA")
+//        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
+//        contactsModel.downloadContacts()
+//    }
+//    
     override func viewWillAppear(_ animated: Bool) {
+        print("AHAHAHA")
         Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         contactsModel.downloadContacts()
     }
@@ -165,7 +172,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func longPress(sender : MyLongPressGestureRecognizer){
-        if sender.state == .ended {
+        if sender.state == .began {
             let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "profileViewController") as? ProfileViewController
             profileViewController?.passedValue = sender.selectedContact
             self.navigationController?.pushViewController(profileViewController!, animated: true)

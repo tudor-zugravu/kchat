@@ -348,6 +348,19 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func deleteContact(userId: Int, otherUserId: Int) {
+        print("yep \(userId) \(otherUserId)")
+        socket.emit("delete_contact", userId, otherUserId)
+    }
+    
+    func setContactDeletedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("contact_deleted") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
     func setGroupRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
         socket.off("group_room_created")
         socket.on("group_room_created") { ( dataArray, ack) -> Void in
