@@ -207,6 +207,7 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
+        navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
     }
   
 }

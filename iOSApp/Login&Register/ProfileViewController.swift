@@ -37,6 +37,7 @@ class ProfileViewController: UIViewController {
         SocketIOManager.sharedInstance.setContactDeletedListener(completionHandler: { (response) -> Void in
             if(response == "success") {
                 let _ = self.navigationController?.popViewController(animated: true)
+                self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
             } else {
                 let alertView = UIAlertController(title: "Error",
                                                   message: "There was a problem deleting \((self.passedValue?.name)!) from your contacts" as String, preferredStyle:.alert)
@@ -123,10 +124,10 @@ class ProfileViewController: UIViewController {
         
 
     }
-   func logOut(_ sender: Any) {
+    func logOut(_ sender: Any) {
         
-    Utils.instance.logOut()
-    _ = self.navigationController?.popToRootViewController(animated: true)
+        Utils.instance.logOut()
+        _ = self.navigationController?.popToRootViewController(animated: true)
     }
     
     func deleteContact(receiver: Int) {
@@ -144,6 +145,9 @@ class ProfileViewController: UIViewController {
     
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
+        if (passedValue != nil) {
+            navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+        }
     }
     
 }

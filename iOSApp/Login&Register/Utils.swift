@@ -50,6 +50,7 @@ class Utils: NSObject {
             tabBarController.tabBar.items?[2].badgeValue = nil
         }
         tabBarController.reloadInputViews()
+        print("\(tabBarController.tabBar.items?.first?.badgeValue) \(tabBarController.tabBar.items?[1].badgeValue) \(tabBarController.tabBar.items?[2].badgeValue)")
     }
     
     func logOut() {

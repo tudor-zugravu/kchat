@@ -39,15 +39,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             _ = self.navigationController?.popToRootViewController(animated: true)
         })
     }
-    
-//    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-//        print("AHAHAHA")
-//        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
-//        contactsModel.downloadContacts()
-//    }
-//    
+
     override func viewWillAppear(_ animated: Bool) {
-        print("AHAHAHA")
+        print("AHAHAHA - appear - contacts")
         Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         contactsModel.downloadContacts()
     }
@@ -168,6 +162,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     func shortPress(gestureRecognizer: MyTapGestureRecognizer){
         let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
         conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!)
+        conversationViewController?.cameFrom = false
         self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
