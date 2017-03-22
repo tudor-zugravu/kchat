@@ -19,6 +19,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var deleteContactButton: UIButton!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var dropButton: DropMenuButton!
+    @IBOutlet weak var otherBottomView: UIView!
     
     var passedValue: ContactModel?
     
@@ -32,6 +33,18 @@ class ProfileViewController: UIViewController {
             print("disconnected");
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setContactDeletedListener(completionHandler: { (response) -> Void in
+            if(response == "success") {
+                let _ = self.navigationController?.popViewController(animated: true)
+                self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+            } else {
+                let alertView = UIAlertController(title: "Error",
+                                                  message: "There was a problem deleting \((self.passedValue?.name)!) from your contacts" as String, preferredStyle:.alert)
+                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                alertView.addAction(okAction)
+                self.present(alertView, animated: true, completion: nil)
+            }
         })
     }
     
@@ -59,7 +72,8 @@ class ProfileViewController: UIViewController {
                     }
                 }
             }
-            deleteContactButton.isHidden = false
+            dropButton.isHidden = true
+            otherBottomView.isHidden = false
             backButton.isHidden = false
 
         } else {
@@ -73,7 +87,8 @@ class ProfileViewController: UIViewController {
                 let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
                 profilePictureImageView.image = image
             }
-            deleteContactButton.isHidden = true
+            dropButton.isHidden = false
+            otherBottomView.isHidden = true
             backButton.isHidden = true
             Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         }
@@ -94,29 +109,45 @@ class ProfileViewController: UIViewController {
     }
     //Dropdown menu Initinal
     func dropInit() {
-        dropButton.initMenu(["Edit Profile", "Change Password", "Change Profile image", "Logout"],actions: [({ () -> (Void) in
+        dropButton.initMenu(["Delete Account", "Change Password", "Logout"],actions: [({ () -> (Void) in
             let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "editProfileViewController"))!
             self.navigationController?.pushViewController(nextView , animated: true)
+        }), ({ () -> (Void) in
+            print("delete account")
         }), ({ () -> (Void) in
             //push to change password page
             let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "changePWD"))!
             self.navigationController?.pushViewController(nextView , animated: true)
-        }), ({ () -> (Void) in
-            print("Change Profile image")
         }),({ () -> (Void) in
             self.logOut(Any.self)
         })])
         
 
     }
-   func logOut(_ sender: Any) {
+    func logOut(_ sender: Any) {
         
-    Utils.instance.logOut()
-    _ = self.navigationController?.popToRootViewController(animated: true)
+        Utils.instance.logOut()
+        _ = self.navigationController?.popToRootViewController(animated: true)
+    }
+    
+    func deleteContact(receiver: Int) {
+        SocketIOManager.sharedInstance.deleteContact(userId: UserDefaults.standard.value(forKey: "userId") as! Int, otherUserId: receiver)
+    }
+    
+    @IBAction func deleteContactPressed(_ sender: Any) {
+        let myAlert = UIAlertController(title:"Delete contact", message:"Are you sure you want to delete \((self.passedValue?.name)!) from your contacts?", preferredStyle:.alert);
+        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.deleteContact(receiver: (self.passedValue?.userId)!)});
+        myAlert.addAction(yesAction);
+        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+        myAlert.addAction(noAction);
+        self.present(myAlert, animated:true, completion:nil);
     }
     
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
+        if (passedValue != nil) {
+            navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+        }
     }
     
 }

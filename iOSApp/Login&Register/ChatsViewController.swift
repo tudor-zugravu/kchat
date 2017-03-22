@@ -35,6 +35,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        print("AHAHAHA - appear - chats")
         SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
     }
@@ -64,6 +65,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
         conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!)
+        conversationViewController?.cameFrom = true
         self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     

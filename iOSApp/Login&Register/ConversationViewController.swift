@@ -22,6 +22,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     var contactId: Int = 0;
     var messages: [MessageModel] = []
     var passedValue: (contactName: String, contactId: Int)?
+    var cameFrom: Bool?
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -66,7 +67,6 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
-            print("\(value.contactName) \(value.contactId)")
             titleLabel.text = value.contactName
             self.contactId = value.contactId
             
@@ -241,6 +241,11 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
+        if cameFrom! == true {
+            navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
+        } else {
+            navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+        }
     }
     
 }

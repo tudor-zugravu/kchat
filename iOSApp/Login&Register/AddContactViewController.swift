@@ -128,6 +128,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     
     @IBAction func backButtonPressed(_ sender: AnyObject) {
         let _ = navigationController?.popViewController(animated: true)
+        navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
     }
 }
 
