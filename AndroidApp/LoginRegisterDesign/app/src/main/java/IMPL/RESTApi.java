@@ -44,7 +44,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
     ArrayList<String> urlPostParams;
     String [] stringParams;
     String type;
-    ArrayList<IContacts> contacts;
     int num;
 
     public RESTApi (Context ctx, String url,ArrayList<String> urlPostParams) {
@@ -66,7 +65,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(type.equals("getIcon")) {
             getBitmapFromURL(this.url,50,50);
         }
-        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")) {
+        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")||type.equals("profileUpdate")) {
             try {
                 URL url = new URL(login_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -119,8 +118,6 @@ public class RESTApi extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPreExecute() {
-        //  alertDialog = new AlertDialog.Builder(context).create();
-        //  alertDialog.setTitle("Login Status");
     }
 
     @Override

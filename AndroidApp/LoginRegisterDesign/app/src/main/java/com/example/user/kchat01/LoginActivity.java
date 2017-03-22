@@ -16,8 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import IMPL.DatabaseAdaptor;
-import IMPL.InfoRetreiver;
+import IMPL.Contacts;
 import IMPL.RESTApi;
 
 /**
@@ -32,12 +31,17 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnGoRegister, btnLogin;
     BottomNavigationView bottomNavigationView;
     CustomActivity customActivity;
+    private DataManager dm;
 
     public static SharedPreferences pref;
     public static SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        dm = new DataManager(LoginActivity.this);
+        dm.flushAllData();
+        dm.flushAllMessageData();
+        Contacts.activeChat.clear();
+        Contacts.activeChat.clear();
         //before any work is done on creating the activity i will check to see if the user is still in session
         //if the user is in session then send him to the chat menu but first check with the server
         //if not then design the layout
@@ -58,8 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        DatabaseAdaptor myAdaptor = new DatabaseAdaptor(this);
-        myAdaptor.checkTable();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -119,31 +121,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-        //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        //customActivity = new CustomActivity();
-        //customActivity.startActivity();
-
-        //Intent bottomIntent = new Intent(this, CustomActivity.class);
-        //this.startActivity(bottomIntent);
     }
 
     public void onLogin(String usr, String pass) {
-        String type = "login";
-        String login_url = "http://188.166.157.62:3000/login";
-        ArrayList<String> paramList= new ArrayList<>();
-        paramList.add("username");
-        paramList.add("password");
-        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url,paramList);
-        backgroundasync.execute(type, usr, pass);
-    }
+        if(InternetHandler.hasInternetConnection(LoginActivity.this)==false){
 
-    public void getJsonData(){
-        String type = "weather";
-        String login_url = "http://api.androidhive.info/contacts/";
-        InfoRetreiver backgroundasync = new InfoRetreiver(login_url,LoginActivity.this);
-        backgroundasync.execute(type, login_url);
+        }else {
+            String type = "login";
+            String login_url = "http://188.166.157.62:3000/login";
+            ArrayList<String> paramList = new ArrayList<>();
+            paramList.add("username");
+            paramList.add("password");
+            RESTApi backgroundasync = new RESTApi(LoginActivity.this, login_url, paramList);
+            backgroundasync.execute(type, usr, pass);
+        }
     }
 
     @Override

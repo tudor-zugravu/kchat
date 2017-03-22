@@ -15,25 +15,67 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var fullNameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var phoneNoLabel: UILabel!
-    
+    @IBOutlet weak var aboutLabel: UILabel!
+    @IBOutlet weak var deleteContactButton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var dropButton: DropMenuButton!
+    
+    var passedValue: ContactModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         self.dropInit()
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        usernameLabel.text = UserDefaults.standard.value(forKey: "username") as! String?
-        fullNameLabel.text = UserDefaults.standard.value(forKey: "fullName") as! String?
-        emailLabel.text = UserDefaults.standard.value(forKey: "email") as! String?
-        phoneNoLabel.text = UserDefaults.standard.value(forKey: "phoneNo") as! String?
-        
-        if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
-            let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
-            profilePictureImageView.image = image
+        if let value = passedValue {
+            usernameLabel.text = value.username
+            fullNameLabel.text = value.name
+            emailLabel.text = value.email
+            phoneNoLabel.text = value.phoneNo
+            aboutLabel.text = value.about
+            
+            let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(value.profilePicture!)")
+            if FileManager.default.fileExists(atPath: filename.path) {
+                profilePictureImageView.image = UIImage(contentsOfFile: filename.path)
+            } else {
+                // Download the profile picture, if exists
+                if let url = URL(string: "http://188.166.157.62/profile_pictures/\(value.profilePicture!)") {
+                    if let data = try? Data(contentsOf: url) {
+                        var profileImg: UIImage
+                        profileImg = UIImage(data: data)!
+                        if let data = UIImagePNGRepresentation(profileImg) {
+                            try? data.write(to: filename)
+                            profilePictureImageView.image = UIImage(contentsOfFile: value.profilePicture!)
+                        }
+                    }
+                }
+            }
+            deleteContactButton.isHidden = false
+            backButton.isHidden = false
+
+        } else {
+            usernameLabel.text = UserDefaults.standard.value(forKey: "username") as! String?
+            fullNameLabel.text = UserDefaults.standard.value(forKey: "fullName") as! String?
+            emailLabel.text = UserDefaults.standard.value(forKey: "email") as! String?
+            phoneNoLabel.text = UserDefaults.standard.value(forKey: "phoneNo") as! String?
+            aboutLabel.text = UserDefaults.standard.value(forKey: "about") as! String?
+            
+            if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
+                let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
+                profilePictureImageView.image = image
+            }
+            deleteContactButton.isHidden = true
+            backButton.isHidden = true
+            Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         }
     }
 
@@ -69,34 +111,12 @@ class ProfileViewController: UIViewController {
     }
    func logOut(_ sender: Any) {
         
-        // Delete profile picture
-        do {
-            let fileManager = FileManager.default
-            let fileName = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))").path
-            
-            if fileManager.fileExists(atPath: fileName) {
-                try fileManager.removeItem(atPath: fileName)
-            } else {
-                print("File does not exist")
-            }
-        }
-        catch let error as NSError {
-            print("An error took place: \(error)")
-        }
-        
-        // Delete stored user data
-        let userDefaults = UserDefaults.standard;
-        userDefaults.removeObject(forKey: "email")
-        userDefaults.removeObject(forKey:"userId")
-        userDefaults.removeObject(forKey: "username")
-        userDefaults.removeObject(forKey: "phoneNo")
-        userDefaults.removeObject(forKey: "password")
-        userDefaults.removeObject(forKey: "fullName")
-        userDefaults.removeObject(forKey: "profilePicture")
-        userDefaults.removeObject(forKey: "contacts")
-        userDefaults.set(false, forKey: "hasLoginKey")
-        userDefaults.set(false, forKey: "hasProfilePicture")
-        UserDefaults.standard.synchronize()
-        self.performSegue(withIdentifier: "profileLogInViewController", sender: self)
+    Utils.instance.logOut()
+    _ = self.navigationController?.popToRootViewController(animated: true)
     }
+    
+    @IBAction func backButtonPressed(_ sender: Any) {
+        let _ = navigationController?.popViewController(animated: true)
+    }
+    
 }

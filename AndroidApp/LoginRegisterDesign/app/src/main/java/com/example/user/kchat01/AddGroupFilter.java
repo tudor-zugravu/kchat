@@ -14,6 +14,7 @@ public class AddGroupFilter extends Filter {
 
     AddGroupAdapter adapter;
     ArrayList<IContacts> filterList;
+    ArrayList<IContacts> filteredContacts;
 
     //constructor
     public AddGroupFilter(ArrayList<IContacts> filterList, AddGroupAdapter adapter){
@@ -29,11 +30,12 @@ public class AddGroupFilter extends Filter {
         //whether search words are input or not
         if (constraint != null && constraint.length() > 0){
             constraint = constraint.toString().toUpperCase();
-            ArrayList<IContacts> filteredContacts = new ArrayList<>();
+            filteredContacts = new ArrayList<>();
 
+            ArrayList<IContacts> contact = this.filterList;
             for (int i=0; i < filterList.size();i++){
                 //matching between constraint and username
-                if (filterList.get(i).getUsername().toUpperCase().contains(constraint)){
+                if (contact.get(i).getContactName().toUpperCase().startsWith((String)constraint)){
                     filteredContacts.add(filterList.get(i));
                 }
             }
@@ -49,7 +51,8 @@ public class AddGroupFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        //adapter.objectList = (ArrayList<IContacts>) results.values;
+        adapter.notifyDataSetChanged();
+        adapter.notifyItemRemoved(0);
         adapter.filterList = (ArrayList<IContacts>) results.values;
         adapter.notifyDataSetChanged();
     }

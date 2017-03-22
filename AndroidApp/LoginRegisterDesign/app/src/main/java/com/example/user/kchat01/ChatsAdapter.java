@@ -2,6 +2,7 @@ package com.example.user.kchat01;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,22 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
     private ChatsFilter filter;
     public static final int SENDER = 1;
     public static final int RECEIVER = 0;
+    public static boolean typechat;
 
     //constructor
     public ChatsAdapter(Context context, ArrayList<?> objectList) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.filterList = objectList;
+        this.typechat=false;
+    }
+
+    //constructor
+    public ChatsAdapter(Context context, ArrayList<?> objectList,int condition) {
+        inflater = LayoutInflater.from(context);
+        this.objectList = objectList;
+        this.filterList = objectList;
+        this.typechat=true;
     }
 
     //create view holder
@@ -55,18 +66,15 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
     @Override
     public void onBindViewHolder(ChatsViewHolder holder, int position) {
-        IMessage current = (IMessage)objectList.get(position);
-        holder.setData(current, position);
+        if(typechat==false) {
+            IMessage current = (IMessage) objectList.get(position);
+            holder.setData(current, position,0);
+        }else if(typechat==true){
+            IMessage current = (IMessage)objectList.get(position);
+            holder.setData(current, position,1);
+        }
     }
-/*
-    //bind data to view
-    @Override
-    public void onBindViewHolder(ChatsViewHolder holder, int position) {
-        ItemChats current = objectList.get(position);
-        holder.txtMessage.setText(current.getMessage());
-        holder.txtInfo.setText(current.getDateTime());
-    }
-*/
+
     @Override
     public int getItemCount() {
         return objectList.size();
@@ -83,7 +91,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         } else {
             return RECEIVER;
         }
-
     }
 
     //filter
@@ -97,25 +104,35 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
     //ChatsViewHolder Class definition
     public static class ChatsViewHolder extends RecyclerView.ViewHolder{
-
         //Related to ItemView
         public TextView txtMessage, txtTime;
         public ImageView imageProfile;
-
         //constructor
         public ChatsViewHolder(View itemView){
             super(itemView);
             txtMessage = (TextView)itemView.findViewById(R.id.textViewMessage);
             txtTime = (TextView)itemView.findViewById(R.id.textViewTime);
             imageProfile = (ImageView)itemView.findViewById(R.id.imageProfile);
-
         }
 
         //set each data on layout file
-        public void setData(IMessage current, int position) {
+        public void setData(IMessage current, int position, int type) {
             this.txtMessage.setText(current.getMessage());
             this.txtTime.setText(current.getTimestamp());
-            this.imageProfile.setImageBitmap(ChatsActivity.contactsBitmap);
+            if(type==0) {
+                this.imageProfile.setImageBitmap(ChatsActivity.contactsBitmap);
+            }else{
+                int messageSenderId = current.getSenderId(); // id from the message
+                Log.d("IDCHECKER","comparator=  "+Integer.toString(messageSenderId));
+                for(int i=0; i<GroupChatsActivity.contactsInChat.size(); i++){
+                    Log.d("IDCHECKER",GroupChatsActivity.contactsInChat.get(i).getUserId());
+                    if(messageSenderId==Integer.parseInt(GroupChatsActivity.contactsInChat.get(i).getUserId())){
+                        Log.d("IDCHECKER",GroupChatsActivity.contactsInChat.get(i).getUserId());
+                        this.imageProfile.setImageBitmap(GroupChatsActivity.contactsInChat.get(i).getBitmap());
+                    }
+                }
+
+            }
         }
     }
 }

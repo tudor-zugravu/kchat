@@ -2,6 +2,8 @@ package API;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 /**
  * Created by Tudor Vasile on 2/10/2017.
  */
@@ -27,5 +29,7 @@ public interface IGroups {
     public Bitmap getGroupImage();
 
     public void setGroupImage(Bitmap groupImage);
+
+    public ArrayList<Integer> getUsersAsID();
 
 }

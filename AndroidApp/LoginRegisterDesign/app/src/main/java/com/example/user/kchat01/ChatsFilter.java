@@ -39,12 +39,10 @@ public class ChatsFilter extends Filter {
                 }
             results.count = filteredChats.size();
             results.values = filteredChats;
-        }else
-        {
+        }else {
             results.count=filterList.size();
             results.values=filterList;
         }
-
         return results;
     }
 

@@ -1,5 +1,7 @@
 package com.example.user.kchat01;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,40 +65,51 @@ public class ContactsActivity extends AppCompatActivity {
     MasterUser man = new MasterUser();
     DataManager dm;
     private Socket mSocket;
+    NotificationCompat.Builder notification;
+    public static final int uniqueId = 45611;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ContactsActivity.this);
              if(man.getProfileLocation()!=null) {
-            try {
-                String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
-                String type = "getImage";
-                ArrayList<String> paramList = new ArrayList<>();
-                paramList.add("picture");
-                RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
-                String result = backgroundasync.execute(type).get();
-            }catch(InterruptedException e){
-            }catch(ExecutionException f){
-            }
+                 if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+                 }else {
+                     try {
+                         String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
+                         String type = "getImage";
+                         ArrayList<String> paramList = new ArrayList<>();
+                         paramList.add("picture");
+                         RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
+                         String result = backgroundasync.execute(type).get();
+                     } catch (InterruptedException e) {
+                     } catch (ExecutionException f) {
+                     }
+                 }
         }
 
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("sent_chats",currentChats);
-            mSocket.emit("get_chats", MasterUser.usersId);
-
         } catch (URISyntaxException e){
         }
+        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+            mSocket.disconnect();
+        }else {
+            mSocket.connect();
+            mSocket.on("connect", startConnection);
+            mSocket.on("authenticated", authenticate);////
+            mSocket.on("sent_chats", currentChats);
+            mSocket.on("sent_group_chats", currentGroups);
+            mSocket.emit("get_chats", MasterUser.usersId);
+            mSocket.emit("get_group_chats", MasterUser.usersId);
+        }
+        notification = new NotificationCompat.Builder(this);
+        notification.setAutoCancel(true);
         setContentView(R.layout.activity_contacts);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        // apply toolbar title
-        toolbarTitle.setText("Contacts");
-        toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         btn_sendRequest = (ImageButton)findViewById(R.id.btn_sendRequest);
         btn_receiveRequest = (ImageButton)findViewById(R.id.btn_receiveRequest);
@@ -181,6 +195,8 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=false;
+                    toolbarTitle.setText("Chats");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     adapter = new ContactsAdapter(ContactsActivity.this, Contacts.activeChat,0) {
@@ -192,7 +208,8 @@ public class ContactsActivity extends AppCompatActivity {
                             String type = "contact";
                             contactsIntent.putExtra("type",type);
                             contactsIntent.putExtra("userid",Integer.toString(contact.getContactId()));
-                            contactsIntent.putExtra("username",contact.getUsername());
+                            //contactsIntent.putExtra("username",contact.getUsername());
+                            contactsIntent.putExtra("contactname",contact.getContactName());
                             contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
@@ -203,13 +220,13 @@ public class ContactsActivity extends AppCompatActivity {
                         @Override
                         public void onLongClick(ContactsViewHolder holder){
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IContacts contact = Contacts.getContactList().get(position);
+                            IContacts contact = Contacts.activeChat.get(position);
                             // move to Profile
                             Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
                             profileIntent.putExtra("contact_username", contact.getUsername());
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            //profileIntent.putExtra("contact_biography", "NOTHING");
                             profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
                             profileIntent.putExtra("type", "contactsprofile");
                             startActivity(profileIntent);
@@ -217,24 +234,29 @@ public class ContactsActivity extends AppCompatActivity {
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
+
                 }
                 if (tabId == R.id.groups) {
                     btn_receiveRequest.setVisibility(GONE);
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
                     ContactsActivity.showPlus=true;
+                    toolbarTitle.setText("Groups");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("CALLEDSTATUS","bottom bar group id is:" + ContactsActivity.tabId);
                     adapter = new ContactsAdapter(ContactsActivity.this, Groups.groupList,2) {
-                        //By clicking a card, the username is got
                         @Override
                         public void onClick(ContactsViewHolder holder) {
                             int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                          //  IGroups contact = Groups.getObjectList().get(position);
-                            Intent contactsIntent = new Intent(getApplicationContext(), ChatsActivity.class);
-                            contactsIntent.putExtra("username", "blah");
-                            startActivity(contactsIntent);
+                            IGroups group = Groups.groupList.get(position);
+                            Intent groupIntent = new Intent(ContactsActivity.this, GroupChatsActivity.class);
+                            groupIntent.putExtra("ownerId",Integer.toString(group.getOwnerId()));
+                            groupIntent.putExtra("usernames",group.getUsersAsID());
+                            groupIntent.putExtra("groupName",group.getName());
+                            groupIntent.putExtra("groupDesc",group.getDescription());
+                            startActivity(groupIntent);
                         }
                     };
                     adapter.notifyDataSetChanged();
@@ -245,6 +267,8 @@ public class ContactsActivity extends AppCompatActivity {
                     btn_sendRequest.setVisibility(VISIBLE);
                     btn_searchContacts.setVisibility(VISIBLE);
                     ContactsActivity.showPlus=false;
+                    toolbarTitle.setText("Contacts");
+                    toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                     invalidateOptionsMenu();
                     ContactsActivity.tabId=tabId;
                     Log.d("RAR",Integer.toString(dm.selectAllContacts().getCount()));
@@ -252,15 +276,18 @@ public class ContactsActivity extends AppCompatActivity {
                     dm.selectAllContacts();
                     }else{
                     try {
-                        Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
-                        String type2 = "getcontacts";
-                        String contacts_url = "http://188.166.157.62:3000/contacts";
-                        ArrayList<String> paramList2 = new ArrayList<>();
-                        paramList2.add("userId");
-                        RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
-                        String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
-                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
 
+                        }else {
+                            Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                            String type2 = "getcontacts";
+                            String contacts_url = "http://188.166.157.62:3000/contacts";
+                            ArrayList<String> paramList2 = new ArrayList<>();
+                            paramList2.add("userId");
+                            RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        }
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
                 }}
@@ -290,9 +317,13 @@ public class ContactsActivity extends AppCompatActivity {
                             // move to Profile
                             Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
                             profileIntent.putExtra("contact_username", contact.getUsername());
+                            profileIntent.putExtra("contact_userid", contact.getUserId());
+                            profileIntent.putExtra("contact_contactname", contact.getContactName());
+                            profileIntent.putExtra("contact_contactid",contact.getContactId());
+                            profileIntent.putExtra("position", position);
                             profileIntent.putExtra("contact_email", contact.getEmail());
                             profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
+                            //profileIntent.putExtra("contact_biography", "NOTHING");//need to implement contact.getBiography()
                             profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
                             profileIntent.putExtra("type", "contactsprofile");
                             startActivity(profileIntent);
@@ -322,9 +353,7 @@ public class ContactsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -355,10 +384,109 @@ public class ContactsActivity extends AppCompatActivity {
                 public void run() {
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"chats",ContactsActivity.this);
-
                 }
             });
         }
     };
 
+    private Emitter.Listener startConnection = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MasterUser man = new MasterUser();
+                   mSocket.emit("authenticate",man.getuserId(),man.getUsername());
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener authenticate = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mSocket.on("update_chat",chatUpdater);
+                    mSocket.on("global_private_messages",notifications);
+
+                }
+            });
+        }
+    };
+    public static String roomnumber="";
+
+    private Emitter.Listener notifications = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0]; // room number
+                    if(!roomnumber.equals(receivedMessages)){
+                        int receivedMessages2 = (Integer) args [1]; // message id
+                        Log.d("UPDATECHAT",Integer.toString(receivedMessages2));
+                        String receivedMessages3 = (String) args [2]; // username
+                        Log.d("UPDATECHAT",receivedMessages3);
+                        String receivedMessages4 = (String) args [3]; // message
+                        Log.d("UPDATECHAT",receivedMessages4);
+                        String receivedMessages5 = (String) args [4]; // timestamp
+                        Log.d("UPDATECHAT",receivedMessages5);
+                        Log.d("UPDATECHAT","global2222!!!");
+                        notification.setSmallIcon(R.drawable.profile_logo);
+                        notification.setTicker("This is the ticker");
+                        notification.setWhen(System.currentTimeMillis());
+                        notification.setContentTitle("Message from:" +receivedMessages3);
+                        notification.setContentText(receivedMessages4);
+                        //notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
+                        showNotification();
+                    }
+                }
+            });
+        }
+    };
+
+    private void showNotification (){
+        Intent intent = new Intent(this,ContactsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(uniqueId,notification.build());
+
+    }
+
+    private Emitter.Listener chatUpdater = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("UPDATECHAT",receivedMessages);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener currentGroups = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("GROUPSRECEIVED",receivedMessages);
+                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"groups",ContactsActivity.this);
+                }
+            });
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
+    }
 }

@@ -48,6 +48,7 @@ public class ProfileIconGetter extends AsyncTask<String,Void,Bitmap> {
     //
     @Override
     protected Bitmap doInBackground(String... params) {
+
         this.stringParams=params;
         this.type = params[0];
 

@@ -57,6 +57,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
             self.present(alertView, animated: true, completion: nil)
         } else {
             
+            print(userDetails)
             // Ensure that none of the JSON values are nil through optional binding
             if let email = userDetails["email"] as? String,
                 let username = userDetails["username"] as? String,
@@ -75,6 +76,12 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 userDefaults.set(fullName, forKey:"fullName");
                 userDefaults.set(true, forKey: "hasLoginKey")
                 
+                if let about = userDetails["biography"] as? String {
+                    userDefaults.set(about, forKey: "about")
+                } else {
+                    userDefaults.set("", forKey: "about")
+                }
+                    
                 // Download the profile picture, if it exists
                 if let profilePicture = userDetails["profile_picture"] as? String {
                     userDefaults.set(profilePicture, forKey:"profilePicture");
@@ -93,7 +100,7 @@ class LoginViewController: UIViewController, LogInModelProtocol {
                 
                 userDefaults.synchronize();
             }
-            
+            SocketIOManager.sharedInstance.establishConnection()
             performSegue(withIdentifier: "loginTabBarViewController", sender: nil)
         }
     }

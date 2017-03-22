@@ -34,12 +34,10 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
         
-        SocketIOManager.sharedInstance.setRoomCreatedListener(completionHandler: { (response) -> Void in
+        SocketIOManager.sharedInstance.setPrivateRoomCreatedListener(completionHandler: { (response) -> Void in
             if response == "fail" {
                 print("room create error")
             } else {
-                print("am intrat in room");
-                SocketIOManager.sharedInstance.addUser(roomId: response, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
                 SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
                     
                     let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
@@ -53,19 +51,26 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                         self.messagesDownloaded(messagesList!)
                     })
                 })
+                if let value = self.passedValue {
+                    SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(self.convLimit))
+                }
             }
         })
-        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         if let value = passedValue {
+            print("\(value.contactName) \(value.contactId)")
             titleLabel.text = value.contactName
             self.contactId = value.contactId
             
-            SocketIOManager.sharedInstance.createRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-            SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(convLimit))
+            SocketIOManager.sharedInstance.createPrivateRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
@@ -78,6 +83,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        SocketIOManager.sharedInstance.setCurrentRoom(room: "")
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -95,7 +101,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 return ConversationSentMessageTableViewCell()
             }
         } else {
-            if messages[indexPath.row].sent! {
+            if messages[indexPath.row].senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
@@ -135,7 +141,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                let item = MessageModel(messageId: messageId, senderId: String(senderId), message: message, timestamp: timestamp)
+                let item = MessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp)
                 messagesAux.insert(item, at: 0)
             }
         }

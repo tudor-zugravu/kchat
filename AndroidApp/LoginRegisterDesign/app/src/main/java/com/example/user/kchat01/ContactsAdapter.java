@@ -29,7 +29,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
 
     private LayoutInflater inflater;
     public ArrayList filterList;
-    private ContactsFilter filter;
+    ContactsFilter filter;
     private int type;
     Context context;
 
@@ -84,18 +84,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
             if(!Groups.groupList.isEmpty()) {
                 //for (int i = 0; i < Contacts.contactList.size(); i++) {
                 Log.d("DATACHECKER", " Ihave got here for the data checker");
-
+                IGroups current3 = (IGroups) filterList.get(position);
                 if(Groups.groupList.get(position).getGroupImage()==null) {
-                    Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
-                    Drawable d = ContextCompat.getDrawable(context, R.drawable.profile_logo);
+                  //  Log.d("PROFILE", " Ihave got here for the data checker"+Contacts.contactList.get(position).getContactName()+" the image is null");
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.add_group);
                     holder.imageProfile.setImageDrawable(d);
                 }else{
                     //holder.imageProfile.setImageBitmap(Contacts.contactList.get(position).getBitmap());
-                    holder.imageProfile.setImageBitmap(Groups.groupList.get(position).getGroupImage());
+                    holder.imageProfile.setImageBitmap(current3.getGroupImage());
                 }
-                holder.textViewUsername.setText(Groups.groupList.get(position).getName());
-                holder.textViewMessage.setText(String.valueOf(Groups.groupList.get(position).getDescription()));
-
+                holder.textViewUsername.setText(current3.getName());
+                holder.textViewMessage.setText(String.valueOf(current3.getDescription()));
             }
 
         }
@@ -112,12 +111,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> im
     public void onLongClick(ContactsViewHolder holder){
     }
 
-
     @Override
     public int getItemCount() {
         return filterList.size();
     }
-
 
     //filter
     @Override

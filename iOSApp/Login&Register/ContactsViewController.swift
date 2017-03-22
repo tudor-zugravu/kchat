@@ -16,23 +16,41 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     var contacts: [ContactModel] = []
     let contactsModel = ContactsModel()
     
+    class MyTapGestureRecognizer: UITapGestureRecognizer {
+        var selectedName: String?
+        var selectedId: Int?
+    }
+    
+    class MyLongPressGestureRecognizer: UILongPressGestureRecognizer {
+        var selectedContact: ContactModel?
+    }
+    
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
         contactsModel.delegate = self
         searchBar.delegate = self
+        
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        Utils.instance.setTabBarValues(tabBarController: self.tabBarController as! TabBarController)
         contactsModel.downloadContacts()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.contacts.filter { (contact) -> Bool in
-            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
-            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
-        }
-        self.tableView.reloadData()
+//        self.contacts.filter { (contact) -> Bool in
+//            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
+//            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
+//        }
+//        self.tableView.reloadData()
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -49,14 +67,19 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             } else {
                 let item: ContactModel = contacts[indexPath.row]
                 cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
+                
+                // Press gestures for cells
+                let tapGesture = MyTapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
+                tapGesture.selectedId = item.userId!
+                tapGesture.selectedName = item.name!
+                tapGesture.numberOfTapsRequired = 1
+                cell.addGestureRecognizer(tapGesture)
+                
+                let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
+                longPress.selectedContact = item
+                tapGesture.numberOfTouchesRequired = 1
+                cell.addGestureRecognizer(longPress)
             }
-            //press cell
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
-            tapGesture.numberOfTapsRequired = 1
-            cell.addGestureRecognizer(tapGesture)
-            cell.addGestureRecognizer(longPress)
-            
             return cell
         } else {
             return ContactsTableViewCell()
@@ -72,7 +95,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         var contactsAux: [ContactModel] = []
         var item:ContactModel;
-
+        
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
             
@@ -91,7 +114,13 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 item.phoneNo = phoneNo
                 item.userId = userId
                 item.contactId = contactId
-                item.timestamp = timestamp
+                item.phoneNo = phoneNo
+                
+                if let about = contactDetails[i]["biography"] as? String {
+                    item.about = about
+                } else {
+                    item.about = ""
+                }
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
@@ -128,34 +157,26 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         self.tableView.reloadData()
     }
-    // long and short press
-    func shortPress(){
-        //turn to message page
-        let nextView:UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController"))!
-        self.navigationController?.pushViewController(nextView , animated: true)
+    
+    func shortPress(gestureRecognizer: MyTapGestureRecognizer){
+        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!)
+        self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
-    func longPress(sender : UIGestureRecognizer){
-        print("Long tap")
+    func longPress(sender : MyLongPressGestureRecognizer){
         if sender.state == .ended {
-            print("UIGestureRecognizerStateEnded")
-            //Do Whatever You want on End of Gesture
-            //Turn to profile page
-            
-        }
-        else if sender.state == .began {
-            print("UIGestureRecognizerStateBegan")
-            //Do Whatever You want on Began of Gesture
+            let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "profileViewController") as? ProfileViewController
+            profileViewController?.passedValue = sender.selectedContact
+            self.navigationController?.pushViewController(profileViewController!, animated: true)
         }
     }
 
-    
     @IBAction func sentRequestsPressed(_ sender: Any) {
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
         contactRequestsViewController?.passedValue = true
         self.navigationController?.pushViewController(contactRequestsViewController!, animated: true)
     }
-    
     @IBAction func receivedRequestsPressed(_ sender: Any) {
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
         contactRequestsViewController?.passedValue = false

@@ -7,34 +7,49 @@
 //
 
 import UIKit
+import AVFoundation
 
 class SocketIOManager: NSObject {
     static let sharedInstance = SocketIOManager()
     
-    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:3000")! as URL)//, config: [.log(true)])
+    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
+    
     var pendingEmits: [(event: String, param: String)] = []
+    private var currentRoom: String = ""
+    var player: AVAudioPlayer?
     
     override init() {
         super.init()
     }
     
     func establishConnection() {
+        socket = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:4000")! as URL)
         socket.connect()
         socket.on("connect") {data, ack in
+            self.socket.emit("authenticate", UserDefaults.standard.value(forKey: "userId") as! Int, UserDefaults.standard.value(forKey: "fullName") as! String)
+        }
+        
+        socket.on("authenticated") {data, ack in
             for currEmit in self.pendingEmits {
                 self.socket.emit(currEmit.event, currEmit.param)
             }
             self.pendingEmits.removeAll()
-        }
-        
-        socket.on("update_chat") { ( dataArray, ack) -> Void in
-            let responseString = dataArray[0] as! String
-            print(responseString)
+            
+            self.socket.on("update_chat") { ( dataArray, ack) -> Void in
+                let responseString = dataArray[0] as! String
+                print(responseString)
+            }
+            
+            self.setGlobalPrivateListener()
         }
     }
     
     func closeConnection() {
         socket.disconnect()
+    }
+    
+    func setCurrentRoom (room: String) {
+        self.currentRoom = room
     }
     
     func setSearchUserReceivedListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
@@ -182,28 +197,30 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func setRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
-        socket.off("room_created")
-        socket.on("room_created") { ( dataArray, ack) -> Void in
+    func setPrivateRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("private_room_created")
+        socket.on("private_room_created") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
         }
     }
     
-    func createRoom(receiverId: String, userId: String) {
-        socket.emit("create_room", receiverId, userId)
-    }
-    
-    func addUser(roomId: String, userId: String) {
-        socket.emit("add_user", roomId, userId)
+    func createPrivateRoom(receiverId: String, userId: String) {
+        socket.emit("create_private_room", receiverId, userId)
     }
     
     func sendMessage(message: String) {
         socket.emit("send_chat", message)
     }
     
+    func sendGroupMessage(message: String) {
+        socket.emit("send_group_chat", message)
+    }
+    
     func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
+        
+        currentRoom = room
         socket.on(room) { ( dataArray, ack) -> Void in
             
             let messageId = dataArray[0] as! Int
@@ -211,6 +228,32 @@ class SocketIOManager: NSObject {
             let message = dataArray[2] as! String
             let timestamp = dataArray[3] as! String
             completionHandler(messageId, username, message, timestamp)
+        }
+    }
+    
+    func setGlobalPrivateListener() {
+        
+        self.socket.off("global_private_messages")
+        self.socket.on("global_private_messages") { ( dataArray, ack) -> Void in
+            
+            let room = dataArray[0] as! String
+            if (room != self.currentRoom) {
+                Utils.instance.newPrivateMessages += 1
+                AudioServicesPlaySystemSound (1334)
+                
+//                let messageId = dataArray[1] as! Int
+//                let username = dataArray[2] as! String
+//                let message = dataArray[3] as! String
+//                let timestamp = dataArray[4] as! String
+//                completionHandler(messageId, username, message, timestamp)
+            }
+        }
+
+    }
+    
+    func setDisconnectedListener(completionHandler: @escaping () -> Void) {
+        self.socket.on("disconnected") { ( dataArray, ack) -> Void in
+            completionHandler()
         }
     }
     
@@ -280,5 +323,41 @@ class SocketIOManager: NSObject {
                 pendingEmits.append(("get_chats", userId))
             }
         }
+    }
+    
+    func getRecentGroupMessages(groupId: Int, limit: String) {
+        socket.emit("get_recent_group_messages", groupId, limit)
+    }
+    
+    func setGetRecentGroupMessagesListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.on("send_recent_group_messages") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            if responseString == "fail" {
+                completionHandler([[:]])
+            } else {
+                if let data = responseString.data(using: .utf8) {
+                    do {
+                        let parsedData = try JSONSerialization.jsonObject(with: data, options: []) as! [[String:Any]]
+                        completionHandler(parsedData)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    func setGroupRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("group_room_created")
+        socket.on("group_room_created") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func createGroupRoom(groupId: String) {
+        socket.emit("create_group_room", groupId)
     }
 }

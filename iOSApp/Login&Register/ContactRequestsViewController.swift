@@ -22,6 +22,8 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         tableView.dataSource = self
         searchBar.delegate = self
         
+        self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
+        
         SocketIOManager.sharedInstance.setRequestAcceptedListener(completionHandler: { (response) -> Void in
             if(response != "fail") {
                 self.contacts.remove(at: Int(response)!)
@@ -52,7 +54,11 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
             })
         })
 
-
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -143,6 +149,12 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
                 item.userId = userId
                 item.contactId = contactId
                 item.timestamp = timestamp
+                
+                if let about = contactDetails[i]["biography"] as? String {
+                    item.about = about
+                } else {
+                    item.about = ""
+                }
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     

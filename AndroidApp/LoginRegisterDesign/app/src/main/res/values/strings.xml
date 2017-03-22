@@ -26,9 +26,8 @@
     <string name="btn_login">Login</string>
 
     <!-- For Top menu -->
-    <string name="editProfile"> Edit Profile</string>
+    <string name="deleteAccount"> Delete Account</string>
     <string name="changePassword"> Change Password</string>
-    <string name="changeProfileImage"> Change Profile Image</string>
     <string name="logout"> Logout</string>
 
 

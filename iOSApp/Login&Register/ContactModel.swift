@@ -17,6 +17,7 @@ class ContactModel: NSObject {
     var phoneNo: String?
     var userId: Int?
     var profilePicture: String?
+    var about: String?
     var contactId: Int?
     var timestamp: String?
     
@@ -27,7 +28,7 @@ class ContactModel: NSObject {
     }
     
     //construct with @name, @email and @telephone parameters
-    init(username: String, name: String, email: String, phoneNo: String, userId: Int, profilePicture: String, contactId: Int, timestamp: String) {
+    init(username: String, name: String, email: String, phoneNo: String, userId: Int, profilePicture: String, about: String, contactId: Int, timestamp: String) {
 
         self.username = username
         self.name = name
@@ -35,6 +36,7 @@ class ContactModel: NSObject {
         self.phoneNo = phoneNo
         self.userId = userId
         self.profilePicture = profilePicture
+        self.about = about
         self.contactId = contactId
         self.timestamp = timestamp
     }
@@ -42,7 +44,7 @@ class ContactModel: NSObject {
     
     //prints object's current state
     override var description: String {
-        return "Username: \(username), Name: \(name), Email: \(email), PhoneNo: \(phoneNo), UserId: \(userId), ProfilePicture: \(profilePicture), ContactId: \(contactId), Timestamp: \(timestamp)"
+        return "Username: \(username), Name: \(name), Email: \(email), PhoneNo: \(phoneNo), UserId: \(userId), ProfilePicture: \(profilePicture), About: \(about), ContactId: \(contactId), Timestamp: \(timestamp)"
     }
     
     

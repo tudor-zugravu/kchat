@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +43,6 @@ public class ChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textViewChatUser;
     private RecyclerView recyclerView;
-   // private SearchView searchView;
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
     private String username,message;
@@ -54,15 +54,18 @@ public class ChatsActivity extends AppCompatActivity {
     private int counter =2;
     public static boolean isAtTop = false;
     public static boolean didOverscroll = false;
+    DataManager dm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dm = new DataManager(ChatsActivity.this);
+
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
-        // and show chatting username on toolber
+        dataList = new ArrayList<>();
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
         if(chatUser!=null&&chatUser.equals("contact")){
@@ -71,24 +74,31 @@ public class ChatsActivity extends AppCompatActivity {
             this.contactId = intent.getIntExtra("contactid", 0);
             byte [] byteArray = getIntent().getByteArrayExtra("contactbitmap");
             this.contactsBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+            if (username!=null) {
+                textViewChatUser.setText(username);
+            }else{
+                textViewChatUser.setText("");
+            }
+            textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         }
-
         try {
             mSocket = IO.socket("http://188.166.157.62:3000");
-            mSocket.connect();
-            mSocket.on("room_created",stringReply2);
-            mSocket.emit("create_room", userId, MasterUser.usersId);
-            mSocket.on("update_chat", serverReplyLogs); // sends server messages
-            mSocket.on("send_recent_messages", getallmessages); // sends server messages
-
-        } catch (URISyntaxException e){
+        } catch (URISyntaxException e) {
         }
-
-        textViewChatUser.setText(chatUser);
-        textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+        if(InternetHandler.hasInternetConnection(ChatsActivity.this)==false){
+            mSocket.disconnect();
+            dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
+            recyclerView.setNestedScrollingEnabled(false);
+        }else {
+                mSocket.connect();
+                mSocket.on("private_room_created", stringReply2);
+                mSocket.emit("create_private_room", userId, MasterUser.usersId);
+                mSocket.on("update_chat", serverReplyLogs); // sends server messages
+                mSocket.on("send_recent_messages", getallmessages); // sends server messages
+                Log.d("OFFLINE TESTER", "Did i reach here?");
+        }
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        dataList = new ArrayList<>();
         adapter = new ChatsAdapter(ChatsActivity.this,dataList);
         recyclerView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -107,9 +117,7 @@ public class ChatsActivity extends AppCompatActivity {
                 @Override
                 public void onScrollStateChanged (RecyclerView recyclerView,int newState){
                 super.onScrollStateChanged(recyclerView, newState);
-
                 int firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition();
-
                     if (newState == 0) {
                         if (firstVisibleItem == 0) isAtTop = true;
                         else isAtTop = false;
@@ -124,7 +132,6 @@ public class ChatsActivity extends AppCompatActivity {
                     }
             }
             });
-
 
         //when inputting to EditText and pushing send button
         Button sendButton = (Button) findViewById(R.id.btn_sendMessage);
@@ -169,17 +176,18 @@ public class ChatsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     dataList.clear();
+                 //   dm.deletePrivateContactMessages(userId,Integer.toString(MasterUser.usersId));
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"message",ChatsActivity.this);
                     Log.d("MESSAGEERROR", args[0].toString());
                     int latestPosition = adapter.getItemCount();
                     recyclerView.setAdapter(adapter);
-                    adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                    adapter.notifyDataSetChanged();
+                   // adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
                     if(counter!=2){
-                        stupidScrolling(false);
+                        scrolling(false);
                     }else{
-                        stupidScrolling(true);
-
+                        scrolling(true);
                     }
                 }
             });
@@ -187,13 +195,25 @@ public class ChatsActivity extends AppCompatActivity {
     };
 
 
-    private void stupidScrolling(boolean type){
-
+    private void scrolling(boolean type){
         if(type==true){
             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
         }else{
             recyclerView.scrollToPosition(0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataList.clear();
+        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
+        if(mSocket!=null) {
+            mSocket.off(ContactsActivity.roomnumber);
+        }
+        ContactsActivity.roomnumber = "";
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
     }
 
     private Emitter.Listener stringReply2 = new Emitter.Listener() {
@@ -203,8 +223,8 @@ public class ChatsActivity extends AppCompatActivity {
             if(receivedMessage.equals("fail")){
                 // print error cannot connect
             }else {
-                //the rooms id is received
-                mSocket.emit("add_user",receivedMessage,MasterUser.usersId);
+                ContactsActivity.roomnumber = receivedMessage;
+                mSocket.off(receivedMessage);
                 mSocket.on(receivedMessage,messageReceiver);
                 mSocket.emit("get_recent_messages",MasterUser.usersId,userId,20);
             }
@@ -233,9 +253,12 @@ public class ChatsActivity extends AppCompatActivity {
                             messageObject.setMe(false);//if the message is sender, set "true". if not, set "false".
                         }
                         dataList.add(latestPosition, messageObject);//"0" means top of array
+                        Log.d("DATALIST","Size of my list is111111111:" + dataList.size());
+                        adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
-                        adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
-                        stupidScrolling(true);
+                        adapter.notifyDataSetChanged();
+                       // adapter.notifyItemInserted(latestPosition);//"0" means insertion to the top of display
+                        scrolling(true);
                     } catch (ParseException e) {
                     }
                 }

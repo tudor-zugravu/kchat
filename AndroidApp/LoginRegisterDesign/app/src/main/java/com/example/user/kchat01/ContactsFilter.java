@@ -35,7 +35,7 @@ public class ContactsFilter extends Filter {
                 for (int i=0; i < filterList.size();i++){
                     if (group.get(i).getName().toUpperCase().startsWith((String) constraint) ) {
                         filteredContacts.add(filterList.get(i));
-                       }
+                    }
                 }
 
             }else if(!filterList.isEmpty() && filterList.get(0) instanceof IContacts) {
@@ -43,7 +43,7 @@ public class ContactsFilter extends Filter {
                 for (int i=0; i < filterList.size();i++){
                     if (contact.get(i).getContactName().toUpperCase().startsWith((String)constraint)){
                         filteredContacts.add(filterList.get(i));
-                        }
+                    }
                 }
             }
 
@@ -62,7 +62,6 @@ public class ContactsFilter extends Filter {
         adapter.notifyDataSetChanged();
         adapter.notifyItemRemoved(0);
         adapter.filterList = (ArrayList)results.values;
-        adapter.notifyDataSetChanged();
-
+        adapter.notifyItemRangeChanged(0,results.count);
     }
 }

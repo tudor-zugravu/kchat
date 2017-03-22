@@ -60,27 +60,14 @@ public class SearchRequestFilter extends Filter {
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-        //adapter.objectList = (ArrayList) results.values;
         adapter.notifyDataSetChanged();
         adapter.notifyItemRemoved(0);
         Log.d("CheckFilter_afterclear", String.valueOf(adapter.filterList.size()));
         adapter.filterList = (ArrayList)results.values;
 //        Log.d("Check_berore_Results", String.valueOf(adapter.filterList.size())+adapter.filterList.get(0));
         adapter.notifyDataSetChanged();
-//        Log.d("Check_after_Results", String.valueOf(adapter.filterList.size())+adapter.filterList.get(0));
-       // adapter.filterList.clear();
+
 
     }
-/*
-    @Override
-    public void run() {
-        ContactsFilter.this.runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        });
-    }
-*/
 }

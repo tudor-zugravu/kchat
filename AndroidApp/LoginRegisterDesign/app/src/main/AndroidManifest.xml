@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
 
 
@@ -32,7 +35,9 @@
         <activity android:name=".CustomActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".ChatsActivity" />
+        <activity android:name=".GroupChatsActivity" />
         <activity android:name=".SearchRequestActivity"/>
+        <activity android:name=".AddContactActivity"/>
         <activity android:name=".AddGroupActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan"/>

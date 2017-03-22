@@ -97,24 +97,27 @@ public class RegisterActivity extends AppCompatActivity{
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String type = "register";
-                String register_url = "http://188.166.157.62:3000/register";
-                ArrayList<String> paramList= new ArrayList<>();
-                paramList.add("fullName");
-                paramList.add("email");
-                paramList.add("username");
-                paramList.add("pwd");
-                paramList.add("phoneNo");
-                paramList.add("biography");
+                if(InternetHandler.hasInternetConnection(RegisterActivity.this)==false){
 
-                RESTApi backgroundasync = new RESTApi(RegisterActivity.this,register_url,paramList);
-                backgroundasync.execute(type,
-                        inputFullName.getText().toString(),
-                        inputEmail.getText().toString(),
-                        inputUsername.getText().toString(),
-                        inputPassword.getText().toString(),
-                        inputPhone.getText().toString(),
-                        inputBio.getText().toString());
+                }else {
+                    String type = "register";
+                    String register_url = "http://188.166.157.62:3000/register";
+                    ArrayList<String> paramList = new ArrayList<>();
+                    paramList.add("fullName");
+                    paramList.add("email");
+                    paramList.add("username");
+                    paramList.add("pwd");
+                    paramList.add("phoneNo");
+                    paramList.add("biography");
+                    RESTApi backgroundasync = new RESTApi(RegisterActivity.this, register_url, paramList);
+                    backgroundasync.execute(type,
+                            inputFullName.getText().toString(),
+                            inputEmail.getText().toString(),
+                            inputUsername.getText().toString(),
+                            inputPassword.getText().toString(),
+                            inputPhone.getText().toString(),
+                            inputBio.getText().toString());
+                }
             }
         });
     }
