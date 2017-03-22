@@ -102,7 +102,6 @@ public class DataManager {
                 PRIVATE_MESSAGES_TIMESTAMP + ", " +
                 PRIVATE_MESSAGES_TYPE + " ) " +
                 " VALUES (" + //  public Message(int messageId,int senderId,String message,String timestamp){
-
                 "'" + messageId + "'" + ", " +
                 "'" + senderId + "'" + ", " +
                 "'" + receiverId + "'" + ", " +
@@ -136,6 +135,24 @@ public class DataManager {
         db.execSQL(query);
     }
 
+    public void insertIntoBufferTable( int senderId, int receiverId, String message, String timestamp, String type){
+        String query = "INSERT INTO " + BUFFER_MESSAGES_TABLE + " (" +
+                GROUP_MESSAGES_SENDERID + ", " +
+                GROUP_MESSAGES_RECEIVERID + ", " +
+                GROUP_MESSAGES_MESSAGE + ", " +
+                GROUP_MESSAGES_TIMESTAMP + ", " +
+                GROUP_MESSAGES_TYPE + ") " +
+                "VALUES (" +
+                "'" + senderId + "'" + ", " +
+                "'" + receiverId + "'" + ", " +
+                "'" + message + "'" + ", " +
+                "'" + timestamp + "'" + ", " +
+                "'" + type + "'" +
+                "); ";
+        Log.i("insert() = ", query);
+        db.execSQL(query);
+    }
+
     public void flushAllData(){ //logout to delete all
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  CONTACTS_TABLE+ ";";
@@ -152,6 +169,10 @@ public class DataManager {
         String query2 = "DELETE FROM " +  GROUP_MESSAGES_TABLE+ ";";
         Log.i("delete() = ", query2);
         db.execSQL(query2);
+
+        String query3 = "DELETE FROM " +  BUFFER_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query3);
+        db.execSQL(query3);
     }
 
     public void deletePrivateContactMessages(String senderId,String receiverId){
@@ -230,6 +251,28 @@ public class DataManager {
             }
             if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
         }
+
+        Cursor c2 = db.rawQuery("SELECT DISTINCT * " +
+                " FROM " + BUFFER_MESSAGES_TABLE +
+                " WHERE" + "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + senderId +"' )"+
+                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
+                "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + myID +"' )"+
+                " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + senderId +"' )"+
+                " ORDER BY datetime(timestamp) DESC ;", null);
+        while (c2.moveToNext()){
+            int sender = c2.getInt(0);
+            int receiver = c2.getInt(1); // senders id
+            String message= c2.getString(2);
+            String timestamp = c2.getString(3);
+
+            IMessage messageStored = new Message(-1,sender,message,timestamp);
+            if(sender == myID){
+                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            }else{
+                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
+            }
+            if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
+        }
         Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
         return c;
     }
@@ -256,6 +299,27 @@ public class DataManager {
             }
             if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
         }
+
+        Cursor c2 = db.rawQuery("SELECT DISTINCT * " +
+                " FROM " + BUFFER_MESSAGES_TABLE +
+                " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
+                " ORDER BY datetime(timestamp) DESC ;", null);
+        while (c2.moveToNext()){
+            int sender = c2.getInt(0);
+            int receiver = c2.getInt(1); // group id
+            String message= c2.getString(2);
+            String timestamp = c2.getString(3);
+
+            IMessage messageStored = new Message(-1,sender,message,timestamp);
+            if(sender == myID){
+                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            }else{
+                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
+            }
+            if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
+        }
+
+
         Log.d("OFFLINE TESTER", "size of the offline list is  " + GroupChatsActivity.dataList.size());
         return c;
     }
@@ -283,7 +347,6 @@ public class DataManager {
         // This method only runs the first time the database is created
         @Override
         public void onCreate(SQLiteDatabase db) {// Creates a table for clients details
-
             String newContactsTableQueryString = "create table "
                     + CONTACTS_TABLE + " ("
                     + CONTACT_TABLE_ID
@@ -342,8 +405,6 @@ public class DataManager {
 
             String bufferMessageTableQueryString = "create table "
                     + BUFFER_MESSAGES_TABLE + " ("
-                    + PRIVATE_MESSAGES_MESSAGEID
-                    + " integer primary key not null,"
                     + PRIVATE_MESSAGES_SENDERID
                     + " integer not null,"
                     + PRIVATE_MESSAGES_RECEIVERID

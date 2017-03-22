@@ -23,6 +23,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import org.json.JSONArray;
 
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         } catch (URISyntaxException e){
         }
 
-            if(InternetHandler.hasInternetConnection(GroupChatsActivity.this)==false){
+            if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,0)==false){
                 mSocket.disconnect();
                dm.selectAllGroupMessages(Integer.parseInt(groupId),MasterUser.usersId);
 //                recyclerView.setNestedScrollingEnabled(false);
@@ -145,12 +146,22 @@ public class GroupChatsActivity extends AppCompatActivity {
                     return;
                 }else {
                     editTextMessage.setText("");
-                    //before i am outputting to the screen i will take the text of the message and any other user related information
-                    //and i will send it to the server using the socket.io
-                    if(mSocket.connected()){
-                        mSocket.emit("send_group_chat",message);
-                    }else{
-                        Log.d("MESSAGEERROR", "Cannot send message:" + message);
+                    if (InternetHandler.hasInternetConnection(GroupChatsActivity.this, 2) == false) {
+                        //insert into database
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        dm.insertIntoBufferTable(MasterUser.usersId, Integer.parseInt(groupId), message, timestamp.toString(), "");
+                        IMessage offlineMessage = new Message(MasterUser.usersId, Integer.parseInt(groupId), message, timestamp.toString());
+                        offlineMessage.setMe(true);
+                        dataList.add(offlineMessage);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        //before i am outputting to the screen i will take the text of the message and any other user related information
+                        //and i will send it to the server using the socket.io
+                        if (mSocket.connected()) {
+                            mSocket.emit("send_group_chat", message);
+                        } else {
+                            Log.d("MESSAGEERROR", "Cannot send message:" + message);
+                        }
                     }
                 }
             }

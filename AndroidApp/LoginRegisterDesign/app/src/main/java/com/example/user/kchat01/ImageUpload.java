@@ -69,7 +69,7 @@ public class ImageUpload extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(InternetHandler.hasInternetConnection(ImageUpload.this)==false){
+                if(InternetHandler.hasInternetConnection(ImageUpload.this,0)==false){
 
                 }else {
                     if (canvas.getDrawable() == null) {

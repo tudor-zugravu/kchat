@@ -207,7 +207,7 @@ private void groupDeserialiser(){
     }
 
     private String getImage (String location, String userId,IContacts contact) {
-        if(InternetHandler.hasInternetConnection(context)==false){
+        if(InternetHandler.hasInternetConnection(context,1)==false){
 
         }else {
             if (location != null && (!location.equals("null"))) {

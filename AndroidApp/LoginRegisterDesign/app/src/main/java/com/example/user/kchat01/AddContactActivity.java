@@ -85,7 +85,7 @@ public class AddContactActivity extends AppCompatActivity {
         if (dm.selectAllContacts().getCount() > 0) {
             dm.selectAllContacts();
         } else {
-            if (InternetHandler.hasInternetConnection(AddContactActivity.this) == false) {
+            if (InternetHandler.hasInternetConnection(AddContactActivity.this,0) == false) {
 
             } else {
 

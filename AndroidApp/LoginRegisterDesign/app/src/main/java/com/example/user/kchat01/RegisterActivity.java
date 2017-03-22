@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity{
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(InternetHandler.hasInternetConnection(RegisterActivity.this)==false){
+                if(InternetHandler.hasInternetConnection(RegisterActivity.this,0)==false){
 
                 }else {
                     String type = "register";

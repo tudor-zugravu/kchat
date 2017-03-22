@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLogin(String usr, String pass) {
-        if(InternetHandler.hasInternetConnection(LoginActivity.this)==false){
+        if(InternetHandler.hasInternetConnection(LoginActivity.this,0)==false){
 
         }else {
             String type = "login";

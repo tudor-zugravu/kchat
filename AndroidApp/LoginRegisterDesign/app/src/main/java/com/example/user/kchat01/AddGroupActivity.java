@@ -73,7 +73,6 @@ public class AddGroupActivity extends AppCompatActivity {
     ImageView camera, gallery, canvas;
     Bitmap bitmap;
     DataManager dm;
-    Socket getmSocket;
     String groupId ,groupName, description;
 
     static final Integer CAMERA = 0x5;
@@ -105,7 +104,7 @@ public class AddGroupActivity extends AppCompatActivity {
         if(dm.selectAllContacts().getCount()>0){
             dm.selectAllContacts();
         }else {
-            if(InternetHandler.hasInternetConnection(AddGroupActivity.this)==false){
+            if(InternetHandler.hasInternetConnection(AddGroupActivity.this,0)==false){
 
             }else {
                 try {
@@ -294,7 +293,7 @@ public class AddGroupActivity extends AppCompatActivity {
                                 return;
                             } else {
                                 bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                                if(InternetHandler.hasInternetConnection(AddGroupActivity.this)==false){
+                                if(InternetHandler.hasInternetConnection(AddGroupActivity.this,1)==false){
 
                                 }else {
                                     if (bitmap != null) {

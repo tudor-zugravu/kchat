@@ -109,7 +109,7 @@ public class CustomActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                if(InternetHandler.hasInternetConnection(CustomActivity.this)==false){
+                                if(InternetHandler.hasInternetConnection(CustomActivity.this,0)==false){
                                 }else {
                                     String newPassword = etCurrentPassword.getText().toString();
                                    // String oldPassword = etOldPassword.getText().toString();

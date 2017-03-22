@@ -73,7 +73,7 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         dm = new DataManager(ContactsActivity.this);
              if(man.getProfileLocation()!=null) {
-                 if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+                 if(InternetHandler.hasInternetConnection(ContactsActivity.this,0)==false){
                  }else {
                      try {
                          String picture_url = "http://188.166.157.62/profile_pictures/" + "profile_picture" + man.getuserId() + ".jpg";
@@ -92,7 +92,7 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket = IO.socket("http://188.166.157.62:3000");
         } catch (URISyntaxException e){
         }
-        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+        if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
             mSocket.disconnect();
         }else {
             mSocket.connect();
@@ -276,7 +276,7 @@ public class ContactsActivity extends AppCompatActivity {
                     dm.selectAllContacts();
                     }else{
                     try {
-                        if(InternetHandler.hasInternetConnection(ContactsActivity.this)==false){
+                        if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
 
                         }else {
                             Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
@@ -414,7 +414,9 @@ public class ContactsActivity extends AppCompatActivity {
                     String receivedMessages = (String) args [0]; // room number
                         if(receivedMessages!=null&&receivedMessages.equals("disconnect")){
                             mSocket.disconnect();
-
+                            Intent loginIntent = new Intent(ContactsActivity.this,LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
                         }
 
                 }

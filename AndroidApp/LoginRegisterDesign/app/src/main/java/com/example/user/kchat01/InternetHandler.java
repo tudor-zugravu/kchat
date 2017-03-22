@@ -10,8 +10,8 @@ import android.support.v7.app.AlertDialog;
  */
 
 public class InternetHandler {
-
-    public static boolean hasInternetConnection(Context context){
+//send messages from post
+    public static boolean hasInternetConnection(Context context, int num){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiNetwork = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (wifiNetwork != null && wifiNetwork.isConnected()) {
@@ -28,9 +28,11 @@ public class InternetHandler {
             return true;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("No Internet detected please connect to the internet to continue")
-                .setNegativeButton("ok", null).create().show();
+        if(num ==0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("No Internet detected please connect to the internet to continue")
+                    .setNegativeButton("ok", null).create().show();
+        }
         return false;
     }
 }

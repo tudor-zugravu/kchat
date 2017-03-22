@@ -285,7 +285,7 @@ public class ProfileActivity extends CustomActivity {
                         // String fieldname has "Username", Email" or "Phone"
                         // new data is stored in "newValue"
                         // If server error, return false
-                        if(InternetHandler.hasInternetConnection(ProfileActivity.this)==false){
+                        if(InternetHandler.hasInternetConnection(ProfileActivity.this,0)==false){
                         }else {
                             String type = "profileUpdate";
                             String login_url = "http://188.166.157.62:3000/";
