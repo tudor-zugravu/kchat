@@ -482,4 +482,48 @@ class SocketIOManager: NSObject {
             completionHandler(responseString)
         }
     }
+    
+    func changeUsername(userId: Int, newUsername: String) {
+        socket.emit("change_username", userId, newUsername)
+    }
+    
+    func setUsernameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("username_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changeEmail(userId: Int, newEmail: String) {
+        socket.emit("change_email", userId, newEmail)
+    }
+    
+    func setEmailChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("email_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changePhoneNo(userId: Int, newPhoneNo: String) {
+        socket.emit("change_phone_number", userId, newPhoneNo)
+    }
+    
+    func setPhoneNoChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("phone_number_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changeAbout(userId: Int, newAbout: String) {
+        socket.emit("change_about", userId, newAbout)
+    }
+    
+    func setAboutChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("about_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
 }

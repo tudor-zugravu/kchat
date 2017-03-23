@@ -51,17 +51,51 @@ class ProfileViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         if !(passedValue != nil) {
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.fullNamelongPress))
-            self.fullNameLabel.addGestureRecognizer(longPress)
-            
-            
+            let fullNameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.fullNameLongPress))
+            self.fullNameLabel.addGestureRecognizer(fullNameLongPressGesture)
+            let usernameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.usernameLongPress))
+            self.usernameLabel.addGestureRecognizer(usernameLongPressGesture)
+            let emailLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.emailLongPress))
+            self.emailLabel.addGestureRecognizer(emailLongPressGesture)
+            let phoneNoLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.phoneNoLongPress))
+            self.phoneNoLabel.addGestureRecognizer(phoneNoLongPressGesture)
+            let aboutLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.aboutLongPress))
+            self.aboutLabel.addGestureRecognizer(aboutLongPressGesture)
             
             SocketIOManager.sharedInstance.setFullNameChangedListener(completionHandler: { (response) -> Void in
                 self.fullNameLabel.text = response
                 UserDefaults.standard.set(response, forKey:"fullName");
                 UserDefaults.standard.synchronize();
             })
-            
+            SocketIOManager.sharedInstance.setUsernameChangedListener(completionHandler: { (response) -> Void in
+                print(response)
+                if (response == "duplicate") {
+                    let alertView = UIAlertController(title: "Failed",
+                                                      message: "Username already exists" as String, preferredStyle:.alert)
+                    let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                    alertView.addAction(okAction)
+                    self.present(alertView, animated: true, completion: nil)
+                } else {
+                    self.usernameLabel.text = response
+                    UserDefaults.standard.set(response, forKey:"username");
+                    UserDefaults.standard.synchronize();
+                }
+            })
+            SocketIOManager.sharedInstance.setEmailChangedListener(completionHandler: { (response) -> Void in
+                self.emailLabel.text = response
+                UserDefaults.standard.set(response, forKey:"email");
+                UserDefaults.standard.synchronize();
+            })
+            SocketIOManager.sharedInstance.setPhoneNoChangedListener(completionHandler: { (response) -> Void in
+                self.phoneNoLabel.text = response
+                UserDefaults.standard.set(response, forKey:"phoneNo");
+                UserDefaults.standard.synchronize();
+            })
+            SocketIOManager.sharedInstance.setAboutChangedListener(completionHandler: { (response) -> Void in
+                self.aboutLabel.text = response
+                UserDefaults.standard.set(response, forKey:"about");
+                UserDefaults.standard.synchronize();
+            })
         }
     }
     
@@ -112,7 +146,7 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    func fullNamelongPress(sender : UILongPressGestureRecognizer){
+    func fullNameLongPress(sender : UILongPressGestureRecognizer){
         if sender.state == .began {
             let alert = UIAlertController(title: "Edit name", message: "Enter the new name", preferredStyle: .alert)
             alert.addTextField { (textField) in
@@ -122,6 +156,104 @@ class ProfileViewController: UIViewController {
                 let textField = alert?.textFields![0]
                 if textField?.text != "" && textField?.text != nil {
                     SocketIOManager.sharedInstance.changeFullName(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newName: (textField?.text)!)
+                }
+            }))
+            alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func usernameLongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Edit username", message: "Enter the new username", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.text = ""
+            }
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0]
+                if textField?.text != "" && textField?.text != nil {
+                    SocketIOManager.sharedInstance.changeUsername(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newUsername: (textField?.text)!)
+                }
+            }))
+            alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func emailLongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Edit email", message: "Enter the new email", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.text = ""
+            }
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0]
+                if textField?.text != "" && textField?.text != nil {
+                    // Email format check
+                    let mailPattern = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
+                    let email = MyRegex(mailPattern)
+                    if email.match(input: (textField?.text!)!) {
+                        SocketIOManager.sharedInstance.changeEmail(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newEmail: (textField?.text)!)
+                    }else{
+                        let alertView = UIAlertController(title: "Failed",
+                                                          message: "Email format not valid" as String, preferredStyle:.alert)
+                        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                        alertView.addAction(okAction)
+                        self.present(alertView, animated: true, completion: nil)
+                    }
+                }
+            }))
+            alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func phoneNoLongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Edit phone number", message: "Enter the new phone number", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.text = ""
+            }
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0]
+                if textField?.text != "" && textField?.text != nil {
+                    // Telephone format check
+                    let phoneParrern = "^7[0-9]{9}$"
+                    let matcher = MyRegex(phoneParrern)
+                    if matcher.match(input: (textField?.text!)!){
+                        SocketIOManager.sharedInstance.changePhoneNo(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newPhoneNo: (textField?.text)!)
+                    } else {
+                        let alertView = UIAlertController(title: "Failed",
+                                                          message: "Phone number format not valid" as String, preferredStyle:.alert)
+                        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                        alertView.addAction(okAction)
+                        self.present(alertView, animated: true, completion: nil)
+                    }
+                }
+            }))
+            alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func aboutLongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Edit description", message: "Enter new description", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.text = ""
+            }
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0]
+                if textField?.text != "" && textField?.text != nil {
+                    if (textField?.text)!.characters.count <= 50 {
+                        SocketIOManager.sharedInstance.changeAbout(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newAbout: (textField?.text)!)
+                    } else {
+                        let alertView = UIAlertController(title: "Failed",
+                                                         message: "Description must be under 50 characters" as String, preferredStyle:.alert)
+                        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                        alertView.addAction(okAction)
+                        self.present(alertView, animated: true, completion: nil)
+                    }
                 }
             }))
             alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
@@ -183,4 +315,23 @@ class ProfileViewController: UIViewController {
         }
     }
     
+    //regular expression function
+    struct  MyRegex {
+        let regex: NSRegularExpression?
+        
+        init(_ pattern: String) {
+            regex = try? NSRegularExpression(pattern: pattern,
+                                             options: .caseInsensitive)
+        }
+        
+        func match(input: String) -> Bool {
+            if let matches = regex?.matches(in: input,
+                                            options: [],
+                                            range: NSMakeRange(0, (input as NSString).length)) {
+                return matches.count > 0
+            } else {
+                return false
+            }
+        }
+    }
 }
