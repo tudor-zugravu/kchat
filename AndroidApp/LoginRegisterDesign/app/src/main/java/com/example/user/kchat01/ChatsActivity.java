@@ -61,6 +61,8 @@ public class ChatsActivity extends AppCompatActivity {
     public static boolean didOverscroll = false;
     DataManager dm;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +99,7 @@ public class ChatsActivity extends AppCompatActivity {
           //  recyclerView.setNestedScrollingEnabled(false);
         }else {
             ContactsActivity.mSocket.connect();
+            ContactsActivity.mSocket.on("you_were_deleted",contactDelete);
             ContactsActivity.mSocket.on("private_room_created", stringReply2);
             ContactsActivity.mSocket.emit("create_private_room", userId, MasterUser.usersId);
             ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
@@ -313,5 +316,29 @@ public class ChatsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private Emitter.Listener contactDelete = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args [0]; // id to delete from active chats
+                    Log.d("DELETESTATUS","Deleted here:" + received);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ChatsActivity.this);
+                    builder.setMessage("No Internet detected please connect to the internet to continue").setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).create().show();
+                    builder.setCancelable(false);
+
+                }
+            });
+        }
+    };
+
+
 
 }

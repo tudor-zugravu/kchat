@@ -310,6 +310,7 @@ public class SearchRequestActivity extends AppCompatActivity {
                     startActivity(getIntent());
                 }
             });
+
         }
     };
 

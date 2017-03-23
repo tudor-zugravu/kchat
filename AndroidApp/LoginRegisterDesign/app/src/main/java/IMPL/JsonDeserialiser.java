@@ -195,7 +195,7 @@ private void groupDeserialiser(){
                         contact.setContactId(senderId);
                         contact.setContactName(senderName);
                         contact.setContactPicture(senderProfilePicture);
-                        getImage(receiverProfilePicture,receiverId,contact);
+                        getImage(senderProfilePicture,Integer.toString(senderId),contact);
                     }
                     Log.d("CALLEDCHAT", "object size: " + receiverName);
                     Log.d("CALLEDCHAT", "object size: " + senderName);

@@ -71,8 +71,33 @@ public class ContactsActivity extends AppCompatActivity {
     public static final int uniqueId = 45611;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (tabId == contacts) {
+            try {
+                    if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
+                    }else {
+                        Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                        String type2 = "getcontacts";
+                        String contacts_url = "http://188.166.157.62:3000/contacts";
+                        ArrayList<String> paramList2 = new ArrayList<>();
+                        paramList2.add("userId");
+                        RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                        String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                        JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                    }
+                }catch(InterruptedException e){
+                }catch(ExecutionException f){
+                }}
+
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("CEK","RESUMED");
         dm = new DataManager(ContactsActivity.this);
              if(man.getProfileLocation()!=null) {
                  if(InternetHandler.hasInternetConnection(ContactsActivity.this,0)==false){
@@ -102,6 +127,7 @@ public class ContactsActivity extends AppCompatActivity {
         }else {
             mSocket.connect();
             mSocket.on("connect", startConnection);
+            mSocket.on("accepted_my_contact_request",refreshLayout);
             mSocket.on("disconnected", disconnectManager);
             mSocket.on("authenticated", authenticate);////
             mSocket.on("sent_chats", currentChats);
@@ -199,6 +225,8 @@ public class ContactsActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 ContactsActivity.tabId = tabId;
                 if (tabId == R.id.chats) {
+                    Log.d("TABPRESS","i selected chats");
+                    mSocket.emit("get_chats", MasterUser.usersId);
                     btn_receiveRequest.setVisibility(GONE);
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
@@ -232,6 +260,7 @@ public class ContactsActivity extends AppCompatActivity {
 
                 }
                 if (tabId == R.id.groups) {
+                    Log.d("TABPRESS","i selected groups");
                     btn_receiveRequest.setVisibility(GONE);
                     btn_sendRequest.setVisibility(GONE);
                     btn_searchContacts.setVisibility(GONE);
@@ -258,6 +287,8 @@ public class ContactsActivity extends AppCompatActivity {
                     recyclerView.setAdapter(adapter);
                 }
                 if (tabId == contacts) {
+                    Log.d("TABPRESS","i selected contact");
+
                     btn_receiveRequest.setVisibility(VISIBLE);
                     btn_sendRequest.setVisibility(VISIBLE);
                     btn_searchContacts.setVisibility(VISIBLE);
@@ -331,6 +362,8 @@ public class ContactsActivity extends AppCompatActivity {
                     recyclerView.setAdapter(adapter);
                 }
                 if (tabId == R.id.profile) {
+                    Log.d("TABPRESS","i selected profile");
+
                     ContactsActivity.tabId=tabId;
                     Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                     MasterUser man = new MasterUser();
@@ -402,6 +435,8 @@ public class ContactsActivity extends AppCompatActivity {
                 public void run() {
                     String receivedMessages = (String) args [0];
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"chats",ContactsActivity.this);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
                 }
             });
         }
@@ -426,7 +461,33 @@ public class ContactsActivity extends AppCompatActivity {
             ContactsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String received = (String) args [0]; // room number
+                    String received = (String) args [0]; // id to delete from active chats
+                    Log.d("DELETESTATUS","Deleted here:" + received);
+
+                    if(Contacts.activeChat!=null){
+                        for(int i =0; i<Contacts.activeChat.size(); i++){
+                            if(Contacts.activeChat.get(i).getUserId().equals(received)){
+                                Contacts.activeChat.remove(i);
+                                adapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    }
+
+                    if(Contacts.contactList!=null){
+                        for(int i =0; i<Contacts.contactList.size(); i++){
+                            if(Contacts.contactList.get(i).getUserId().equals(received)){
+                                Contacts.contactList.remove(i);
+                                adapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    }
+
+                    if(dm!=null&& dm.selectAllContacts().getCount()>0){
+                        dm.deleteContact(received);
+                        Log.d("CONTACTSSIZE", "i reached here");
+                    }
 
                 }
             });
@@ -525,6 +586,37 @@ public class ContactsActivity extends AppCompatActivity {
                     String sendersName = (String) args [0];
                     Log.d("CONTACTREQUEST","received from"+ sendersName);
                     notificationRevealer("Friend Request","You have received a friend request from: " + sendersName,ContactsActivity.this);
+                }
+            });
+        }
+    };
+
+
+
+    private Emitter.Listener refreshLayout = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
+
+                        }else {
+                            Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                            String type2 = "getcontacts";
+                            String contacts_url = "http://188.166.157.62:3000/contacts";
+                            ArrayList<String> paramList2 = new ArrayList<>();
+                            paramList2.add("userId");
+                            RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        }
+                    }catch(InterruptedException e){
+                    }catch(ExecutionException f){
+                    }
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
                 }
             });
         }

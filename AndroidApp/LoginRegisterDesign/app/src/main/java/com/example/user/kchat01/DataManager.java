@@ -195,11 +195,11 @@ public class DataManager {
         db.execSQL(query2);
     }
 
-    public void deleteContact(String name){
+    public void deleteContact(String contactId){
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  CONTACTS_TABLE+
                 " WHERE " + CONTACT_TABLE_USERID +
-                " = '" + name + "';";
+                " = '" + contactId + "';";
         Log.i("delete() = ", query);
         db.execSQL(query);
     }
