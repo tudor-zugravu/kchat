@@ -13,7 +13,9 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    var searchActive : Bool = false
     var chats: [ChatModel] = []
+    var filteredChats: [ChatModel] = []
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -46,20 +48,49 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filteredChats = chats.filter({ (chat) -> Bool in
+            return (chat.receiverName!.lowercased().hasPrefix(searchText.lowercased()));
+        })
+        
+        self.tableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return chats.count
+        if(searchActive){
+            return filteredChats.count
+        } else {
+            return chats.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "chatsCell") as? ChatsTableViewCell {
-            if chats.count == 0 {
-                cell.configureCell("", lastMessage: "", timestamp: "", profilePic: "")
+            
+            var item: ChatModel
+            
+            if(searchActive){
+                item = filteredChats[indexPath.row]
             } else {
-                let item: ChatModel = chats[indexPath.row]
-                cell.configureCell(item.receiverName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.profilePicture!)
+                item = chats[indexPath.row]
             }
+            
+            cell.configureCell(item.receiverName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.profilePicture!)
             return cell
         } else {
             return ChatsTableViewCell()

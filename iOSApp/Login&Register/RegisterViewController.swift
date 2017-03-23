@@ -155,7 +155,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
         self.present(myAlert, animated:true, completion:nil);
     }
     
-    //regular expression funtion
+    //regular expression function
     struct  MyRegex {
         let regex: NSRegularExpression?
         

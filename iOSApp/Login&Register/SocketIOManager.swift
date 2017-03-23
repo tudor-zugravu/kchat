@@ -459,6 +459,18 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func deleteAccount(userId: Int) {
+        socket.emit("delete_account", userId)
+    }
+    
+    func setAccountDeletedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("account_deleted") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            print(responseString)
+        }
+    }
+    
     func setGroupRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
         socket.off("group_room_created")
         socket.on("group_room_created") { ( dataArray, ack) -> Void in
@@ -470,5 +482,60 @@ class SocketIOManager: NSObject {
     
     func createGroupRoom(groupId: String) {
         socket.emit("create_group_room", groupId)
+    }
+    
+    func changeFullName(userId: Int, newName: String) {
+        socket.emit("change_fullname", userId, newName)
+    }
+    
+    func setFullNameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("fullname_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changeUsername(userId: Int, newUsername: String) {
+        socket.emit("change_username", userId, newUsername)
+    }
+    
+    func setUsernameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("username_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changeEmail(userId: Int, newEmail: String) {
+        socket.emit("change_email", userId, newEmail)
+    }
+    
+    func setEmailChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("email_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changePhoneNo(userId: Int, newPhoneNo: String) {
+        socket.emit("change_phone_number", userId, newPhoneNo)
+    }
+    
+    func setPhoneNoChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("phone_number_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func changeAbout(userId: Int, newAbout: String) {
+        socket.emit("change_about", userId, newAbout)
+    }
+    
+    func setAboutChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("about_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
     }
 }

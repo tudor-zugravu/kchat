@@ -62,22 +62,29 @@
 
             <!-- /.navbar-header -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li >
-                        <a href="#">
-                            <img src="/images/chat.png" width="40" height="40">
-                    </a>
-                    </li>
-                    <li>
-                        <a href="/group">
-                            <img src="/images/group.png" width="40" height="40">
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="/contact">
-                            <img src="/images/profile.png" width="40" height="40">
-                        </a>
-                    </li>
+              <ul class="nav navbar-nav">
+                <li >
+                    <a href="/profile" >
+                        <img src="/images/profile.png" width="40" height="40">
+                </a>
+                </li>
+                  <li >
+                      <a href="/chat" class="active">
+                          <img src="/images/chat.png" width="40" height="40">
+                  </a>
+                  </li>
+                  <li>
+                      <a href="/groupChat">
+                          <img src="/images/group.png" width="40" height="40">
+                      </a>
+                  </li>
+                  <li >
+                      <a href="/contacts">
+                          <img src="/images/profile.png" width="40" height="40">
+                      </a>
+                  </li>
+
+
 
             <!--    <li>
                     <form id="search_user" action="">
@@ -174,7 +181,17 @@
 
                     <p><%= contacts[pointer].phone_number %></p>
                 </div>
+                <div>
                   <button type="button" onclick="deleteContact(<%=user_id %>,<%= contacts[pointer].user_id %>)">Delete contact</button>
+                  </div>
+                  <div>
+                    <form method="post" action="/chat">
+                    <input name="contactId" type="hidden" value="<%= contacts[pointer].user_id %>">
+                    <input name="contactName" type="hidden" value="<%= contacts[pointer].name %>">
+                    <button type="submit"> Start Conversation </button>
+                    </form>
+                    </div>
+
         </div>
         <ul id="search_result">
 

@@ -48,10 +48,15 @@
 <body onLoad="viewchats(<%=user_id %>)">
   <P id="user_id"  style="visibility: invisible"><%=user_id %></p>
     <P id="fullName" ><%=fullname %></p>
+
     <div id="test">
 
     </div>
     <div id="wrapper">
+
+
+        <p id="target_id"><%= target_id %></p>
+          <p id="target_name"><%= target_name %></p>
 
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -67,6 +72,11 @@
             <!-- /.navbar-header -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
+                  <li >
+                      <a href="/profile" >
+                          <img src="/images/profile.png" width="40" height="40">
+                  </a>
+                  </li>
                     <li >
                         <a href="/chat" class="active">
                             <img src="/images/chat.png" width="40" height="40">
@@ -168,7 +178,16 @@
         var socket = io.connect('http://188.166.157.62:3000');
         var currentUser = $("#user_id").text();
         var name=$("#fullName").text();
+        var target_id=$("#target_id").text();
+        var target_name=$("#target_name").text();
         var room;
+
+        if(target_id!= 0){
+         chat(target_id,target_name,name);
+         console.log("chat now");
+        }
+
+
 
 
         function viewchats(id,name){

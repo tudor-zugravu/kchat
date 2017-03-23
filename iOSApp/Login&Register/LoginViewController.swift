@@ -57,7 +57,6 @@ class LoginViewController: UIViewController, LogInModelProtocol {
             self.present(alertView, animated: true, completion: nil)
         } else {
             
-            print(userDetails)
             // Ensure that none of the JSON values are nil through optional binding
             if let email = userDetails["email"] as? String,
                 let username = userDetails["username"] as? String,

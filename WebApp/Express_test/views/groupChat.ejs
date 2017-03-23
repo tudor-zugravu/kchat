@@ -56,6 +56,11 @@
             <!-- /.navbar-header -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
+                  <li >
+                      <a href="/profile" >
+                          <img src="/images/profile.png" width="40" height="40">
+                  </a>
+                  </li>
                     <li >
                         <a href="/chat" >
                             <img src="/images/chat.png" width="40" height="40">
@@ -70,6 +75,12 @@
                         <a href="/contacts">
                             <img src="/images/profile.png" width="40" height="40">
                         </a>
+                    </li>
+                    <li>
+                      <button type="button" onclick="showPage()">
+                        <i class="fa fa-plus"></i>
+                      </button>
+
                     </li>
 
 
@@ -110,7 +121,21 @@
       </div>
 
         <div id="page-wrapper">
+          <div id="chatMenu">
+            <div class="dropdown" style="float:right;">
+              <button class="dropbtn"><i class="fa fa-plus"></i></button>
+              <div class="dropdown-content" style="left:0;">
+                <form id="search_user" action="">
+                  <input id="search" autocomplete="off" / placeholder="search user">
+                  <button class="btn btn-default" type="submit" href="/search">
+                    <i class="fa fa-search"></i>
+                    </button>
+                  </form>
+              </div>
+            </div>
+          </div>
          <div id="chatContent">
+
 
          </div>
         <div class="col-md-12 col-xs-12 login_control" style="position:fixed; bottom:20px; width: 100%;">
@@ -122,8 +147,35 @@
             </form>
 
         </div>
+        <div id="creatGroup" style="display:none;">
+          <form id="create_group_form" action="" onsubmit="return createGroup();">
+           <input type="text" placeholder="Group Name" id="group_name">
+            <input type="text" placeholder="Group description" id="group_description">
+            <p>
+              Upload Group picture:
+            </p>
+            <input class="profile-pic" type="file" id="group_pic" accept="image/*">
+           <div class="select_group_members">
+             <p>
+               Select group members:
+             </p>
+          <ul style="list-style-type: none">
+            <% for(var i=0; i < contacts.length; i++) { %>
+              <li><input type="checkbox" value="<%= contacts[i].user_id %>" name="select_group_contact"><%= contacts[i].username %> (<%= contacts[i].name %>)</li>
 
+              <% } %>
 
+            </ul>
+            </div>
+          <button type="submit">DONE</button>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div>
+
+        <div id="createGroupSuccess" style="display:none;">
+          <p>You have successfully created group </p>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+        </div>
           </div>
 
 
@@ -230,7 +282,10 @@
           }
         }
       });
-
+      socket.emit('authenticate', currentUser,name);
+      socket.on('authenticated',function(msg){
+        console.log("autenticated"+msg);
+      });
       socket.emit('create_group_room',group_id);
       socket.on('update_chat',function(msg){
         console.log("updatechat: "+msg);
@@ -252,6 +307,35 @@
       return false;
     }
 
+    function showPage(){
+      console.log("create group now");
+      $('#creatGroup').modal();
+    }
+
+    function createGroup() {
+      console.log("initial create group");
+      var userids = new Array();
+    $("input:checkbox[name=select_group_contact]:checked").each(function(){
+        userids.push($(this).val());
+});
+   console.log(userids);
+   var group_name=$("#group_name").val();
+   var group_description =$("#group_description").val();
+   var group_pic = $("#group_pic").val();
+   console.log(group_name);
+   console.log(group_description);
+   console.log(group_pic);
+   console.log(currentUser);
+   socket.emit('create_group',group_name,group_description,currentUser,group_pic,userids);
+   socket.on('group_created',function(msg){
+     console.log("group creatted: "+msg);
+     $.modal.close();
+     //Open Invite Sucessful Modal
+     $('#createGroupSuccess').modal();
+   })
+
+    return false;
+    }
 
     </script>
 </body>
