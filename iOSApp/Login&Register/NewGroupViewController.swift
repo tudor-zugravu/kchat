@@ -15,8 +15,11 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var selectedImage: UIImageView!
     
-    var contacts: [ContactModel] = []
+    var contacts: [SelectedContactModel] = []
     let contactsModel = ContactsModel()
+    var numberOfSelectedContacts: Int = 0
+    var imageHasChanged: Bool = false
+    var selectedImagee: UIImage? = nil
     
     let picker = UIImagePickerController()
     
@@ -62,10 +65,10 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "addGroupContactsCell") as? AddGroupContactsTableViewCell {
             
-            var item: ContactModel
+            var item: SelectedContactModel
             item = contacts[indexPath.row]
             
-            cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!, selected: false)
+            cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!, selected: item.selected!)
             
             return cell
         } else {
@@ -75,39 +78,43 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        (tableView.cellForRow(at: indexPath) as? AddGroupContactsTableViewCell)?.selectCell()
+        let cell = tableView.cellForRow(at: indexPath) as! AddGroupContactsTableViewCell
+        if (cell.contactIsSelected) {
+            cell.selectCell()
+            contacts[indexPath.row].selected = false
+            numberOfSelectedContacts -= 1
+        } else if (numberOfSelectedContacts == 5) {
+            let alertView = UIAlertController(title: "Failed",
+                                              message: "There can be only 6 members in a group" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+            alertView.addAction(okAction)
+            self.present(alertView, animated: true, completion: nil)
+        } else {
+            cell.selectCell()
+            contacts[indexPath.row].selected = true
+            numberOfSelectedContacts += 1
+        }
     }
     
     // The function called at the arival of the response from the server
     func contactsDownloaded(_ contactDetails: [[String:Any]]) {
         
-        var contactsAux: [ContactModel] = []
-        var item:ContactModel;
+        var contactsAux: [SelectedContactModel] = []
+        var item:SelectedContactModel;
         
         // parse the received JSON and save the contacts
         for i in 0 ..< contactDetails.count {
             
-            if let username = contactDetails[i]["username"] as? String,
-                let name = contactDetails[i]["name"] as? String,
+            if let name = contactDetails[i]["name"] as? String,
                 let email = contactDetails[i]["email"] as? String,
-                let phoneNo = contactDetails[i]["phone_number"] as? String,
                 let userId = contactDetails[i]["user_id"] as? Int,
                 let contactId = contactDetails[i]["contact_id"] as? Int
             {
-                item = ContactModel()
-                item.username = username
+                item = SelectedContactModel()
                 item.name = name
                 item.email = email
-                item.phoneNo = phoneNo
                 item.userId = userId
                 item.contactId = contactId
-                item.phoneNo = phoneNo
-                
-                if let about = contactDetails[i]["biography"] as? String {
-                    item.about = about
-                } else {
-                    item.about = ""
-                }
                 
                 if let profilePicture = contactDetails[i]["profile_picture"] as? String {
                     
@@ -134,12 +141,13 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
                 } else {
                     item.profilePicture = ""
                 }
+                item.selected = false
                 
                 contactsAux.append(item)
             }
         }
         contacts = contactsAux
-        
+        numberOfSelectedContacts = 0
         self.tableView.reloadData()
     }
 
@@ -170,21 +178,59 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         let _ = navigationController?.popViewController(animated: true)
     }
     @IBAction func doneButtonPressed(_ sender: Any) {
-//        if groupNameTextField.text != nil{
+//    if groupNameTextField.text != nil {
 //            groupModel.data_request(groupNameTextField.text!)
-//        }else{
-//            
-//            // Display alert messaage
-//            displayAlertMessage(mymessage: "All fields are required!");
-//        }
+//    }
+        
+        if (imageHasChanged) {
+            // upload image
+            if let capturePhotoImage = selectedImagee {
+                if let imageData = UIImagePNGRepresentation(capturePhotoImage) {
+                    let encodedImageData = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+                    
+                    // Setting up the server session with the URL and the request
+                    let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
+                    let session = URLSession.shared
+                    var request = URLRequest(url:url)
+                    request.httpMethod = "POST"
+                    request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+                    
+                    // Request parameters
+                    let paramString = "image=\(encodedImageData)&sender=\(UserDefaults.standard.value(forKey: "userId")!)"
+                    request.httpBody = paramString.data(using: String.Encoding.utf8)
+                    
+                    let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                        guard let data = data, error == nil else {
+                            print("error=\(error)")
+                            return
+                        }
+                        if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
+                            print("statusCode should be 200, but is \(httpStatus.statusCode)")
+                            print("response = \(response)")
+                        }
+                        let responseString = String(data: data, encoding: .utf8)
+                        print("responseString = \(responseString)")
+                    }
+                    task.resume()
+                }
+            }
+        }
 
+        var selectedContacts: [Int] = []
+        contacts.forEach { contact in
+            if contact.selected! {
+                selectedContacts.append(contact.userId!)
+            }
+        }
+        
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
         selectedImage.contentMode = .scaleAspectFit //3
         selectedImage.image = chosenImage //4
-        print("yep")
+        selectedImagee = chosenImage
+        imageHasChanged = true
         dismiss(animated:true, completion: nil) //5
     }
     

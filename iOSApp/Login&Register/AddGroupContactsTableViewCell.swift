@@ -28,7 +28,6 @@ class AddGroupContactsTableViewCell: UITableViewCell {
         containerView.layer.shadowRadius = 3
         containerView.layer.shadowOpacity = 0.6
         containerView.clipsToBounds = false
-        contactIsSelected = false
         isSelectedImage.isHidden = true
     }
     
@@ -46,7 +45,7 @@ class AddGroupContactsTableViewCell: UITableViewCell {
         } else {
             isSelectedImage.isHidden = true
         }
-        contactIsSelected = false
+        contactIsSelected = selected
     }
     
     func selectCell () {

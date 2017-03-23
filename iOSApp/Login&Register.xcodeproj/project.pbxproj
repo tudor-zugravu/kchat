@@ -71,6 +71,7 @@
 		C33313701E7D8DCD00B8F229 /* GroupChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */; };
 		C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35C91E51E7EEA6900D6555B /* TabBarController.swift */; };
 		C3A527711E84146000697D5F /* AddGroupContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */; };
+		C3A527731E8443FB00697D5F /* SelectedContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527721E8443FB00697D5F /* SelectedContactModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +162,7 @@
 		C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatModel.swift; sourceTree = "<group>"; };
 		C35C91E51E7EEA6900D6555B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddGroupContactsTableViewCell.swift; sourceTree = "<group>"; };
+		C3A527721E8443FB00697D5F /* SelectedContactModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedContactModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +246,7 @@
 				384D31E01E783B44003DA0B1 /* ChatModel.swift */,
 				384D31E81E799E3C003DA0B1 /* MessageModel.swift */,
 				C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */,
+				C3A527721E8443FB00697D5F /* SelectedContactModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -502,6 +505,7 @@
 				3810AC031E742DD2005A98EB /* AddContactViewController.swift in Sources */,
 				3810AC251E743CBF005A98EB /* SocketEngine.swift in Sources */,
 				388D0E1D1E5607A000EDADA2 /* RegisterModel.swift in Sources */,
+				C3A527731E8443FB00697D5F /* SelectedContactModel.swift in Sources */,
 				3810AC2F1E743CBF005A98EB /* SocketIOClientOption.swift in Sources */,
 				3810AC321E743CBF005A98EB /* SocketLogger.swift in Sources */,
 				3810AC211E743CBF005A98EB /* SocketAckEmitter.swift in Sources */,

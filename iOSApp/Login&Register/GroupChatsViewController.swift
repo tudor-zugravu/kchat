@@ -146,7 +146,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
                         item.groupPicture = groupPicture
                     } else {
                         // Download the profile picture, if exists
-                        if let url = URL(string: "http://188.166.157.62/profile_pictures/\(groupPicture)") {
+                        if let url = URL(string: "http://188.166.157.62/group_pictures/\(groupPicture)") {
                             if let data = try? Data(contentsOf: url) {
                                 var profileImg: UIImage
                                 profileImg = UIImage(data: data)!
