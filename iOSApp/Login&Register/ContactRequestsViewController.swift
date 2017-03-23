@@ -14,7 +14,10 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var titleLabel: UILabel!
     
+    var searchActive : Bool = false
     var contacts: [ContactModel] = []
+    var filteredContacts: [ContactModel] = []
+    
     var passedValue: Bool?
     
     override func viewDidLoad() {
@@ -90,20 +93,49 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         view.addGestureRecognizer(tap)
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filteredContacts = contacts.filter({ (contact) -> Bool in
+            return (contact.name!.lowercased().hasPrefix(searchText.lowercased()));
+        })
+        
+        self.tableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return contacts.count
+        if(searchActive){
+            return filteredContacts.count
+        } else {
+            return contacts.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
-            if contacts.count == 0 {
-                cell.configureCell("", email: "", profilePic: "")
+
+            var item: ContactModel
+            
+            if(searchActive){
+                item = filteredContacts[indexPath.row]
             } else {
-                let item: ContactModel = contacts[indexPath.row]
-                cell.configureCell(item.username!, email: item.name!, profilePic: item.profilePicture!)
+                item = contacts[indexPath.row]
             }
+
+            cell.configureCell(item.name!, email: item.username!, profilePic: item.profilePicture!)
             return cell
         } else {
             return ContactsTableViewCell()

@@ -66,12 +66,8 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
-            if contacts.count == 0 {
-                cell.configureCell("", email: "", profilePic: "")
-            } else {
-                let item: FilteredContactModel = contacts[indexPath.row]
-                cell.configureCell(item.username!, email: item.name!, profilePic: "")
-            }
+            let item: FilteredContactModel = contacts[indexPath.row]
+            cell.configureCell(item.name!, email: item.username!, profilePic: "")
             return cell
         } else {
             return ContactsTableViewCell()

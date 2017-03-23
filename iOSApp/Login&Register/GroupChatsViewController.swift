@@ -13,7 +13,9 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    var searchActive : Bool = false
     var chats: [GroupChatModel] = []
+    var filteredChats: [GroupChatModel] = []
     
     override func viewDidLoad() {
         tableView.delegate = self
@@ -50,20 +52,49 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filteredChats = chats.filter({ (chat) -> Bool in
+            return (chat.groupName!.lowercased().hasPrefix(searchText.lowercased()));
+        })
+        
+        self.tableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return chats.count
+        if(searchActive){
+            return filteredChats.count
+        } else {
+            return chats.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "chatsCell") as? ChatsTableViewCell {
-            if chats.count == 0 {
-                cell.configureCell("", lastMessage: "", timestamp: "", profilePic: "")
+
+            var item: GroupChatModel
+            
+            if(searchActive){
+                item = filteredChats[indexPath.row]
             } else {
-                let item: GroupChatModel = chats[indexPath.row]
-                cell.configureCell(item.groupName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.groupPicture!)
+                item = chats[indexPath.row]
             }
+
+            cell.configureCell(item.groupName!, lastMessage: item.lastMessage!, timestamp: item.timestamp!, profilePic: item.groupPicture!)
             return cell
         } else {
             return ChatsTableViewCell()

@@ -803,7 +803,6 @@
                 <searchDisplayController id="yoI-vW-Syc">
                     <connections>
                         <outlet property="delegate" destination="DMf-8i-c2Q" id="Mvz-Yo-yBy"/>
-                        <outlet property="searchBar" destination="yMh-og-FC1" id="UY1-fT-1V1"/>
                         <outlet property="searchContentsController" destination="DMf-8i-c2Q" id="Q4l-Md-S7F"/>
                         <outlet property="searchResultsDataSource" destination="DMf-8i-c2Q" id="pr4-7X-f8K"/>
                         <outlet property="searchResultsDelegate" destination="DMf-8i-c2Q" id="mSA-v2-Xmb"/>
@@ -2050,7 +2049,6 @@
                 <searchDisplayController id="3GU-xh-Gd8">
                     <connections>
                         <outlet property="delegate" destination="rRf-JD-Mhu" id="bzj-MM-LIL"/>
-                        <outlet property="searchBar" destination="TBc-6d-ETD" id="urO-6o-EQB"/>
                         <outlet property="searchContentsController" destination="rRf-JD-Mhu" id="J37-fP-O6w"/>
                         <outlet property="searchResultsDataSource" destination="rRf-JD-Mhu" id="2JV-uK-5Vs"/>
                         <outlet property="searchResultsDelegate" destination="rRf-JD-Mhu" id="Cuh-ej-bRB"/>

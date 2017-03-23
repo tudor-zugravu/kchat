@@ -13,7 +13,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    var searchActive : Bool = false
     var contacts: [ContactModel] = []
+    var filteredContacts: [ContactModel] = []
     let contactsModel = ContactsModel()
     
     class MyTapGestureRecognizer: UITapGestureRecognizer {
@@ -31,6 +33,11 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.dataSource = self
         contactsModel.delegate = self
         searchBar.delegate = self
+        
+//        searchController.searchResultsUpdater = self
+//        searchController.dimsBackgroundDuringPresentation = false
+//        definesPresentationContext = true
+//        tableView.tableHeaderView = searchController.searchBar
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
         
@@ -54,40 +61,60 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        self.contacts.filter { (contact) -> Bool in
-//            print((contact.name!.lowercased().range(of: searchText.lowercased()) != nil))
-//            return (contact.name!.lowercased().range(of: searchText.lowercased()) != nil);
-//        }
-//        self.tableView.reloadData()
+        
+        filteredContacts = contacts.filter({ (contact) -> Bool in
+            return (contact.name!.lowercased().hasPrefix(searchText.lowercased()));
+        })
+        
+        self.tableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
     }
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return contacts.count
+        if(searchActive){
+            return filteredContacts.count
+        } else {
+            return contacts.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "contactsCell") as? ContactsTableViewCell {
+
+            var item: ContactModel
             
-            if contacts.count == 0 {
-                cell.configureCell("", email: "", profilePic: "")
+            if(searchActive){
+                item = filteredContacts[indexPath.row]
             } else {
-                let item: ContactModel = contacts[indexPath.row]
-                cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
-                
-                // Press gestures for cells
-                let tapGesture = MyTapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
-                tapGesture.selectedId = item.userId!
-                tapGesture.selectedName = item.name!
-                tapGesture.selectedPicture = item.profilePicture!
-                tapGesture.numberOfTapsRequired = 1
-                cell.addGestureRecognizer(tapGesture)
-                
-                let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
-                longPress.selectedContact = item
-                cell.addGestureRecognizer(longPress)
+                item = contacts[indexPath.row]
             }
+            
+            cell.configureCell(item.name!, email: item.email!, profilePic: item.profilePicture!)
+            
+            // Press gestures for cells
+            let tapGesture = MyTapGestureRecognizer(target: self, action: #selector(ContactsViewController.shortPress))
+            tapGesture.selectedId = item.userId!
+            tapGesture.selectedName = item.name!
+            tapGesture.selectedPicture = item.profilePicture!
+            tapGesture.numberOfTapsRequired = 1
+            cell.addGestureRecognizer(tapGesture)
+            
+            let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
+            longPress.selectedContact = item
+            cell.addGestureRecognizer(longPress)
             return cell
         } else {
             return ContactsTableViewCell()
