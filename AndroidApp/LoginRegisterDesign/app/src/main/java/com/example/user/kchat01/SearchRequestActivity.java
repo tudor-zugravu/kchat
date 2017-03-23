@@ -72,7 +72,9 @@ public class SearchRequestActivity extends AppCompatActivity {
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
         }else if (type.equals("receiveRequest")){
+            ContactsActivity.mSocket.on("you_received_contact_request",receivedContactRequest);
 
+            ContactsActivity.mSocket.on("no_more_contact_request",contactListener);
             ContactsActivity.mSocket.emit("received_contact_requests",MasterUser.usersId);
             ContactsActivity.mSocket.on("received_requests",contactManagement2);
             //make a request and show
@@ -145,7 +147,8 @@ public class SearchRequestActivity extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // to change this to send request operation
-                                        ContactsActivity.mSocket.emit("send_contact_request",MasterUser.usersId,filteredContact.getUserId());
+                                        MasterUser man = new MasterUser();
+                                        ContactsActivity.mSocket.emit("send_contact_request",MasterUser.usersId,man.getFullName(),filteredContact.getUserId());
                                         ContactsActivity.mSocket.on("sent_request",onlineJoin);
                                         searchView.setQuery(null,false);
                                         Toast.makeText(SearchRequestActivity.this, "sending request", Toast.LENGTH_SHORT).show();
@@ -260,7 +263,52 @@ public class SearchRequestActivity extends AppCompatActivity {
                     };
                         adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
+
                 }}
+            });
+        }
+    };
+
+
+    private Emitter.Listener contactListener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //removing the received requests from a sender on delete in the contacts sent requests
+                    String serverresult = (String) args[0]; //senders id
+                    Log.d("CONTACTVIEWER",serverresult);
+                    Log.d("CONTACTVIEWER","I have reached here");
+                    if(Contacts.receivedRequests!=null) {
+                        for (int i = 0; i < Contacts.receivedRequests.size(); i++) {
+                            Log.d("CONTACTVIEWER","I have reached here 2");
+
+                            if(Contacts.receivedRequests.get(i).getUserId().equals(serverresult)){
+                                Log.d("CONTACTVIEWER","I have reached here 3");
+                                Contacts.receivedRequests.remove(i);
+                                adapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    }
+
+                    }
+            });
+        }
+    };
+
+    private Emitter.Listener receivedContactRequest = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("CONTACTREQUEST","hit here");
+
+                    finish();
+                    startActivity(getIntent());
+                }
             });
         }
     };

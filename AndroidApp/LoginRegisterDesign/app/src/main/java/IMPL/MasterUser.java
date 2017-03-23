@@ -67,6 +67,11 @@ public class MasterUser {
         return username;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+
     public String getEmail() {
         return email;
     }
@@ -85,6 +90,11 @@ public class MasterUser {
     public String getProfileLocation() {
         return this.profileLocation;
     }
+
+    public void setBiography(String biography){
+        this.biography = biography;
+    }
+
 
     public void setUsersImage(Bitmap profile) {
        this.usersprofile=profile;

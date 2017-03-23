@@ -85,7 +85,6 @@ public class AddGroupActivity extends AppCompatActivity {
             ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("group_created",getGroupId);
 
-
         setContentView(R.layout.activity_add_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

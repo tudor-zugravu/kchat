@@ -2,6 +2,7 @@ package com.example.user.kchat01;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -66,7 +67,7 @@ public class ContactsActivity extends AppCompatActivity {
     MasterUser man = new MasterUser();
     DataManager dm;
     public static Socket mSocket;
-    NotificationCompat.Builder notification;
+    static NotificationCompat.Builder notification;
     public static final int uniqueId = 45611;
 
     @Override
@@ -105,6 +106,8 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket.on("authenticated", authenticate);////
             mSocket.on("sent_chats", currentChats);
             mSocket.on("sent_group_chats", currentGroups);
+            mSocket.on("you_received_contact_request",receivedContactRequest);
+            mSocket.on("you_were_deleted",contactDelete);
             mSocket.emit("get_chats", MasterUser.usersId);
             mSocket.emit("get_group_chats", MasterUser.usersId);
         }
@@ -222,20 +225,7 @@ public class ContactsActivity extends AppCompatActivity {
                             contactsIntent.putExtra("contactbitmap",byteArray);
                             startActivity(contactsIntent);
                         }
-                        @Override
-                        public void onLongClick(ContactsViewHolder holder){
-                            int position = recyclerView.getChildAdapterPosition(holder.itemView);
-                            IContacts contact = Contacts.activeChat.get(position);
-                            // move to Profile
-                            Intent profileIntent = new Intent(ContactsActivity.this, ProfileActivity.class);
-                            profileIntent.putExtra("contact_username", contact.getUsername());
-                            profileIntent.putExtra("contact_email", contact.getEmail());
-                            profileIntent.putExtra("contact_phonenumber", contact.getPhoneNumber());
-                            //profileIntent.putExtra("contact_biography", "NOTHING");
-                            profileIntent.putExtra("contacts_bitmap", contact.getBitmap());
-                            profileIntent.putExtra("type", "contactsprofile");
-                            startActivity(profileIntent);
-                        }
+
                     };
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
@@ -430,6 +420,19 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
+    private Emitter.Listener contactDelete = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args [0]; // room number
+
+                }
+            });
+        }
+    };
+
     private Emitter.Listener authenticate = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -461,27 +464,29 @@ public class ContactsActivity extends AppCompatActivity {
                         Log.d("UPDATECHAT",receivedMessages4);
                         String receivedMessages5 = (String) args [4]; // timestamp
                         Log.d("UPDATECHAT",receivedMessages5);
-                        Log.d("UPDATECHAT","global2222!!!");
-                        notification.setSmallIcon(R.drawable.profile_logo);
-                        notification.setTicker("This is the ticker");
-                        notification.setWhen(System.currentTimeMillis());
-                        notification.setContentTitle("Message from:" +receivedMessages3);
-                        notification.setContentText(receivedMessages4);
-                        notification.setSound(Uri.parse("android.resource://" + ContactsActivity.this.getPackageName() + "/" + R.raw.notification));
-                        showNotification();
+                       notificationRevealer(receivedMessages3,receivedMessages4,ContactsActivity.this);
                     }
                 }
             });
         }
     };
 
-    private void showNotification (){
-        Intent intent = new Intent(this,ContactsActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(uniqueId,notification.build());
+    public static void notificationRevealer(String title, String content,Context con){
+        notification.setSmallIcon(R.drawable.profile_logo);
+        notification.setTicker("This is the ticker");
+        notification.setWhen(System.currentTimeMillis());
+        notification.setContentTitle("Message from:" +title);
+        notification.setContentText(content);
+        notification.setSound(Uri.parse("android.resource://" + con.getPackageName() + "/" + R.raw.notification));
+        showNotification(con);
+    }
 
+    public static void showNotification (Context con){
+        Intent intent = new Intent(con,ContactsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(con,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) con.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(uniqueId,notification.build());
     }
 
     private Emitter.Listener chatUpdater = new Emitter.Listener() {
@@ -511,11 +516,25 @@ public class ContactsActivity extends AppCompatActivity {
         }
     };
 
+    private Emitter.Listener receivedContactRequest = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String sendersName = (String) args [0];
+                    Log.d("CONTACTREQUEST","received from"+ sendersName);
+                    notificationRevealer("Friend Request","You have received a friend request from: " + sendersName,ContactsActivity.this);
+                }
+            });
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
-        mSocket.disconnect();
+      //  mSocket.disconnect();
     }
 }

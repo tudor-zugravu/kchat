@@ -84,7 +84,10 @@ public class JsonDeserialiser {
         String blocked=jObject.getString("blocked");
         String session=jObject.getString("session");
         String profile_picture=jObject.getString("profile_picture");
-        MasterUser man=new MasterUser(Integer.parseInt(id),name,email,username,phone_number,Integer.parseInt(blocked),Integer.parseInt(session),profile_picture);
+        String biography=jObject.getString("biography");
+
+            MasterUser man=new MasterUser(Integer.parseInt(id),name,email,username,phone_number,Integer.parseInt(blocked),Integer.parseInt(session),profile_picture);
+            man.setBiography(biography);
         }catch(final JSONException e){
         Log.e("JSON ERROR","Json parsing error: "+e.getMessage());
             }

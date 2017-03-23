@@ -116,7 +116,6 @@ public class CustomActivity extends AppCompatActivity {
                                 }else {
                                     String newPassword = etCurrentPassword.getText().toString();
                                    // String oldPassword = etOldPassword.getText().toString();
-
                                     String type = "profileUpdate";
                                     String login_url = "http://188.166.157.62:3000/changePass";
                                     ArrayList<String> paramList = new ArrayList<>();
