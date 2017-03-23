@@ -459,6 +459,18 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func deleteAccount(userId: Int) {
+        socket.emit("delete_account", userId)
+    }
+    
+    func setAccountDeletedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("account_deleted") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            print(responseString)
+        }
+    }
+    
     func setGroupRoomCreatedListener(completionHandler: @escaping (_ response: String) -> Void) {
         socket.off("group_room_created")
         socket.on("group_room_created") { ( dataArray, ack) -> Void in
