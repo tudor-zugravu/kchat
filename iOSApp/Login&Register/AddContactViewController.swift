@@ -115,7 +115,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     
     func addContact(receiver: Int) {
         
-        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(receiver))
+        SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), userName: UserDefaults.standard.value(forKey: "fullName")! as! String, receiverId: String(receiver))
     }
     
     func dismissKeyboard() {

@@ -70,6 +70,7 @@
 		C333136E1E7D8C4100B8F229 /* GroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */; };
 		C33313701E7D8DCD00B8F229 /* GroupChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */; };
 		C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35C91E51E7EEA6900D6555B /* TabBarController.swift */; };
+		C3A527711E84146000697D5F /* AddGroupContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,6 +160,7 @@
 		C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupConversationViewController.swift; sourceTree = "<group>"; };
 		C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatModel.swift; sourceTree = "<group>"; };
 		C35C91E51E7EEA6900D6555B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddGroupContactsTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 				384D31DC1E7839D8003DA0B1 /* ChatsTableViewCell.swift */,
 				384D31E21E79998B003DA0B1 /* ConversationSentMessageTableViewCell.swift */,
 				384D31E41E7999CE003DA0B1 /* ConversationReceivedMessageTableViewCell.swift */,
+				C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -504,6 +507,7 @@
 				3810AC211E743CBF005A98EB /* SocketAckEmitter.swift in Sources */,
 				389CB7B11E59FC5B00B5FDEE /* ChangePasswordModel.swift in Sources */,
 				59205AFA1E7C965800B92ABF /* EditProfileViewController.swift in Sources */,
+				C3A527711E84146000697D5F /* AddGroupContactsTableViewCell.swift in Sources */,
 				384D31DF1E783A43003DA0B1 /* ChatsViewController.swift in Sources */,
 				3810AC371E743CBF005A98EB /* SSLSecurity.swift in Sources */,
 				59205AF21E7C7E5400B92ABF /* DropMenuButton.swift in Sources */,
