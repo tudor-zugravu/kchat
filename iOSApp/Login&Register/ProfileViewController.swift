@@ -280,8 +280,13 @@ class ProfileViewController: UIViewController {
     //Dropdown menu Initinal
     func dropInit() {
         dropButton.initMenu(["Delete Account", "Change Password", "Logout"],actions: [({ () -> (Void) in
-            SocketIOManager.sharedInstance.deleteAccount(userId: UserDefaults.standard.value(forKey: "userId") as! Int)
-            self.logOut(Any.self)
+            // Popup for validation with accepting a contact request on accept
+            let myAlert = UIAlertController(title:"Delete account", message:"Are you sure you want to delete your account?", preferredStyle:.alert);
+            let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.deleteAccount(userId: UserDefaults.standard.value(forKey: "userId") as! Int)});
+            myAlert.addAction(yesAction);
+            let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+            myAlert.addAction(noAction);
+            self.present(myAlert, animated:true, completion:nil);
             self.dropButton.table.isHidden = true
         }), ({ () -> (Void) in
             self.dropButton.table.isHidden = true
@@ -301,6 +306,11 @@ class ProfileViewController: UIViewController {
     
     func deleteContact(receiver: Int) {
         SocketIOManager.sharedInstance.deleteContact(userId: UserDefaults.standard.value(forKey: "userId") as! Int, otherUserId: receiver)
+    }
+    
+    func deleteAccount(userId: Int) {
+        SocketIOManager.sharedInstance.deleteAccount(userId: userId)
+        self.logOut(Any.self)
     }
     
     @IBAction func deleteContactPressed(_ sender: Any) {
