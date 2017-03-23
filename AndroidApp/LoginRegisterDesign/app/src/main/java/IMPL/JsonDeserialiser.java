@@ -68,7 +68,7 @@ public class JsonDeserialiser {
         }else if (deserializeType.equals("groups")) {
             groupDeserialiser();
         }else if (deserializeType.equals("getgroupcontacts")){
-            //groupContactDdeserialiser();
+          //  groupContactDdeserialiser();
         }else if (deserializeType.equals("groupmessage")) {
             messageDeserialiser(1,"user_id");
         }
@@ -138,7 +138,6 @@ public class JsonDeserialiser {
                     dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 }
             }
-
         }catch( final JSONException e){
                 Log.e("JSON ERROR", "Json parsing error: " + e.getMessage());
             }
@@ -148,6 +147,7 @@ private void groupDeserialiser(){
     Groups.groupList.clear();
     try {
         if(this.serverResult!=null) {
+            Log.d("GROUPSRECEIVED", "object size: " + serverResult);
             JSONArray jArr = new JSONArray(this.serverResult);
             for (int i = 0; i < jArr.length(); i++) {
                 JSONObject obj = jArr.getJSONObject(i);
@@ -160,6 +160,7 @@ private void groupDeserialiser(){
                 IGroups groups = new Groups(groupName,message,groupId,groupPicture,null);
                 Log.d("GROUPSRECEIVED", "object size: " + groupId);
                 Log.d("GROUPSRECEIVED", "object size: " + description);
+                getGroupImage(groupId,groups);
                 Groups.groupList.add(groups);
             }
         }
@@ -210,6 +211,39 @@ private void groupDeserialiser(){
         }
     }
 
+
+    private String getGroupImage (int groupId,IGroups group) {
+        if(InternetHandler.hasInternetConnection(context,1)==false){
+        }else {
+                Bitmap groupBitmap;
+                String image = "";
+                try {
+                    String picture_url = "http://188.166.157.62/group_pictures/" + "group_picture" + groupId + ".jpg";
+                    Log.d("GROUPSRECEIVED", "object size: " + picture_url);
+
+                    String type = "getGroupIcon";
+                    ProfileIconGetter backgroundasync = new ProfileIconGetter(context, picture_url);
+                    groupBitmap = backgroundasync.execute(type).get();
+                    if (groupBitmap != null) {
+                        group.setGroupImage(groupBitmap);
+                        image = encodeToBase64(groupBitmap, Bitmap.CompressFormat.JPEG, 100);
+                        Log.d("DATABASE", "the client has got a image");
+                        Log.d("PROFILE", "image received from the server is :" + image);
+                        return image;
+                    } else {
+                        group.setGroupImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.add_group));
+                        image = encodeToBase64(groupBitmap, Bitmap.CompressFormat.JPEG, 100);
+                        Log.d("DATABASE", "the client does not have an image");
+                        Log.d("PROFILE", "image received from the server is :" + image);
+                        return image;
+                    }
+                } catch (InterruptedException e) {
+                } catch (ExecutionException f) {
+                }
+        }
+        return null;
+    }
+
     private String getImage (String location, String userId,IContacts contact) {
         if(InternetHandler.hasInternetConnection(context,1)==false){
 
@@ -248,6 +282,7 @@ private void groupDeserialiser(){
             if(this.serverResult!=null) {
                  ArrayList <IContacts> contactsInChat = new ArrayList<>();
                 JSONArray jArr = new JSONArray(this.serverResult);
+                Log.d("GROUPCONTACTS",serverResult);
                 for (int i = 0; i < jArr.length(); i++) {
                     JSONObject obj = jArr.getJSONObject(i);
                     String userId = obj.getString("user_id");
@@ -255,7 +290,11 @@ private void groupDeserialiser(){
                     String username = obj.getString("username");
                     String contactPicture = obj.getString("profile_picture");
                     IContacts contact = new Contacts(0, null, userId, contactName, null, username, null, contactPicture);
-                    getImage(contactPicture,userId,contact);
+                    if(contactPicture==null||contactPicture.equals("null")||contactPicture.equals("NULL")||contactPicture.equals("")){
+                        contact.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.human));
+                    }else{
+                        getImage(contactPicture,userId,contact);
+                    }
                     contactsInChat.add(contact);
                 }
                 Log.d("GROUPFUNCTION", "object size: " + contactsInChat.size());

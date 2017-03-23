@@ -135,10 +135,13 @@ public class ProfileActivity extends CustomActivity {
                                         Log.d("REMOVE_USERID", contacts_userid);
                                         Log.d("REMOVE_MASTERID", String.valueOf(MasterUser.usersId));
                                         Log.d("REMOVE_CONTACT_POSI", String.valueOf(contacts_position));
+                                        ContactsActivity.mSocket.emit("delete_contact", MasterUser.usersId,contacts_userid);
+
                                         dialog.cancel();
 
                                             Toast.makeText(ProfileActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                                             btnDelete.setVisibility(GONE);
+                                        onBackPressed();
 
                                     }
                                 });

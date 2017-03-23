@@ -28,7 +28,7 @@ import IMPL.Groups;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> implements ContactsViewHolder.ContactsViewHolderListener, Filterable{
 
     private LayoutInflater inflater;
-    public ArrayList filterList;
+    public  ArrayList filterList;
     ContactsFilter filter;
     private int type;
     Context context;

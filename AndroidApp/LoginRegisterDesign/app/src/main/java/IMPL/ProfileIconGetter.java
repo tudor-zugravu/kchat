@@ -52,7 +52,7 @@ public class ProfileIconGetter extends AsyncTask<String,Void,Bitmap> {
         this.stringParams=params;
         this.type = params[0];
 
-        if(type.equals("getIcon")) {
+        if(type.equals("getIcon")||type.equals("getGroupIcon")) {
             try {
                 URL url = new URL(this.url);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -71,9 +71,19 @@ public class ProfileIconGetter extends AsyncTask<String,Void,Bitmap> {
                 return resizedBitmap;
             } catch (FileNotFoundException e) {
                 Log.d("PROFILE","file not found for PART 10    " + this.url);
-                Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.human);
-                return icon;
+                if(type.equals("getIcon")) {
+                    Log.d("PROFILE222","file not found for contact Image");
+
+                    Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                            R.drawable.human);
+                    return icon;
+                }else if(type.equals("getGroupIcon")){
+                    Log.d("PROFILE222","file not found for groupImage");
+
+                    Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                            R.drawable.add_group);
+                    return icon;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

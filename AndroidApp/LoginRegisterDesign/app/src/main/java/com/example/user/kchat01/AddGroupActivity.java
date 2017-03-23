@@ -268,11 +268,11 @@ public class AddGroupActivity extends AppCompatActivity {
                 public void run() {
                     String receivedMessages = (String) args [0];
                     if(receivedMessages.equals("fail")){
-                        Log.d("USERSLIST", receivedMessages);
+                        Log.d("GROUPLIST", receivedMessages);
                     }else {
-                        receivedMessages = receivedMessages.substring(5);
+                       // receivedMessages = receivedMessages.substring(5);
                         //receivedMessages = receivedMessages.substring(0,1);
-                        Log.d("USERSLIST", " i have received from server    "+receivedMessages);
+                        Log.d("GROUPLIST", " i have received from server"+receivedMessages);
                         groupId = receivedMessages;
 
                         if (groupName.isEmpty() || description.isEmpty()) {
@@ -292,7 +292,7 @@ public class AddGroupActivity extends AppCompatActivity {
 
                                 }else {
                                     if (bitmap != null) {
-                                        Log.d("USERSLIST", " i am sending the groups picture");
+                                        Log.d("GROUPLIST", " i am sending the groups picture");
                                         Bitmap bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
                                         String codedImage = ImageUpload.getStringImage(bitmap);
                                         JsonSerialiser imageSerialiser = new JsonSerialiser();
@@ -310,16 +310,17 @@ public class AddGroupActivity extends AppCompatActivity {
                             }
 
                             if (AddGroupAdapter.checkedUsers != null) {
-
                                 String imageLocation = "group_picture"+groupId+".jpg";
+                                Log.d("GROUPLIST",imageLocation);
                                 IGroups group = new Groups(groupName,description,MasterUser.usersId,imageLocation,usersId);
                                 group.setGroupImage(bitmap);
                                 Groups.groupList.add(group);
                                 //after sending data, back to contact page
                                 Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
-                                Log.d("AddGroup_userId", usersId.toString());
+                                Log.d("GROUPLIST", usersId.toString());
                                 Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
                                 startActivity(myIntent);
+                                finish();
                             }
                         }
                     }

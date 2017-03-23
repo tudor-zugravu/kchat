@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -89,7 +91,6 @@ public class ContactsActivity extends AppCompatActivity {
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
                 }}
-
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
@@ -127,13 +128,13 @@ public class ContactsActivity extends AppCompatActivity {
         }else {
             mSocket.connect();
             mSocket.on("connect", startConnection);
-            mSocket.on("accepted_my_contact_request",refreshLayout);
+            mSocket.on("accepted_my_contact_request",refreshLayout); //-----------refresh
             mSocket.on("disconnected", disconnectManager);
             mSocket.on("authenticated", authenticate);////
             mSocket.on("sent_chats", currentChats);
             mSocket.on("sent_group_chats", currentGroups);
             mSocket.on("you_received_contact_request",receivedContactRequest);
-            mSocket.on("you_were_deleted",contactDelete);
+            mSocket.on("you_were_deleted",refreshLayout);///-----------refresh
             mSocket.emit("get_chats", MasterUser.usersId);
             mSocket.emit("get_group_chats", MasterUser.usersId);
         }
@@ -417,6 +418,12 @@ public class ContactsActivity extends AppCompatActivity {
 
                     Log.d("AUTHENTICATE", receivedMessages);
                     if(receivedMessages!=null&&receivedMessages.equals("disconnect")){
+                        Context context = getApplicationContext();
+                        CharSequence text = "Double sign-in detected";
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                         mSocket.disconnect();
                         Intent loginIntent = new Intent(ContactsActivity.this,LoginActivity.class);
                         startActivity(loginIntent);
@@ -462,31 +469,34 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     String received = (String) args [0]; // id to delete from active chats
-                    Log.d("DELETESTATUS","Deleted here:" + received);
-
-                    if(Contacts.activeChat!=null){
-                        for(int i =0; i<Contacts.activeChat.size(); i++){
-                            if(Contacts.activeChat.get(i).getUserId().equals(received)){
-                                Contacts.activeChat.remove(i);
-                                adapter.notifyDataSetChanged();
-                                recyclerView.setAdapter(adapter);
-                            }
-                        }
-                    }
-
-                    if(Contacts.contactList!=null){
-                        for(int i =0; i<Contacts.contactList.size(); i++){
-                            if(Contacts.contactList.get(i).getUserId().equals(received)){
-                                Contacts.contactList.remove(i);
-                                adapter.notifyDataSetChanged();
-                                recyclerView.setAdapter(adapter);
-                            }
-                        }
-                    }
+//                    Log.d("DELETESTATUS","Deleted here:" + received);
+//                    if(Contacts.activeChat!=null&&!Contacts.activeChat.isEmpty()){
+//                        for(int i =0; i<Contacts.activeChat.size(); i++){
+//                            Log.d("DELETESTATUS",Integer.toString(Contacts.activeChat.get(i).getContactId()));
+//                            if(Contacts.activeChat.get(i).getContactId()==Integer.parseInt(received)){
+//                                Contacts.activeChat.remove(Contacts.activeChat.get(i));
+//                            }
+//                        }
+//                    }
+//
+//                    if(Contacts.contactList!=null&&!Contacts.contactList.isEmpty()){
+//                        for(int i =0; i<Contacts.contactList.size(); i++){
+//                            Log.d("DELETESTATUS","the current contact id is "+Contacts.contactList.get(i).getUserId());
+//
+//                            if(Contacts.contactList.get(i).getUserId().equals(received)){
+//                                Log.d("DELETESTATUS","I currently got:  "+Contacts.contactList.get(i).getUserId());
+//                                Contacts.contactList.remove(i);
+//                            }
+//                        }
+//
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                    Log.d("DELETESTATUS", "The size of my contactsList is " + Contacts.contactList.size());
+//                    //   recyclerView.setAdapter(adapter);
 
                     if(dm!=null&& dm.selectAllContacts().getCount()>0){
                         dm.deleteContact(received);
-                        Log.d("CONTACTSSIZE", "i reached here");
+                        Log.d("DELETESTATUS", "i reached here");
                     }
 
                 }
@@ -627,6 +637,6 @@ public class ContactsActivity extends AppCompatActivity {
         super.onDestroy();
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
-      //  mSocket.disconnect();
+        mSocket.disconnect();  //re-comment out?
     }
 }
