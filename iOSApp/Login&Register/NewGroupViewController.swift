@@ -11,8 +11,9 @@ import UIKit
 class NewGroupViewController: UIViewController {
 
     @IBOutlet weak var groupNameTextField: UITextField!
-    @IBOutlet weak var groupDescription: UITextView!
-    @IBOutlet weak var newMemberTableView: UITableView!
+    @IBOutlet weak var groupDescriptionTextField: UITextField!
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var selectedImage: UIImageView!
     
     let groupModel=GroupModel()
     
@@ -27,32 +28,23 @@ class NewGroupViewController: UIViewController {
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
     }
 
+    @IBAction func cameraButtonPressed(_ sender: Any) {
+    }
+    
+    @IBOutlet weak var photosButtonPressed: UIButton!
+    
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
     }
     @IBAction func doneButtonPressed(_ sender: Any) {
-        if groupNameTextField.text != nil{
-            groupModel.data_request(groupNameTextField.text!)
-        }else{
-            
-            // Display alert messaage
-            displayAlertMessage(mymessage: "All fields are required!");
-        }
+//        if groupNameTextField.text != nil{
+//            groupModel.data_request(groupNameTextField.text!)
+//        }else{
+//            
+//            // Display alert messaage
+//            displayAlertMessage(mymessage: "All fields are required!");
+//        }
 
     }
-    // Display alert message function
-    func displayAlertMessage(mymessage:String) {
-        let myAlert = UIAlertController(title:"Error", message:mymessage, preferredStyle:.alert);
-        let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
-        myAlert.addAction(okaction);
-        self.present(myAlert, animated:true, completion:nil);
-    }
-
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
 }

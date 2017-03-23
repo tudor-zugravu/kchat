@@ -89,9 +89,9 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func addContact(userId: String, receiverId: String) {
+    func addContact(userId: String, userName: String, receiverId: String) {
         
-        socket.emit("send_contact_request", userId, receiverId)
+        socket.emit("send_contact_request", userId, userName, receiverId)
     }
     
     func setSentRequestsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {

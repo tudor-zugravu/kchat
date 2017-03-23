@@ -173,8 +173,9 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         self.tableView.reloadData()
     }
     
-    @IBAction func createGroupButtonPressed(_ sender: Any) {
-        let members: [Int] = [2, 33, 36]
-        SocketIOManager.sharedInstance.createGroup(name: "test", description: "this group is meant to be used for testing", ownerId: 34, group_picture: "group_picture1.jpg", members: members)
-    }
+//    @IBAction func createGroupButtonPressed(_ sender: Any) {
+    
+        //        let members: [Int] = [2, 33, 36]
+//        SocketIOManager.sharedInstance.createGroup(name: "test", description: "this group is meant to be used for testing", ownerId: 34, group_picture: "group_picture1.jpg", members: members)
+//    }
 }
