@@ -139,8 +139,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 let email = contactDetails[i]["email"] as? String,
                 let phoneNo = contactDetails[i]["phone_number"] as? String,
                 let userId = contactDetails[i]["user_id"] as? Int,
-                let contactId = contactDetails[i]["contact_id"] as? Int,
-                let timestamp = contactDetails[i]["timestmp"] as? String
+                let contactId = contactDetails[i]["contact_id"] as? Int
             {
                 item = ContactModel()
                 item.username = username

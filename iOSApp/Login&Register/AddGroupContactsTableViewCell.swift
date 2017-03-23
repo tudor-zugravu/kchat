@@ -16,6 +16,8 @@ class AddGroupContactsTableViewCell: UITableViewCell {
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var isSelectedImage: UIImageView!
     
+    var contactIsSelected: Bool = false
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -26,9 +28,11 @@ class AddGroupContactsTableViewCell: UITableViewCell {
         containerView.layer.shadowRadius = 3
         containerView.layer.shadowOpacity = 0.6
         containerView.clipsToBounds = false
+        contactIsSelected = false
+        isSelectedImage.isHidden = true
     }
     
-    func configureCell(_ fullName: String, email: String, profilePic: String) {
+    func configureCell(_ fullName: String, email: String, profilePic: String, selected: Bool) {
         fullNameLabel.text = fullName
         emailLabel.text = email
         if (profilePic != "") {
@@ -37,6 +41,21 @@ class AddGroupContactsTableViewCell: UITableViewCell {
         } else {
             profilePicture.image = UIImage(named: "profile-logo.png")
         }
+        if selected {
+            isSelectedImage.isHidden = false
+        } else {
+            isSelectedImage.isHidden = true
+        }
+        contactIsSelected = false
     }
     
+    func selectCell () {
+        if contactIsSelected {
+            isSelectedImage.isHidden = true
+            contactIsSelected = false
+        } else {
+            isSelectedImage.isHidden = false
+            contactIsSelected = true
+        }
+    }
 }
