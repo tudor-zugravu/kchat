@@ -49,6 +49,22 @@ class ProfileViewController: UIViewController {
         })
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        if !(passedValue != nil) {
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.fullNamelongPress))
+            self.fullNameLabel.addGestureRecognizer(longPress)
+            
+            
+            
+            SocketIOManager.sharedInstance.setFullNameChangedListener(completionHandler: { (response) -> Void in
+                self.fullNameLabel.text = response
+                UserDefaults.standard.set(response, forKey:"fullName");
+                UserDefaults.standard.synchronize();
+            })
+            
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
         SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
@@ -95,6 +111,23 @@ class ProfileViewController: UIViewController {
             backButton.isHidden = true
         }
     }
+    
+    func fullNamelongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Edit name", message: "Enter the new name", preferredStyle: .alert)
+            alert.addTextField { (textField) in
+                textField.text = ""
+            }
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0]
+                if textField?.text != "" && textField?.text != nil {
+                    SocketIOManager.sharedInstance.changeFullName(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newName: (textField?.text)!)
+                }
+            }))
+            alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
 
     @IBAction func menuPressed(_ sender: Any) {
         if self.dropButton.table.isHidden {
@@ -103,7 +136,6 @@ class ProfileViewController: UIViewController {
             tap.cancelsTouchesInView = false
             self.view.addGestureRecognizer(tap)
         }
-        
     }
     
     //touch the space and hide drop down menu

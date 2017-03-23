@@ -86,7 +86,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                 
                 let longPress = MyLongPressGestureRecognizer(target: self, action: #selector(ContactsViewController.longPress))
                 longPress.selectedContact = item
-                tapGesture.numberOfTouchesRequired = 1
                 cell.addGestureRecognizer(longPress)
             }
             return cell

@@ -471,4 +471,15 @@ class SocketIOManager: NSObject {
     func createGroupRoom(groupId: String) {
         socket.emit("create_group_room", groupId)
     }
+    
+    func changeFullName(userId: Int, newName: String) {
+        socket.emit("change_fullname", userId, newName)
+    }
+    
+    func setFullNameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.on("fullname_changed") { ( dataArray, ack) -> Void in
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
 }
