@@ -22,11 +22,14 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
 import IMPL.Contacts;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
+import IMPL.RESTApi;
 
 /**
  * Created by user on 22/02/2017.
@@ -66,6 +69,7 @@ public class SearchRequestActivity extends AppCompatActivity {
             adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.searchList, 0);
 
         }else if (type.equals("sendRequest")){
+            ContactsActivity.mSocket.on("accepted_my_contact_request",refreshLayout2);
             ContactsActivity.mSocket.emit("sent_contact_requests",MasterUser.usersId);
             ContactsActivity.mSocket.on("sent_requests",contactManagement);
             toolbarTitle.setText("Sent Requests");
@@ -77,6 +81,7 @@ public class SearchRequestActivity extends AppCompatActivity {
             ContactsActivity.mSocket.on("no_more_contact_request",contactListener);
             ContactsActivity.mSocket.emit("received_contact_requests",MasterUser.usersId);
             ContactsActivity.mSocket.on("received_requests",contactManagement2);
+
             //make a request and show
             toolbarTitle.setText("Received Requests");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
@@ -311,6 +316,53 @@ public class SearchRequestActivity extends AppCompatActivity {
                 }
             });
 
+        }
+    };
+
+    private Emitter.Listener refreshLayout2 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            SearchRequestActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    String sendersName = (String) args [0];
+
+//                    try {
+//                        if(InternetHandler.hasInternetConnection(SearchRequestActivity.this,1)==false){
+//
+//                        }else {
+//                            Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+//                            String type2 = "getcontacts";
+//                            String contacts_url = "http://188.166.157.62:3000/contacts";
+//                            ArrayList<String> paramList2 = new ArrayList<>();
+//                            paramList2.add("userId");
+//                            RESTApi backgroundasync2 = new RESTApi(SearchRequestActivity.this, contacts_url, paramList2);
+//                            MasterUser man = new MasterUser();
+//                            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+//                            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", SearchRequestActivity.this);
+//                         }
+//                    }catch(InterruptedException e){
+//                    }catch(ExecutionException f){
+//                    }
+                    if(!Contacts.sentRequests.isEmpty()) {
+                        for (int i = 0; i < Contacts.sentRequests.size(); i++) {
+                            if (Contacts.sentRequests.get(i).getUserId()== sendersName){
+                                Contacts.sentRequests.remove(i);
+                                Log.d("EMITTER","Deleted here");
+                            }
+                        }
+                    }
+                    Log.d("EMITTER","REACH HERE");
+                    ContactsActivity.mSocket.emit("sent_contact_requests",MasterUser.usersId);
+                    //ContactsActivity.mSocket.on("sent_requests",contactManagement);
+                   // toolbarTitle.setText("Sent Requests");
+                  //  toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+                    adapter = new SearchRequestAdapter(SearchRequestActivity.this, Contacts.sentRequests, 1);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
+                }
+            });
         }
     };
 

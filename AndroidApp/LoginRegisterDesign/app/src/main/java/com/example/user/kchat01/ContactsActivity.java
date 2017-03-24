@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -79,7 +80,7 @@ public class ContactsActivity extends AppCompatActivity {
             try {
                     if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
                     }else {
-                        Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                        Log.d("CALLEDSTATUS", "onresume");
                         String type2 = "getcontacts";
                         String contacts_url = "http://188.166.157.62:3000/contacts";
                         ArrayList<String> paramList2 = new ArrayList<>();
@@ -134,7 +135,8 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket.on("sent_chats", currentChats);
             mSocket.on("sent_group_chats", currentGroups);
             mSocket.on("you_received_contact_request",receivedContactRequest);
-            mSocket.on("you_were_deleted",refreshLayout);///-----------refresh
+            mSocket.on("you_were_deleted",contactDelete);///-----------refresh
+            mSocket.on("accepted_my_contact_request",refreshLayout);
             mSocket.emit("get_chats", MasterUser.usersId);
             mSocket.emit("get_group_chats", MasterUser.usersId);
         }
@@ -335,9 +337,17 @@ public class ContactsActivity extends AppCompatActivity {
                             contactsIntent.putExtra("username",contact.getUsername());
                             contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            contact.getBitmap().compress(Bitmap.CompressFormat.JPEG,100,stream);
-                            byte [] byteArray = stream.toByteArray();
-                            contactsIntent.putExtra("contactbitmap",byteArray);
+                            if(contact.getBitmap()!=null) {
+                                contact.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                                byte[] byteArray = stream.toByteArray();
+                                contactsIntent.putExtra("contactbitmap", byteArray);
+                            }else{
+                                Bitmap humanIcon = BitmapFactory.decodeResource(getResources(), R.drawable.human);
+                                contact.setBitmap(humanIcon);
+                                contact.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                                byte[] byteArray = stream.toByteArray();
+                                contactsIntent.putExtra("contactbitmap", byteArray);
+                            }
                             startActivity(contactsIntent);
                         }
                         @Override
@@ -469,35 +479,40 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     String received = (String) args [0]; // id to delete from active chats
-//                    Log.d("DELETESTATUS","Deleted here:" + received);
-//                    if(Contacts.activeChat!=null&&!Contacts.activeChat.isEmpty()){
-//                        for(int i =0; i<Contacts.activeChat.size(); i++){
-//                            Log.d("DELETESTATUS",Integer.toString(Contacts.activeChat.get(i).getContactId()));
-//                            if(Contacts.activeChat.get(i).getContactId()==Integer.parseInt(received)){
-//                                Contacts.activeChat.remove(Contacts.activeChat.get(i));
-//                            }
-//                        }
-//                    }
-//
-//                    if(Contacts.contactList!=null&&!Contacts.contactList.isEmpty()){
-//                        for(int i =0; i<Contacts.contactList.size(); i++){
-//                            Log.d("DELETESTATUS","the current contact id is "+Contacts.contactList.get(i).getUserId());
-//
-//                            if(Contacts.contactList.get(i).getUserId().equals(received)){
-//                                Log.d("DELETESTATUS","I currently got:  "+Contacts.contactList.get(i).getUserId());
-//                                Contacts.contactList.remove(i);
-//                            }
-//                        }
-//
-//                    }
-//                    adapter.notifyDataSetChanged();
-//                    Log.d("DELETESTATUS", "The size of my contactsList is " + Contacts.contactList.size());
-//                    //   recyclerView.setAdapter(adapter);
 
                     if(dm!=null&& dm.selectAllContacts().getCount()>0){
                         dm.deleteContact(received);
                         Log.d("DELETESTATUS", "i reached here");
                     }
+
+                    if(!Contacts.contactList.isEmpty()) {
+                        for (int i = 0; i < Contacts.contactList.size(); i++) {
+                            if (Contacts.contactList.get(i).getUserId()== received){
+                                Contacts.contactList.remove(i);
+                                Log.d("EMITTER","Deleted here");
+                            }
+                        }
+                    }
+
+                    try {
+                        if(InternetHandler.hasInternetConnection(ContactsActivity.this,1)==false){
+
+                        }else {
+                            Log.d("CALLEDSTATUS", "i made a rest request to get the  contacts");
+                            String type2 = "getcontacts";
+                            String contacts_url = "http://188.166.157.62:3000/contacts";
+                            ArrayList<String> paramList2 = new ArrayList<>();
+                            paramList2.add("userId");
+                            RESTApi backgroundasync2 = new RESTApi(ContactsActivity.this, contacts_url, paramList2);
+                            String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
+                            JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", ContactsActivity.this);
+                        }
+                    }catch(InterruptedException e){
+                    }catch(ExecutionException f){
+                    }
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
+
 
                 }
             });
@@ -600,8 +615,6 @@ public class ContactsActivity extends AppCompatActivity {
             });
         }
     };
-
-
 
     private Emitter.Listener refreshLayout = new Emitter.Listener() {
         @Override

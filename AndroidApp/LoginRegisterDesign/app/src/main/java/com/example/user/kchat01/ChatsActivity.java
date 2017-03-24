@@ -1,5 +1,7 @@
 package com.example.user.kchat01;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,10 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -60,8 +65,19 @@ public class ChatsActivity extends AppCompatActivity {
     public static boolean isAtTop = false;
     public static boolean didOverscroll = false;
     DataManager dm;
+    static boolean active = false;
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -323,19 +339,21 @@ public class ChatsActivity extends AppCompatActivity {
             ChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String received = (String) args [0]; // id to delete from active chats
-                    Log.d("DELETESTATUS","Deleted here:" + received);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ChatsActivity.this);
-                    builder.setMessage("No Internet detected please connect to the internet to continue").setNegativeButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    }).create().show();
-                    builder.setCancelable(false);
-
+                    if (active == true) {
+                        String received = (String) args[0]; // id to delete from active chats
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        Log.d("DELETESTATUS", "Deleted here:" + received);
+                        Context context = getApplicationContext();
+                        CharSequence text = "Contact deleted you chat left!";
+                        int duration = Toast.LENGTH_LONG;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        finish();
+                    }
                 }
             });
+
         }
     };
 
