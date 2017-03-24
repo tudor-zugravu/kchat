@@ -22,39 +22,81 @@
 
                 <div class="control">
 
-                    <i class="fa fa-user-circle-o" ></i>
-
-                    <input type="text" class="form-control" value="<%= username %>" name="name"/>
+                  <p>Username:</p>
+                 <div style="display:inline;">
+                  <p> <%= username %></p>
+                  <a href="/changeUsername">   <button class="cbtn btn-orange">Change userName</button> </a>
+                  </div>
                 </div>
 
 								<div class="control">
 
-                    <i class="fa fa-user-circle-o" ></i>
-										<img src="../images/button.png" / style="width:40px" height:"40px">
-                    <input type="text" class="form-control" value="<%= email %>" name="email"/>
+                  <p>
+                    Email:
+                  </p>
+                  <p>
+                  <%= email %>
+                  </p>
+                  <a href="/changePass">Edit</a>
                 </div>
 
 								<div class="control">
 
-                    <i class="fa fa-user-circle-o" ></i>
-										<img src="../images/button.png" / style="width:40px" height:"40px">
-                    <input type="text" class="form-control" value="<%= phone %>" name="phone"/>
+                  <p>
+                    phoneNo:
+                  </p>
+                  <p>
+                  <%= phone %>
+                  </p>
+                  <a href="/changePass">Edit</a>
                 </div>
 
 
                 <div >
-                    <a href="/login"> <button class="btn btn-orange">Log Out</button></a>
-
-                  <a href="/changePass">   <button class="changePassword">Change Password</button> </a>
+                  <p>
+                    Full name:
+                  </p>
+                  <p>
+                  <%= fullname %>
+                  </p>
+                  <a href="/changePass">Edit</a>
                 </div>
 
+                <div >
+                  <p>
+                    Biography:
+                  </p>
+                  <p>
+                  <%= biography %>
+                  </p>
+                  <a href="/changePass">Edit</a>
+                </div>
+
+                  <div >
+                    <a href="/login"> <button class="btn btn-orange" >Log Out</button></a>
+
+                  <a href="/changePass">   <button class="cbtn btn-orange">Change Pass</button> </a>
+                  <a href="/changePass">   <button class="cbtn btn-orange">Change Pass</button> </a>
+                </div>
+
+
         </div>
+       <div>
 
-
+       </div>
+       <div id="deleteGroupFail" style="display:none;">
+         <p>You have failed deleting the group! </p>
+         <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+       </div>
     </div>
 	</div>
 
+   <script>
+   function InputUsername(){
+      $('#eleteGroupFail').modal();
+   }
 
+   </script>
 
 </body>
 </html>

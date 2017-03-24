@@ -32,6 +32,8 @@
 
 <link rel="stylesheet" href="/jquery-modal/jquery.modal.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/stylesheets/mainPage.css" type="text/css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/stylesheets/flex-layout-attribute.min.css">
 </head>
 
 <body onLoad="viewchats(<%=user_id %>)">
@@ -120,24 +122,18 @@
 
       </div>
 
-        <div id="page-wrapper">
-          <div id="chatMenu">
-            <div class="dropdown" style="float:right;">
-              <button class="dropbtn"><i class="fa fa-plus"></i></button>
-              <div class="dropdown-content" style="left:0;">
-                <form id="search_user" action="">
-                  <input id="search" autocomplete="off" / placeholder="search user">
-                  <button class="btn btn-default" type="submit" href="/search">
-                    <i class="fa fa-search"></i>
-                    </button>
-                  </form>
-              </div>
+      <div id="page-wrapper"  style="padding: 0 0 0 0px;">
+        <div id="chatMenu">
+          <div id="wrapper" style="width:100%; height: 40px; display:block; padding :3px 0px 0px 3px;">
+            <div class="dropdown" style="float:left;" id="groupChatAttach">
             </div>
+            <span id="groupChatInfo" style="padding :0px 0px 0px 5px; font-size: 22px "></span>
           </div>
-         <div id="chatContent">
-
+        </div>
+      <div id="chatContent">
 
          </div>
+
         <div class="col-md-12 col-xs-12 login_control" style="position:fixed; bottom:20px; width: 100%;">
           <form id="send_chat" action="" onsubmit="return groupChat();" >
             <input id="message" autocomplete="off" / placeholder="Enter Message Here" style="width:60%;order-radius: 50px;">
@@ -147,6 +143,8 @@
             </form>
 
         </div>
+        </div>
+
         <div id="creatGroup" style="display:none;">
           <form id="create_group_form" action="" onsubmit="return createGroup();">
            <input type="text" placeholder="Group Name" id="group_name">
@@ -177,6 +175,25 @@
           <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
         </div>
           </div>
+          <div id="leaveGroupSuccess" style="display:none;">
+            <p>You have successfully leaved group </p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+          </div>
+            </div>
+            <div id="leaveGroupFail" style="display:none;">
+              <p>You have failed leaving the group, try again! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+            <div id="deleteGroupSuccess" style="display:none;">
+              <p>You have successfully deleted the group! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+            <div id="deleteGroupFail" style="display:none;">
+              <p>You have failed deleting the group! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+
+              </div>
 
 
 
@@ -199,17 +216,23 @@
 
     <script src="/dist/js/sb-admin-2.js"></script>
       <script src="/socket.io/socket.io.js"></script>
+
   -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
 
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="/jquery-modal/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
+
 
         <script>
         var socket = io.connect('http://188.166.157.62:3000');
         var currentUser = $("#user_id").text();
         var name=$("#fullName").text();
         var room;
+        var groupMembers;
+
 
 
         function viewchats(id,name){
@@ -220,7 +243,14 @@
         console.log("autenticated"+msg);
       });
       socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time){
-       $('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+fullName+': '+message+'<br>');
+       //$('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+fullName+': '+message+'<br>');
+       console.log(fullName +","+ name);
+       if(fullName != name){
+         console.log("Name does not match with Fullname");
+           $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-left: 2px;" src="'+getPicturepathByFullName(fullName)+'"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+fullName+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
+         }else{
+           $('#chatContent').append('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+time+'</i><b> '+fullName+'</b></div><div>'+message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="'+getPicturepathByFullName(fullName)+'"></div></div>');
+       }
         console.log("global_provate_message_room "+socketRoom);
         console.log("global_provate_message_insertId "+insertId);
         console.log("global_provate_message_fullName "+fullName);
@@ -244,27 +274,39 @@
 
 
     for(var i=0; i < target.length; i++) {
+      console.log("Progile:"+target[i].group_picture);
          console.log(currentUser);
-          console.log("case1");
-           $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+')">'+target[i].name+target[i].message+'<hr>'+'<br>');
-
+         console.log("case1");
+         if(target[i].group_picture != null){
+           console.log("Geoupcase1");
+           //$('#list1').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="https://www.mautic.org/media/images/default_avatar.png"></div></div>');
+           //$('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')">'+target[i].name+target[i].message+'<hr>'+'<br>');
+          // $('#list1').prepend('<div layout="center-right" style="height: 60px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;"  src="http://188.166.157.62/group_pictures/'+target[i].group_picture+'" onerror="replaceImg(this)"></div></a></div>');
+            $('#list').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;"  src="http://188.166.157.62/group_pictures/'+target[i].group_picture+'" onerror="replaceImg(this)"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].user_id)+'</b><i style="font-size: 11px;"></i></div><div>'+target[i].message+'</div></div></div>');
+         }else{
+           console.log("Geoupcase2");
+            $('#list1').prepend('<div layout="center-right" style="height: 60px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="https://www.mautic.org/media/images/default_avatar.png"></div></a></div>');
          }
-
+         }
           });
 
     }
 
 
       function chat(group_id){
-        var groupMembers;
+
+        $("#groupChatInfo").empty();
+        $("#groupChatAttach").empty();
+        $('#groupChatInfo').append('YOU are now chat with');
+      $('#groupChatAttach').append('<div class="dropdown"><button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown"><i class="fa fa-bars"></i></button><ul class="dropdown-menu"><li><a onclick="leaveGroup('+group_id+')">Leave group</a></li><li><a onclick="inviteContacts('+group_id+')">Invite Others to Group</a></li><li><a onclick="deleteGroup('+group_id+')">Delete Group</a></li></ul></div><br>');
         socket.emit('get_group_members',group_id);
-      socket.on('send_group_members', function(msg){
+        socket.on('send_group_members', function(msg){
         console.log(msg);
         groupMembers= JSON.parse(msg);
-      console.log(groupMembers.length);
-      for(var i=0; i < groupMembers.length; i++) {
-        console.log(groupMembers[i]);
-      }
+        console.log(groupMembers.length);
+        for(var i=0; i < groupMembers.length; i++) {
+          console.log(groupMembers[i]);
+        }
       });
       socket.emit('get_recent_group_messages',group_id,10);
       socket.on('send_recent_group_messages', function(msg){
@@ -274,11 +316,14 @@
          for(var i=0; i < target.length; i++) {
           console.log(target[i]);
           if(target[i].user_id==currentUser){
+            $('#chatContent').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+target[i].timestmp+'</i><b> '+showName(target[i].user_id)+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="'+getPicturepath(target[i].user_id)+'"></div></div>');
 
-            $('#chatContent').prepend('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+target[i].user_id+': '+target[i].message+'<br>');
+
+            //$('#chatContent').prepend('<div style="height:60px; text-align: right; padding-right: 15px;"><span class="sendChat"><div>'+showName(target[i].user_id)+' '+target[i].timestmp+''+target[i].message+'</div><img style="width: 40px; border-radius: 100%;" src="'+getPicturepath(target[i].user_id)+'"></div>');
           }
           else {
-              $('#chatContent').prepend('<div class="recieveChat" style=" background-color: green;border=1px;">'+target[i].user_id+': '+target[i].message+'<br>');
+
+            $('#chatContent').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-left: 2px;" src="'+getPicturepath(target[i].user_id)+'"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].user_id)+'</b><i style="font-size: 11px;"> '+target[i].timestmp+'</i></div><div>'+target[i].message+'</div></div></div>');
           }
         }
       });
@@ -298,13 +343,13 @@
     }
 
     function groupChat(){
+     $("#message").empty();
       var mes=$("#message").val();
       //console.log(mes);
       socket.emit('send_group_chat',mes);
 
-
-
       return false;
+
     }
 
     function showPage(){
@@ -336,6 +381,89 @@
 
     return false;
     }
+
+    function leaveGroup(group_id){
+      console.log("leaving");
+      socket.emit('leave_group',currentUser,group_id);
+      socket.on('group_left', function(msg){
+           if (msg == 'success'){
+             $.modal.close();
+
+             $('#leaveGroupSuccess').modal();
+           }else{
+             $.modal.close();
+
+             $('#lleaveGroupFail').modal();
+           }
+      });
+    }
+    function inviteContacts(group_id){
+      console.log(groupMembers.length);
+      console.log(contacts.length);
+    }
+
+function deleteGroup(group_id){
+  console.log ("deleteing");
+  socket.emit('delete_group',currentUser,group_id);
+  socket.on('group_deleted', function(msg){
+       if (msg == 'success'){
+         $.modal.close();
+
+         $('#deleteGroupSuccess').modal();
+       }else{
+         $.modal.close();
+
+         $('#deleteGroupFail').modal();
+       }
+  });
+};
+
+function showName(id){
+      var result = "";
+      for(var i = 0 ; i < groupMembers.length ; i++){
+          if(groupMembers[i].user_id == id){
+            console.log(groupMembers[i].name);
+            result = groupMembers[i].name;
+        }
+      }
+      return result;
+    }
+
+    function getPicturepath(id){
+      var result = "";
+      for(var i = 0 ; i < groupMembers.length ; i++){
+          if(groupMembers[i].user_id == id){
+            console.log(groupMembers[i].profile_picture);
+            if(groupMembers[i].profile_picture != null){
+              result = 'http://188.166.157.62/profile_pictures/' + groupMembers[i].profile_picture;
+            }else{
+              result = 'https://www.mautic.org/media/images/default_avatar.png';
+            }
+
+        }
+      }
+      return result;
+    }
+
+    function getPicturepathByFullName(name){
+      var result = "";
+      for(var i = 0 ; i < groupMembers.length ; i++){
+          if(groupMembers[i].name == name){
+            console.log(groupMembers[i].profile_picture);
+            if(groupMembers[i].profile_picture != null){
+              result = 'http://188.166.157.62/profile_pictures/' + groupMembers[i].profile_picture;
+            }else{
+              result = 'https://www.mautic.org/media/images/default_avatar.png';
+            }
+
+        }
+      }
+      return result;
+    }
+    function replaceImg(image){
+      image.src="https://www.mautic.org/media/images/default_avatar.png";
+    }
+
 
     </script>
 </body>

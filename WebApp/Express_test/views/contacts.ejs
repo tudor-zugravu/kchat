@@ -45,8 +45,9 @@
 
 </head>
 
-<body>
+<body onLoad="authenticate(<%=user_id %>)">
   <P id="user_id"  style="visibility: invisible"><%=user_id %></p>
+    <P id="fullName" ><%=fullname %></p>
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -256,7 +257,16 @@
 
         <script>
         var socket = io.connect('http://188.166.157.62:3000');
-        var currentUser = $("#user_id").text();;
+        var currentUser = $("#user_id").text();
+        var name=$("#fullName").text();
+        function authenticate(id) {
+          socket.emit('connection');
+        socket.emit('authenticate', id,name);
+        socket.on('authenticated',function(msg){
+          console.log("autenticated"+msg);
+        });
+        }
+
         $(function () {
 
 
@@ -293,8 +303,6 @@
        var error;
        console.log ("test4");
 
-
-
  socket.emit('send_contact_request', currentUser, id);
   console.log ("test5");
        socket.on('sent_request', function(msg){
@@ -317,18 +325,18 @@
      }
       function deleteContact(currentUser, id){
         var test="success"
+        console.log("delete:"+currentUser);
+          console.log("being deleted:"+id);
+          console.log("message"+test);
         socket.emit('delete_contact_request', currentUser, id,test);
          console.log (currentUser);
          console.log (id);
               socket.on('request_deleted', function(msg){
-                console.log ("test6");
+
                 console.log(msg);
-                console.log ("test7");
+
                 if(msg == "fail"){
-                  //Close openning modal
-
-                  //Open Invite Error Modal
-
+                  console.log("failed to delete the user");
                 }else{
                   //Close openning modal
                   $.modal.close();
