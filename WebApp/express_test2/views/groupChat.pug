@@ -1,0 +1,69 @@
+extends layout
+block content
+	body.skin-red.sidebar-mini(onLoad="viewchats('" + user_id + "')")
+		div(class="wrapper")
+			include main-header
+			div.content-wrapper#content
+				section.content-header
+					h1
+						span Dashboard >>
+						small Control Panel
+				section.content
+					div.row
+						div(class="col-md-3")
+							div(class="box box-danger")
+								div(class="box-body no-padding box-contacts")
+									ul(class="contacts-online" id="chat-list")
+								div(class="box-footer")
+									button(class="btn btn-danger btn-block btn-flat" id="newMessage") New Message
+						div.col-md-9
+							div.box.box-danger
+								div.box-header.with-border
+									h3.box-title.box-title-chat Chat with Group
+								div(class="pull-right" id="toolbar-chat" style="display:none")
+									button(class="btn btn-xs btn-default" onclick="endChat(this)")
+										i(class="fa fa-times")
+								div.box-body
+									//- DISPLAY CHAT
+									div.direct-chat-messages.direct-chat-danger(style="height: 380px;")#direct-chat
+									div.box-footer
+										form#formChat( style = "display : none" )
+											div(class="input-group")
+												input( type = "text" name="message" placeholder = "Type Message ..." class="form-control" id="message")
+												span(class="input-group-btn")
+													button(type = "submit" id = "kirim" class="btn btn-danger btn-flat") Send
+
+		script(src="/socket.io/socket.io.js")
+		script.
+			var socket = io.connect('http://188.166.157.62:3000')
+			var currentUser = $("#user_id").text()
+			var name = $("#fullname").text()
+			var room;
+
+			function viewchats(id,name){
+				socket.emit('connection');
+				socket.emit('authenticate', id,name);
+				socket.on('authenticated',function(msg){
+					console.log("autenticated"+msg);
+				});
+
+				socket.emit('get_group_chats',currentUser);
+
+				socket.on('sent_group_chats', function(msg){
+					var target = JSON.parse(msg);
+					
+					for(var i=0; i < target.length; i++) {
+						var element = "<li id = '"+target[i].group_id+"'>";
+						element += "<a href = 'javascript:void(0)' >";
+						element += "<img src = '/img/user.png' class = 'contacts-list-img' alt = 'user image'>";
+						element += "<div class = 'box-tools pull-right'>";
+						element += "<span data-toggle='tooltip' class = 'badge bg-light-blue' id = 'countChat' ><i class = 'fa fa-inbox'></i></span>";
+						element += "</div>";
+						element += "<div class = 'contacts-list-info' style = 'height:40px'>";
+						element += "<span class = 'contacts-list-name'>"+target[i].name+"</span>";
+						element += "</div></a></li>";
+						//- $('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+')">'+target[i].name+target[i].message+'<hr>'+'<br>');
+					}
+					$('ul#chat-list').append(element);
+				});
+			}
