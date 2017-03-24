@@ -236,7 +236,9 @@
 
 
         function viewchats(id,name){
-
+          console.log($("#fullName").text());
+          console.log ("username is"+name);
+          console.log ("userID is"+currentUser);
         socket.emit('connection');
       socket.emit('authenticate', id,name);
       socket.on('authenticated',function(msg){
@@ -245,7 +247,10 @@
       socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time){
        //$('#chatContent').append('<div class="sendChat" style=" background-color: lightblue;border=1px;text-align: right;"> '+fullName+': '+message+'<br>');
        console.log(fullName +","+ name);
-       if(fullName != name){
+       console.log("fullname is "+fullName );
+       console.log("Name is "+ name);
+      // change here !!
+       if(fullName != $("#fullName").text()){
          console.log("Name does not match with Fullname");
            $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-left: 2px;" src="'+getPicturepathByFullName(fullName)+'"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+fullName+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
          }else{
@@ -282,7 +287,7 @@
            //$('#list1').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="https://www.mautic.org/media/images/default_avatar.png"></div></div>');
            //$('#list1').append('<div class="chatList" style="border-bottom: 30px; border=1px">'+'<div class="image">'+'<a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')">'+target[i].name+target[i].message+'<hr>'+'<br>');
           // $('#list1').prepend('<div layout="center-right" style="height: 60px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;"  src="http://188.166.157.62/group_pictures/'+target[i].group_picture+'" onerror="replaceImg(this)"></div></a></div>');
-            $('#list').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;"  src="http://188.166.157.62/group_pictures/'+target[i].group_picture+'" onerror="replaceImg(this)"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].user_id)+'</b><i style="font-size: 11px;"></i></div><div>'+target[i].message+'</div></div></div>');
+            $('#list1').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;"  src="http://188.166.157.62/group_pictures/'+target[i].group_picture+'" onerror="replaceImg(this)"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].user_id)+'</b><i style="font-size: 11px;"></i></div><div>'+target[i].message+'</div></div></div>');
          }else{
            console.log("Geoupcase2");
             $('#list1').prepend('<div layout="center-right" style="height: 60px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\')"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;"></i><b> '+target[i].name+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-right: 2px;" src="https://www.mautic.org/media/images/default_avatar.png"></div></a></div>');

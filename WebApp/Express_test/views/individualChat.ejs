@@ -58,6 +58,7 @@
         <p id="target_id"><%= target_id %></p>
           <p id="target_name"><%= target_name %></p>
 
+
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -193,9 +194,9 @@
       socket.on('authenticated',function(msg){
         console.log("autenticated"+msg);
       });
-
-      socket.on('global_private_messages',function(socketRoom,insertId,Fullname,message,time){
-        if(fullName != name){
+     // changed here!!
+      socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time){
+        if(fullName != $("#fullName").text()){
           console.log("Name does not match with Fullname");
             $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><img style="width: 40px; border-radius: 100%; padding-left: 2px;" src="'+getPicturepathByFullName(fullName)+'"></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+fullName+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
           }else{

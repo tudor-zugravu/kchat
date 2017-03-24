@@ -70,7 +70,7 @@ app.locals.fullName=""
 app.locals.user_id="";
 app.locals.contactList="";
 app.locals.biography="";
-app.locals.profile="";
+app.locals.profile_picture="";
 //profile
 app.get('/profile', function(req, res){
 
@@ -79,7 +79,7 @@ res.render('profile');
 
 //login , as of now redirect to profle page first
 app.post('/authenticate', function(req,res){
-
+  console.log ("test login 1");
   var args = {
       data: {
         username : req.body.username, // username is unique
@@ -89,7 +89,7 @@ app.post('/authenticate', function(req,res){
   };
 
   client.post("http://188.166.157.62:3000/login", args, function (data, response) {
-
+    console.log ("test login 2");
       // parsed response body as js object
 
       var ans = data;
@@ -97,7 +97,7 @@ app.post('/authenticate', function(req,res){
       res.render('loginError');
     }
     else {
-      console.log(ans);
+      console.log("Login ans "+ans);}
 
       app.locals.username=ans.username;
       app.locals.email=ans.email;
@@ -105,18 +105,27 @@ app.post('/authenticate', function(req,res){
       app.locals.fullname=ans.name;
       app.locals.user_id=ans.user_id;
       app.locals.biography=ans.biography;
-
-      var args = {
-          data: {
-            userId :app.locals.user_id
-          },
-          headers: { "Content-Type": "application/json" }
-      };
-           res.render('individualChat', {target_id : 0,target_name:""});
-
-    };
+      app.locals.profile_picture=ans.profile_picture;
 
   });
+  var args= {
+      data: {
+        userId :36
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+    console.log ("test contacts2")
+
+    client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+      console.log ("reached contacts in login 1")
+        // parsed response body as js object
+        app.locals.contactList=data;
+        console.log( data);
+        var contacts_list = data;
+         console.log("contacts has :  "+contacts_list);
+           res.render('individualChat', {target_id : 0,target_name:"",contacts_list});
+      });
 
 });
 
@@ -181,6 +190,10 @@ console.log("req.body.app.local.username");
         // parsed response body as js object
         var ans = data;
          console.log(ans.toString());
+         if (ans.toString()== 'success'){
+           console.log ("u have changed password");
+           res.render('profile');
+         }
       });
 
     });
@@ -253,8 +266,24 @@ app.get('/contacts/:id', function(req,res){
 });
 
 app.get('/chat', function(req, res){
-  var send = { target_id : 0,target_name:""};
-  res.render('individualChat',send);
+  var args= {
+      data: {
+        userId :app.locals.user_id
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+    console.log ("test contacts2")
+
+    client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+      console.log ("reached contacts in login 1")
+        // parsed response body as js object
+        app.locals.contactList=data;
+        console.log("response from server "+ data);
+        var contacts_list = data;
+         console.log("contacts has :  "+contacts_list);
+           res.render('individualChat', {target_id : 0,target_name:"",contacts_list});
+      });
 });
 
 app.post('/chat', function(req, res){
