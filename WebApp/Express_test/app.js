@@ -21,7 +21,8 @@ var loginError=require('./routes/loginError');
 var contacts=require('./routes/contacts');
 var individualChat= require('./routes/individualChat');
 var groupChat=require('./routes/groupChat');
-var chat=require('./routes/chat');
+var chat=require('./routes/Chat');
+var changeUsername=require('./routes/changeUsername');
 
 var app = express();
 
@@ -68,7 +69,8 @@ app.locals.phone = "";
 app.locals.fullName=""
 app.locals.user_id="";
 app.locals.contactList="";
-
+app.locals.biography="";
+app.locals.profile_picture="";
 //profile
 app.get('/profile', function(req, res){
 
@@ -77,7 +79,7 @@ res.render('profile');
 
 //login , as of now redirect to profle page first
 app.post('/authenticate', function(req,res){
-
+  console.log ("test login 1");
   var args = {
       data: {
         username : req.body.username, // username is unique
@@ -87,7 +89,7 @@ app.post('/authenticate', function(req,res){
   };
 
   client.post("http://188.166.157.62:3000/login", args, function (data, response) {
-
+    console.log ("test login 2");
       // parsed response body as js object
 
       var ans = data;
@@ -95,33 +97,35 @@ app.post('/authenticate', function(req,res){
       res.render('loginError');
     }
     else {
-      console.log(ans);
+      console.log("Login ans "+ans);}
 
       app.locals.username=ans.username;
       app.locals.email=ans.email;
       app.locals.phone=ans.phone_number;
       app.locals.fullname=ans.name;
       app.locals.user_id=ans.user_id;
-
-      var args = {
-          data: {
-            userId :app.locals.user_id
-          },
-          headers: { "Content-Type": "application/json" }
-      };
-
-
-      client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
-          // parsed response body as js object
-          app.locals.contactList=data;
-          var contacts = data;
-           console.log(contacts);
-           var send = { contacts , profilePicture:"DummyDummy" , chats : [ {message : "Dummy"} ], pointer : 0};
-           res.render('individualChat',send);
-        });
-    };
+      app.locals.biography=ans.biography;
+      app.locals.profile_picture=ans.profile_picture;
 
   });
+  var args= {
+      data: {
+        userId :36
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+    console.log ("test contacts2")
+
+    client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+      console.log ("reached contacts in login 1")
+        // parsed response body as js object
+        app.locals.contactList=data;
+        console.log( data);
+        var contacts_list = data;
+         console.log("contacts has :  "+contacts_list);
+           res.render('individualChat', {target_id : 0,target_name:"",contacts_list});
+      });
 
 });
 
@@ -129,6 +133,7 @@ app.post('/authenticate', function(req,res){
 
 
 app.post('/register', function(req,res){
+  console.log("register test");
   var args = {
       data: {
         username :req.body.username ,
@@ -136,6 +141,7 @@ app.post('/register', function(req,res){
         fullName : req.body.fullName,
         pwd : req.body.pwd,
         phoneNo :req.body.phoneNo,
+        biography:req.body.biography,
       },
       headers: { "Content-Type": "application/json" }
   };
@@ -145,10 +151,25 @@ app.post('/register', function(req,res){
       // parsed response body as js object
      var ans = data;
       console.log(ans.toString());
+      console.log("response: "+data);
+      console.log(ans.insertId);
+      var split = ans.split(" ");
+      var insertId = split[split.length-1];
+      if (ans.includes("success")){
+          app.locals.username=req.body.username ;
+          app.locals.email=req.body.email;
+          app.locals.phone=req.body.phoneNo;
+          app.locals.fullname=req.body.fullName;
+          app.locals.user_id=insertId;
+          app.locals.biography=req.body.biography;
+          res.render('individualChat', {target_id : 0,target_name:""});
+        }
 
     });
 
   });
+
+
 
 
   app.post('/changePass', function(req,res){
@@ -169,9 +190,55 @@ console.log("req.body.app.local.username");
         // parsed response body as js object
         var ans = data;
          console.log(ans.toString());
+         if (ans.toString()== 'success'){
+           console.log ("u have changed password");
+           res.render('profile');
+         }
       });
 
     });
+
+    app.post('/changeUsername', function(req,res){
+       console.log("changeUsername reached 1");
+      var args = {
+          data: {
+            newUsername: req.body.new_Username,
+            id:app.locals.user_id,
+          },
+          headers: { "Content-Type": "application/json" }
+      };
+      console.log(req.body.new_Username);
+      console.log(app.locals.user_id);
+      console.log("changeUsername reached 2");
+
+      client.post("http://188.166.157.62:3000/changeUsername", args, function(req,res){
+        console.log("changeUsername reached 3");
+      });
+
+      });
+
+// contacts page
+    app.get('/contacts', function(req,res){
+      console.log ("test contacts1")
+      var args = {
+            data: {
+              userId :app.locals.user_id
+            },
+            headers: { "Content-Type": "application/json" }
+        };
+        console.log ("test contacts2")
+
+        client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+          console.log ("test contacts3")
+            // parsed response body as js object
+            app.locals.contactList=data;
+            var contacts = data;
+             console.log("contacts has :  "+contacts);
+             var send = { contacts , profilePicture:"DummyDummy" , chats : [ {message : "Dummy"} ], pointer : 0};
+             res.render('contacts',send);
+          });
+
+      });
 
 
 
@@ -192,9 +259,6 @@ app.get('/contacts/:id', function(req,res){
       }
 
     }
-
-
-
     /*console.log("pointer:"+pointer);
     console.log(app.locals.contactList[pointer]);*/
     var send = { contacts : app.locals.contactList , profilePicture:"DummyDummy" , pointer : pointer};
@@ -202,11 +266,55 @@ app.get('/contacts/:id', function(req,res){
 });
 
 app.get('/chat', function(req, res){
-  res.render('individualChat');
+  var args= {
+      data: {
+        userId :app.locals.user_id
+      },
+      headers: { "Content-Type": "application/json" }
+  };
+
+    console.log ("test contacts2")
+
+    client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+      console.log ("reached contacts in login 1")
+        // parsed response body as js object
+        app.locals.contactList=data;
+        console.log("response from server "+ data);
+        var contacts_list = data;
+         console.log("contacts has :  "+contacts_list);
+           res.render('individualChat', {target_id : 0,target_name:"",contacts_list});
+      });
+});
+
+app.post('/chat', function(req, res){
+  console.log("conversation");
+  id=req.body.contactId;
+  name=req.body.contactName;
+  var send = { target_id : id,target_name:name};
+  console.log("Now we r gonna chat with"+id);
+  console.log("Now we r gonna chat with"+name);
+  res.render('individualChat',send);
 });
 
 app.get('/groupChat', function(req, res){
-  res.render('groupChat');
+  console.log ("test contacts1");
+  var args = {
+        data: {
+          userId :app.locals.user_id
+        },
+        headers: { "Content-Type": "application/json" }
+    };
+  client.post("http://188.166.157.62:3000/contacts", args, function (data, response) {
+    console.log ("test contacts3");
+      // parsed response body as js object
+      app.locals.contactList=data;
+      var contacts = data;
+       console.log("contacts has : "+contacts);
+       var send = { contacts , pointer : 0};
+       res.render('groupChat',send);
+    });
+
+
 });
 
 io.on('connection', function(socket){
@@ -218,7 +326,7 @@ io.on('connection', function(socket){
 
 
 app.get('/test', function(req, res){
-  var id = 2;
+  /*var id = 2;
   socket_io_cli.emit('get_chats',id);
   socket_io_cli.on('sent_chats', function(msg){
   var target = JSON.parse(msg);
@@ -234,7 +342,25 @@ app.get('/test', function(req, res){
   $("#chatContent").empty();
   var target = JSON.parse(msg);
   console.log(target.length);
-  console.log(target[0]);
+  console.log(target[0]);*/
+
+  console.log("changeUsername reached 1");
+ var args = {
+     data: {
+       newUsername: "zoe11",
+       id: 48,
+     },
+     headers: { "Content-Type": "application/json" }
+ };
+ console.log(req.body.new_Username);
+ console.log(app.locals.user_id);
+ console.log("changeUsername reached 2");
+
+ client.post("http://188.166.157.62:3000/changeUsername", args, function(req,res){
+   console.log("changeUsername reached 3");
+ });
+
+
 });
 
 
@@ -247,6 +373,7 @@ app.use('/contacts',contacts);
 app.use('/individualChat',individualChat);
 app.use('/groupChat',groupChat);
 app.use('/chat',chat);
+app.use('/changeUsername',changeUsername);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
