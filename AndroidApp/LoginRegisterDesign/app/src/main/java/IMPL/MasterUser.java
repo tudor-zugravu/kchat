@@ -71,7 +71,6 @@ public class MasterUser {
         return fullName;
     }
 
-
     public String getEmail() {
         return email;
     }
@@ -98,5 +97,18 @@ public class MasterUser {
 
     public void setUsersImage(Bitmap profile) {
        this.usersprofile=profile;
+    }
+
+
+    public static void setUsername(String username) {
+        MasterUser.username = username;
+    }
+
+    public static void setEmail(String email) {
+        MasterUser.email = email;
+    }
+
+    public static void setTelephonenumber(String telephonenumber) {
+        MasterUser.telephonenumber = telephonenumber;
     }
 }

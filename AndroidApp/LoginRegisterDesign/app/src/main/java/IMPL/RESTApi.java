@@ -3,6 +3,7 @@ package IMPL;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.user.kchat01.ContactsActivity;
+import com.example.user.kchat01.CustomActivity;
 import com.example.user.kchat01.LoginActivity;
 import com.example.user.kchat01.R;
 
@@ -65,7 +67,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(type.equals("getIcon")) {
             getBitmapFromURL(this.url,50,50);
         }
-        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")||type.equals("profileUpdate")) {
+        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")||type.equals("profileUpdate")||type.equals("deleteAccount")||type.equals("profileUpdate")) {
             try {
                 URL url = new URL(login_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -73,6 +75,8 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setDoInput(true);
                 Log.d("REGISTER REACH", "reached here for register part 1");
+                Log.d("REGISTER REACH", "reached here for register part 2" + type);
+
                 OutputStream outputStream = httpURLConnection.getOutputStream();
 
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
@@ -122,17 +126,33 @@ public class RESTApi extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPostExecute(String result) {
+
+        if(type.equals("login")) {
+            if (result == null || result.equals("") || result.equals("null")) {
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                builder.setMessage("No result, server is offline").setNegativeButton("ok", null).create().show();
+                return;
+            }
+        }
+
         if(result!=null){
             boolean  b = result.startsWith("{");  // true
             MasterUser man = new MasterUser();
             if(b && type.equals("login")){
-                Log.d("SERVERRESULT","Sent from the server:" + result);
+                Log.d("LOGINRESULT","Profile from the server:" + result);
+
+                if(result.equals("{\"status\":\"failed\"}")){
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                    builder.setMessage("Incorrect credintials please try again").setNegativeButton("ok", null).create().show();
+                    return;
+                }
+
                 result = result.replace("login_sucess", "");
                 JsonDeserialiser deserialiser = new JsonDeserialiser(result,this.type,context);
 
                 if(man.getUsername()!=null) {
                     if(LoginActivity.pref.getAll()!=null) {
-                        Log.d("SERVERRESULT","I have reached here to save");
+                        Log.d("LOGINRESULT","I have reached here to save");
                         LoginActivity.editor.putString("usernamelogin", stringParams[1]); // Storing login
                         LoginActivity.editor.putString("usernamepassword", stringParams[2]); // Storing password
                         LoginActivity.editor.commit(); // commit changes
@@ -143,35 +163,28 @@ public class RESTApi extends AsyncTask<String,Void,String> {
                 }else {
                     Log.d("SERVERRESULT","Cannot Log in");
                 }
-            }else if (result.contains("fail")){
-                Log.d("SERVERRESULT","Cannot Log in");
-            }else{
-                Log.d("SERVERRESULT","Sent from the server:" + result);
             }
-            if(b && type.equals("register")) {
-                Log.d("SERVERRESULT","Sent from the server:" + result);
-            }
-            if(type.equals("getcontacts")) {
-                Log.d("SERVERRESULT","Sent from the server:" + result);
-                Log.d("DESERIALISER","Successfully created the object: " + result);
-            }
-        switch(result){
-            case "":
-                break;
-            case"True":
-                break;
-            case"fail":
-                Log.d("SERVERRESULT","Cannot Log in");
-                break;
-            case"Username Already Exists":
-                break;
-            case"Email Already Exists":
-                break;
-            case "Incorrect Password":
-                break;
-        }
-            Log.d("SERVERRESULT","Sent from the server:" + result);
 
+            if(type.equals("register")) {
+                Log.d("REGISTER","register  Sent from the server:" + result);
+                if(result.equals("duplicate")){
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                    builder.setMessage("Could not create an account username already exists").setNegativeButton("ok", null).create().show();
+                }else if(result.contains("success")){
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                    builder.setCancelable(false);
+                    builder.setMessage("Account has been successfully created you may now log in.").setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent logoutIntent = new Intent(context, LoginActivity.class);
+                            logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            context.startActivity(logoutIntent);
+                            ((Activity) context).finish();
+                        }
+                    }).create().show();
+                    }
+
+                }
         }else{
             Log.d("SERVERRRRR" , "Bad Result from the server");
         }

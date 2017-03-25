@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -65,7 +66,16 @@ public class ProfileActivity extends CustomActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if(InternetHandler.hasInternetConnection(ProfileActivity.this,1)==false){
+            ContactsActivity.mSocket.disconnect();
+        }else {
+            ContactsActivity.mSocket.connect();
+            ContactsActivity.mSocket.on("fullname_changed", fullnameChanged);
+            ContactsActivity.mSocket.on("username_changed", usernameChanged); //-----------refresh
+            ContactsActivity.mSocket.on("email_changed", emailChanged);
+            ContactsActivity.mSocket.on("phone_number_changed", phoneNumberChanged);////
+            ContactsActivity.mSocket.on("about_changed", aboutChanged);
+        }
         setContentView(R.layout.activity_profile);
         Intent intent= getIntent();
         Bundle bundle = intent.getExtras();
@@ -93,7 +103,6 @@ public class ProfileActivity extends CustomActivity {
         if(bundle!=null) {
             String type =(String) bundle.get("type");
             if (type.equals("contactsprofile")){
-
                 contacts_username = (String) bundle.get("contact_username");
                 contacts_userid = (String)bundle.get("contact_userid");
                 contacts_contactname = (String) bundle.get("contact_contactname");
@@ -136,9 +145,7 @@ public class ProfileActivity extends CustomActivity {
                                         Log.d("REMOVE_MASTERID", String.valueOf(MasterUser.usersId));
                                         Log.d("REMOVE_CONTACT_POSI", String.valueOf(contacts_position));
                                         ContactsActivity.mSocket.emit("delete_contact", MasterUser.usersId,contacts_userid);
-
                                         dialog.cancel();
-
                                             Toast.makeText(ProfileActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                                             btnDelete.setVisibility(GONE);
                                         onBackPressed();
@@ -151,13 +158,15 @@ public class ProfileActivity extends CustomActivity {
                     }
                 });
 
-
             }else if (type.equals("usersprofile")) {
                 toolbarTitle.setText("My Profile");
                 toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
                 MasterUser man = new MasterUser();
-                if(man.getProfileLocation()!=null) {
+                if(man.getProfileLocation()!=null&&!man.getProfileLocation().equals("null")) {
                     imageProfile.setImageBitmap(man.getUsersprofile());
+                    Log.d("MYTAG", "location is" + man.getUsersprofile());
+                }else if(man.getProfileLocation().equals("null")){
+                    imageProfile.setImageResource(R.drawable.human);
                 }else {
                     imageProfile.setImageResource(R.drawable.human);
                 }
@@ -187,7 +196,7 @@ public class ProfileActivity extends CustomActivity {
                         } else if (self){
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileActivity.this);
                             builder1.setTitle("Change Image Confirmation");
-                            builder1.setMessage("Do you change your Profile image?");
+                            builder1.setMessage("Do you want to change your profile image?");
                             builder1.setCancelable(true);
                             builder1.setPositiveButton(
                                     "Yes", new DialogInterface.OnClickListener() {
@@ -286,33 +295,28 @@ public class ProfileActivity extends CustomActivity {
                         // If server error, return false
                         if(InternetHandler.hasInternetConnection(ProfileActivity.this,0)==false){
                         }else {
-                            String type = "profileUpdate";
-                            String login_url = "http://188.166.157.62:3000/";
-                            ArrayList<String> paramList = new ArrayList<>();
 
                             switch (fieldName) {
                                 case "Username":
-                                    login_url = login_url+"changeUsername";
-                                    paramList.add("changeUsername");
+                                    Log.d("CHANGE","Changed username");
+                                    ContactsActivity.mSocket.emit("change_username",MasterUser.usersId,newValue);
                                     break;
                                 case "Email":
-                                    login_url = login_url+"changeEmail";
-                                    paramList.add("changeEmail");
+                                    Log.d("CHANGE","Changed email");
+                                    ContactsActivity.mSocket.emit("change_email",MasterUser.usersId,newValue);
                                     break;
                                 case "Phone":
-                                    login_url = login_url+"changePhoneNumber";
-                                    paramList.add("changePhoneNumber");
+                                    Log.d("CHANGE","Changed phone");
+                                    ContactsActivity.mSocket.emit("change_phone_number",MasterUser.usersId,newValue);
                                     break;
                                 case "Biography":
-                                    login_url = login_url+"changebiography";
-                                    paramList.add("changeBiography");
+                                    Log.d("CHANGE","Changed biography");
+                                    ContactsActivity.mSocket.emit("change_about",MasterUser.usersId,newValue);
+                                    Log.d("CHANGE","Changed biography value is " + newValue);
                                     break;
                             }
 
-                            RESTApi backgroundasync = new RESTApi(ProfileActivity.this, login_url, paramList);
-                            backgroundasync.execute(type, newValue);
                         }
-                     //   Toast.makeText(ProfileActivity.this,fieldName+"was changed to "+newValue,Toast.LENGTH_SHORT).show();
                     }
                 });
         builder.setNegativeButton("Cancel",
@@ -398,6 +402,116 @@ public class ProfileActivity extends CustomActivity {
         alertDialog = builder.create();
         alertDialog.show();
     }
+
+    private Emitter.Listener fullnameChanged = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("fail")){
+                        Toast toast = Toast.makeText(ProfileActivity.this, "could not change Full Name server offline or value exists", Toast.LENGTH_LONG);
+                        toast.show();
+                    }else{
+                        Toast toast = Toast.makeText(ProfileActivity.this, "Full Name changed", Toast.LENGTH_LONG);
+
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener usernameChanged = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("fail")) {
+                        Toast toast = Toast.makeText(ProfileActivity.this, "could not change username, server offline or value already exists", Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }else if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("duplicate")){
+                            Toast toast = Toast.makeText(ProfileActivity.this, "could not change username, username already exists", Toast.LENGTH_LONG);
+                            toast.show();
+                    }else{
+                        Toast toast = Toast.makeText(ProfileActivity.this, "Username changed", Toast.LENGTH_LONG);
+                        toast.show();
+                        MasterUser.setUsername(receivedMessages);
+                        tvUsername.setText(receivedMessages);
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener emailChanged = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("fail")){
+                        Toast toast = Toast.makeText(ProfileActivity.this, "could not change email, server offline or value already exists", Toast.LENGTH_LONG);
+                        toast.show();
+                    }else{
+                        Toast toast = Toast.makeText(ProfileActivity.this, "Email changed", Toast.LENGTH_LONG);
+                        toast.show();
+                        MasterUser.setEmail(receivedMessages);
+                        tvEmail.setText(receivedMessages);
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener phoneNumberChanged = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("fail")){
+                        Toast toast = Toast.makeText(ProfileActivity.this, "could not change phone number, server offline or value already exists", Toast.LENGTH_LONG);
+                        toast.show();
+                    }else{
+                        Toast toast = Toast.makeText(ProfileActivity.this, "Phone number changed", Toast.LENGTH_LONG);
+                        toast.show();
+                        MasterUser.setTelephonenumber(receivedMessages);
+                        tvPhone.setText(receivedMessages);
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener aboutChanged = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("CHANGE","Reached here");
+
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||receivedMessages.equals("fail")){
+                        Toast toast = Toast.makeText(ProfileActivity.this, "could not change biography, server offline or value already exists", Toast.LENGTH_LONG);
+                        toast.show();
+                    }else{
+                        Toast toast = Toast.makeText(ProfileActivity.this, "Biography changed", Toast.LENGTH_LONG);
+                        toast.show();
+                        MasterUser man = new MasterUser();
+                        man.setBiography(receivedMessages);
+                        tvBio.setText(receivedMessages);
+                    }
+                }
+            });
+        }
+    };
 
 }
 

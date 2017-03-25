@@ -14,9 +14,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import IMPL.MasterUser;
 import IMPL.RESTApi;
 
 import static com.example.user.kchat01.R.id.confirm;
@@ -43,8 +47,10 @@ public class CustomActivity extends AppCompatActivity {
         dm = new DataManager(CustomActivity.this);
         MenuItem itemDeleteAccount = menu.findItem(R.id.deleteAccount);
         MenuItem itemPasswordChange = menu.findItem(R.id.changePassword);
-        if (ProfileActivity.self==false) {
 
+        ContactsActivity.mSocket.on("account_deleted",accountDelete);
+
+        if (ProfileActivity.self==false) {
             MenuItem item = menu.findItem(R.id.logout);
             item.setVisible(false);
             itemDeleteAccount.setVisible(false);
@@ -76,8 +82,28 @@ public class CustomActivity extends AppCompatActivity {
                                 builder.setPositiveButton("Delete",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                Toast.makeText(CustomActivity.this, "Delete!\nPassword:"+currentPassword, Toast.LENGTH_SHORT).show();
-                                                dialog.cancel();
+                                                try {
+                                                    MasterUser man = new MasterUser();
+                                                    String type = "deleteAccount";
+                                                    String login_url = "http://188.166.157.62:3000/login";
+                                                    ArrayList<String> paramList = new ArrayList<>();
+                                                    paramList.add("username");
+                                                    paramList.add("password");
+                                                    RESTApi backgroundasync = new RESTApi(CustomActivity.this, login_url, paramList);
+                                                    String result = backgroundasync.execute(type, man.getUsername(), etDeleteAccConfirmPassword.getText().toString()).get();
+                                                    Log.d("REACHEDDELETE", "server sends back  " + result);
+
+                                                    if(result!=null&&result.equals("{\"status\":\"failed\"}")){
+                                                        AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
+                                                        builder.setMessage("Could not delete account, Incorrect Password please try again")
+                                                                .setNegativeButton("ok", null).create().show();
+                                                    }else if(result!=null&&result.startsWith("{")){
+                                                        Log.d("REACHEDDELETE", "REACHED HERE 1");
+                                                        ContactsActivity.mSocket.emit("delete_account", MasterUser.usersId);
+                                                    }
+                                                }catch (ExecutionException e){
+                                                }catch (InterruptedException f){
+                                                }
                                             }
                                         });
                                 builder.setNegativeButton("Cancel",null);
@@ -114,24 +140,40 @@ public class CustomActivity extends AppCompatActivity {
 
                                 if(InternetHandler.hasInternetConnection(CustomActivity.this,0)==false){
                                 }else {
-                                    String newPassword = etCurrentPassword.getText().toString();
-                                   // String oldPassword = etOldPassword.getText().toString();
+                                    try{
+                                    String currentPassword = etCurrentPassword.getText().toString();
+                                    String newPassword = etConfirm.getText().toString();
+                                        // String oldPassword = etOldPassword.getText().toString();
                                     String type = "profileUpdate";
                                     String login_url = "http://188.166.157.62:3000/changePass";
                                     ArrayList<String> paramList = new ArrayList<>();
                                     paramList.add("newPassword");
                                     paramList.add("username");
                                     paramList.add("password"); // to get the old password
-
+                                    MasterUser man = new MasterUser();
                                     RESTApi backgroundasync = new RESTApi(CustomActivity.this, login_url, paramList);
-                                    backgroundasync.execute(type, newPassword); // myusername and old password
+                                    String serverResult = backgroundasync.execute(type, newPassword,man.getUsername(),currentPassword).get(); // myusername and old password
+
+                                    if(serverResult!=null&&(serverResult.equals("invalid")||serverResult.equals("fail"))){
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
+                                        builder.setMessage("Cannot change, the password is invalid or has failed")
+                                                .setNegativeButton("ok", null).create().show();
+                                    }else if (serverResult!=null&&serverResult.equals("success")){
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
+                                        builder.setMessage("Password has successfully been changed")
+                                                .setNegativeButton("ok", null).create().show();
+                                    }
+
+                                    }catch (ExecutionException e){
+                                    }catch (InterruptedException f){
+                                    }
                                 }
                                 //Send request for changing password to the server
                                 // New password is stored in variable of "newValue"
-                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                LoginActivity.editor.clear();
-                                LoginActivity.editor.commit(); // commit changes
-                                startActivity(intent);
+//                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+//                                LoginActivity.editor.clear();
+//                                LoginActivity.editor.commit(); // commit changes
+//                                startActivity(intent);
 
                                // Toast.makeText(getApplicationContext(),"Password was changed to "+newValue, Toast.LENGTH_SHORT).show();
                             }
@@ -153,9 +195,9 @@ public class CustomActivity extends AppCompatActivity {
                 /*
                 Logout Request to server
                  */
-                Intent logoutIntent = new Intent(CustomActivity.this, LoginActivity.class);
                 LoginActivity.editor.clear();
                 LoginActivity.editor.commit(); // commit changes
+                Intent logoutIntent = new Intent(CustomActivity.this, LoginActivity.class);
                 logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);
                 finish();
@@ -270,4 +312,32 @@ Compare the hash value of input strings with that of current actual password
             }
         }
     }
+
+    private Emitter.Listener accountDelete = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            CustomActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String receivedMessages = (String) args [0];
+                    Log.d("REACHEDDELETE", "REACHED HERE 2");
+
+                    if((receivedMessages!=null&&receivedMessages.equals(""))||(receivedMessages!=null&&receivedMessages.equals("fail"))){
+                        Toast toast = Toast.makeText(CustomActivity.this, "could not delete account problem with the account or server", Toast.LENGTH_LONG);
+                        toast.show();
+                    }else if(receivedMessages!=null&&receivedMessages.equals("success")){ LoginActivity.editor.clear();
+                        Log.d("REACHEDDELETE", "REACHED HERE 3");
+                        LoginActivity.editor.commit(); // commit changes
+                        Intent logoutIntent = new Intent(CustomActivity.this, LoginActivity.class);
+                        logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(logoutIntent);
+                        finish();
+                        dm.flushAllData();
+                        Toast toast = Toast.makeText(CustomActivity.this, "Account deleted", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
+        }
+    };
 }
