@@ -18,6 +18,7 @@ public class Groups implements IGroups {
     private String pictureLocation;
     private ArrayList<Integer> usersAsID;
     private Bitmap groupImage;
+    private int actualOwner;
     public static ArrayList<IGroups> groupList = new ArrayList<>();
 
     public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId){
@@ -97,5 +98,16 @@ public class Groups implements IGroups {
 
     public void setGroupImage(Bitmap groupImage) {
         this.groupImage = groupImage;
+    }
+
+    @Override
+    public int getActualOwnerId() {
+        return actualOwner;
+    }
+
+    @Override
+    public void setActualOwnerId(int actualOwnerId) {
+        this.actualOwner=actualOwnerId;
+
     }
 }

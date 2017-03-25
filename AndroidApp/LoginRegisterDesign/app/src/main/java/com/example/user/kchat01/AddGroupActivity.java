@@ -313,6 +313,7 @@ public class AddGroupActivity extends AppCompatActivity {
                                 String imageLocation = "group_picture"+groupId+".jpg";
                                 Log.d("GROUPLIST",imageLocation);
                                 IGroups group = new Groups(groupName,description,MasterUser.usersId,imageLocation,usersId);
+                                group.setActualOwnerId(MasterUser.usersId);
                                 group.setGroupImage(bitmap);
                                 Groups.groupList.add(group);
                                 //after sending data, back to contact page

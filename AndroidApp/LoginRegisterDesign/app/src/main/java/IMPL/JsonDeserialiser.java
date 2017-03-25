@@ -157,9 +157,11 @@ private void groupDeserialiser(){
                 String description = obj.getString("description");//
                 String message = obj.getString("message");
                 String timestamp = obj.getString("timestmp");
+                int actualOwnerId = obj.getInt("owner");
                 IGroups groups = new Groups(groupName,message,groupId,groupPicture,null);
+                groups.setActualOwnerId(actualOwnerId);
                 Log.d("GROUPSRECEIVED", "object size: " + groupId);
-                Log.d("GROUPSRECEIVED", "object size: " + description);
+                Log.d("GROUPSRECEIVED", "actual owner is " + actualOwnerId);
                 getGroupImage(groupId,groups);
                 Groups.groupList.add(groups);
             }

@@ -51,6 +51,7 @@ import IMPL.RESTApi;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.example.user.kchat01.R.id.contacts;
+import static com.example.user.kchat01.R.id.groups;
 
 /**
  * Created by user on 22/02/2017.
@@ -92,6 +93,11 @@ public class ContactsActivity extends AppCompatActivity {
                 }catch(InterruptedException e){
                 }catch(ExecutionException f){
                 }}
+
+        if (tabId == groups) {
+            Log.d("Chicken","restarted groups");
+            mSocket.emit("get_group_chats", MasterUser.usersId);
+        }
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
@@ -283,6 +289,8 @@ public class ContactsActivity extends AppCompatActivity {
                             groupIntent.putExtra("usernames",group.getUsersAsID());
                             groupIntent.putExtra("groupName",group.getName());
                             groupIntent.putExtra("groupDesc",group.getDescription());
+                            Log.d("GROUPSRECEIVED","I pass this->  "+ group.getActualOwnerId());
+                            groupIntent.putExtra("actualOwnerId",group.getActualOwnerId());
                             startActivity(groupIntent);
                         }
                     };
@@ -563,13 +571,14 @@ public class ContactsActivity extends AppCompatActivity {
         notification.setWhen(System.currentTimeMillis());
         notification.setContentTitle("Message from:" +title);
         notification.setContentText(content);
+
         notification.setSound(Uri.parse("android.resource://" + con.getPackageName() + "/" + R.raw.notification));
         showNotification(con);
     }
 
     public static void showNotification (Context con){
         Intent intent = new Intent(con,ContactsActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(con,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(con,0,new Intent(),0);
         notification.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager) con.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(uniqueId,notification.build());

@@ -32,4 +32,11 @@ public interface IGroups {
 
     public ArrayList<Integer> getUsersAsID();
 
+    public int getActualOwnerId();
+
+    public void setActualOwnerId(int actualOwnerId);
+
+
+
+
 }

@@ -168,14 +168,7 @@ public class CustomActivity extends AppCompatActivity {
                                     }catch (InterruptedException f){
                                     }
                                 }
-                                //Send request for changing password to the server
-                                // New password is stored in variable of "newValue"
-//                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//                                LoginActivity.editor.clear();
-//                                LoginActivity.editor.commit(); // commit changes
-//                                startActivity(intent);
 
-                               // Toast.makeText(getApplicationContext(),"Password was changed to "+newValue, Toast.LENGTH_SHORT).show();
                             }
                         });
 

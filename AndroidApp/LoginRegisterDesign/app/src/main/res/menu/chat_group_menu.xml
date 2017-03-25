@@ -13,4 +13,9 @@
         android:id="@+id/report"
         android:title="Report Conversation"/>
 
+    <item
+        android:id="@+id/deleteGroup"
+        android:title="Delete Group"/>
+
+
 </menu>

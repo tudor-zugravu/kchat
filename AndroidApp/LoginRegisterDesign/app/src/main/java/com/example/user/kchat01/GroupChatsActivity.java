@@ -1,5 +1,6 @@
 package com.example.user.kchat01;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,6 +36,8 @@ import java.util.Date;
 
 import API.IContacts;
 import API.IMessage;
+import IMPL.Contacts;
+import IMPL.Groups;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
@@ -57,7 +61,8 @@ public class GroupChatsActivity extends AppCompatActivity {
     public static ArrayList<IMessage> dataList;
     private String username,message,groupName,groupDescription;
     public static Bitmap contactsBitmap;
-    private String ownerId;
+    private int GROUPID; // this is the id of the group
+    private String ownerId; // this is the id of the group
     private CharSequence dateText;
     private int counter =2;
     private ArrayList<Integer> usernames;
@@ -75,6 +80,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         this.usernames = intent.getIntegerArrayListExtra("usernames");
         this.groupName = intent.getStringExtra("groupName");
         this.groupDescription = intent.getStringExtra("groupDesc");
+        this.GROUPID = intent.getIntExtra("actualOwnerId",0);
         dataList = new ArrayList<>();
         dm = new DataManager(GroupChatsActivity.this);
         groupId = ownerId;
@@ -91,6 +97,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                 ContactsActivity.mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
                 ContactsActivity.mSocket.on("group_room_created", stringReply2);
                 ContactsActivity.mSocket.emit("create_group_room", ownerId);
+                ContactsActivity.mSocket.on("group_deleted",groupDeleted);
             }
 
         setContentView(R.layout.activity_chats);
@@ -316,6 +323,27 @@ public class GroupChatsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.chat_group_menu, menu);
+        if(MasterUser.usersId!=GROUPID){ // if i am not the owner
+            Log.d("COMPAREID"," my own id is  " + MasterUser.usersId);
+            Log.d("COMPAREID"," owners id is  " + GROUPID);
+
+            MenuItem item = menu.findItem(R.id.addContact);
+            item.setVisible(false);
+            MenuItem item2 = menu.findItem(R.id.deleteGroup);
+            item2.setVisible(false);
+            }else{
+            MenuItem item = menu.findItem(R.id.addContact);
+            if(contactsInChat!=null&&contactsInChat.size()>5){ // if i am not the owner
+                item.setVisible(false);
+            }else{
+                item.setVisible(true);
+            }
+            MenuItem item2 = menu.findItem(R.id.deleteGroup);
+            item2.setVisible(true);
+            MenuItem item3 = menu.findItem(R.id.leaveGroup);
+            item3.setVisible(false);
+        }
+
         return true;
     }
 
@@ -345,13 +373,15 @@ public class GroupChatsActivity extends AppCompatActivity {
             alert11.show();
             return true;
         } else if (id == R.id.addContact) {
-//            Log.d("ADDCONTACT_usernames", String.valueOf(usernames.size()));
+
             Intent addContactIntent = new Intent(getApplicationContext(), AddContactActivity.class);
             addContactIntent.putExtra("ownerId", ownerId);
             addContactIntent.putExtra("usernames", usernames);
             addContactIntent.putExtra("groupName", groupName);
             startActivity(addContactIntent);
             return true;
+
+
         } else if (id == R.id.report) {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupChatsActivity.this);
             builder1.setTitle("Report Confirmation");
@@ -362,6 +392,27 @@ public class GroupChatsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             // Need to implement REPORT TO SERVER
                             dialog.cancel();
+                        }
+                    });
+            builder1.setNegativeButton("Cancel", null);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+            return true;
+        }else if (id == R.id.deleteGroup) {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupChatsActivity.this);
+            builder1.setTitle("Delete Group Confirmation");
+            builder1.setMessage("Do you wish to delete this group?");
+            builder1.setCancelable(true);
+            builder1.setPositiveButton(
+                    "Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if(MasterUser.usersId==GROUPID) {
+                                dialog.cancel();
+                                Log.d("Chicken","part1-1-1");
+                                ContactsActivity.mSocket.emit("delete_group",MasterUser.usersId,groupId);
+                            }
+                            Log.d("Chicken","part33");
+
                         }
                     });
             builder1.setNegativeButton("Cancel", null);
@@ -385,4 +436,42 @@ public class GroupChatsActivity extends AppCompatActivity {
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
     }
+
+    private Emitter.Listener groupDeleted = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            GroupChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args[0]; // id to delete from active chats
+
+                    if( received.equals("success")){
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        Context context = getApplicationContext();
+                        CharSequence text = "Group has been sucessfully deleted";
+                        int duration = Toast.LENGTH_LONG;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        for(int i = 0; i<Groups.groupList.size();i++){
+                            if(Groups.groupList.get(i).getOwnerId()==Integer.parseInt(groupId)){
+                                Log.d("Chicken","REaCh");
+                                Groups.groupList.remove(i);
+                            }
+                        }
+                        toast.show();
+                        finish();
+                    }else if (received.equals("fail")){
+                        Context context = getApplicationContext();
+                        CharSequence text = "Cannot delete group problem with the server";
+                        int duration = Toast.LENGTH_LONG;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                }
+            });
+
+        }
+    };
+
+
 }
