@@ -70,7 +70,7 @@ public class ProfileActivity extends CustomActivity {
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             MasterUser man = new MasterUser();
             if(man.getProfileLocation()!=null&&!man.getProfileLocation().equals("null")) {
-                imageProfile.setImageBitmap(man.getUsersprofile());
+              //  imageProfile.setImageBitmap(man.getUsersprofile());
                 Log.d("MYTAG", "location is" + man.getUsersprofile());
             }else if(man.getProfileLocation().equals("null")){
                 imageProfile.setImageResource(R.drawable.human);

@@ -95,9 +95,10 @@ public class ContactsActivity extends AppCompatActivity {
                 }}
 
         if (tabId == groups) {
-            mSocket.on("sent_group_chats", currentGroups);
-            Log.d("Chickensz","re-showing the groups again");
-            mSocket.emit("get_group_chats", MasterUser.usersId);
+//            mSocket.on("sent_group_chats", currentGroups);
+//            Log.d("Chickensz","re-showing the groups again");
+//           mSocket.emit("get_group_chats", MasterUser.usersId);
+
         }
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
@@ -147,6 +148,7 @@ public class ContactsActivity extends AppCompatActivity {
             mSocket.on("you_received_contact_request",receivedContactRequest);
             mSocket.on("you_were_deleted",contactDelete);///-----------refresh
             mSocket.on("accepted_my_contact_request",refreshLayout);
+            mSocket.on("you_have_been_added_to_group",youHaveBeenAdded);
             mSocket.emit("get_chats", MasterUser.usersId);
             mSocket.emit("get_group_chats", MasterUser.usersId);
         }
@@ -272,6 +274,7 @@ public class ContactsActivity extends AppCompatActivity {
 
                 }
                 if (tabId == R.id.groups) {
+                    mSocket.emit("get_group_chats", MasterUser.usersId);
                     Log.d("TABPRESS","i selected groups");
                     btn_receiveRequest.setVisibility(GONE);
                     btn_sendRequest.setVisibility(GONE);
@@ -561,7 +564,9 @@ public class ContactsActivity extends AppCompatActivity {
                         Log.d("UPDATECHAT",receivedMessages4);
                         String receivedMessages5 = (String) args [4]; // timestamp
                         Log.d("UPDATECHAT",receivedMessages5);
-                       notificationRevealer(receivedMessages3,receivedMessages4,ContactsActivity.this);
+                        if(!man.getUsername().equals(receivedMessages3)) {
+                            notificationRevealer(receivedMessages3, receivedMessages4, ContactsActivity.this);
+                        }
                     }
                 }
             });
@@ -609,6 +614,27 @@ public class ContactsActivity extends AppCompatActivity {
                     String receivedMessages = (String) args [0];
                     Log.d("GROUPSRECEIVED",receivedMessages);
                     JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"groups",ContactsActivity.this);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener youHaveBeenAdded = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ContactsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String sendersName = (String) args [0];
+                    Log.d("GROUPPPP"," "+ sendersName);
+                    Log.d("GROUPPPP"," "+ "Reached here part 1111");
+
+                    mSocket.on("sent_group_chats", currentGroups);
+                    mSocket.emit("get_group_chats", MasterUser.usersId);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(adapter);
+                    notificationRevealer("Group Add","You have been added to a group ",ContactsActivity.this);
+                    Log.d("GROUPPPP"," "+ sendersName);
                 }
             });
         }

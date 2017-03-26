@@ -21,27 +21,47 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegisterActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ProfileActivity"
-            android:noHistory="true" />
-        <activity android:name=".CustomActivity" />
-        <activity android:name=".ContactsActivity" />
-        <activity android:name=".ChatsActivity" />
-        <activity android:name=".GroupChatsActivity" />
-        <activity android:name=".SearchRequestActivity"/>
-        <activity android:name=".AddContactActivity"/>
+            android:noHistory="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CustomActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ContactsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ChatsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".GroupChatsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SearchRequestActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AddContactActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity android:name=".AddGroupActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ImageUpload" android:exported="true"></activity>
+            android:windowSoftInputMode="adjustPan" android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ImageUpload" android:exported="true" android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
