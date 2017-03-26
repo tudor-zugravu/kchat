@@ -73,6 +73,7 @@
 		C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35C91E51E7EEA6900D6555B /* TabBarController.swift */; };
 		C3A527711E84146000697D5F /* AddGroupContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */; };
 		C3A527731E8443FB00697D5F /* SelectedContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527721E8443FB00697D5F /* SelectedContactModel.swift */; };
+		C3C28B7F1E8869C100418A60 /* AddMembersToGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C28B7E1E8869C100418A60 /* AddMembersToGroupViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,6 +166,7 @@
 		C35C91E51E7EEA6900D6555B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddGroupContactsTableViewCell.swift; sourceTree = "<group>"; };
 		C3A527721E8443FB00697D5F /* SelectedContactModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedContactModel.swift; sourceTree = "<group>"; };
+		C3C28B7E1E8869C100418A60 /* AddMembersToGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddMembersToGroupViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,6 +275,7 @@
 				384D31E61E799B05003DA0B1 /* ConversationViewController.swift */,
 				C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */,
 				C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */,
+				C3C28B7E1E8869C100418A60 /* AddMembersToGroupViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 				59334E4F1E492C8700E91DF3 /* InitialViewController.swift in Sources */,
 				3810AC271E743CBF005A98EB /* SocketEnginePacketType.swift in Sources */,
 				3816822E1E5CB3F000B637E8 /* ContactsModel.swift in Sources */,
+				C3C28B7F1E8869C100418A60 /* AddMembersToGroupViewController.swift in Sources */,
 				3810AC2B1E743CBF005A98EB /* SocketEventHandler.swift in Sources */,
 				59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */,
 				C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */,

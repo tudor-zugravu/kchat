@@ -48,8 +48,15 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
             SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         })
+        SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+
         SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIHaveBeenAddedToGroupListener(completionHandler: { () -> Void in
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -105,7 +112,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         tableView.deselectRow(at: indexPath, animated: true)
         
         let groupConversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "groupConversationViewController") as? GroupConversationViewController
-        groupConversationViewController?.passedValue = (chats[indexPath.row].groupName!, chats[indexPath.row].groupId!, chats[indexPath.row].groupDescription!)
+        groupConversationViewController?.passedValue = (chats[indexPath.row].groupName!, chats[indexPath.row].groupId!, chats[indexPath.row].groupDescription!, chats[indexPath.row].owner!, chats[indexPath.row].groupPicture!)
         self.navigationController?.pushViewController(groupConversationViewController!, animated: true)
     }
     
@@ -120,7 +127,8 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
             
             if let groupId = chatDetails[i]["group_id"] as? Int,
                 let groupName = chatDetails[i]["name"] as? String,
-                let groupDescription = chatDetails[i]["description"] as? String
+                let groupDescription = chatDetails[i]["description"] as? String,
+                let owner = chatDetails[i]["owner"] as? Int
             {
                 
                 item = GroupChatModel()
@@ -128,6 +136,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
                 item.groupId = groupId
                 item.groupName = groupName
                 item.groupDescription = groupDescription
+                item.owner = owner
                 
                 if let lastMessage = chatDetails[i]["message"] as? String,
                     let timestamp = chatDetails[i]["timestmp"] as? String {

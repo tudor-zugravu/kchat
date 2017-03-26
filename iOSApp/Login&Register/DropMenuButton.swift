@@ -73,7 +73,7 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
         
         var tableFrameHeight = CGFloat()
         
-        tableFrameHeight = self.frame.height * 3 - 1
+        tableFrameHeight = self.frame.height * CGFloat(self.act.count) - 1
         table.layer.cornerRadius = 10
         table.frame = CGRect(x: 200, y: 20 + self.frame.height, width: 150, height:tableFrameHeight)
         table.rowHeight = self.frame.height
@@ -90,7 +90,7 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        //self.setNeedsDisplay()
+//        self.setNeedsDisplay()
         fixLayout()
         
         
@@ -106,9 +106,7 @@ class DropMenuButton: UIButton, UITableViewDelegate, UITableViewDataSource
     {
         
         self.act[indexPath.row]()
-        
         showItems()
-        
     }
     
     

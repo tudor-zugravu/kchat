@@ -453,6 +453,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.logOut(Any.self)
         })])
     }
+    
     func logOut(_ sender: Any) {
         
         Utils.instance.logOut()

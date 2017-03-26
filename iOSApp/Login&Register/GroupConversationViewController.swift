@@ -17,17 +17,21 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var navigationView: UIView!
+    @IBOutlet weak var dropButton: DropMenuButton!
+    @IBOutlet weak var leaveButton: UIButton!
     
     var didOverscroll: Bool = false
     var convLimit: Int = 20
     var groupId: Int = 0;
     var messages: [MessageModel] = []
-    var passedValue: (groupName: String, groupId: Int, groupDescription: String)?
-    var members = [String: String]()
+    var passedValue: (groupName: String, groupId: Int, groupDescription: String, owner: Int, groupPicture: String)?
+    var members = [String: (name: String, profilePicture: String)]()
     
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
+        self.dropInit()
+        self.dropButton.table.isHidden = true
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
 //        
@@ -57,6 +61,20 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                         self.messagesDownloaded(messagesList!)
                     })
                 })
+                SocketIOManager.sharedInstance.setGroupDeletedListener(completionHandler: { (response) -> Void in
+                    print(response)
+                    if response == "success" {
+                        let _ = self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+                    }
+                })
+                SocketIOManager.sharedInstance.setGroupLeftListener(completionHandler: { (response) -> Void in
+                    print(response)
+                    if response == "success" {
+                        let _ = self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+                    }
+                })
                 if self.passedValue != nil {
                     SocketIOManager.sharedInstance.getGroupMembers(groupId: String(self.groupId))
                 }
@@ -73,6 +91,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         
         SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
         SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in })
         
         if let value = passedValue {
             
@@ -81,6 +100,20 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             self.groupId = value.groupId
             
             SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
+            if value.owner == UserDefaults.standard.value(forKey: "userId") as! Int {
+                dropButton.isHidden = false
+                leaveButton.isHidden = true
+            } else {
+                dropButton.isHidden = true
+                leaveButton.isHidden = false
+            }
+            
+            SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
+                if (enemy == String(describing: (self.passedValue?.groupId)!)) {
+                    let _ = self.navigationController?.popViewController(animated: true)
+                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
+                }
+            })
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
@@ -124,7 +157,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "receivedMessageCell") as? ConversationReceivedMessageTableViewCell {
                     
                     let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!, item.timestamp!, members[item.senderId!]!)
+                    cell.configureCell(item.message!, item.timestamp!, (members[item.senderId!]?.profilePicture)!)
                     return cell
                 } else {
                     return ConversationReceivedMessageTableViewCell()
@@ -139,8 +172,11 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         // parse the received JSON and save the contacts
         for i in 0 ..< membersDetails.count {
             
-            if let userId = membersDetails[i]["user_id"] as? Int
+            if let userId = membersDetails[i]["user_id"] as? Int,
+                let userFullName = membersDetails[i]["name"] as? String
             {
+                var item: (name: String, profilePicture: String)
+                item.name = userFullName
                 var picture = ""
                 if let profilePicture = membersDetails[i]["profile_picture"] as? String {
                     let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePicture)")
@@ -166,7 +202,8 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 } else {
                     picture = ""
                 }
-                members[String(userId)] = picture
+                item.profilePicture = picture
+                members[String(userId)] = item
             }
         }
         SocketIOManager.sharedInstance.getRecentGroupMessages(groupId: self.groupId, limit: String(self.convLimit))
@@ -176,7 +213,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     func messagesDownloaded(_ messagesDetails: [[String:Any]]) {
         
         var messagesAux: [MessageModel] = []
-        
+
         // parse the received JSON and save the messages
         for i in 0 ..< messagesDetails.count {
             
@@ -285,6 +322,58 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
         navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+    }
+
+    @IBAction func leaveButtonPressed(_ sender: Any) {
+        // Popup for validation with accepting a contact request on accept
+        let myAlert = UIAlertController(title:"Leave group", message:"Are you sure you want to leave this group?", preferredStyle:.alert);
+        let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+            SocketIOManager.sharedInstance.leaveGroup(userId: UserDefaults.standard.value(forKey: "userId") as! Int, groupId: (self.passedValue?.groupId)!)
+        });
+        myAlert.addAction(yesAction);
+        let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+        myAlert.addAction(noAction);
+        self.present(myAlert, animated:true, completion:nil);
+        self.dropButton.table.isHidden = true
+    }
+    
+    @IBAction func menuPressed(_ sender: Any) {
+        if self.dropButton.table.isHidden {
+            self.dropInit()
+            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissMenu))
+            tap.cancelsTouchesInView = false
+            self.view.addGestureRecognizer(tap)
+            self.tableView.addGestureRecognizer(tap)
+        }
+    }
+    
+    //touch the space and hide drop down menu
+    func dismissMenu(gestureRecognizer: UITapGestureRecognizer) {
+        if !self.dropButton.table.frame.contains(gestureRecognizer.location(in: self.view)) {
+            self.dropButton.table.isHidden = true
+        }
+    }
+    
+    //Dropdown menu Initinal
+    func dropInit() {
+        dropButton.initMenu(["Add contacts to group", "Delete group"],actions: [({ () -> (Void) in
+            let addMembersToGroupViewController = self.storyboard?.instantiateViewController(withIdentifier: "addMembersToGroupViewController") as? AddMembersToGroupViewController
+            addMembersToGroupViewController?.passedValue = self.passedValue
+            addMembersToGroupViewController?.passedMembers = self.members
+            self.navigationController?.pushViewController(addMembersToGroupViewController!, animated: true)
+            self.dropButton.table.isHidden = true
+        }), ({ () -> (Void) in
+            // Popup for validation with accepting a contact request on accept
+            let myAlert = UIAlertController(title:"Delete group", message:"Are you sure you want to delete this group?", preferredStyle:.alert);
+            let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                SocketIOManager.sharedInstance.deleteGroup(userId: UserDefaults.standard.value(forKey: "userId") as! Int, groupId: self.groupId)
+            });
+            myAlert.addAction(yesAction);
+            let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+            myAlert.addAction(noAction);
+            self.present(myAlert, animated:true, completion:nil);
+            self.dropButton.table.isHidden = true
+        })])
     }
     
 }

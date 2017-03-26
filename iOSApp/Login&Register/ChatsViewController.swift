@@ -44,7 +44,6 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
             SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
         })
         SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-
         SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
     }
     

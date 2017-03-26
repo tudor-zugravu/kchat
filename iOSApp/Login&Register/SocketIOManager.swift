@@ -260,12 +260,21 @@ class SocketIOManager: NSObject {
             }
         }
     }
-
     
     func setIWasDeletedListener(completionHandler: @escaping (_ enemy: String) -> Void) {
         
         self.socket.off("you_were_deleted")
         self.socket.on("you_were_deleted") { ( dataArray, ack) -> Void in
+            
+            let enemy = dataArray[0] as! String
+            completionHandler(enemy)
+        }
+    }
+    
+    func setIWasDeletedFromGroupListener(completionHandler: @escaping (_ enemy: String) -> Void) {
+        
+        self.socket.off("you_were_deleted_from_group")
+        self.socket.on("you_were_deleted_from_group") { ( dataArray, ack) -> Void in
             
             let enemy = dataArray[0] as! String
             completionHandler(enemy)
@@ -311,7 +320,15 @@ class SocketIOManager: NSObject {
         
         self.socket.off("accepted_my_contact_request")
         self.socket.on("accepted_my_contact_request") { ( dataArray, ack) -> Void in
-            print("yeeeeeep")
+            AudioServicesPlaySystemSound (1334)
+            completionHandler()
+        }
+    }
+    
+    func setIHaveBeenAddedToGroupListener(completionHandler: @escaping () -> Void) {
+        
+        self.socket.off("you_have_been_added_to_group")
+        self.socket.on("accepyou_have_been_added_to_groupted_my_contact_request") { ( dataArray, ack) -> Void in
             AudioServicesPlaySystemSound (1334)
             completionHandler()
         }
@@ -352,6 +369,42 @@ class SocketIOManager: NSObject {
     
     func setGroupCreatedListener(completionHandler: @escaping (_ userList: String?) -> Void) {
         socket.on("group_created") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func deleteGroup(userId: Int, groupId: Int) {
+        socket.emit("delete_group", userId, groupId)
+    }
+    
+    func setGroupDeletedListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.on("group_deleted") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func leaveGroup(userId: Int, groupId: Int) {
+        socket.emit("leave_group", userId, groupId)
+    }
+    
+    func setGroupLeftListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.on("group_left") { ( dataArray, ack) -> Void in
+            
+            let responseString = dataArray[0] as! String
+            completionHandler(responseString)
+        }
+    }
+    
+    func addToGroup(groupId: Int, members: [Int]) {
+        socket.emit("add_to_group", groupId, members)
+    }
+    
+    func setAddedToGroupListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.on("added_to_group") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
             completionHandler(responseString)

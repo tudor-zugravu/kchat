@@ -17,6 +17,7 @@ class GroupChatModel: NSObject {
     var lastMessage: String?
     var timestamp: String?
     var groupPicture: String?
+    var owner: Int?
     
     //empty constructor
     override init()
@@ -25,7 +26,7 @@ class GroupChatModel: NSObject {
     }
     
     //construct with @name, @email and @telephone parameters
-    init(groupId: Int, groupName: String, groupDescription: String, lastMessage: String, timestamp: String, groupPicture: String) {
+    init(groupId: Int, groupName: String, groupDescription: String, lastMessage: String, timestamp: String, groupPicture: String, owner: Int) {
         
         self.groupId = groupId
         self.groupName = groupName
@@ -33,12 +34,13 @@ class GroupChatModel: NSObject {
         self.lastMessage = lastMessage
         self.timestamp = timestamp
         self.groupPicture = groupPicture
+        self.owner = owner
     }
     
     
     //prints object's current state
     override var description: String {
-        return "Group Id: \(groupId), Group Name: \(groupName), Description: \(groupDescription), Last Message: \(lastMessage), Timestamp: \(timestamp), Group Picture: \(groupPicture)"
+        return "Group Id: \(groupId), Group Name: \(groupName), Description: \(groupDescription), Last Message: \(lastMessage), Timestamp: \(timestamp), Group Picture: \(groupPicture), Owner: \(owner)"
     }
     
     
