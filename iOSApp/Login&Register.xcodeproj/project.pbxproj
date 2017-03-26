@@ -69,6 +69,7 @@
 		C333136C1E7D5C8500B8F229 /* GroupChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */; };
 		C333136E1E7D8C4100B8F229 /* GroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */; };
 		C33313701E7D8DCD00B8F229 /* GroupChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */; };
+		C336F9001E87F0AE00BD612C /* ImageUploadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C336F8FF1E87F0AE00BD612C /* ImageUploadModel.swift */; };
 		C35C91E61E7EEA6900D6555B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35C91E51E7EEA6900D6555B /* TabBarController.swift */; };
 		C3A527711E84146000697D5F /* AddGroupContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */; };
 		C3A527731E8443FB00697D5F /* SelectedContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A527721E8443FB00697D5F /* SelectedContactModel.swift */; };
@@ -160,6 +161,7 @@
 		C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatsViewController.swift; sourceTree = "<group>"; };
 		C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupConversationViewController.swift; sourceTree = "<group>"; };
 		C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatModel.swift; sourceTree = "<group>"; };
+		C336F8FF1E87F0AE00BD612C /* ImageUploadModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUploadModel.swift; sourceTree = "<group>"; };
 		C35C91E51E7EEA6900D6555B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		C3A527701E84146000697D5F /* AddGroupContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddGroupContactsTableViewCell.swift; sourceTree = "<group>"; };
 		C3A527721E8443FB00697D5F /* SelectedContactModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedContactModel.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				384D31E81E799E3C003DA0B1 /* MessageModel.swift */,
 				C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */,
 				C3A527721E8443FB00697D5F /* SelectedContactModel.swift */,
+				C336F8FF1E87F0AE00BD612C /* ImageUploadModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -522,6 +525,7 @@
 				3810AC2A1E743CBF005A98EB /* SocketEngineWebsocket.swift in Sources */,
 				3810AC3A1E743CF2005A98EB /* SocketIOManager.swift in Sources */,
 				3847247B1E5C903F00611EA2 /* ContactsTableViewCell.swift in Sources */,
+				C336F9001E87F0AE00BD612C /* ImageUploadModel.swift in Sources */,
 				59205AF41E7C84B500B92ABF /* NewGroupViewController.swift in Sources */,
 				591100E71E4BE6CD00AC77A7 /* RegisterViewController.swift in Sources */,
 				3810AC381E743CBF005A98EB /* WebSocket.swift in Sources */,

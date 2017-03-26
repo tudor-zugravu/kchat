@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol {
+class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol, ImageUploadModelProtocol {
 
     @IBOutlet weak var groupNameTextField: UITextField!
     @IBOutlet weak var groupDescriptionTextField: UITextField!
@@ -17,9 +17,10 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var contacts: [SelectedContactModel] = []
     let contactsModel = ContactsModel()
+    let imageUploadModel = ImageUploadModel()
     var numberOfSelectedContacts: Int = 0
     var imageHasChanged: Bool = false
-    var selectedImagee: UIImage? = nil
+    var selectedImg: UIImage? = nil
     
     let picker = UIImagePickerController()
     
@@ -29,6 +30,7 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         tableView.delegate = self
         tableView.dataSource = self
         contactsModel.delegate = self
+        imageUploadModel.delegate = self
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
         
@@ -36,6 +38,23 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
             print("disconnected");
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
+            if (response == "fail") {
+                let alertView = UIAlertController(title: "A problem has occured",
+                                                  message: "Please try again!" as String, preferredStyle:.alert)
+                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                alertView.addAction(okAction)
+                self.present(alertView, animated: true, completion: nil)
+            } else {
+                print("si raspunsul esteeee \(response!)")
+                if (self.imageHasChanged) {
+                    self.uploadImage(id: response!)
+                } else {
+                    print("ok")
+                    self.goBack()
+                }
+            }
         })
     }
     
@@ -175,61 +194,130 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     @IBAction func backButtonPressed(_ sender: Any) {
-        let _ = navigationController?.popViewController(animated: true)
+        self.goBack()
     }
+    
     @IBAction func doneButtonPressed(_ sender: Any) {
-//    if groupNameTextField.text != nil {
-//            groupModel.data_request(groupNameTextField.text!)
-//    }
-        
-        if (imageHasChanged) {
-            // upload image
-            if let capturePhotoImage = selectedImagee {
-                if let imageData = UIImagePNGRepresentation(capturePhotoImage) {
-                    let encodedImageData = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-                    
-                    // Setting up the server session with the URL and the request
-                    let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
-                    let session = URLSession.shared
-                    var request = URLRequest(url:url)
-                    request.httpMethod = "POST"
-                    request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-                    
-                    // Request parameters
-                    let paramString = "image=\(encodedImageData)&sender=\(UserDefaults.standard.value(forKey: "userId")!)"
-                    request.httpBody = paramString.data(using: String.Encoding.utf8)
-                    
-                    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                        guard let data = data, error == nil else {
-                            print("error=\(error)")
-                            return
-                        }
-                        if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
-                            print("statusCode should be 200, but is \(httpStatus.statusCode)")
-                            print("response = \(response)")
-                        }
-                        let responseString = String(data: data, encoding: .utf8)
-                        print("responseString = \(responseString)")
-                    }
-                    task.resume()
+        if groupNameTextField.text != nil && groupNameTextField.text != "" && groupDescriptionTextField.text != nil && groupDescriptionTextField.text != "" {
+            
+            var selectedContacts: [Int] = []
+            contacts.forEach { contact in
+                if contact.selected! {
+                    selectedContacts.append(contact.userId!)
                 }
             }
-        }
-
-        var selectedContacts: [Int] = []
-        contacts.forEach { contact in
-            if contact.selected! {
-                selectedContacts.append(contact.userId!)
+            
+            if (imageHasChanged) {
+                SocketIOManager.sharedInstance.createGroup(name: groupNameTextField.text!, description: groupDescriptionTextField.text!, ownerId: UserDefaults.standard.value(forKey: "userId") as! Int, group_picture: "true", members: selectedContacts)
+                
+            } else {
+                SocketIOManager.sharedInstance.createGroup(name: groupNameTextField.text!, description: groupDescriptionTextField.text!, ownerId: UserDefaults.standard.value(forKey: "userId") as! Int, group_picture: "", members: selectedContacts)
             }
+        } else {
+            let alertView = UIAlertController(title: "Failed",
+                                              message: "Please fill in the group name and description" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+            alertView.addAction(okAction)
+            self.present(alertView, animated: true, completion: nil)
+        }
+    }
+    
+    func uploadImage(id: String) {
+        // upload image
+        if let capturePhotoImage = selectedImg {
+            let smallerPhoto = cropToBounds(image: capturePhotoImage)
+            let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
+            if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
+                imageUploadModel.uploadImage(id: id, base64String: base64String, type:"group")
+            } else {
+                self.showError()
+            }
+        } else {
+            self.showError()
+        }
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
+        
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+    
+    func cropToBounds(image: UIImage) -> UIImage {
+        
+        var size: Int
+        if ((image.cgImage?.width)! < (image.cgImage?.height)!) {
+            size = (image.cgImage?.width)!
+        } else {
+            size = (image.cgImage?.height)!
+        }
+        let contextImage: UIImage = UIImage(cgImage: image.cgImage!)
+        
+        let contextSize: CGSize = contextImage.size
+        
+        var posX: CGFloat = 0.0
+        var posY: CGFloat = 0.0
+        var cgwidth: CGFloat = CGFloat(size)
+        var cgheight: CGFloat = CGFloat(size)
+        
+        // See what size is longer and create the center off of that
+        if contextSize.width > contextSize.height {
+            posX = ((contextSize.width - contextSize.height) / 2)
+            posY = 0
+            cgwidth = contextSize.height
+            cgheight = contextSize.height
+        } else {
+            posX = 0
+            posY = ((contextSize.height - contextSize.width) / 2)
+            cgwidth = contextSize.width
+            cgheight = contextSize.width
         }
         
+        let rect: CGRect = CGRect(x:posX, y:posY, width:cgwidth, height:cgheight)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImage = contextImage.cgImage!.cropping(to: rect)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return resizeImage(image: image, newWidth: 200)!
+    }
+    
+    func imageUploaded(_ response: NSString) {
+        if response.contains("success") {
+            print("ok - image uploaded")
+            self.goBack()
+        } else {
+            self.showError()
+        }
+    }
+    
+    func goBack() {
+        let _ = navigationController?.popViewController(animated: true)
+        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+    }
+    
+    func showError() {
+        let alertView = UIAlertController(title: "Failed",
+                                          message: "There was a problem uploading the image" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
         selectedImage.contentMode = .scaleAspectFit //3
         selectedImage.image = chosenImage //4
-        selectedImagee = chosenImage
+        selectedImg = chosenImage
         imageHasChanged = true
         dismiss(animated:true, completion: nil) //5
     }
