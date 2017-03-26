@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/leaveGroup"
+        android:title="Leave Group"/>
+
+    <item
+        android:id="@+id/addContact"
+        android:title="Add Contact to Group"/>
+
+    <item
+        android:id="@+id/report"
+        android:title="Report Conversation"/>
+
+    <item
+        android:id="@+id/deleteGroup"
+        android:title="Delete Group"/>
+
+
+</menu>

@@ -26,26 +26,28 @@
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="?attr/actionBarSize"
-        android:orientation="vertical"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
         android:paddingTop="10dp">
         <ImageView
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:scaleType="fitStart"
             android:adjustViewBounds="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/logo"
             android:id="@+id/imageLogo" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_below="@+id/imageLogo"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/usenameLayout">
 
             <ImageView
                 android:layout_width="40dp"
@@ -72,8 +74,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
+            android:orientation="horizontal"
+            android:layout_below="@+id/usenameLayout"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/passwordLayout">
+        <ImageView
                 android:layout_width="40dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="10dp"
@@ -82,7 +89,8 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="@+id/imageLock">
                  <android.support.design.widget.TextInputEditText
                      android:id="@+id/input_password"
                      android:layout_width="match_parent"
@@ -91,32 +99,26 @@
                      android:inputType="textPassword"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <Button android:id="@+id/btn_login"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/passwordLayout"
+            android:layout_centerHorizontal="true"
+            android:text="@string/btn_login"
+            android:textSize="16dp"
+            android:background="@drawable/button_oval"
+            android:textColor="@android:color/white" />
+        <Button android:id="@+id/btn_goRegister"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
             android:layout_marginTop="30dp"
-            android:orientation="horizontal">
-             <Button android:id="@+id/btn_goRegister"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_marginTop="20dp"
-                 android:layout_marginStart="20dp"
-                 android:layout_marginLeft="20dp"
-                 android:text="@string/btn_register"
-                 android:background="@drawable/btn_register"
-                 android:textColor="@android:color/white"/>
-             <Button android:id="@+id/btn_login"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_marginTop="20dp"
-                 android:layout_marginStart="60dp"
-                 android:layout_marginLeft="60dp"
-                 android:text="@string/btn_login"
-                 android:background="@drawable/btn_register"
-                 android:textColor="@android:color/white"
-                 android:layout_alignParentTop="true"
-                 android:layout_alignParentEnd="true" />
-        </LinearLayout>
-    </LinearLayout>
+            android:layout_below="@+id/btn_login"
+            android:layout_centerHorizontal="true"
+            android:text="@string/btn_register"
+            android:textSize="16dp"
+            android:background="@drawable/button_oval"
+            android:textColor="@android:color/white"
+            android:padding="20dp" />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

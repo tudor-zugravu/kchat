@@ -1,5 +1,10 @@
 package IMPL;
 
+import android.graphics.Bitmap;
+
+import com.example.user.kchat01.R;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 import API.IMessage;
@@ -14,15 +19,20 @@ public class Message implements IMessage {
     private int senderId;
     private int groupId;
     private String message;
-    private Date timestamp;
+    private String timestamp;
+    private String username;
+    private int imageId;
+    private boolean isMe;
+    private int receiverId;
+    private String strTimestamp;
 
-    public Message(int messageId,int senderId,int groupId,String message,Date timestamp){
-    this.messageId = messageId;
+    public Message(int messageId,int senderId,String message,String timestamp){
         this.senderId = senderId;
-        this.groupId = groupId;
+          this.messageId = messageId;
         this.message = message;
         this.timestamp = timestamp;
     }
+
 
     @Override
     public int getMessageId() {
@@ -65,12 +75,57 @@ public class Message implements IMessage {
     }
 
     @Override
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return this.timestamp;
     }
 
     @Override
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public int getReceiverId() {
+        return this.receiverId;
+    }
+
+    @Override
+    public void setReceiverId(int receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    @Override
+    public int getImageId() {
+        return this.imageId;
+    }
+    @Override
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+    @Override
+    public String getStrTimestamp() {
+        return this.strTimestamp;
+    }
+    @Override
+    public void setStrTimestamp(String strTimestamp) {
+        this.strTimestamp = strTimestamp;
+    }
+    @Override
+    public boolean isMe() {
+        return isMe;
+    }
+    @Override
+    public void setMe(boolean me) {
+        isMe = me;
+    }
+
 }

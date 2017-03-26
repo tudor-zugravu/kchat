@@ -1,5 +1,9 @@
 package IMPL;
 
+import android.graphics.Bitmap;
+
+import java.util.ArrayList;
+
 import API.IGroups;
 
 /**
@@ -9,15 +13,29 @@ import API.IGroups;
 public class Groups implements IGroups {
 
    private String description;
-    private int groupId;
-    private int type;
+    private int ownerId;
     private String name;
+    private String pictureLocation;
+    private ArrayList<Integer> usersAsID;
+    private Bitmap groupImage;
+    private int actualOwner;
+    public static ArrayList<IGroups> groupList = new ArrayList<>();
 
-    public Groups (int groupId, String name, String description, int type){
-    this.description = description;
-        this.groupId = groupId;
-        this.type=type;
-        this.name=name;
+    public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId){
+        this.name = groupName;
+        this.description = description;
+        this.ownerId = ownerId;
+        this.pictureLocation=pictureLocation;
+        this.usersAsID = usersId;
+    }
+
+    public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId,Bitmap groupImage){
+        this.name = groupName;
+        this.description = description;
+        this.ownerId = ownerId;
+        this.pictureLocation=pictureLocation;
+        this.usersAsID = usersId;
+        groupImage = groupImage;
     }
 
     @Override
@@ -30,24 +48,12 @@ public class Groups implements IGroups {
         this.description = description;
     }
 
-    @Override
-    public int getGroupId() {
-        return getGroupId();
+    public int getOwnerId() {
+        return this.ownerId;
     }
 
-    @Override
-    public void setGroupId(int groupId) {
-    this.groupId=groupId;
-    }
-
-    @Override
-    public int getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(int type) {
-        this.type=type;
+    public void setOwnerId(int ownerId) {
+    this.ownerId = ownerId;
     }
 
     @Override
@@ -58,5 +64,50 @@ public class Groups implements IGroups {
     @Override
     public void setName(String name) {
         this.name=name;
+    }
+
+    @Override
+    public String getImageLocation() {
+        return this.pictureLocation;
+    }
+
+    @Override
+    public void setImageLocation(String pictureLocation) {
+        this.pictureLocation = pictureLocation;
+    }
+
+    public static ArrayList<IGroups> getGroupList() {
+        return groupList;
+    }
+
+    public static void setGroupList(ArrayList<IGroups> groupList) {
+        Groups.groupList = groupList;
+    }
+
+    public ArrayList<Integer> getUsersAsID() {
+        return usersAsID;
+    }
+
+    public void setUsersAsID(ArrayList<Integer> usersAsID) {
+        this.usersAsID = usersAsID;
+    }
+
+    public Bitmap getGroupImage() {
+        return groupImage;
+    }
+
+    public void setGroupImage(Bitmap groupImage) {
+        this.groupImage = groupImage;
+    }
+
+    @Override
+    public int getActualOwnerId() {
+        return actualOwner;
+    }
+
+    @Override
+    public void setActualOwnerId(int actualOwnerId) {
+        this.actualOwner=actualOwnerId;
+
     }
 }

@@ -6,27 +6,28 @@
     <string name="toolbar_title">KCHAT</string>
 
     <!-- For login, register and profile page -->
+    <string name="hint_fullname">Full Name</string>
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>
     <string name="hint_phone">Phone Number</string>
     <string name="hint_password">Password</string>
     <string name="hint_confirm">Confirm Password</string>
+    <string name="hint_bio">Biography less than 300 characters</string>
 
+    <string name="err_msg_fullname">Enter FullName</string>
     <string name="err_msg_username">Enter Username</string>
     <string name="err_msg_email">Enter valid email address</string>
     <string name="err_msg_phone">Enter valid phone number</string>
-    <string name="err_msg_password">minimum 6 digits, there must be a number and a symbol</string>
+    <string name="err_msg_password">minimum 6 characters, there must be a alphabet, number, and symbol</string>
     <string name="err_msg_confirm">Password does NOT match</string>
+    <string name="err_msg_bio">Enter Biography</string>
 
     <string name="btn_register">Register</string>
     <string name="btn_login">Login</string>
-    <string name="btn_changepassword">Change Password</string>
-    <string name="btn_logout">Log Out</string>
 
     <!-- For Top menu -->
-    <string name="setting01"> Setting 01</string>
-    <string name="setting02"> Profile</string>
-    <string name="language"> Language</string>
+    <string name="deleteAccount"> Delete Account</string>
+    <string name="changePassword"> Change Password</string>
     <string name="logout"> Logout</string>
 
 

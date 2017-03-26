@@ -12,24 +12,23 @@ protocol RegisterModelProtocol: class {
     func responseReceived(_ response: NSString)
 }
 
-
 class RegisterModel: NSObject, URLSessionDataDelegate {
     
     //properties
     weak var delegate: RegisterModelProtocol!
     
     // Server request function for inserting a new user in the database
-    func data_request(_ fullName: String, username: String, email: String, phoneNo: String, pwd: String) {
+    func data_request(_ fullName: String, username: String, email: String, phoneNo: String, pwd: String, about: String) {
         
         // Setting up the server session with the URL and the request
-        let url: URL = URL(string: "http://188.166.157.62:3000/register")!
+        let url: URL = URL(string: "http://188.166.157.62:4000/register")!
         let session = URLSession.shared
         var request = URLRequest(url:url)
         request.httpMethod = "POST"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         
         // Request parameters
-        let paramString = "fullName=\(fullName)&username=\(username)&email=\(email)&phoneNo=\(phoneNo)&pwd=\(pwd)"
+        let paramString = "fullName=\(fullName)&username=\(username)&email=\(email)&phoneNo=\(phoneNo)&pwd=\(pwd)&about=\(about)"
         request.httpBody = paramString.data(using: String.Encoding.utf8)
         
         let task = session.dataTask(with: request, completionHandler: {

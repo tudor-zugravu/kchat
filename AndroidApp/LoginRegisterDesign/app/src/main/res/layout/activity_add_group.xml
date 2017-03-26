@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_gravity="center"
+                    android:id="@+id/toolbar_title" />
+                <TextView
+                    android:id="@+id/textViewDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableRight="@drawable/add_group_done_icon"
+                    android:text="DONE"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="right"
+                    android:padding="8dp"
+                    android:textAllCaps="true"
+                    android:clickable="true"
+                    android:textColor="@drawable/textview_done_color"/>
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:layout_below="@id/appBarLayout"
+            android:id="@+id/scrollbar">
+        <RelativeLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_below="@id/appBarLayout">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iVCamera"
+                android:layout_alignParentRight="true"
+                android:padding="20dp"
+                android:src="@android:drawable/ic_menu_camera"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iVGallery"
+                android:layout_below="@+id/iVCamera"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/canvas"
+                android:padding="20dp"
+                android:src="@android:drawable/ic_menu_gallery"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:id="@+id/canvas"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_toLeftOf="@+id/iVCamera" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Group Name: "
+                android:textSize="14dp"
+                android:layout_below="@+id/canvas"
+                android:paddingTop="10dp"
+                android:id="@+id/textViewGroupName"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/textViewGroupName"
+                android:layout_below="@+id/canvas"
+                android:layout_marginTop="10dp"
+                android:id="@+id/editTextGroupName"
+                android:inputType="text"
+                android:background="@drawable/edittext_add_group"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/textViewGroupName"
+                android:id="@+id/editTextGroupDescription"
+                android:inputType="textMultiLine"
+                android:hint="Group Description"
+                android:textSize="14dp"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:background="@drawable/edittext_add_group"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Group Member"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/editTextGroupDescription"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:id="@+id/textViewSelect"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/textViewSelect"
+                    class="android.support.v7.widget.RecyclerView"/>
+        </RelativeLayout>
+            </android.support.v4.widget.NestedScrollView>
+            <!--
+            </LinearLayout>
+            -->
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

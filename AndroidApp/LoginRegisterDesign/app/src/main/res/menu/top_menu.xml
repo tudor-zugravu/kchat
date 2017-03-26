@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/setting01"
-        android:title="@string/setting01"/>
+        android:id="@+id/deleteAccount"
+        android:title="@string/deleteAccount"/>
     <item
-        android:id="@+id/profile"
-        android:title="@string/setting02"/>
-    <item
-        android:id="@+id/language"
-        android:title="@string/language"/>
+        android:id="@+id/changePassword"
+        android:title="@string/changePassword"/>
     <item
         android:id="@+id/logout"
         android:title="@string/logout"/>

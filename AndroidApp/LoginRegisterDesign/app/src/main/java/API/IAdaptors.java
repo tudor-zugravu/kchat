@@ -1,5 +1,7 @@
 package API;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 /**
@@ -16,7 +18,8 @@ public interface IAdaptors {
 
     public void initialDatabaseSetup();
 
-    public boolean addToContactsTable(int contactId, int globalId, String contactName, String username);
+    public boolean addToContactsTable(int contactId, int requestNum, String timestamp,String userId,String contactName,String email,
+                                      String username,String phonenumber,int blocked,int session,String contactPicture,Bitmap profilePicture);
 
     public boolean addToGroupsTable(int id, String name, String description, int type);
 

@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,18 +14,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import IMPL.RESTApi;
 
 /**
  * Created by user on 09/02/2017.
  */
 
-public class RegisterActivity extends CustomActivity{
+public class RegisterActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
-    private TextInputEditText inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm;
-    private TextInputLayout inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm;
+    private TextInputEditText inputFullName,inputUsername, inputEmail, inputPhone, inputPassword, inputConfirm, inputBio;
+    private TextInputLayout inputLayoutFullName,inputLayoutUsername, inputLayoutEmail, inputLayoutPhone, inputLayoutPassword, inputLayoutConfirm, inputLayoutBio;
     private Button btnRegister;
 
     // for java regular expression
@@ -32,7 +36,7 @@ public class RegisterActivity extends CustomActivity{
     // start with 020 or 07 and 11 digits
     private static final Pattern PHONE_PATTERN = Pattern.compile("^020[0-9]{8}$||^07[0-9]{9}$");
     //include at least one digit and one character excluding alphabets, and more than 6
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[^a-zA-Z0-9])[^a-zA-Z]{6,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,30 +47,36 @@ public class RegisterActivity extends CustomActivity{
         setSupportActionBar(toolbar);
 
         toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
+        inputLayoutFullName = (TextInputLayout)findViewById(R.id.input_layout_fullname);
         inputLayoutUsername = (TextInputLayout)findViewById(R.id.input_layout_username);
         inputLayoutEmail= (TextInputLayout)findViewById(R.id.input_layout_email);
         inputLayoutPhone = (TextInputLayout)findViewById(R.id.input_layout_phone);
         inputLayoutPassword = (TextInputLayout)findViewById(R.id.input_layout_password);
         inputLayoutConfirm = (TextInputLayout)findViewById(R.id.input_layout_confirm);
+        inputLayoutBio = (TextInputLayout)findViewById(R.id.input_layout_bio);
+        inputFullName = (TextInputEditText)findViewById(R.id.input_fullname);
         inputUsername = (TextInputEditText)findViewById(R.id.input_username);
         inputEmail = (TextInputEditText)findViewById(R.id.input_email);
         inputPhone = (TextInputEditText)findViewById(R.id.input_phone);
         inputPassword = (TextInputEditText)findViewById(R.id.input_password);
         inputConfirm = (TextInputEditText)findViewById(R.id.input_confirm);
+        inputBio = (TextInputEditText)findViewById(R.id.input_bio);
         btnRegister = (Button)findViewById(R.id.btn_register);
 
         // apply toolbar title
-        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setText("Register");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         // apply the Register button to Georgia font
         btnRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
 
         //for check during inputting characters in each field
+        inputFullName.addTextChangedListener(new MyTextWatcher(inputFullName));
         inputUsername.addTextChangedListener(new MyTextWatcher(inputUsername));
         inputEmail.addTextChangedListener(new MyTextWatcher(inputEmail));
         inputPhone.addTextChangedListener(new MyTextWatcher(inputPhone));
         inputPassword.addTextChangedListener(new MyTextWatcher(inputPassword));
         inputConfirm.addTextChangedListener(new MyTextWatcher(inputConfirm));
+        inputBio.addTextChangedListener(new MyTextWatcher(inputBio));
 
         btnRegister.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -75,10 +85,48 @@ public class RegisterActivity extends CustomActivity{
             }
         });
         btnRegister.setEnabled(false);
+
+        inputFullName.setText("Tudor Vasile");
+        inputUsername.setText("TUDOR");
+        inputEmail.setText("tudor-dan@hotmail.co.uk");
+        inputPhone.setText("07983967714");
+        inputPassword.setText("!Kings777");
+        inputConfirm.setText("!Kings777");
+        inputBio.setText("This is a biography of the user");
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(InternetHandler.hasInternetConnection(RegisterActivity.this,0)==false){
+
+                }else {
+                    String type = "register";
+                    String register_url = "http://188.166.157.62:3000/register";
+                    ArrayList<String> paramList = new ArrayList<>();
+                    paramList.add("fullName");
+                    paramList.add("email");
+                    paramList.add("username");
+                    paramList.add("pwd");
+                    paramList.add("phoneNo");
+                    paramList.add("biography");
+                    RESTApi backgroundasync = new RESTApi(RegisterActivity.this, register_url, paramList);
+                    backgroundasync.execute(type,
+                            inputFullName.getText().toString(),
+                            inputEmail.getText().toString(),
+                            inputUsername.getText().toString(),
+                            inputPassword.getText().toString(),
+                            inputPhone.getText().toString(),
+                            inputBio.getText().toString());
+                }
+            }
+        });
     }
 
     /* Form validation check*/
     private void validateCheck() {
+        if (!validateFullName()) {
+            return;
+        }
         if (!validateUsername()) {
             return;
         }
@@ -94,14 +142,31 @@ public class RegisterActivity extends CustomActivity{
         if (!validateConfirm()) {
             return;
         }
+        if (!validateBio()){
+            return;
+        }
 
 // Now, result is displayed by Toast and output each input in the Log.
 // For actual communication, required to store each variable in parameters
         Toast.makeText(this, "Registered", Toast.LENGTH_LONG).show();
+        Log.i("fullname", inputFullName.getText().toString());
         Log.i("username", inputUsername.getText().toString());
         Log.i("email", inputEmail.getText().toString());
         Log.i("phone", inputPhone.getText().toString());
         Log.i("password", inputPassword.getText().toString());
+        Log.i("biography", inputBio.getText().toString());
+    }
+
+    //get the text in username edittext
+    // if empty -> show error in layout field
+    private boolean validateFullName(){
+        if (inputFullName.getText().toString().trim().isEmpty()){
+            inputLayoutFullName.setError(getString(R.string.err_msg_fullname));
+            return false;
+        } else {
+            inputLayoutFullName.setErrorEnabled(false);
+        }
+        return true;
     }
 
     //get the text in username edittext
@@ -166,10 +231,21 @@ public class RegisterActivity extends CustomActivity{
         return true;
     }
 
+    private boolean validateBio(){
+        if (inputBio.getText().toString().isEmpty()){
+            inputLayoutBio.setError(getString(R.string.err_msg_bio));
+            return false;
+        } else {
+            inputLayoutBio.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+
     // Button Update
     // when all fields are OK, Register button is enabled.
     private void enableButton(){
-        if (!validateUsername() || !validateEmail() || !validatePhone() || !validatePassword() || !validateConfirm()) {
+        if (!validateFullName() || !validateUsername() || !validateEmail() || !validatePhone() || !validatePassword() || !validateConfirm() || !validateBio()) {
             btnRegister.setEnabled(false);
         } else {
             btnRegister.setEnabled(true);
@@ -198,6 +274,9 @@ public class RegisterActivity extends CustomActivity{
         @Override
         public void afterTextChanged(Editable s){
             switch (view.getId()){
+                case R.id.input_fullname:
+                    validateFullName();
+                    break;
                 case R.id.input_username:
                     validateUsername();
                     break;
@@ -212,6 +291,9 @@ public class RegisterActivity extends CustomActivity{
                     break;
                 case R.id.input_confirm:
                     validateConfirm();
+                    break;
+                case R.id.input_bio:
+                    validateBio();
                     break;
             }
              enableButton();

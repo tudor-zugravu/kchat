@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RegisterViewController: UIViewController, RegisterModelProtocol {
+class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterModelProtocol {
 
     @IBOutlet weak var fullNameTextField: UITextField!
     @IBOutlet weak var usernameTextField: UITextField!
@@ -16,6 +16,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
     @IBOutlet weak var phoneNoTextField: UITextField!
     @IBOutlet weak var pwdTextField: UITextField!
     @IBOutlet weak var confirmPwdTextField: UITextField!
+    @IBOutlet weak var aboutTextField: UITextField!
     
     let registerModel = RegisterModel()
   
@@ -24,6 +25,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
 
         // Do any additional setup after loading the view.
         registerModel.delegate = self
+        aboutTextField.delegate = self
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -40,6 +42,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         phoneNoTextField.resignFirstResponder()
         pwdTextField.resignFirstResponder()
         confirmPwdTextField.resignFirstResponder()
+        aboutTextField.resignFirstResponder()
         
         // Check for empty fields
         if fullNameTextField.text != nil && fullNameTextField.text != "" && usernameTextField.text != nil &&
@@ -47,7 +50,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
             phoneNoTextField.text != nil && phoneNoTextField.text != "" && pwdTextField.text != nil &&
             pwdTextField.text != "" && confirmPwdTextField.text != nil && confirmPwdTextField.text != ""
         {
-            //email formate check
+            // Email format check
             let mailPattern = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
             let email = MyRegex(mailPattern)
             if email.match(input: emailTextField.text!) {
@@ -56,7 +59,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
                 return;
             }
 
-            //check the telephone formate
+            // Telephone format check
             let phoneParrern = "^7[0-9]{9}$"
             let matcher = MyRegex(phoneParrern)
             if matcher.match(input: phoneNoTextField.text!){
@@ -66,7 +69,6 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
                 return;
             }
 
-            
             // Check if the two passwords match
             if pwdTextField.text != confirmPwdTextField.text {
                 
@@ -74,8 +76,13 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
                 displayAlertMessage(mymessage: "Passwords do not match!")
             } else {
                 
-                // Call the request function from the Model component
-                registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!)
+                if confirmPwdTextField.text != nil && confirmPwdTextField.text != "" {
+                    // Call the request function from the Model component
+                    registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: aboutTextField.text!)
+                } else {
+                    // Call the request function from the Model component
+                    registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: "")
+                }
             }
         } else {
             
@@ -83,6 +90,8 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
             displayAlertMessage(mymessage: "All fields are required!");
         }
     }
+    
+    
     
     // The function called at the arival of the response from the server
     func responseReceived(_ permission: NSString) {
@@ -96,6 +105,9 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
             userDefaults.set(phoneNoTextField.text, forKey:"phoneNo");
             userDefaults.set(pwdTextField.text, forKey:"password");
             userDefaults.set(fullNameTextField.text, forKey:"fullName");
+            if aboutTextField.text != nil && aboutTextField.text != "" {
+                userDefaults.set(aboutTextField.text, forKey:"about");
+            }
             userDefaults.set(true, forKey: "hasLoginKey")
             userDefaults.synchronize();
             
@@ -121,6 +133,12 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         view.endEditing(true)
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.characters.count + string.characters.count - range.length
+        return newLength <= 50 // Bool
+    }
+    
     @IBAction func backButtonPressed(_ sender: AnyObject) {
         let _ = navigationController?.popViewController(animated: true)
     }
@@ -137,7 +155,7 @@ class RegisterViewController: UIViewController, RegisterModelProtocol {
         self.present(myAlert, animated:true, completion:nil);
     }
     
-    //regular expression funtion
+    //regular expression function
     struct  MyRegex {
         let regex: NSRegularExpression?
         

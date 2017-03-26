@@ -12,15 +12,31 @@ class ContactsTableViewCell: UITableViewCell {
     
     
     @IBOutlet weak var fullNameLabel: UILabel!
-    @IBOutlet weak var removeButton: UIButton!
+    @IBOutlet weak var emailLabel: UILabel!
+    @IBOutlet weak var profilePicture: UIImageView!
+    @IBOutlet weak var containerView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+
+        //cell layout
+        containerView.layer.cornerRadius = 10
+        containerView.layer.shadowColor = UIColor.lightGray.cgColor
+        containerView.layer.shadowOffset = CGSize(width:-2, height:2)
+        containerView.layer.shadowRadius = 3
+        containerView.layer.shadowOpacity = 0.6
+        containerView.clipsToBounds = false
     }
     
-        func configureCell(_ fullName: String) {
-            fullNameLabel.text = fullName
+    func configureCell(_ fullName: String, email: String, profilePic: String) {
+        fullNameLabel.text = fullName
+        emailLabel.text = email
+        if (profilePic != "") {
+            let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(profilePic)").path
+            profilePicture.image = UIImage(contentsOfFile: filename)
+        } else {
+            profilePicture.image = UIImage(named: "profile-logo.png")
         }
+    }
     
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="5dp"
+    card_view:cardBackgroundColor="@color/windowBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:id="@+id/imageProfile"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageProfile"
+            android:layout_toEndOf="@+id/imageProfile"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/cardviewUsernameColor"
+            android:id="@+id/textViewUsername" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:paddingEnd="10dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/checkBox"
+            android:theme="@style/MyCheckBox"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+
+
+

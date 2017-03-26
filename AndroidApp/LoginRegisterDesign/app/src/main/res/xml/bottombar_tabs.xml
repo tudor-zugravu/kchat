@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <tabs>
+        <tab
+            id="@+id/chats"
+            icon="@drawable/chats_logo_big"
+            title="Chats" />
+        <tab
+            id="@+id/groups"
+            icon="@drawable/group_logo_big"
+            title="Group" />
+        <tab
+            id="@+id/contacts"
+            icon="@drawable/contacts_logo_big"
+            title="Contacts" />
+        <tab
+            id="@+id/profile"
+            icon="@drawable/profile_logo_big"
+            title="Profile" />
+    </tabs>

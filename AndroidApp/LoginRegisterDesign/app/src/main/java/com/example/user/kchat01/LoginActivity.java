@@ -1,26 +1,29 @@
 package com.example.user.kchat01;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import IMPL.DatabaseAdaptor;
-import IMPL.InfoRetreiver;
+import java.util.ArrayList;
+
+import IMPL.Contacts;
 import IMPL.RESTApi;
 
 /**
  * Created by user on 10/02/2017.
  */
 
-public class LoginActivity extends CustomActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView toolbarTitle;
@@ -28,13 +31,38 @@ public class LoginActivity extends CustomActivity {
     private Button btnGoRegister, btnLogin;
     BottomNavigationView bottomNavigationView;
     CustomActivity customActivity;
+    private DataManager dm;
 
+    public static SharedPreferences pref;
+    public static SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        dm = new DataManager(LoginActivity.this);
+        dm.flushAllData();
+        dm.flushAllMessageData();
+        Contacts.activeChat.clear();
+        Contacts.activeChat.clear();
+        //before any work is done on creating the activity i will check to see if the user is still in session
+        //if the user is in session then send him to the chat menu but first check with the server
+        //if not then design the layout
+         this.pref = getApplicationContext().getSharedPreferences("LoginPreference", 0); // 0 - for private mode;
+         this.editor = pref.edit();
+        if(pref.getAll()!=null) {
+            String username = pref.getString("usernamelogin", null);
+            String password = pref.getString("usernamepassword", null);
+            if (username != null && password != null) {
+                Log.d("LOGINRESULT",username);
+                Intent loginIntent = new Intent(LoginActivity.this, ContactsActivity.class);
+                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(loginIntent);
+                finish();
+                //editor.clear();
+                //editor.commit(); // commit changes
+            }
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        DatabaseAdaptor myAdaptor = new DatabaseAdaptor(this);
-        myAdaptor.checkTable();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,8 +71,10 @@ public class LoginActivity extends CustomActivity {
         inputPassword = (TextInputEditText) findViewById(R.id.input_password);
         btnGoRegister = (Button) findViewById(R.id.btn_goRegister);
 
+        inputUsername.setText("tudor");
+        inputPassword.setText("tudor");
         // apply toolbar title
-        toolbarTitle.setText(R.string.toolbar_title);
+        toolbarTitle.setText("Login");
         toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         // apply the Register button to Georgia font
         btnGoRegister.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
@@ -70,11 +100,13 @@ public class LoginActivity extends CustomActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                 String user;
+                 String pass;
                 //login process
-                String username = inputUsername.getText().toString().trim();
-                String password = inputPassword.getText().toString().trim();
+                user = inputUsername.getText().toString().trim();
+                pass = inputPassword.getText().toString().trim();
                 //empty field is not permitted
-                if (username.isEmpty() || password.isEmpty()) {
+                if (user.isEmpty() || pass.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                     builder.setMessage("All fields are required.")
                             .setNegativeButton("Back", null)
@@ -82,41 +114,36 @@ public class LoginActivity extends CustomActivity {
                             .show();
                 } else {
                 //in actual application, these variables are sent to the server
-                    Log.i("username", username);
-                    Log.i("password", password);
-                    Intent loginIntent = new Intent(LoginActivity.this, ContactsListActivity.class);
-                    startActivity(loginIntent);
+                    Log.i("username", user);
+                    Log.i("password", pass);
+                    onLogin(user,pass);
+
                 }
             }
         });
-        //this.OnLogin();
-        this.getJsonData();
-        //bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        //customActivity = new CustomActivity();
-        //customActivity.startActivity();
-
-        //Intent bottomIntent = new Intent(this, CustomActivity.class);
-        //this.startActivity(bottomIntent);
 
     }
 
-    public void OnLogin() {
-      //  String username = UsernameEt.getText().toString();
-       // String password = PasswordEt.getText().toString();
-        String type = "login";
-         String login_url = "http://188.166.157.62:3000/test";
-        String username = "Ken";
-        String password = "OnePiece";
-        RESTApi backgroundasync = new RESTApi(LoginActivity.this,login_url);
-        backgroundasync.execute(type, username, password);
+    public void onLogin(String usr, String pass) {
+        if(InternetHandler.hasInternetConnection(LoginActivity.this,0)==false){
+
+        }else {
+            String type = "login";
+            String login_url = "http://188.166.157.62:3000/login";
+            ArrayList<String> paramList = new ArrayList<>();
+            paramList.add("username");
+            paramList.add("password");
+            RESTApi backgroundasync = new RESTApi(LoginActivity.this, login_url, paramList);
+            backgroundasync.execute(type, usr, pass);
+        }
     }
 
-    public void getJsonData(){
-        String type = "weather";
-        String login_url = "http://api.androidhive.info/contacts/";
-        InfoRetreiver backgroundasync = new InfoRetreiver(login_url,LoginActivity.this);
-        backgroundasync.execute(type, login_url);
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(pref.getAll()!=null) {
+            this.editor.clear();
+            this.editor.commit(); // commit changes
+        }
     }
-
 }

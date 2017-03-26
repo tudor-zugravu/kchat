@@ -23,6 +23,14 @@ class ChangePasswordViewController: UIViewController, ChangePasswordModelProtoco
         
         // Do any additional setup after loading the view.
         changePasswordModel.delegate = self
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
     override func viewWillAppear(_ animated: Bool) {
