@@ -284,6 +284,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
+        navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
     }
     
 }

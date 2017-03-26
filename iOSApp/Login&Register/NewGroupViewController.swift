@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol {
+class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, ContactsModelProtocol, ImageUploadModelProtocol {
 
     @IBOutlet weak var groupNameTextField: UITextField!
     @IBOutlet weak var groupDescriptionTextField: UITextField!
@@ -17,6 +17,7 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var contacts: [SelectedContactModel] = []
     let contactsModel = ContactsModel()
+    let imageUploadModel = ImageUploadModel()
     var numberOfSelectedContacts: Int = 0
     var imageHasChanged: Bool = false
     var selectedImg: UIImage? = nil
@@ -29,6 +30,7 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         tableView.delegate = self
         tableView.dataSource = self
         contactsModel.delegate = self
+        imageUploadModel.delegate = self
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
         
@@ -36,6 +38,23 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
             print("disconnected");
             Utils.instance.logOut()
             _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
+            if (response == "fail") {
+                let alertView = UIAlertController(title: "A problem has occured",
+                                                  message: "Please try again!" as String, preferredStyle:.alert)
+                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                alertView.addAction(okAction)
+                self.present(alertView, animated: true, completion: nil)
+            } else {
+                print("si raspunsul esteeee \(response!)")
+                if (self.imageHasChanged) {
+                    self.uploadImage(id: response!)
+                } else {
+                    print("ok")
+                    self.goBack()
+                }
+            }
         })
     }
     
@@ -175,56 +194,58 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     @IBAction func backButtonPressed(_ sender: Any) {
-        let _ = navigationController?.popViewController(animated: true)
+        self.goBack()
     }
     
     @IBAction func doneButtonPressed(_ sender: Any) {
-//    if groupNameTextField.text != nil {
-//            groupModel.data_request(groupNameTextField.text!)
-//    }
-        
-        
-        
-        
-        print("haha")
-        if (imageHasChanged) {
-            // upload image
-            print("uploading")
+        if groupNameTextField.text != nil && groupNameTextField.text != "" && groupDescriptionTextField.text != nil && groupDescriptionTextField.text != "" {
             
-            if let capturePhotoImage = selectedImg {
-                if let smallerPhoto = resizeImage(image: capturePhotoImage, newWidth: 200) {
-                    selectedImage.image = smallerPhoto
-                    let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
-                    if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
-//                        let encodedImageData = smallerPhoto.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-                        
-                        // Setting up the server session with the URL and the request
-                        let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
-                        let session = URLSession.shared
-                        var request = URLRequest(url:url)
-                        request.httpMethod = "POST"
-                        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-                        
-                        // Request parameters
-                        let paramString = "image=\(base64String)&sender=\(UserDefaults.standard.value(forKey: "userId")!)"
-                        request.httpBody = paramString.data(using: String.Encoding.utf8)
-                        
-                        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                            guard let data = data, error == nil else {
-                                print("error=\(error)")
-                                return
-                            }
-                            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
-                                print("statusCode should be 200, but is \(httpStatus.statusCode)")
-                                print("response = \(response)")
-                            }
-                            let responseString = String(data: data, encoding: .utf8)
-                            print("responseString = \(responseString)")
-                        }
-                        task.resume()
-                    }
+            var selectedContacts: [Int] = []
+            contacts.forEach { contact in
+                if contact.selected! {
+                    selectedContacts.append(contact.userId!)
                 }
             }
+            
+            if (imageHasChanged) {
+                SocketIOManager.sharedInstance.createGroup(name: groupNameTextField.text!, description: groupDescriptionTextField.text!, ownerId: UserDefaults.standard.value(forKey: "userId") as! Int, group_picture: "true", members: selectedContacts)
+                
+            } else {
+                SocketIOManager.sharedInstance.createGroup(name: groupNameTextField.text!, description: groupDescriptionTextField.text!, ownerId: UserDefaults.standard.value(forKey: "userId") as! Int, group_picture: "", members: selectedContacts)
+            }
+        } else {
+            let alertView = UIAlertController(title: "Failed",
+                                              message: "Please fill in the group name and description" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+            alertView.addAction(okAction)
+            self.present(alertView, animated: true, completion: nil)
+        }
+    }
+    
+    func uploadImage(id: String) {
+        // upload image
+        if let capturePhotoImage = selectedImg {
+            if let smallerPhoto = resizeImage(image: capturePhotoImage, newWidth: 200) {
+                let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
+                if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
+                    imageUploadModel.uploadImage(id: id, base64String: base64String)
+                } else {
+                    self.showError()
+                }
+            } else {
+                self.showError()
+            }
+        } else {
+            self.showError()
+        }
+    }
+    
+    func imageUploaded(_ response: NSString) {
+        if response.contains("success") {
+            print("ok - image uploaded")
+            self.goBack()
+        } else {
+            self.showError()
         }
     }
     
@@ -239,6 +260,19 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         UIGraphicsEndImageContext()
         
         return newImage
+    }
+    
+    func goBack() {
+        let _ = navigationController?.popViewController(animated: true)
+        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+    }
+    
+    func showError() {
+        let alertView = UIAlertController(title: "Failed",
+                                          message: "There was a problem uploading the image" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
