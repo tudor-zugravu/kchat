@@ -18,17 +18,17 @@ class ImageUploadModel: NSObject, URLSessionDataDelegate {
     weak var delegate: ImageUploadModelProtocol!
     
     // Server request function for validating log in credentials
-    func uploadImage(id: String, base64String: String) {
+    func uploadImage(id: String, base64String: String, type: String) {
         
         // Setting up the server session with the URL and the request
-        let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
+        let url: URL = URL(string: "http://188.166.157.62:4000/iOSImageUpload")!
         let session = URLSession.shared
         var request = URLRequest(url:url)
         request.httpMethod = "POST"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
         
         // Request parameters
-        let paramString = "image=\(base64String.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)&sender=\(id)"
+        let paramString = "photoType=\(type)&image=\(base64String.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)&sender=\(id)"
         request.httpBody = paramString.data(using: String.Encoding.utf8)
         
         let task = session.dataTask(with: request, completionHandler: {
@@ -37,6 +37,7 @@ class ImageUploadModel: NSObject, URLSessionDataDelegate {
             // Check for request errors
             guard let _:Data = data, let _:URLResponse = response, error == nil else {
                 print("error")
+                print(error)
                 return
             }
             

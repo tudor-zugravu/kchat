@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ImageUploadModelProtocol {
 
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
@@ -22,6 +22,9 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var otherBottomView: UIView!
     
     var passedValue: ContactModel?
+    let imageUploadModel = ImageUploadModel()
+    let picker = UIImagePickerController()
+    var selectedImg: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +32,8 @@ class ProfileViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.dropInit()
         self.dropButton.table.isHidden = true
+        imageUploadModel.delegate = self
+        picker.delegate = self
         
         SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
             print("disconnected");
@@ -61,6 +66,8 @@ class ProfileViewController: UIViewController {
             self.phoneNoLabel.addGestureRecognizer(phoneNoLongPressGesture)
             let aboutLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.aboutLongPress))
             self.aboutLabel.addGestureRecognizer(aboutLongPressGesture)
+            let profilePictureLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.profilePictureLongPress))
+            self.profilePictureImageView.addGestureRecognizer(profilePictureLongPressGesture)
             
             SocketIOManager.sharedInstance.setFullNameChangedListener(completionHandler: { (response) -> Void in
                 self.fullNameLabel.text = response
@@ -68,7 +75,6 @@ class ProfileViewController: UIViewController {
                 UserDefaults.standard.synchronize();
             })
             SocketIOManager.sharedInstance.setUsernameChangedListener(completionHandler: { (response) -> Void in
-                print(response)
                 if (response == "duplicate") {
                     let alertView = UIAlertController(title: "Failed",
                                                       message: "Username already exists" as String, preferredStyle:.alert)
@@ -108,7 +114,6 @@ class ProfileViewController: UIViewController {
             emailLabel.text = value.email
             phoneNoLabel.text = value.phoneNo
             aboutLabel.text = value.about
-            
             let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(value.profilePicture!)")
             if FileManager.default.fileExists(atPath: filename.path) {
                 profilePictureImageView.image = UIImage(contentsOfFile: filename.path)
@@ -138,6 +143,7 @@ class ProfileViewController: UIViewController {
             
             if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
                 let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
+                print(image?.imageOrientation.rawValue);
                 profilePictureImageView.image = image
             }
             dropButton.isHidden = false
@@ -259,6 +265,155 @@ class ProfileViewController: UIViewController {
             alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
             self.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    func profilePictureLongPress(sender : UILongPressGestureRecognizer){
+        if sender.state == .began {
+            // Popup for validation with accepting a contact request on accept
+            let myAlert = UIAlertController(title:"Change profile picture", message:"Select or take a new profile picture", preferredStyle:.alert);
+            let cameraAction=UIAlertAction(title:"Take picture", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                self.cameraButtonPressed()
+            });
+            myAlert.addAction(cameraAction);
+            let libraryAction=UIAlertAction(title:"Choose picture", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in
+                self.photosButtonPressed()
+            });
+            myAlert.addAction(libraryAction);
+            let noAction=UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil);
+            myAlert.addAction(noAction);
+            self.present(myAlert, animated:true, completion:nil);
+        }
+    }
+    
+    func cameraButtonPressed() {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.allowsEditing = false
+            picker.sourceType = UIImagePickerControllerSourceType.camera
+            picker.cameraCaptureMode = .photo
+            picker.modalPresentationStyle = .fullScreen
+            present(picker,animated: true,completion: nil)
+        } else {
+            let alertView = UIAlertController(title: "Failed",
+                                              message: "The camera is not available" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+            alertView.addAction(okAction)
+            self.present(alertView, animated: true, completion: nil)
+        }
+    }
+    
+    func photosButtonPressed() {
+        picker.allowsEditing = false
+        picker.sourceType = .photoLibrary
+        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
+        self.selectedImg = chosenImage
+        self.uploadImage(id: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        dismiss(animated:true, completion: nil) //5
+    }
+    
+    func uploadImage(id: String) {
+        // upload image
+        if let capturePhotoImage = selectedImg {
+            let smallerPhoto = cropToBounds(image: capturePhotoImage)
+            selectedImg = smallerPhoto
+            let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
+            if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
+                imageUploadModel.uploadImage(id: id, base64String: base64String, type:"profile")
+            } else {
+                self.showError()
+            }
+        } else {
+            self.showError()
+        }
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
+        
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+    
+    func cropToBounds(image: UIImage) -> UIImage {
+        
+        var size: Int
+        if ((image.cgImage?.width)! < (image.cgImage?.height)!) {
+            size = (image.cgImage?.width)!
+        } else {
+            size = (image.cgImage?.height)!
+        }
+        let contextImage: UIImage = UIImage(cgImage: image.cgImage!)
+        
+        let contextSize: CGSize = contextImage.size
+        
+        var posX: CGFloat = 0.0
+        var posY: CGFloat = 0.0
+        var cgwidth: CGFloat = CGFloat(size)
+        var cgheight: CGFloat = CGFloat(size)
+        
+        // See what size is longer and create the center off of that
+        if contextSize.width > contextSize.height {
+            posX = ((contextSize.width - contextSize.height) / 2)
+            posY = 0
+            cgwidth = contextSize.height
+            cgheight = contextSize.height
+        } else {
+            posX = 0
+            posY = ((contextSize.height - contextSize.width) / 2)
+            cgwidth = contextSize.width
+            cgheight = contextSize.width
+        }
+        
+        let rect: CGRect = CGRect(x:posX, y:posY, width:cgwidth, height:cgheight)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImage = contextImage.cgImage!.cropping(to: rect)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return resizeImage(image: image, newWidth: 200)!
+    }
+    
+    func imageUploaded(_ response: NSString) {
+        if response.contains("success") {
+            let filename = Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")
+            if let data = UIImagePNGRepresentation(selectedImg!) {
+                do {
+                    let fileManager = FileManager.default
+                    if fileManager.fileExists(atPath: filename.path) {
+                        try fileManager.removeItem(atPath: filename.path)
+                        Utils.instance.deleteCachedPicture(image: "\(UserDefaults.standard.value(forKey: "profilePicture"))")
+                    } else {
+                        print("File does not exist")
+                    }
+                } catch let error as NSError {
+                    print("An error took place: \(error)")
+                }
+                try? data.write(to: filename)
+                profilePictureImageView.image = selectedImg
+            }
+        } else {
+            self.showError()
+        }
+    }
+    
+    func showError() {
+        let alertView = UIAlertController(title: "Failed",
+                                          message: "There was a problem uploading the image" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
 
     @IBAction func menuPressed(_ sender: Any) {

@@ -28,7 +28,7 @@ class Utils: NSObject {
     
     // Function that returns the path of the images
     func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask)
         let documentsDirectory = paths[0]
         return documentsDirectory
     }
@@ -83,6 +83,25 @@ class Utils: NSObject {
         UserDefaults.standard.synchronize()
         
         SocketIOManager.sharedInstance.closeConnection()
+    }
+    
+    func deleteCachedPicture(image: String) {
+        do {
+            let fileManager = FileManager.default
+            let paths = FileManager.default.urls(for: .cachesDirectory, in: .allDomainsMask)
+            let documentsDirectory = paths[0]
+
+            let fileName = documentsDirectory.appendingPathComponent("\(image)").path
+            
+            if fileManager.fileExists(atPath: fileName) {
+                try fileManager.removeItem(atPath: fileName)
+            } else {
+                print("File does not exist")
+            }
+        } catch let error as NSError {
+            print("An error took place: \(error)")
+        }
+
     }
     
 }

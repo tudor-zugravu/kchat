@@ -225,25 +225,13 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     func uploadImage(id: String) {
         // upload image
         if let capturePhotoImage = selectedImg {
-            if let smallerPhoto = resizeImage(image: capturePhotoImage, newWidth: 200) {
-                let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
-                if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
-                    imageUploadModel.uploadImage(id: id, base64String: base64String)
-                } else {
-                    self.showError()
-                }
+            let smallerPhoto = cropToBounds(image: capturePhotoImage)
+            let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
+            if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
+                imageUploadModel.uploadImage(id: id, base64String: base64String, type:"group")
             } else {
                 self.showError()
             }
-        } else {
-            self.showError()
-        }
-    }
-    
-    func imageUploaded(_ response: NSString) {
-        if response.contains("success") {
-            print("ok - image uploaded")
-            self.goBack()
         } else {
             self.showError()
         }
@@ -260,6 +248,56 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         UIGraphicsEndImageContext()
         
         return newImage
+    }
+    
+    func cropToBounds(image: UIImage) -> UIImage {
+        
+        var size: Int
+        if ((image.cgImage?.width)! < (image.cgImage?.height)!) {
+            size = (image.cgImage?.width)!
+        } else {
+            size = (image.cgImage?.height)!
+        }
+        let contextImage: UIImage = UIImage(cgImage: image.cgImage!)
+        
+        let contextSize: CGSize = contextImage.size
+        
+        var posX: CGFloat = 0.0
+        var posY: CGFloat = 0.0
+        var cgwidth: CGFloat = CGFloat(size)
+        var cgheight: CGFloat = CGFloat(size)
+        
+        // See what size is longer and create the center off of that
+        if contextSize.width > contextSize.height {
+            posX = ((contextSize.width - contextSize.height) / 2)
+            posY = 0
+            cgwidth = contextSize.height
+            cgheight = contextSize.height
+        } else {
+            posX = 0
+            posY = ((contextSize.height - contextSize.width) / 2)
+            cgwidth = contextSize.width
+            cgheight = contextSize.width
+        }
+        
+        let rect: CGRect = CGRect(x:posX, y:posY, width:cgwidth, height:cgheight)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImage = contextImage.cgImage!.cropping(to: rect)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return resizeImage(image: image, newWidth: 200)!
+    }
+    
+    func imageUploaded(_ response: NSString) {
+        if response.contains("success") {
+            print("ok - image uploaded")
+            self.goBack()
+        } else {
+            self.showError()
+        }
     }
     
     func goBack() {
