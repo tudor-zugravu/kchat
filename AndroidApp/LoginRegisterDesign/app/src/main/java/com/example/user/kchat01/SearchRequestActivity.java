@@ -18,18 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
 import IMPL.Contacts;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
-import IMPL.RESTApi;
+
+import static android.view.View.GONE;
 
 /**
  * Created by user on 22/02/2017.
@@ -97,6 +92,9 @@ public class SearchRequestActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         searchView = (SearchView) findViewById(R.id.searchView);
+        if(type.equals("sendRequest")|| type.equals("receiveRequest")) {
+            searchView.setVisibility(GONE);
+        }
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
