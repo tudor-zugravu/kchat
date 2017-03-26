@@ -19,7 +19,7 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     let contactsModel = ContactsModel()
     var numberOfSelectedContacts: Int = 0
     var imageHasChanged: Bool = false
-    var selectedImagee: UIImage? = nil
+    var selectedImg: UIImage? = nil
     
     let picker = UIImagePickerController()
     
@@ -177,59 +177,75 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
     }
+    
     @IBAction func doneButtonPressed(_ sender: Any) {
 //    if groupNameTextField.text != nil {
 //            groupModel.data_request(groupNameTextField.text!)
 //    }
         
+        
+        
+        
+        print("haha")
         if (imageHasChanged) {
             // upload image
-            if let capturePhotoImage = selectedImagee {
-                if let imageData = UIImagePNGRepresentation(capturePhotoImage) {
-                    let encodedImageData = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-                    
-                    // Setting up the server session with the URL and the request
-                    let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
-                    let session = URLSession.shared
-                    var request = URLRequest(url:url)
-                    request.httpMethod = "POST"
-                    request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
-                    
-                    // Request parameters
-                    let paramString = "image=\(encodedImageData)&sender=\(UserDefaults.standard.value(forKey: "userId")!)"
-                    request.httpBody = paramString.data(using: String.Encoding.utf8)
-                    
-                    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                        guard let data = data, error == nil else {
-                            print("error=\(error)")
-                            return
+            print("uploading")
+            
+            if let capturePhotoImage = selectedImg {
+                if let smallerPhoto = resizeImage(image: capturePhotoImage, newWidth: 200) {
+                    selectedImage.image = smallerPhoto
+                    let jpegCompressionQuality: CGFloat = 1 // Set this to whatever suits your purpose
+                    if let base64String = UIImageJPEGRepresentation(smallerPhoto, jpegCompressionQuality)?.base64EncodedString() {
+//                        let encodedImageData = smallerPhoto.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+                        
+                        // Setting up the server session with the URL and the request
+                        let url: URL = URL(string: "http://188.166.157.62:4000/iOSGroupImageUpload")!
+                        let session = URLSession.shared
+                        var request = URLRequest(url:url)
+                        request.httpMethod = "POST"
+                        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+                        
+                        // Request parameters
+                        let paramString = "image=\(base64String)&sender=\(UserDefaults.standard.value(forKey: "userId")!)"
+                        request.httpBody = paramString.data(using: String.Encoding.utf8)
+                        
+                        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                            guard let data = data, error == nil else {
+                                print("error=\(error)")
+                                return
+                            }
+                            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
+                                print("statusCode should be 200, but is \(httpStatus.statusCode)")
+                                print("response = \(response)")
+                            }
+                            let responseString = String(data: data, encoding: .utf8)
+                            print("responseString = \(responseString)")
                         }
-                        if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
-                            print("statusCode should be 200, but is \(httpStatus.statusCode)")
-                            print("response = \(response)")
-                        }
-                        let responseString = String(data: data, encoding: .utf8)
-                        print("responseString = \(responseString)")
+                        task.resume()
                     }
-                    task.resume()
                 }
             }
         }
-
-        var selectedContacts: [Int] = []
-        contacts.forEach { contact in
-            if contact.selected! {
-                selectedContacts.append(contact.userId!)
-            }
-        }
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
         
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
         selectedImage.contentMode = .scaleAspectFit //3
         selectedImage.image = chosenImage //4
-        selectedImagee = chosenImage
+        selectedImg = chosenImage
         imageHasChanged = true
         dismiss(animated:true, completion: nil) //5
     }
