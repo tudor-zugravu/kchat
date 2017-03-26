@@ -328,7 +328,7 @@ class SocketIOManager: NSObject {
     func setIHaveBeenAddedToGroupListener(completionHandler: @escaping () -> Void) {
         
         self.socket.off("you_have_been_added_to_group")
-        self.socket.on("accepyou_have_been_added_to_groupted_my_contact_request") { ( dataArray, ack) -> Void in
+        self.socket.on("you_have_been_added_to_group") { ( dataArray, ack) -> Void in
             AudioServicesPlaySystemSound (1334)
             completionHandler()
         }
