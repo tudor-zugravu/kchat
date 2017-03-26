@@ -42,6 +42,7 @@ import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
 
+import static com.example.user.kchat01.R.id.contacts;
 import static com.example.user.kchat01.R.id.leaveGroup;
 
 /**
@@ -77,15 +78,15 @@ public class GroupChatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         this.ownerId = intent.getStringExtra("ownerId");
-        this.usernames = intent.getIntegerArrayListExtra("usernames");
         this.groupName = intent.getStringExtra("groupName");
         this.groupDescription = intent.getStringExtra("groupDesc");
         this.GROUPID = intent.getIntExtra("actualOwnerId",0);
         dataList = new ArrayList<>();
+        usernames = new ArrayList<>();
         dm = new DataManager(GroupChatsActivity.this);
         groupId = ownerId;
 
-            if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,0)==false){
+        if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,0)==false){
                 ContactsActivity.mSocket.disconnect();
                dm.selectAllGroupMessages(Integer.parseInt(groupId),MasterUser.usersId);
 //                recyclerView.setNestedScrollingEnabled(false);
@@ -98,6 +99,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                 ContactsActivity.mSocket.on("group_room_created", stringReply2);
                 ContactsActivity.mSocket.emit("create_group_room", ownerId);
                 ContactsActivity.mSocket.on("group_deleted",groupDeleted);
+                ContactsActivity.mSocket.on("group_left",groupLeft);
             }
 
         setContentView(R.layout.activity_chats);
@@ -226,8 +228,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     dataList.clear();
-                    Log.d("GROUPFUNCTION", "-----ihave reached here----");
-
                     String receivedMessages = (String) args [0];
                    JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessages,"groupmessage",GroupChatsActivity.this);
                     Log.d("GROUPFUNCTION", "-----"+ args[0].toString());
@@ -263,6 +263,9 @@ public class GroupChatsActivity extends AppCompatActivity {
                 Log.d("GROUPFUNCTION", "---I HAVE FAILED HERE -----");
 
             }else {
+                Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
+                Log.d("Chickensz","group room number is  is:" + receivedMessage);
+
                 //the rooms id is received
                 ContactsActivity.mSocket.on(receivedMessage,messageReceiver);
                 Log.d("GROUPFUNCTION", "---REACHED HERE PART 0-----");
@@ -282,9 +285,11 @@ public class GroupChatsActivity extends AppCompatActivity {
               Log.d("GROUPFUNCTION",receivedMessage);
                 JsonDeserialiser messageDeserialise = new JsonDeserialiser(receivedMessage,"getgroupcontacts",GroupChatsActivity.this);
                contactsInChat = messageDeserialise.groupContactDdeserialiser();
-                   Log.d("GROUPFUNCTION", "size of contacts in chat is " + contactsInChat.size());
+                for(int i=0; i<contactsInChat.size(); i++){
+                    Log.d("Chickenz","id is+   " + contactsInChat.get(i).getUserId());
+                    Log.d("Chickenz","name  is+   " + contactsInChat.get(i).getContactName());
+                }
             }
-         //   Log.d("GROUPFUNCTION", receivedMessage);
         }
     };
 
@@ -324,8 +329,6 @@ public class GroupChatsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.chat_group_menu, menu);
         if(MasterUser.usersId!=GROUPID){ // if i am not the owner
-            Log.d("COMPAREID"," my own id is  " + MasterUser.usersId);
-            Log.d("COMPAREID"," owners id is  " + GROUPID);
 
             MenuItem item = menu.findItem(R.id.addContact);
             item.setVisible(false);
@@ -343,7 +346,6 @@ public class GroupChatsActivity extends AppCompatActivity {
             MenuItem item3 = menu.findItem(R.id.leaveGroup);
             item3.setVisible(false);
         }
-
         return true;
     }
 
@@ -359,12 +361,10 @@ public class GroupChatsActivity extends AppCompatActivity {
             builder1.setPositiveButton(
                     "Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Toast.makeText(GroupChatsActivity.this, "GroupID: " + ownerId + "\n UserID: " + MasterUser.usersId, Toast.LENGTH_SHORT).show();
-//                            if(mSocket.connected()){
-//                                mSocket.emit("key of leave group",groupid, userID);
-//                            }else{
-//                                Log.d("MESSAGEERROR", "Cannot leave group");
-//                            }
+                            if(ContactsActivity.mSocket.connected()){
+                                Log.d("Chickenz","leaving the group part 1");
+                                ContactsActivity.mSocket.emit("leave_group",MasterUser.usersId, ownerId);
+                            }
                             dialog.cancel();
                         }
                     });
@@ -373,14 +373,17 @@ public class GroupChatsActivity extends AppCompatActivity {
             alert11.show();
             return true;
         } else if (id == R.id.addContact) {
-
             Intent addContactIntent = new Intent(getApplicationContext(), AddContactActivity.class);
             addContactIntent.putExtra("ownerId", ownerId);
-            addContactIntent.putExtra("usernames", usernames);
             addContactIntent.putExtra("groupName", groupName);
+            addContactIntent.putExtra("contactsizenum", contactsInChat.size());
+            for(int i = 0; i<contactsInChat.size(); i++){
+                usernames.add(Integer.parseInt(contactsInChat.get(i).getUserId()));
+            }
+            addContactIntent.putExtra("usernames", usernames);
+            Log.d("Chicken","chick77777   , contacts in chat is---- " + usernames.size());
             startActivity(addContactIntent);
             return true;
-
 
         } else if (id == R.id.report) {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupChatsActivity.this);
@@ -408,10 +411,8 @@ public class GroupChatsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             if(MasterUser.usersId==GROUPID) {
                                 dialog.cancel();
-                                Log.d("Chicken","part1-1-1");
                                 ContactsActivity.mSocket.emit("delete_group",MasterUser.usersId,groupId);
                             }
-                            Log.d("Chicken","part33");
 
                         }
                     });
@@ -424,18 +425,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
-        groupId =null;
-        dataList.clear();
-        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
-        if(ContactsActivity.mSocket!=null) {
-            ContactsActivity.mSocket.off(ContactsActivity.roomnumber);
-        }
-        ContactsActivity.roomnumber = "";
-        recyclerView.getRecycledViewPool().clear();
-        adapter.notifyDataSetChanged();
-    }
+
 
     private Emitter.Listener groupDeleted = new Emitter.Listener() {
         @Override
@@ -454,7 +444,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         for(int i = 0; i<Groups.groupList.size();i++){
                             if(Groups.groupList.get(i).getOwnerId()==Integer.parseInt(groupId)){
-                                Log.d("Chicken","REaCh");
                                 Groups.groupList.remove(i);
                             }
                         }
@@ -472,6 +461,66 @@ public class GroupChatsActivity extends AppCompatActivity {
 
         }
     };
+
+    private Emitter.Listener addedContacts = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            GroupChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args[0]; // id to delete from active chats
+
+                }
+            });
+
+        }
+    };
+
+    private Emitter.Listener groupLeft = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            GroupChatsActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args[0]; // id to delete from active chats
+
+                    if(received.equals("success")){
+                        for(int i=0; i<Groups.groupList.size(); i++){
+                            if(Groups.groupList.get(i).getOwnerId()==Integer.parseInt(ownerId)){
+                                Groups.groupList.remove(i);
+                            }
+                        }
+                        finish();
+                        Toast.makeText(GroupChatsActivity.this, "You have left the group " + groupName+" successfully", Toast.LENGTH_LONG).show();
+                        return;
+                    }else if (received.equals("fail")){
+                        Toast.makeText(GroupChatsActivity.this, "Cannot leave the group " + groupName+" problem with server", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Toast.makeText(GroupChatsActivity.this, "Server Problem", Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+    };
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataList.clear();
+        Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
+
+        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
+        if(  ContactsActivity.mSocket!=null) {
+            ContactsActivity.mSocket.off(ContactsActivity.roomnumber);
+        }
+        ContactsActivity.roomnumber = "";
+        recyclerView.getRecycledViewPool().clear();
+        adapter.notifyDataSetChanged();
+    }
+
 
 
 }

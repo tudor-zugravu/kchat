@@ -14,11 +14,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import android.Manifest;
 import android.widget.Toast;
@@ -75,18 +77,26 @@ public class ImageUpload extends AppCompatActivity {
                     if (canvas.getDrawable() == null) {
                         return;
                     } else {
+                        try{
                         Bitmap bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
                         String codedImage = getStringImage(bitmap);
                         JsonSerialiser imageSerialiser = new JsonSerialiser();
                         MasterUser man = new MasterUser();
                         String imagetosend = imageSerialiser.serialiseProfileImage(man.getuserId(), codedImage);
                         String type = "updateImage";
-                        String login_url = "http://188.166.157.62:3000/imageupload";
+                        String login_url = "http://188.166.157.62:3000/imageUpload";
                         ArrayList<String> paramList = new ArrayList<>();
                         paramList.add("request");
                         paramList.add("json");
                         RESTApi backgroundasync = new RESTApi(ImageUpload.this, login_url, paramList);
-                        backgroundasync.execute(type, "profileImageChange", imagetosend);
+                        String result = backgroundasync.execute(type, "profileImageChange", imagetosend).get();
+                            if(result!=null){
+                                man.setUsersImage(bitmap);
+                                finish();
+                            }
+                        } catch (InterruptedException e) {
+                        } catch (ExecutionException f) {
+                        }
                     }
                 }
             }

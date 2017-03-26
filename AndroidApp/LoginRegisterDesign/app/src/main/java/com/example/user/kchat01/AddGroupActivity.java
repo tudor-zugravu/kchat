@@ -319,8 +319,6 @@ public class AddGroupActivity extends AppCompatActivity {
                                 //after sending data, back to contact page
                                 Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
                                 Log.d("GROUPLIST", usersId.toString());
-                                Intent myIntent = new Intent(AddGroupActivity.this, ContactsActivity.class);
-                                startActivity(myIntent);
                                 finish();
                             }
                         }

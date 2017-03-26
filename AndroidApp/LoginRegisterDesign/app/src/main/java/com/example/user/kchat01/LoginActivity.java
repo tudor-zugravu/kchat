@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             if (username != null && password != null) {
                 Log.d("LOGINRESULT",username);
                 Intent loginIntent = new Intent(LoginActivity.this, ContactsActivity.class);
+                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(loginIntent);
                 finish();
                 //editor.clear();

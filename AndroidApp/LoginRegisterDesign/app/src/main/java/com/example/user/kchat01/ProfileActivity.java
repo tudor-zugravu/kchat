@@ -64,6 +64,24 @@ public class ProfileActivity extends CustomActivity {
     private static final Pattern PHONE_PATTERN = Pattern.compile("^020[0-9]{8}$||^07[0-9]{9}$");
 
     @Override
+    protected void onResume() {
+        super.onResume();
+            toolbarTitle.setText("My Profile");
+            toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+            MasterUser man = new MasterUser();
+            if(man.getProfileLocation()!=null&&!man.getProfileLocation().equals("null")) {
+                imageProfile.setImageBitmap(man.getUsersprofile());
+                Log.d("MYTAG", "location is" + man.getUsersprofile());
+            }else if(man.getProfileLocation().equals("null")){
+                imageProfile.setImageResource(R.drawable.human);
+            }else {
+                imageProfile.setImageResource(R.drawable.human);
+            }
+
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(InternetHandler.hasInternetConnection(ProfileActivity.this,1)==false){

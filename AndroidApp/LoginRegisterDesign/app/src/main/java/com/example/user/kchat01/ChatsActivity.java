@@ -243,6 +243,7 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
         if(  ContactsActivity.mSocket!=null) {

@@ -95,7 +95,8 @@ public class ContactsActivity extends AppCompatActivity {
                 }}
 
         if (tabId == groups) {
-            Log.d("Chicken","restarted groups");
+            mSocket.on("sent_group_chats", currentGroups);
+            Log.d("Chickensz","re-showing the groups again");
             mSocket.emit("get_group_chats", MasterUser.usersId);
         }
         adapter.notifyDataSetChanged();
@@ -117,6 +118,9 @@ public class ContactsActivity extends AppCompatActivity {
                          paramList.add("picture");
                          RESTApi backgroundasync = new RESTApi(ContactsActivity.this, picture_url, paramList);
                          String result = backgroundasync.execute(type).get();
+                         if(result!=null){
+                             Log.d("LOGGGG",result);
+                         }
                      } catch (InterruptedException e) {
                      } catch (ExecutionException f) {
                      }
@@ -253,7 +257,6 @@ public class ContactsActivity extends AppCompatActivity {
                             String type = "contact";
                             contactsIntent.putExtra("type",type);
                             contactsIntent.putExtra("userid",Integer.toString(contact.getContactId()));
-                            //contactsIntent.putExtra("username",contact.getUsername());
                             contactsIntent.putExtra("contactname",contact.getContactName());
                             contactsIntent.putExtra("contactid",contact.getContactId());
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -286,7 +289,7 @@ public class ContactsActivity extends AppCompatActivity {
                             IGroups group = Groups.groupList.get(position);
                             Intent groupIntent = new Intent(ContactsActivity.this, GroupChatsActivity.class);
                             groupIntent.putExtra("ownerId",Integer.toString(group.getOwnerId()));
-                            groupIntent.putExtra("usernames",group.getUsersAsID());
+                            groupIntent.putExtra("usernames",group.getUsersAsID());////////////////////////////////////
                             groupIntent.putExtra("groupName",group.getName());
                             groupIntent.putExtra("groupDesc",group.getDescription());
                             Log.d("GROUPSRECEIVED","I pass this->  "+ group.getActualOwnerId());
@@ -409,7 +412,7 @@ public class ContactsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.add) {
-            Intent intent = new Intent(getApplicationContext(), AddGroupActivity.class);
+            Intent intent = new Intent(ContactsActivity.this, AddGroupActivity.class);
             startActivity(intent);
         }
         return true;

@@ -1,6 +1,7 @@
 package com.example.user.kchat01;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -14,20 +15,25 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
 import IMPL.Contacts;
+import IMPL.Groups;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.RESTApi;
@@ -55,14 +61,13 @@ public class AddContactActivity extends AppCompatActivity {
     Bitmap bitmap;
     DataManager dm;
     Socket getmSocket;
-    String ownerId, groupId, groupName, description;
+    String ownerId, groupId, groupName, contactSize;
 
     static final Integer CAMERA = 0x5;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("CONTACTLIST", "I have data here 98765432");
 
         dm = new DataManager(AddContactActivity.this);
         usersId = new ArrayList<>();
@@ -71,6 +76,7 @@ public class AddContactActivity extends AppCompatActivity {
         this.ownerId = intent.getStringExtra("ownerId");
         this.groupUsersId = intent.getIntegerArrayListExtra("usernames");
         this.groupName = intent.getStringExtra("groupName");
+        this.contactSize = intent.getStringExtra("contactsizenum");
 
         setContentView(R.layout.activity_add_contact);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -97,18 +103,39 @@ public class AddContactActivity extends AppCompatActivity {
                     RESTApi backgroundasync2 = new RESTApi(AddContactActivity.this, contacts_url, paramList2);
                     String result2 = backgroundasync2.execute(type2, man.getuserId()).get();
                     JsonDeserialiser deserialiser = new JsonDeserialiser(result2, "getcontacts", AddContactActivity.this);
-
                 } catch (InterruptedException e) {
                 } catch (ExecutionException f) {
                 }
+            }
+           }
 
+            if(Contacts.contactList!=null&&groupUsersId!=null&&!groupUsersId.isEmpty()) {
+                HashMap<String, IContacts> tempContacts = new HashMap<>();
+                for (IContacts contact : Contacts.contactList) {
+                    tempContacts.put(contact.getUserId(), contact);
+                }
+            //    Log.d("Chicken","size of temp contacts is " + tempContacts.size());
+                for (Integer user : groupUsersId) {
+                    if (tempContacts.containsKey(user.toString())) {
+                        tempContacts.remove(user.toString());
+                        Log.d("Chicken","chick333   , hit here");
+                    }
+                }
+              //  Log.d("Chicken","size of temp contacts is " + tempContacts.size());
+                memberList = new ArrayList<>(tempContacts.values());
+              //  Log.d("Chicken","size of temp contacts is " + tempContacts.size());
+                tempContacts.clear();
+             //   Log.d("Chicken","size of temp contacts is " + tempContacts.size());
+             //   Log.d("Chicken","size of members list is  " + memberList.size());
+
+            }else{
+             //   Log.d("Chicken","chick444444   , hit here");
+                memberList = Contacts.contactList;
             }
 
-            }
-            adapter = new AddGroupAdapter(AddContactActivity.this, Contacts.contactList, 1);// "1" : AddContactActivity
 
+            adapter = new AddGroupAdapter(AddContactActivity.this, memberList, 1);// "1" : AddContactActivity
             textViewDone = (TextView) findViewById(R.id.textViewDone);
-
             textViewDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -136,9 +163,7 @@ public class AddContactActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         searchView = (SearchView) findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -153,7 +178,22 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+       }
+
+
+    private Emitter.Listener addedContacts = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            AddContactActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String received = (String) args[0]; // id to delete from active chats
+
+                }
+            });
+
         }
+    };
 /*
     private Emitter.Listener getGroupId = new Emitter.Listener() {
         @Override
