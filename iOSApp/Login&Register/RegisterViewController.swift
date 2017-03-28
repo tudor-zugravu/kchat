@@ -100,12 +100,20 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
                 displayAlertMessage(mymessage: "Passwords do not match!")
             } else {
                 
-                if confirmPwdTextField.text != nil && confirmPwdTextField.text != "" {
-                    // Call the request function from the Model component
-                    registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: aboutTextField.text!)
+                if (Utils.instance.isInternetAvailable()) {
+                    if aboutTextField.text != nil && aboutTextField.text != "" {
+                        // Call the request function from the Model component
+                        registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: aboutTextField.text!)
+                    } else {
+                        // Call the request function from the Model component
+                        registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: "")
+                    }
                 } else {
-                    // Call the request function from the Model component
-                    registerModel.data_request(fullNameTextField.text!, username: usernameTextField.text!, email: emailTextField.text!, phoneNo: phoneNoTextField.text!, pwd: pwdTextField.text!, about: "")
+                    let alertView = UIAlertController(title: "No internet connection",
+                                                      message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+                    let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                    alertView.addAction(okAction)
+                    self.present(alertView, animated: true, completion: nil)
                 }
             }
         } else {

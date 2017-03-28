@@ -36,20 +36,12 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        if (Utils.instance.isInternetAvailable()) {
-            setListeners()
-        } else {
-            noInternetAllert()
-            self.searchBar.isUserInteractionEnabled = false
-        }
+        setListeners()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if (Utils.instance.isInternetAvailable()) {
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
             SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        } else {
-            noInternetAllert()
-            self.searchBar.isUserInteractionEnabled = false
         }
     }
     
@@ -129,7 +121,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
         alertView.addAction(okAction)
         self.present(alertView, animated: true, completion: nil)
-        self.searchBar.isUserInteractionEnabled = false
+        
     }
     
     func keyboardWillShow(notification:NSNotification) {
@@ -167,13 +159,11 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
                 print("error")
             }
         })
-        
         SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.contactsDownloaded(userList!)
             })
         })
-        
         SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
             print("disconnected");
             Utils.instance.logOut()

@@ -26,39 +26,24 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         searchBar.delegate = self
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
-        
-        SocketIOManager.sharedInstance.setGetGroupChatsListener(completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.chatsDownloaded(userList!)
-            })
-        })
-        
-        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
-            if response == "fail" {
-                print("group create error")
-            } else {
-                print(response);
-            }
-        })
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
+        
+        self.setListeners()
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
             SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        })
-        SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
-            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        })
-        SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIHaveBeenAddedToGroupListener(completionHandler: { () -> Void in
-            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        })
+        } else {
+            noInternetAllert()
+            if (UserDefaults.standard.value(forKey: "privateChats") != nil) {
+                // retrieving a value for a key
+                if let data = UserDefaults.standard.data(forKey: "groupChats"),
+                    let chatsAux = NSKeyedUnarchiver.unarchiveObject(with: data) as? [GroupChatModel] {
+                    chats = chatsAux
+                    self.tableView.reloadData()
+                }
+            }
+        }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
@@ -133,6 +118,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         
         let groupConversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "groupConversationViewController") as? GroupConversationViewController
         groupConversationViewController?.passedValue = (chats[indexPath.row].groupName!, chats[indexPath.row].groupId!, chats[indexPath.row].groupDescription!, chats[indexPath.row].owner!, chats[indexPath.row].groupPicture!)
+        groupConversationViewController?.groupIndex = indexPath.row
         self.navigationController?.pushViewController(groupConversationViewController!, animated: true)
     }
     
@@ -199,6 +185,9 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         }
         chats = chatsAux
         
+        let storedGroupChats = NSKeyedArchiver.archivedData(withRootObject: chats)
+        UserDefaults.standard.set(storedGroupChats, forKey:"groupChats");
+
         self.tableView.reloadData()
     }
     
@@ -225,6 +214,42 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setGetGroupChatsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.chatsDownloaded(userList!)
+            })
+        })
+        SocketIOManager.sharedInstance.setGroupCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("group create error")
+            }
+        })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+        SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIHaveBeenAddedToGroupListener(completionHandler: { () -> Void in
+            SocketIOManager.sharedInstance.getGroupChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     func dismissKeyboard() {

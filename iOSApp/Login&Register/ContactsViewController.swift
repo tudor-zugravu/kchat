@@ -40,8 +40,8 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        if (Utils.instance.isInternetAvailable()) {
-            self.setListeners()
+        self.setListeners()
+        if Utils.instance.isInternetAvailable() {
             contactsModel.downloadContacts()
         } else {
             noInternetAllert()
@@ -208,14 +208,10 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func shortPress(gestureRecognizer: MyTapGestureRecognizer){
-        if (Utils.instance.isInternetAvailable()) {
-            let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-            conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
-            conversationViewController?.cameFrom = false
-            self.navigationController?.pushViewController(conversationViewController!, animated: true)
-        } else {
-            noInternetAllert()
-        }
+        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
+        conversationViewController?.cameFrom = false
+        self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
     func longPress(sender : MyLongPressGestureRecognizer){
@@ -285,7 +281,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
         alertView.addAction(okAction)
         self.present(alertView, animated: true, completion: nil)
-        self.searchBar.isUserInteractionEnabled = false
     }
     
     func dismissKeyboard() {

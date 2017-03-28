@@ -32,13 +32,7 @@ class ChangePasswordViewController: UIViewController, UITextFieldDelegate,Change
         newPasswordTextField.delegate = self
         confirmPasswordTextField.delegate = self
 
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        setListeners()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,8 +71,12 @@ class ChangePasswordViewController: UIViewController, UITextFieldDelegate,Change
                 // Check if the two passwords match
                 if newPasswordTextField.text == confirmPasswordTextField.text {
                 
-                    // Initiate request for password change
-                    changePasswordModel.data_request(UserDefaults.standard.value(forKey: "username") as! String, password: initialPasswordTextField.text!, newPassword: newPasswordTextField.text!)
+                    if Utils.instance.isInternetAvailable() {
+                        // Initiate request for password change
+                        changePasswordModel.data_request(UserDefaults.standard.value(forKey: "username") as! String, password: initialPasswordTextField.text!, newPassword: newPasswordTextField.text!)
+                    } else {
+                        self.noInternetAllert()
+                    }
                 } else {
                     
                     // Display error message for different passwords
@@ -174,6 +172,24 @@ class ChangePasswordViewController: UIViewController, UITextFieldDelegate,Change
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     func dismissKeyboard() {
