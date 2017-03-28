@@ -24,10 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 
-import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,13 +33,11 @@ import java.util.Date;
 
 import API.IContacts;
 import API.IMessage;
-import IMPL.Contacts;
 import IMPL.Groups;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
 import IMPL.Message;
 
-import static com.example.user.kchat01.R.id.contacts;
 import static com.example.user.kchat01.R.id.leaveGroup;
 
 /**
@@ -54,13 +49,13 @@ import static com.example.user.kchat01.R.id.leaveGroup;
 
 public class GroupChatsActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private TextView textViewChatUser;
+    private TextView textViewChatUser, textViewGroupDesc;
     private ImageButton imageUpload;
     private RecyclerView recyclerView;
    // private SearchView searchView;
     private ChatsAdapter adapter;
     public static ArrayList<IMessage> dataList;
-    private String username,message,groupName,groupDescription;
+    private String username,message,groupName,groupDescription,groupDescription2;
     public static Bitmap contactsBitmap;
     private int GROUPID; // this is the id of the group
     private String ownerId; // this is the id of the group
@@ -80,6 +75,7 @@ public class GroupChatsActivity extends AppCompatActivity {
         this.ownerId = intent.getStringExtra("ownerId");
         this.groupName = intent.getStringExtra("groupName");
         this.groupDescription = intent.getStringExtra("groupDesc");
+        this.groupDescription2 = intent.getStringExtra("groupDesc2");//Description
         this.GROUPID = intent.getIntExtra("actualOwnerId",0);
         dataList = new ArrayList<>();
         usernames = new ArrayList<>();
@@ -107,9 +103,12 @@ public class GroupChatsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
+        textViewGroupDesc = (TextView) findViewById(R.id.textViewGroupDesc);
 
         textViewChatUser.setText(groupName);
         textViewChatUser.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
+        textViewGroupDesc.setText(groupDescription2);
+        textViewGroupDesc.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         imageUpload.setOnClickListener(new View.OnClickListener() {
             @Override

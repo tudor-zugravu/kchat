@@ -1,6 +1,5 @@
 package com.example.user.kchat01;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -274,7 +273,7 @@ public class ContactsActivity extends AppCompatActivity {
 
                 }
                 if (tabId == R.id.groups) {
-                    mSocket.emit("get_group_chats", MasterUser.usersId);
+                    //mSocket.emit("get_group_chats", MasterUser.usersId);   //////
                     Log.d("TABPRESS","i selected groups");
                     btn_receiveRequest.setVisibility(GONE);
                     btn_sendRequest.setVisibility(GONE);
@@ -295,6 +294,7 @@ public class ContactsActivity extends AppCompatActivity {
                             groupIntent.putExtra("usernames",group.getUsersAsID());////////////////////////////////////
                             groupIntent.putExtra("groupName",group.getName());
                             groupIntent.putExtra("groupDesc",group.getDescription());
+                            groupIntent.putExtra("groupDesc2", group.getDescription2());
                             Log.d("GROUPSRECEIVED","I pass this->  "+ group.getActualOwnerId());
                             groupIntent.putExtra("actualOwnerId",group.getActualOwnerId());
                             startActivity(groupIntent);
@@ -629,7 +629,7 @@ public class ContactsActivity extends AppCompatActivity {
                     Log.d("GROUPPPP"," "+ sendersName);
                     Log.d("GROUPPPP"," "+ "Reached here part 1111");
 
-                    mSocket.on("sent_group_chats", currentGroups);
+                   // mSocket.on("sent_group_chats", currentGroups);
                     mSocket.emit("get_group_chats", MasterUser.usersId);
                     adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);

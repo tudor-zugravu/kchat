@@ -14,6 +14,10 @@ public interface IGroups {
 
     public void setDescription(String description);
 
+    public String getDescription2();
+
+    public void setDescription2(String description2);
+
     public int getOwnerId();
 
     public void setOwnerId(int ownerId);

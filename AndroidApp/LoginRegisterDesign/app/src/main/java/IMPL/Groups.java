@@ -12,7 +12,7 @@ import API.IGroups;
 
 public class Groups implements IGroups {
 
-   private String description;
+   private String description, description2;
     private int ownerId;
     private String name;
     private String pictureLocation;
@@ -28,7 +28,14 @@ public class Groups implements IGroups {
         this.pictureLocation=pictureLocation;
         this.usersAsID = usersId;
     }
-
+    public Groups (String groupName, String description, int ownerId,  String pictureLocation, String description2, ArrayList<Integer> usersId){
+        this.name = groupName;
+        this.description = description;
+        this.ownerId = ownerId;
+        this.pictureLocation=pictureLocation;
+        this.description2 = description2;
+        this.usersAsID = usersId;
+    }
     public Groups (String groupName, String description, int ownerId,  String pictureLocation, ArrayList<Integer> usersId,Bitmap groupImage){
         this.name = groupName;
         this.description = description;
@@ -46,6 +53,16 @@ public class Groups implements IGroups {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getDescription2() {
+        return this.description2;
+    }
+
+    @Override
+    public void setDescription2(String description2) {
+        this.description2 = description2;
     }
 
     public int getOwnerId() {
