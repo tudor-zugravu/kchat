@@ -1,0 +1,161 @@
+// Socket.io server listens to our app
+
+
+var mysql = require("mysql");
+var fs = require('fs');
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "kchatadmin",
+  database: "kchat"
+});
+
+
+con.connect(function(err){
+  if(err){
+    console.log('Error connecting to Db');
+    return;
+  }
+  console.log('Connection established for message stream db');
+});
+
+
+module.exports = function(io){
+    //socket.io stuff
+	// usernames which are currently connected to the chat
+	var usernames = {};
+	var privateroom = {};
+
+ var userlist = {}; //ids of clients connected to the chat
+	 // rooms which are currently available in chat
+	var rooms = ['room1','room2','room3'];
+	io.on('connection', function(socket){
+	 socket.on('disconnect', function(){
+	   console.log('user disconnected');
+	 });
+
+	 socket.on('user_connect', function(username){
+		socket.join(username);
+		socket.emit("Connected","user has connected");
+	 });
+
+	 // socket.on('chat message', function(msg){
+	 //   console.log('message: ' + msg);
+	 //   // io.emit('chat message', msg); <- comment out and added next line by Ken to send message except for sender
+	 //   socket.broadcast.emit('chat message', msg);
+	 //   io.emit('chat message', 'function from server chat message');
+	 // });
+
+	
+
+	 socket.on('join_own_chat', function(sender_id){  //each user has his own room as a id
+	  //  socket.join(sender_id);
+
+
+//////////////////////////////////////////////////////////////////////////
+	  socket.sender_id = sender_id;
+	  socket.room = 'room1';
+	  userlist[sender_id] = sender_id;
+	  socket.join('room1');
+
+	  // echo to client they've connected
+		socket.emit('users_chat_status', '!!!!!---you have connected to room1-----!!!!!!');
+		// echo to room 1 that a person has connected to their room
+		socket.broadcast.to('room1').emit('users_chat_status', sender_id + ' has connected to this room');
+		// ? socket.emit('users_chat_status', rooms, 'room1');
+//////////////////////////////////////////////////////////////////////////
+
+
+
+	    console.log('The user that has just connected is: ' + sender_id);
+	    io.emit('users_chat_status', 'You' + sender_id+ 'have successfully connected to the server');
+	 });
+
+	 socket.on('private_chat', function(msg){
+	 console.log('contents of message is: ' + msg);
+		var receiver = msg.contacts_id;
+		io.sockets.in(receiver).emit("message_receival",msg);
+		var jsonObject = JSON.parse(msg);
+		var userReceiver = jsonObject.receiver; // id for the chat room
+			    console.log('the user that i am trying to contact is: ' + userReceiver);
+		var today = new Date(jsonObject.timestamp);
+
+	//	socket.join(userReceiver);
+	//	io.sockets.in(userReceiver).emit('message_receival',msg); //<--not working
+	//	socket.to(userReceiver).emit('message_receival', msg); // NOTE: room will be created if it doesn't exist
+	//	socket.broadcast.to(userReceiver).emit('message_receival', msg);
+
+		io.sockets.in(socket.room).emit('message_receival', msg);
+
+
+		var queryString = "INSERT INTO Private_messages (`sender_id`, `receiver_id`, `message`, `timestmp`) VALUES (" +
+							con.escape(jsonObject.sender) + ", " +
+              con.escape(jsonObject.receiver) + ", " +
+              con.escape(jsonObject.message) + ", " +
+              con.escape(today) + ")"; //sending the message contents to the database
+		con.query(queryString);
+		socket.emit("message_receival",msg);
+	 });
+
+   socket.on('search_user_filter', function(username, userId){ // used for searching users in the database
+    
+     if(username != null && username != ""){
+       var username = con.escape(username + "%");
+       var queryString = "SELECT user_id, username, name FROM Users " +
+       "WHERE user_id <> " + userId + " " + 
+       "AND user_id NOT IN (SELECT added_contact_id FROM Contacts WHERE owner_id = "  + userId + ")" + 
+       "AND user_id NOT IN (SELECT owner_id FROM Contacts WHERE added_contact_id = "  + userId + ")" + 
+       "AND name LIKE " + username + " ORDER BY name;";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("search_user_received", 'fail');
+         } else {
+           socket.emit("search_user_received", JSON.stringify(rows));
+         }
+       });
+     } else {
+       socket.emit("search_user_received", 'fail');
+     }
+   });
+
+   socket.on('send_contact_request', function(sendersId,receiversId){ // used for searching users in the database
+     if(data!=null&&data!==""){
+       var username = con.escape(data+"%");
+       var queryString = "INSERT INTO Contacts (contact_id, owner_id, added_contact_id, invite, timestmp) " +
+       "VALUES (NULL, " + sendersId + ", " + receiversId + ", '1', CURRENT_TIMESTAMP);";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("sent_request",'fail');
+           console.log('fail');
+         } else {
+           socket.emit("sent_request",'success');
+           console.log('success');
+         }
+       });
+     }
+   });
+
+   socket.on('accept_contact_request', function(data){ // used for searching users in the database
+     if(data!=null&&data!==""){
+       var username = con.escape(data+"%");
+       var queryString = "SELECT *" +
+       "FROM `Users`" +
+       "WHERE `name` LIKE " + data + " ORDER BY `name`;";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit('fail');
+           console.log('the server failed to get results');
+         } else {
+        //   socket.emit("search_user_received",JSON.stringify(rows));
+           console.log('JSON result is ' + JSON.stringify(rows));
+         }
+       });
+     }
+   });
+});
+
+
+};

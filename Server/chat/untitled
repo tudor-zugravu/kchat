@@ -1,0 +1,257 @@
+// Socket.io server listens to our app
+
+
+var mysql = require("mysql");
+var fs = require('fs');
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "kchatadmin",
+  database: "kchat"
+});
+
+
+con.connect(function(err){
+  if(err){
+    console.log('Error connecting to Db');
+    return;
+  }
+  console.log('Connection established for message stream db');
+});
+
+
+
+
+  var usernames = {};
+  var rooms = [];
+
+module.exports = function(io){
+  
+	io.on('connection', function(socket) {
+	 
+   socket.emit('connect', 'connected');
+
+
+
+  socket.on('adduser', function (roomId, currentUserId) {
+        var username = "" + currentUserId;
+        var room = roomId;
+ 
+        if (rooms.indexOf(room) != -1) {
+            socket.username = username;
+            socket.room = room;
+            usernames[username] = username;
+            socket.join(room);
+
+            socket.emit('updatechat', 'SERVER: You are connected. Start chatting');
+            socket.broadcast.to(room).emit('updatechat', 'SERVER: ' + username + ' has connected to this room');
+        } else {
+
+            socket.emit('updatechat', 'SERVER: Please enter valid code.');
+        }
+    });
+     
+    socket.on('createroom', function (receiverId, userId) {
+
+      if(receiverId != null && receiverId != "" && userId != null && userId != "") {
+       var queryString = "SELECT contact_id FROM Contacts WHERE owner_id = " + userId + " AND added_contact_id = " + receiverId + 
+                          " UNION SELECT contact_id FROM Contacts WHERE added_contact_id = " + userId + " AND owner_id = " + receiverId + ";";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit('updatechat', 'SERVER: Room not created, you are not friends');
+           socket.emit('roomcreated', 'fail');
+         } else {
+            var new_room = "" + rows[0].contact_id;
+
+            if (rooms.indexOf(new_room) == -1) {
+              rooms.push(new_room);
+            }
+            
+            socket.emit('updatechat', 'SERVER Your room is ready, invite someone using this ID:' + new_room);
+            socket.emit('roomcreated', new_room);
+         }
+       });
+     }
+    });
+ 
+    socket.on('sendchat', function (msg) {
+      
+	    // socket.broadcast.to(socket.room).emit(socket.room, "" + socket.username, "" + msg);
+
+      sqlMsg = msg.replace("'","\\'");
+      var queryString = 'INSERT INTO Private_messages (message_id, sender_id, receiver_id, message, timestmp) ' + 
+                        'SELECT NULL, ' + socket.username + ", CASE WHEN owner_id = " + socket.username + ' THEN added_contact_id ' +
+                        'WHEN added_contact_id = ' + socket.username + " THEN owner_id ELSE NULL END, '" + sqlMsg + "', CURRENT_TIMESTAMP " +
+                        'FROM Contacts WHERE contact_id = ' + socket.room + ';';
+                        
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           io.sockets.in(socket.room).emit(socket.room, "database insert error"); 
+         } else {
+           io.sockets.in(socket.room).emit(socket.room, "" + socket.username, "" + msg); 
+         }
+       });
+
+    });
+ 
+    socket.on('disconnect', function () {
+        delete usernames[socket.username];
+        io.sockets.emit('updateusers', usernames);
+        if (socket.username !== undefined) {
+            socket.broadcast.emit('updatechat', 'SERVER: ' + socket.username + ' has disconnected');
+            socket.leave(socket.room);
+        }
+    });
+
+
+
+
+   socket.on('search_user_filter', function(username, userId){ // used for searching users in the database
+    
+     if(username != null && username != "") {
+       var username = con.escape(username + "%");
+       var queryString = "SELECT user_id, username, name FROM Users " +
+       "WHERE user_id <> " + userId + " " + 
+       "AND user_id NOT IN (SELECT added_contact_id FROM Contacts WHERE owner_id = "  + userId + ")" + 
+       "AND user_id NOT IN (SELECT owner_id FROM Contacts WHERE added_contact_id = "  + userId + ")" + 
+       "AND name LIKE " + username + " ORDER BY name;";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("search_user_received", 'fail');
+         } else {
+           socket.emit("search_user_received", JSON.stringify(rows));
+         }
+       });
+     } else {
+       socket.emit("search_user_received", 'fail');
+     }
+   });
+
+   socket.on('send_contact_request', function(sendersId, receiversId){ // used for searching users in the database
+     if(sendersId != null && sendersId != "" && receiversId != null && receiversId != "") {
+       var queryString = "INSERT INTO Contacts (contact_id, owner_id, added_contact_id, invite, timestmp) " +
+       "VALUES (NULL, " + sendersId + ", " + receiversId + ", '1', CURRENT_TIMESTAMP);";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("sent_request", 'fail');
+         } else {
+           socket.emit("sent_request", 'success');
+         }
+       });
+     }
+   });
+
+   socket.on('sent_contact_requests', function(userId){ // used for searching users in the database
+     
+     if(userId != null && userId != "") {
+       var queryString = 'SELECT contact_id, timestmp, Users.* ' + 
+                          'FROM Contacts JOIN Users ON Users.user_id = Contacts.added_contact_id ' + 
+                          'WHERE owner_id = ' + userId + ' AND invite = 1;';
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("sent_requests", 'fail');
+         } else {
+           socket.emit("sent_requests", JSON.stringify(rows));
+         }
+       });
+     }
+   });
+
+   socket.on('delete_contact_request', function(sendersId, receiversId, receiver) { // used for searching users in the database
+     if(sendersId != null && sendersId != "" && receiversId != null && receiversId != "" && receiver != null && receiver != "") {
+       var queryString = "DELETE FROM Contacts WHERE Contacts.owner_id = " + sendersId +
+                          " AND Contacts.added_contact_id = " + receiversId + ";";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit('request_deleted', 'fail');
+         } else {
+          socket.emit("request_deleted", receiver);
+         }
+       });
+     }
+   });
+
+   socket.on('received_contact_requests', function(userId){ // used for searching users in the database
+     
+     if(userId != null && userId != "") {
+       var queryString = 'SELECT contact_id, timestmp, Users.* ' + 
+                          'FROM Contacts JOIN Users ON Users.user_id = Contacts.owner_id ' + 
+                          'WHERE added_contact_id = ' + userId + ' AND invite = 1;';
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("received_requests", 'fail');
+         } else {
+           socket.emit("received_requests", JSON.stringify(rows));
+         }
+       });
+     }
+   });
+
+   socket.on('accept_contact_request', function(sendersId, receiversId, receiver) { // used for searching users in the database
+     if(sendersId != null && sendersId != "" && receiversId != null && receiversId != "" && receiver != null && receiver != "") {
+       var queryString = "UPDATE Contacts SET invite = '0' WHERE Contacts.owner_id = " + sendersId +
+                          " AND Contacts.added_contact_id = " + receiversId + ";";
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit('request_accepted', 'fail');
+         } else {
+          socket.emit("request_accepted", receiver);
+         }
+       });
+     }
+   });
+
+   socket.on('get_chats', function(userId){ // used for searching users in the database
+     if(userId != null && userId != "") {
+       var queryString = 'SELECT users1.user_id as receiverId, users1.name as receiverName, users1.profile_picture as receiverProfilePicture, ' + 
+                          'users2.user_id as senderId, users2.name as senderName, users2.profile_picture as senderProfilePicture, message, timestmp ' + 
+                          'FROM Private_messages JOIN Users users1 ON users1.user_id = Private_messages.receiver_id ' + 
+                          'JOIN Users users2 ON users2.user_id = Private_messages.sender_id ' + 
+                          'WHERE message_id IN (SELECT MAX(message_id) ' + 
+                                                'FROM (SELECT receiver_id as receiverId, message_id, timestmp ' + 
+                                                      'FROM Private_messages ' + 
+                                                      'WHERE sender_id = ' + userId + 
+                                                      ' UNION SELECT sender_id as receiverId, message_id, timestmp ' +
+                                                      'FROM Private_messages ' +
+                                                      'WHERE receiver_id = ' + userId +
+                                                      ' ORDER BY timestmp DESC) chats ' + 
+                                                'GROUP BY receiverID)' + 
+                          'ORDER BY timestmp DESC;';
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("sent_chats", 'fail');
+         } else {
+           socket.emit("sent_chats", JSON.stringify(rows));
+         }
+       });
+     }
+   });
+
+    socket.on('get_recent_messages', function(senderId, receiverId, limit){ // used for searching users in the database
+     if(senderId != null && senderId != "" && receiverId != null && receiverId != "" && limit != null && limit != "") {
+       var queryString = 'SELECT *, true as sent FROM `Private_messages` WHERE sender_id = ' + senderId + ' AND receiver_id = ' + receiverId + 
+                          ' UNION SELECT *, false as sent FROM `Private_messages` WHERE sender_id = ' + receiverId + ' AND receiver_id = ' + senderId + 
+                          ' ORDER BY timestmp DESC LIMIT ' + limit + ';';
+       con.query(queryString, function(err, rows, fields) {
+         if (err) {
+           throw err;
+           socket.emit("send_recent_messages", 'fail');
+         } else {
+           socket.emit("send_recent_messages", JSON.stringify(rows));
+         }
+       });
+     }
+   });
+});
+
+
+};
