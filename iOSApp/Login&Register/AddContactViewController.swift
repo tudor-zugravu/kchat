@@ -12,6 +12,9 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    
+    var bottomDistance: CGFloat = 0;
     
     var contacts: [FilteredContactModel] = []
     
@@ -52,10 +55,19 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
 
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
@@ -118,14 +130,39 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         SocketIOManager.sharedInstance.addContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), userName: UserDefaults.standard.value(forKey: "fullName")! as! String, receiverId: String(receiver))
     }
     
-    func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
-        view.endEditing(true)
-    }
-    
     @IBAction func backButtonPressed(_ sender: AnyObject) {
         let _ = navigationController?.popViewController(animated: true)
         navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        adjustingHeight(show: true, notification: notification)
+    }
+    
+    func keyboardWillHide(notification:NSNotification) {
+        adjustingHeight(show: false, notification: notification)
+    }
+    
+    func adjustingHeight(show:Bool, notification:NSNotification) {
+        
+        if let userInfo = notification.userInfo, let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIKeyboardAnimationCurveUserInfoKey] {
+            
+            let duration = (durationValue as AnyObject).doubleValue
+            let keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+            let options = UIViewAnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+            let changeInHeight = (keyboardFrame.height) * (show ? 1 : 0)
+            
+            self.bottomConstraint.constant = bottomDistance + changeInHeight
+            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+                
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
 }
 
