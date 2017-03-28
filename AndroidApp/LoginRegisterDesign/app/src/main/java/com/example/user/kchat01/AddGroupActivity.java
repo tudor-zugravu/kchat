@@ -82,7 +82,7 @@ public class AddGroupActivity extends AppCompatActivity {
         dm = new DataManager(AddGroupActivity.this);
         usersId = new ArrayList<>();
 
-            ContactsActivity.mSocket.connect();
+           // ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("group_created",getGroupId);
 
         setContentView(R.layout.activity_add_group);
@@ -315,6 +315,7 @@ public class AddGroupActivity extends AppCompatActivity {
                                 IGroups group = new Groups(groupName,description,MasterUser.usersId,imageLocation,usersId);
                                 group.setActualOwnerId(MasterUser.usersId);
                                 group.setGroupImage(bitmap);
+                                group.setOwnerId(Integer.parseInt(groupId));
                                 Groups.groupList.add(group);
                                 //after sending data, back to contact page
                                 Toast.makeText(AddGroupActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();

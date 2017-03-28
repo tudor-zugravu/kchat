@@ -68,10 +68,10 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         dm = new DataManager(AddContactActivity.this);
         usersId = new ArrayList<>();
 
+        ContactsActivity.mSocket.on("added_to_group",addedToGroup);
         Intent intent = getIntent();
         this.ownerId = intent.getStringExtra("ownerId");
         this.groupUsersId = intent.getIntegerArrayListExtra("usernames");
@@ -93,7 +93,6 @@ public class AddContactActivity extends AppCompatActivity {
             dm.selectAllContacts();
         } else {
             if (InternetHandler.hasInternetConnection(AddContactActivity.this,0) == false) {
-
             } else {
                 try {
                     String type2 = "getcontacts";
@@ -114,25 +113,17 @@ public class AddContactActivity extends AppCompatActivity {
                 for (IContacts contact : Contacts.contactList) {
                     tempContacts.put(contact.getUserId(), contact);
                 }
-            //    Log.d("Chicken","size of temp contacts is " + tempContacts.size());
                 for (Integer user : groupUsersId) {
                     if (tempContacts.containsKey(user.toString())) {
                         tempContacts.remove(user.toString());
                         Log.d("Chicken","chick333   , hit here");
                     }
                 }
-              //  Log.d("Chicken","size of temp contacts is " + tempContacts.size());
                 memberList = new ArrayList<>(tempContacts.values());
-              //  Log.d("Chicken","size of temp contacts is " + tempContacts.size());
                 tempContacts.clear();
-             //   Log.d("Chicken","size of temp contacts is " + tempContacts.size());
-             //   Log.d("Chicken","size of members list is  " + memberList.size());
-
             }else{
-             //   Log.d("Chicken","chick444444   , hit here");
                 memberList = Contacts.contactList;
             }
-
 
             adapter = new AddGroupAdapter(AddContactActivity.this, memberList, 1);// "1" : AddContactActivity
             textViewDone = (TextView) findViewById(R.id.textViewDone);
@@ -151,7 +142,7 @@ public class AddContactActivity extends AppCompatActivity {
                         checkedString.append("\n");
                     }
                     JSONArray jsonArray = new JSONArray(usersId);
-//                mSocket.emit("create_group", groupName, description, MasterUser.usersId, "true", jsonArray);
+                    ContactsActivity.mSocket.emit("add_to_group",ownerId, jsonArray);
                     Toast.makeText(AddContactActivity.this,"addcontact: "+jsonArray+"\n ContactName: "+String.valueOf(checkedString)+"\nGroupID: "+ownerId, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -181,87 +172,25 @@ public class AddContactActivity extends AppCompatActivity {
        }
 
 
-    private Emitter.Listener addedContacts = new Emitter.Listener() {
+    private Emitter.Listener addedToGroup = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             AddContactActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String received = (String) args[0]; // id to delete from active chats
+                    Log.d("LeChecker",received);
+                    if(received.equals("success")){
+                    finish();
+                    }else{
 
-                }
-            });
-
-        }
-    };
-/*
-    private Emitter.Listener getGroupId = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            AddContactActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String receivedMessages = (String) args [0];
-                    if(receivedMessages.equals("fail")){
-                        Log.d("USERSLIST", receivedMessages);
-                    }else {
-                        receivedMessages = receivedMessages.substring(5);
-                        Log.d("USERSLIST", " i have received from server    "+receivedMessages);
-                        groupId = receivedMessages;
-
-                        if (groupName.isEmpty() || description.isEmpty()) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AddContactActivity.this);
-                            builder.setMessage("Group Name and Description fields are required.").setNegativeButton("Back", null).create().show();
-                        } else if (adapter.checkedUsers.size() == 0) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AddContactActivity.this);
-                            builder.setMessage("Please select at least one user.").setNegativeButton("Back", null).create().show();//
-                        } else {
-
-                            if (canvas.getDrawable() == null) {
-                                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.add_group);
-                                return;
-                            } else {
-                                bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                                if(InternetHandler.hasInternetConnection(AddContactActivity.this)==false){
-
-                                }else {
-                                    if (bitmap != null) {
-                                        Log.d("USERSLIST", " i am sending the groups picture");
-                                        Bitmap bitmap = ((BitmapDrawable) canvas.getDrawable()).getBitmap();
-                                        String codedImage = ImageUpload.getStringImage(bitmap);
-                                        JsonSerialiser imageSerialiser = new JsonSerialiser();
-                                        MasterUser man = new MasterUser();
-                                        String imagetosend = imageSerialiser.serialiseProfileImage(groupId, codedImage);
-                                        String type = "updateImage";
-                                        String login_url = "http://188.166.157.62:3000/groupImageUpload";
-                                        ArrayList<String> paramList = new ArrayList<>();
-                                        paramList.add("request");
-                                        paramList.add("json");
-                                        RESTApi backgroundasync = new RESTApi(AddContactActivity.this, login_url, paramList);
-                                        backgroundasync.execute(type, "profileImageChange", imagetosend);
-                                    }
-                                }
-                            }
-
-                            if (AddGroupAdapter.checkedUsers != null) {
-
-                                String imageLocation = "group_picture"+groupId+".jpg";
-                                IGroups group = new Groups(groupName,description,MasterUser.usersId,imageLocation,usersId);
-                                group.setGroupImage(bitmap);
-                                Groups.groupList.add(group);
-                                //after sending data, back to contact page
-                                Toast.makeText(AddContactActivity.this, "Group: " + groupName + "\n Description: " + description + "\n User: " + checkedString.toString() + " was added.", Toast.LENGTH_SHORT).show();
-                                Log.d("AddGroup_userId", usersId.toString());
-                                Intent myIntent = new Intent(AddContactActivity.this, ContactsActivity.class);
-                                startActivity(myIntent);
-                            }
-                        }
                     }
                 }
             });
+
         }
     };
-*/
+
 
 
 }

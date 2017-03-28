@@ -80,9 +80,9 @@ public class ProfileActivity extends CustomActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(InternetHandler.hasInternetConnection(ProfileActivity.this,1)==false){
-            ContactsActivity.mSocket.disconnect();
+           // ContactsActivity.mSocket.disconnect();
         }else {
-            ContactsActivity.mSocket.connect();
+            //ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("fullname_changed", fullnameChanged);
             ContactsActivity.mSocket.on("username_changed", usernameChanged); //-----------refresh
             ContactsActivity.mSocket.on("email_changed", emailChanged);

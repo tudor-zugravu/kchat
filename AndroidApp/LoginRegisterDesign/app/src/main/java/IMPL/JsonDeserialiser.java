@@ -128,7 +128,9 @@ public class JsonDeserialiser {
                 }
                 if(GroupChatsActivity.dataList!=null && type ==1 ) {
                     GroupChatsActivity.dataList.add(0, messageObject);
-                    Log.d("GROUPFUNCTION", "size of the list is : " + GroupChatsActivity.dataList.size());
+                    Log.d("GROUPFUNCTIONN", "size of the list is : " + jArr.length());
+
+
                     dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 }
             }

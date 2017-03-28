@@ -93,7 +93,7 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
                 if(cb.isChecked()){
                     groupLimit = groupLimit + 1;
                     if (type == -1) { // ADD Group
-                        if (groupLimit > 1) {
+                        if (groupLimit > 6) {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                             AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
                             builder1.setTitle("Cannot create Group");
@@ -113,7 +113,7 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
                         checkedUsers.clear();
                         // TO check the number of current members in group
 //                        Log.d("ADDCONTACT_GROUP_MEM", String.valueOf(groupUsersId.size()));
-                        if (groupLimit > 1) {
+                        if (groupLimit > 6) {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
                             AddContactActivity.textViewDone.setVisibility(TextView.GONE);
                             builder1.setTitle("Cannot add the contact");
@@ -134,13 +134,13 @@ public class AddGroupAdapter extends RecyclerView.Adapter<AddGroupViewHolder> im
                 }else if (!cb.isChecked()){
                     groupLimit = groupLimit - 1 ;
                     if (type == -1) { //ADD Group
-                        if (groupLimit > 1) {
+                        if (groupLimit < 6) {
                             AddGroupActivity.textViewDone.setVisibility(TextView.GONE);
                         } else {
                             AddGroupActivity.textViewDone.setVisibility(TextView.VISIBLE);
                         }
                     }else if (type == 1){  //Add Contact to group
-                        if (groupLimit > 1) {
+                        if (groupLimit < 6) {
                             AddContactActivity.textViewDone.setVisibility(TextView.GONE);
                         } else {
                             AddContactActivity.textViewDone.setVisibility(TextView.VISIBLE);

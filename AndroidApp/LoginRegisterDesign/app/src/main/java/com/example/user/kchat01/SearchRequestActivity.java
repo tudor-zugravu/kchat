@@ -44,7 +44,7 @@ public class SearchRequestActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Contacts.searchList.clear();
 
-        ContactsActivity.mSocket.connect();
+        //ContactsActivity.mSocket.connect();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_request);
