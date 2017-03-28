@@ -109,18 +109,17 @@ public class ChatsActivity extends AppCompatActivity {
         }
 
 
-        if(InternetHandler.hasInternetConnection(ChatsActivity.this,0)==false){
-            ContactsActivity.mSocket.disconnect();
+        if(InternetHandler.hasInternetConnection(ChatsActivity.this,1)==false){
+
             dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
           //  recyclerView.setNestedScrollingEnabled(false);
         }else {
-            ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("you_were_deleted",contactDelete);
             ContactsActivity.mSocket.on("private_room_created", stringReply2);
             ContactsActivity.mSocket.emit("create_private_room", userId, MasterUser.usersId);
             ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
             ContactsActivity.mSocket.on("send_recent_messages", getallmessages); // sends server messages
-                Log.d("OFFLINE TESTER", "Did i reach here?");
+
         }
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -243,7 +242,6 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
         if(  ContactsActivity.mSocket!=null) {

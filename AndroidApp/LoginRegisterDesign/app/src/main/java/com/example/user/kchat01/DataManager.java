@@ -115,9 +115,16 @@ public class DataManager {
         counter = counter + 1;
         Log.d("OFFLINE TESTER", "this was called  " + counter + " times");
     }
-
+//dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
     public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
-        String query = "INSERT OR REPLACE INTO " + GROUP_MESSAGES_TABLE + " ( " +
+
+        String query2 = "DELETE FROM " +  GROUP_MESSAGES_TABLE+
+                " WHERE " + GROUP_MESSAGES_RECEIVERID + " = " + receiverId + " AND " + GROUP_MESSAGES_MESSAGEID + " = " + messageId +";";
+        Log.i("delete() = ", query2);
+        db.execSQL(query2);
+
+
+        String query = "INSERT  INTO " + GROUP_MESSAGES_TABLE + " ( " +
                 GROUP_MESSAGES_MESSAGEID + ", " +
                 GROUP_MESSAGES_SENDERID + ", " +
                 GROUP_MESSAGES_RECEIVERID + ", " +
@@ -280,7 +287,8 @@ public class DataManager {
     }
 
     public Cursor selectAllGroupMessages(int groupId, int myID) { ///name = 34 ken //myId is 2 Tudor
-        Cursor c = db.rawQuery("SELECT DISTINCT * " +
+        Log.d("DATABASE"," a ----- "+  groupId);
+        Cursor c = db.rawQuery("SELECT * " +
                 " FROM " + GROUP_MESSAGES_TABLE +
                 " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
                 " ORDER BY datetime(timestamp) DESC ;", null);
@@ -292,6 +300,11 @@ public class DataManager {
             int sender_id = c.getInt(1);
             String message= c.getString(3);
             String timestamp = c.getString(4);
+
+            Log.d("DATABASERESULT", Integer.toString(messageId));
+            Log.d("DATABASERESULT", Integer.toString(sender_id));
+            Log.d("DATABASERESULT", message);
+            Log.d("DATABASERESULT", timestamp);
 
             IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
             if(sender_id == myID){
@@ -320,7 +333,6 @@ public class DataManager {
             }
             if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
         }
-
 
         Log.d("OFFLINE TESTER", "size of the offline list is  " + GroupChatsActivity.dataList.size());
         return c;

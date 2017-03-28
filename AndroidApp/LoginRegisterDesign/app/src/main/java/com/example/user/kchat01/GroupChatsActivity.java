@@ -67,6 +67,19 @@ public class GroupChatsActivity extends AppCompatActivity {
     public static ArrayList <IContacts> contactsInChat;
     DataManager dm;
     public static String groupId;
+    static boolean active = false;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +95,24 @@ public class GroupChatsActivity extends AppCompatActivity {
         dm = new DataManager(GroupChatsActivity.this);
         groupId = ownerId;
 
-        if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,0)==false){
-                ContactsActivity.mSocket.disconnect();
+        if(InternetHandler.hasInternetConnection(GroupChatsActivity.this,1)==false){
+
                dm.selectAllGroupMessages(Integer.parseInt(groupId),MasterUser.usersId);
 //                recyclerView.setNestedScrollingEnabled(false);
             }else {
-                ContactsActivity.mSocket.connect();
                 ContactsActivity.mSocket.on("send_group_members", groupList);
                 ContactsActivity.mSocket.emit("get_group_members", ownerId);
                 ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
+                ContactsActivity.mSocket.off("send_recent_group_messages");
                 ContactsActivity.mSocket.on("send_recent_group_messages", getallmessages); // sends server messages
+                ContactsActivity.mSocket.off("group_room_created");
                 ContactsActivity.mSocket.on("group_room_created", stringReply2);
                 ContactsActivity.mSocket.emit("create_group_room", ownerId);
                 ContactsActivity.mSocket.on("group_deleted",groupDeleted);
                 ContactsActivity.mSocket.on("group_left",groupLeft);
-            }
+                ContactsActivity.mSocket.on("you_were_deleted_from_group",groupRemove);
+
+        }
 
         setContentView(R.layout.activity_chats);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -167,6 +183,7 @@ public class GroupChatsActivity extends AppCompatActivity {
                         didOverscroll = true;
                     }
                     if (newState == 2 && isAtTop && didOverscroll) {
+                        Log.d("GROUPFUNCTIONN", "haha");
                         ContactsActivity.mSocket.emit("get_recent_group_messages",ownerId,20*counter);
                         counter++;
                         didOverscroll = false;
@@ -262,12 +279,14 @@ public class GroupChatsActivity extends AppCompatActivity {
                 Log.d("GROUPFUNCTION", "---I HAVE FAILED HERE -----");
 
             }else {
-                Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
+                Log.d("Chickensz","roomnumber is:" + ContactsActivity.grouproomnumber);
                 Log.d("Chickensz","group room number is  is:" + receivedMessage);
-
-                //the rooms id is received
+                ContactsActivity.grouproomnumber = receivedMessage;
+                ContactsActivity.mSocket.off(receivedMessage);
                 ContactsActivity.mSocket.on(receivedMessage,messageReceiver);
                 Log.d("GROUPFUNCTION", "---REACHED HERE PART 0-----");
+                Log.d("GROUPFUNCTIONN", "haha 22222");
+
                 ContactsActivity.mSocket.emit("get_recent_group_messages",ownerId,20);
             }
             Log.d("GROUPFUNCTION", receivedMessage);
@@ -410,7 +429,19 @@ public class GroupChatsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             if(MasterUser.usersId==GROUPID) {
                                 dialog.cancel();
-                                ContactsActivity.mSocket.emit("delete_group",MasterUser.usersId,groupId);
+                                if(groupId==null||groupId.equals("")){
+                                    Log.d("TESTERING","ERRORRRRR");
+                                }else {
+                                    Log.d("TESTERING",groupId);
+
+                                    if(groupId.equals(ownerId)){
+                                        Log.d("TESTERING","hit here 1");
+                                        ContactsActivity.mSocket.emit("delete_group", MasterUser.usersId, groupId);
+                                    }else{
+                                        Log.d("TESTERING","hit here 2222");
+                                        ContactsActivity.mSocket.emit("delete_group", MasterUser.usersId, GROUPID);
+                                    }
+                                }
                             }
 
                         }
@@ -461,13 +492,24 @@ public class GroupChatsActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener addedContacts = new Emitter.Listener() {
+    private Emitter.Listener groupRemove = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             GroupChatsActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String received = (String) args[0]; // id to delete from active chats
+                    if (active == true) {
+                        String received = (String) args[0]; // id to delete from active chats
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        Log.d("DELETESTATUS", "Deleted here:" + received);
+                        Context context = getApplicationContext();
+                        CharSequence text = "Contact deleted you from chat!";
+                        int duration = Toast.LENGTH_LONG;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        finish();
+                    }
 
                 }
             });
@@ -509,17 +551,24 @@ public class GroupChatsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dataList.clear();
-        Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
+        Log.d("Chickensz","roomnumber is:" + ContactsActivity.grouproomnumber);
 
-        Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
+        Log.d("DATALIST","roomnumber is:" + ContactsActivity.grouproomnumber);
         if(  ContactsActivity.mSocket!=null) {
-            ContactsActivity.mSocket.off(ContactsActivity.roomnumber);
+            ContactsActivity.mSocket.off(ContactsActivity.grouproomnumber);
+            ContactsActivity.mSocket.off("send_recent_group_messages");
         }
-        ContactsActivity.roomnumber = "";
+        ContactsActivity.grouproomnumber = "";
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
     }
 
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
 }
