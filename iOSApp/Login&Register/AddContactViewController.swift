@@ -37,29 +37,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         if (Utils.instance.isInternetAvailable()) {
-            SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
-                if(response == true) {
-                    self.contacts = []
-                    self.tableView.reloadData()
-                    self.searchBar.text = ""
-                } else {
-                    print("error")
-                }
-            })
-            
-            SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
-                DispatchQueue.main.async(execute: { () -> Void in
-                    self.contactsDownloaded(userList!)
-                })
-            })
-            
-            SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-                print("disconnected");
-                Utils.instance.logOut()
-                _ = self.navigationController?.popToRootViewController(animated: true)
-            })
-            SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-            SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+            setListeners()
         } else {
             noInternetAllert()
             self.searchBar.isUserInteractionEnabled = false
@@ -177,6 +155,32 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
+            if(response == true) {
+                self.contacts = []
+                self.tableView.reloadData()
+                self.searchBar.text = ""
+            } else {
+                print("error")
+            }
+        })
+        
+        SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+        
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
     func dismissKeyboard() {
