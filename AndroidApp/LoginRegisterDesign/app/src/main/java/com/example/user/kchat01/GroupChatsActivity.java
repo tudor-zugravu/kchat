@@ -111,7 +111,6 @@ public class GroupChatsActivity extends AppCompatActivity {
                 ContactsActivity.mSocket.on("group_deleted",groupDeleted);
                 ContactsActivity.mSocket.on("group_left",groupLeft);
                 ContactsActivity.mSocket.on("you_were_deleted_from_group",groupRemove);
-
         }
 
         setContentView(R.layout.activity_chats);
@@ -205,11 +204,11 @@ public class GroupChatsActivity extends AppCompatActivity {
                     if (InternetHandler.hasInternetConnection(GroupChatsActivity.this, 2) == false) {
                         //insert into database
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                        dm.insertIntoBufferTable(MasterUser.usersId, Integer.parseInt(groupId), message, timestamp.toString(), "");
                         IMessage offlineMessage = new Message(MasterUser.usersId, Integer.parseInt(groupId), message, timestamp.toString());
                         offlineMessage.setMe(true);
                         dataList.add(offlineMessage);
                         adapter.notifyDataSetChanged();
+                        dm.insertIntoBufferTable(MasterUser.usersId,Integer.parseInt(ownerId),message,timestamp.toString(),"group");
                     } else {
                         //before i am outputting to the screen i will take the text of the message and any other user related information
                         //and i will send it to the server using the socket.io
@@ -455,8 +454,6 @@ public class GroupChatsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     private Emitter.Listener groupDeleted = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -545,14 +542,11 @@ public class GroupChatsActivity extends AppCompatActivity {
         }
     };
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         dataList.clear();
         Log.d("Chickensz","roomnumber is:" + ContactsActivity.grouproomnumber);
-
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.grouproomnumber);
         if(  ContactsActivity.mSocket!=null) {
             ContactsActivity.mSocket.off(ContactsActivity.grouproomnumber);
@@ -562,8 +556,6 @@ public class GroupChatsActivity extends AppCompatActivity {
         recyclerView.getRecycledViewPool().clear();
         adapter.notifyDataSetChanged();
     }
-
-
 
     @Override
     protected void onResume() {

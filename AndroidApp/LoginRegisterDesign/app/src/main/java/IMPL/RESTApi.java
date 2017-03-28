@@ -67,7 +67,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
         if(type.equals("getIcon")) {
             getBitmapFromURL(this.url,50,50);
         }
-        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")||type.equals("profileUpdate")||type.equals("deleteAccount")||type.equals("profileUpdate")) {
+        if(type.equals("login")||type.equals("register")||type.equals("updateImage")||type.equals("getcontacts")||type.equals("profileUpdate")||type.equals("deleteAccount")||type.equals("profileUpdate")||type.equals("bufferSend")) {
             try {
                 URL url = new URL(login_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -126,6 +126,12 @@ public class RESTApi extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPostExecute(String result) {
+
+        if(type.equals("bufferSend")){
+            if (result == null || result.equals("") || result.equals("null")) {
+                Log.d("MESSI","got a result from the server");
+            }
+        }
 
         if(type.equals("login")) {
             if (result == null || result.equals("") || result.equals("null")) {

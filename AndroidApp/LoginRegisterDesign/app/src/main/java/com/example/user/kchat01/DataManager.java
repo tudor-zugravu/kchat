@@ -168,6 +168,28 @@ public class DataManager {
         db.execSQL(query);
     }
 
+
+    public void getAllBufferedMessages(){ //logout to delete all
+        Log.d("MESSI","reeached to get all buffered messages");
+        Cursor c2 = db.rawQuery("SELECT * " +
+                " FROM " + BUFFER_MESSAGES_TABLE +
+                " ORDER BY datetime(timestamp) ASC ;", null);
+            while (c2.moveToNext()){
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // group id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(4);
+            IMessage messageStored = new Message(-1,sender,message,timestamp);
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            if(InternetHandler.bufferdList!=null )InternetHandler.bufferdList.add(messageStored);
+        }
+        Log.d("MESSI","reeached to delete");
+
+        String query = "DELETE FROM " + BUFFER_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query);
+        db.execSQL(query);
+    }
+
     public void flushAllMessageData(){ //logout to delete all
 // Delete the details from the table if already exists
         String query = "DELETE FROM " +  PRIVATE_MESSAGES_TABLE+ ";";
@@ -267,19 +289,14 @@ public class DataManager {
                 " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
                 "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + myID +"' )"+
                 " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + senderId +"' )"+
-                " ORDER BY datetime(timestamp) DESC ;", null);
+                " ORDER BY datetime(timestamp) ASC ;", null);
         while (c2.moveToNext()){
-            int sender = c2.getInt(0);
-            int receiver = c2.getInt(1); // senders id
-            String message= c2.getString(2);
-            String timestamp = c2.getString(3);
-
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // senders id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(4);
             IMessage messageStored = new Message(-1,sender,message,timestamp);
-            if(sender == myID){
-                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            }else{
-                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
-            }
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
             if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
         }
         Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
@@ -301,11 +318,6 @@ public class DataManager {
             String message= c.getString(3);
             String timestamp = c.getString(4);
 
-            Log.d("DATABASERESULT", Integer.toString(messageId));
-            Log.d("DATABASERESULT", Integer.toString(sender_id));
-            Log.d("DATABASERESULT", message);
-            Log.d("DATABASERESULT", timestamp);
-
             IMessage messageStored = new Message(messageId,sender_id,message,timestamp);
             if(sender_id == myID){
                 messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
@@ -318,23 +330,16 @@ public class DataManager {
         Cursor c2 = db.rawQuery("SELECT DISTINCT * " +
                 " FROM " + BUFFER_MESSAGES_TABLE +
                 " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
-                " ORDER BY datetime(timestamp) DESC ;", null);
+                " ORDER BY datetime(timestamp) ASC ;", null);
         while (c2.moveToNext()){
-            int sender = c2.getInt(0);
-            int receiver = c2.getInt(1); // group id
-            String message= c2.getString(2);
-            String timestamp = c2.getString(3);
-
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // group id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(4);
             IMessage messageStored = new Message(-1,sender,message,timestamp);
-            if(sender == myID){
-                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            }else{
-                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
-            }
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
             if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
         }
-
-        Log.d("OFFLINE TESTER", "size of the offline list is  " + GroupChatsActivity.dataList.size());
         return c;
     }
 
@@ -419,6 +424,8 @@ public class DataManager {
 
             String bufferMessageTableQueryString = "create table "
                     + BUFFER_MESSAGES_TABLE + " ("
+                    + "id"
+                    + " integer primary key AUTOINCREMENT ,"
                     + PRIVATE_MESSAGES_SENDERID
                     + " integer not null,"
                     + PRIVATE_MESSAGES_RECEIVERID
