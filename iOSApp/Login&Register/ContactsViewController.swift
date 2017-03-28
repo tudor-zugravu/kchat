@@ -35,31 +35,25 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.dataSource = self
         contactsModel.delegate = self
         searchBar.delegate = self
-        
-//        searchController.searchResultsUpdater = self
-//        searchController.dimsBackgroundDuringPresentation = false
-//        definesPresentationContext = true
-//        tableView.tableHeaderView = searchController.searchBar
-        
+ 
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
-        
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
-            self.contactsModel.downloadContacts()
-        })
-        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
-            self.contactsModel.downloadContacts()
-        })
-        contactsModel.downloadContacts()
+        if (Utils.instance.isInternetAvailable()) {
+            self.setListeners()
+            contactsModel.downloadContacts()
+        } else {
+            noInternetAllert()
+            if (UserDefaults.standard.value(forKey: "contacts") != nil) {
+                // retrieving a value for a key
+                if let data = UserDefaults.standard.data(forKey: "contacts"),
+                    let contactsAux = NSKeyedUnarchiver.unarchiveObject(with: data) as? [ContactModel] {
+                    contacts = contactsAux
+                    self.tableView.reloadData()
+                }
+            }
+        }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
@@ -206,17 +200,22 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         }
         contacts = contactsAux
-//        UserDefaults.standard.set(contactsAux, forKey:"contacts");
         
+        let storedContacts = NSKeyedArchiver.archivedData(withRootObject: contacts)
+        UserDefaults.standard.set(storedContacts, forKey:"contacts");
         
         self.tableView.reloadData()
     }
     
     func shortPress(gestureRecognizer: MyTapGestureRecognizer){
-        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
-        conversationViewController?.cameFrom = false
-        self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        if (Utils.instance.isInternetAvailable()) {
+            let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+            conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
+            conversationViewController?.cameFrom = false
+            self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        } else {
+            noInternetAllert()
+        }
     }
     
     func longPress(sender : MyLongPressGestureRecognizer){
@@ -262,6 +261,31 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             }, completion: nil)
         }
         self.tableView.reloadData()
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
+            self.contactsModel.downloadContacts()
+        })
+        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
+            self.contactsModel.downloadContacts()
+        })
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
+        self.searchBar.isUserInteractionEnabled = false
     }
     
     func dismissKeyboard() {
