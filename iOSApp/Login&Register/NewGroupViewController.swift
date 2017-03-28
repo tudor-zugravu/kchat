@@ -21,7 +21,9 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     var numberOfSelectedContacts: Int = 0
     var imageHasChanged: Bool = false
     var selectedImg: UIImage? = nil
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     
+    var bottomDistance: CGFloat = 0;
     let picker = UIImagePickerController()
     
     override func viewDidLoad() {
@@ -73,8 +75,22 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
             self.contactsModel.downloadContacts()
         })
         contactsModel.downloadContacts()
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
         return contacts.count
@@ -326,4 +342,32 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         dismiss(animated: true, completion: nil)
     }
 
+    func keyboardWillShow(notification:NSNotification) {
+        adjustingHeight(show: true, notification: notification)
+    }
+    
+    func keyboardWillHide(notification:NSNotification) {
+        adjustingHeight(show: false, notification: notification)
+    }
+    
+    func adjustingHeight(show:Bool, notification:NSNotification) {
+        
+        if let userInfo = notification.userInfo, let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIKeyboardAnimationCurveUserInfoKey] {
+            
+            let duration = (durationValue as AnyObject).doubleValue
+            let options = UIViewAnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+            let changeInHeight = 20 * (show ? 1 : 0)
+            
+            self.bottomConstraint.constant = bottomDistance + CGFloat(changeInHeight)
+            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+                
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
 }

@@ -12,7 +12,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     
+    var bottomDistance: CGFloat = 0;
     var searchActive : Bool = false
     var contacts: [ContactModel] = []
     var filteredContacts: [ContactModel] = []
@@ -58,6 +60,20 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             self.contactsModel.downloadContacts()
         })
         contactsModel.downloadContacts()
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -70,7 +86,11 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchActive = true;
+        if searchBar.text != nil && searchBar.text != "" {
+            searchActive = true
+        } else {
+            searchActive = false
+        }
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -216,5 +236,36 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         let contactRequestsViewController = self.storyboard?.instantiateViewController(withIdentifier: "contactRequestsController") as? ContactRequestsViewController
         contactRequestsViewController?.passedValue = false
         self.navigationController?.pushViewController(contactRequestsViewController!, animated: true)
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        adjustingHeight(show: true, notification: notification)
+    }
+    
+    func keyboardWillHide(notification:NSNotification) {
+        adjustingHeight(show: false, notification: notification)
+    }
+    
+    func adjustingHeight(show:Bool, notification:NSNotification) {
+        
+        if let userInfo = notification.userInfo, let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIKeyboardAnimationCurveUserInfoKey] {
+            
+            let duration = (durationValue as AnyObject).doubleValue
+            let keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+            let options = UIViewAnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+            let changeInHeight = (keyboardFrame.height  - 50) * (show ? 1 : 0)
+            
+            self.bottomConstraint.constant = bottomDistance + changeInHeight
+            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+                
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+        self.tableView.reloadData()
+    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
 }

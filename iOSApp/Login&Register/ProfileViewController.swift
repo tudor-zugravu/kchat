@@ -143,7 +143,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
                 let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
-                print(image?.imageOrientation.rawValue);
                 profilePictureImageView.image = image
             }
             dropButton.isHidden = false

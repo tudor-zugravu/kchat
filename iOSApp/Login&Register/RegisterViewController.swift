@@ -17,15 +17,35 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
     @IBOutlet weak var pwdTextField: UITextField!
     @IBOutlet weak var confirmPwdTextField: UITextField!
     @IBOutlet weak var aboutTextField: UITextField!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var bottomViewConstraint: NSLayoutConstraint!
     
     let registerModel = RegisterModel()
+    var bottomViewDistance: CGFloat = 0
+    var bottomDistance: CGFloat = 30
+    var offset: CGFloat = 0
   
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        fullNameTextField.delegate = self
+        usernameTextField.delegate = self
+        emailTextField.delegate = self
+        pwdTextField.delegate = self
+        phoneNoTextField.delegate = self
+        confirmPwdTextField.delegate = self
+        aboutTextField.delegate = self
+        
+        bottomDistance = bottomConstraint.constant
 
         // Do any additional setup after loading the view.
         registerModel.delegate = self
         aboutTextField.delegate = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -33,6 +53,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     @IBAction func registerButton(_ sender: Any) {
@@ -144,6 +168,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
     }
     
     func onSuccess() {
+        SocketIOManager.sharedInstance.establishConnection()
         self.performSegue(withIdentifier: "registerTabBarViewController", sender: nil)
     }
     
@@ -153,6 +178,45 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
         let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
         myAlert.addAction(okaction);
         self.present(myAlert, animated:true, completion:nil);
+    }
+    
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if (textField == emailTextField) {
+            self.offset = -100
+        } else if (textField == usernameTextField) {
+            self.offset = -165
+        } else if (textField == fullNameTextField) {
+            self.offset = -230
+        } else {
+            self.offset = 0
+        }
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        adjustingHeight(show: true, notification: notification)
+    }
+    
+    func keyboardWillHide(notification:NSNotification) {
+        adjustingHeight(show: false, notification: notification)
+    }
+    
+    func adjustingHeight(show:Bool, notification:NSNotification) {
+        
+        if let userInfo = notification.userInfo, let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIKeyboardAnimationCurveUserInfoKey] {
+            
+            let duration = (durationValue as AnyObject).doubleValue
+            let keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+            let options = UIViewAnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+            let changeInHeight = (keyboardFrame.height) * (show ? 1 : 0)
+            
+            self.bottomViewConstraint.constant = bottomViewDistance + changeInHeight
+            self.bottomConstraint.constant = bottomDistance + offset * (show ? 1 : 0)
+            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+                
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
     }
     
     //regular expression function

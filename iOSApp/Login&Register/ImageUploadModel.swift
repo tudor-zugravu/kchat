@@ -21,7 +21,7 @@ class ImageUploadModel: NSObject, URLSessionDataDelegate {
     func uploadImage(id: String, base64String: String, type: String) {
         
         // Setting up the server session with the URL and the request
-        let url: URL = URL(string: "http://188.166.157.62:4000/iOSImageUpload")!
+        let url: URL = URL(string: "http://188.166.157.62:3000/iOSImageUpload")!
         let session = URLSession.shared
         var request = URLRequest(url:url)
         request.httpMethod = "POST"

@@ -21,7 +21,7 @@ class RegisterModel: NSObject, URLSessionDataDelegate {
     func data_request(_ fullName: String, username: String, email: String, phoneNo: String, pwd: String, about: String) {
         
         // Setting up the server session with the URL and the request
-        let url: URL = URL(string: "http://188.166.157.62:4000/register")!
+        let url: URL = URL(string: "http://188.166.157.62:3000/register")!
         let session = URLSession.shared
         var request = URLRequest(url:url)
         request.httpMethod = "POST"

@@ -8,22 +8,30 @@
 
 import UIKit
 
-class ChangePasswordViewController: UIViewController, ChangePasswordModelProtocol {
+class ChangePasswordViewController: UIViewController, UITextFieldDelegate,ChangePasswordModelProtocol {
     
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var initialPasswordTextField: UITextField!
     @IBOutlet weak var newPasswordTextField: UITextField!
     @IBOutlet weak var confirmPasswordTextField: UITextField!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var bottomViewConstraint: NSLayoutConstraint!
     
     let changePasswordModel = ChangePasswordModel()
+    var bottomViewDistance: CGFloat = 0
+    var bottomDistance: CGFloat = 30
+    var offset: CGFloat = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         changePasswordModel.delegate = self
-        
+        initialPasswordTextField.delegate = self
+        newPasswordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
+
         SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
             print("disconnected");
             Utils.instance.logOut()
@@ -40,6 +48,19 @@ class ChangePasswordViewController: UIViewController, ChangePasswordModelProtoco
             let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
             profilePictureImageView.image = image
         }
+        
+        // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     @IBAction func changePasswordPressed(_ sender: Any) {
@@ -103,11 +124,6 @@ class ChangePasswordViewController: UIViewController, ChangePasswordModelProtoco
         }
     }
     
-    func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
-        view.endEditing(true)
-    }
-    
     @IBAction func backButtonPressed(_ sender: Any) {
         let _ = navigationController?.popViewController(animated: true)
     }
@@ -122,5 +138,46 @@ class ChangePasswordViewController: UIViewController, ChangePasswordModelProtoco
         let okaction=UIAlertAction(title:"ok", style:UIAlertActionStyle.default, handler:nil);
         myAlert.addAction(okaction);
         self.present(myAlert, animated:true, completion:nil);
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if (textField == initialPasswordTextField) {
+            self.offset = 155
+        } else if (textField == newPasswordTextField) {
+            self.offset = 155
+        } else {
+            self.offset = 155
+        }
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        adjustingHeight(show: true, notification: notification)
+    }
+    
+    func keyboardWillHide(notification:NSNotification) {
+        adjustingHeight(show: false, notification: notification)
+    }
+    
+    func adjustingHeight(show:Bool, notification:NSNotification) {
+        
+        if let userInfo = notification.userInfo, let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIKeyboardAnimationCurveUserInfoKey] {
+            
+            let duration = (durationValue as AnyObject).doubleValue
+            let keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+            let options = UIViewAnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+            let changeInHeight = (keyboardFrame.height) * (show ? 1 : 0)
+            
+            self.bottomViewConstraint.constant = bottomViewDistance + changeInHeight
+            self.bottomConstraint.constant = bottomDistance + offset * (show ? 1 : 0)
+            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+                
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
 }
