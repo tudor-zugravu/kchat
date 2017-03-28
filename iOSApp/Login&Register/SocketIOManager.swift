@@ -53,6 +53,7 @@ class SocketIOManager: NSObject {
     
     func setSearchUserReceivedListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
         
+        socket.off("search_user_received")
         socket.on("search_user_received") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -78,6 +79,7 @@ class SocketIOManager: NSObject {
     
     func setSentRequestListener(completionHandler: @escaping (_ status: Bool) -> Void) {
         
+        socket.off("sent_request")
         socket.on("sent_request") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -96,6 +98,7 @@ class SocketIOManager: NSObject {
     
     func setSentRequestsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
         
+        socket.off("sent_requests")
         socket.on("sent_requests") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -121,6 +124,7 @@ class SocketIOManager: NSObject {
     
     func setRequestDeletedListener(completionHandler: @escaping (_ status: String) -> Void) {
         
+        socket.off("request_deleted")
         socket.on("request_deleted") { ( dataArray, ack) -> Void in
 
             let responseString = dataArray[0] as! String
@@ -134,7 +138,7 @@ class SocketIOManager: NSObject {
     }
     
     func setReceivedRequestsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
-
+        socket.off("received_requests")
         socket.on("received_requests") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -159,6 +163,8 @@ class SocketIOManager: NSObject {
     }
     
     func setRequestAcceptedListener(completionHandler: @escaping (_ status: String) -> Void) {
+        
+        socket.off("request_accepted")
         socket.on("request_accepted") { ( dataArray, ack) -> Void in
         
             let responseString = dataArray[0] as! String
@@ -171,6 +177,8 @@ class SocketIOManager: NSObject {
     }
     
     func setGetChatsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        
+        socket.off("sent_chats")
         socket.on("sent_chats") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             if responseString == "fail" {
@@ -220,6 +228,7 @@ class SocketIOManager: NSObject {
     func setRoomListener(room: String, completionHandler: @escaping (_ messageId: Int, _ username: String, _ message: String, _ timestamp: String) -> Void) {
         
         currentRoom = room
+        socket.off(room)
         socket.on(room) { ( dataArray, ack) -> Void in
             
             let messageId = dataArray[0] as! Int
@@ -335,6 +344,7 @@ class SocketIOManager: NSObject {
     }
     
     func setDisconnectedListener(completionHandler: @escaping () -> Void) {
+        self.socket.off("disconnected")
         self.socket.on("disconnected") { ( dataArray, ack) -> Void in
             completionHandler()
         }
@@ -345,6 +355,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGetRecentMessagesListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.off("send_recent_messages")
         socket.on("send_recent_messages") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -368,6 +379,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGroupCreatedListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.off("group_created")
         socket.on("group_created") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -380,6 +392,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGroupDeletedListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.off("group_deleted")
         socket.on("group_deleted") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -392,6 +405,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGroupLeftListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.off("group_left")
         socket.on("group_left") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -404,6 +418,7 @@ class SocketIOManager: NSObject {
     }
     
     func setAddedToGroupListener(completionHandler: @escaping (_ userList: String?) -> Void) {
+        socket.off("added_to_group")
         socket.on("added_to_group") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -412,6 +427,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGetGroupChatsListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.off("sent_group_chats")
         socket.on("sent_group_chats") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             if responseString == "fail" {
@@ -445,6 +461,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGotGroupMembersListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.off("send_group_members")
         socket.on("send_group_members") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             if responseString == "fail" {
@@ -482,6 +499,7 @@ class SocketIOManager: NSObject {
     }
     
     func setGetRecentGroupMessagesListener(completionHandler: @escaping (_ userList: [[String: Any]]?) -> Void) {
+        socket.off("send_recent_group_messages")
         socket.on("send_recent_group_messages") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -505,6 +523,7 @@ class SocketIOManager: NSObject {
     }
     
     func setContactDeletedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("contact_deleted")
         socket.on("contact_deleted") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -517,6 +536,7 @@ class SocketIOManager: NSObject {
     }
     
     func setAccountDeletedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("account_deleted")
         socket.on("account_deleted") { ( dataArray, ack) -> Void in
             
             let responseString = dataArray[0] as! String
@@ -542,6 +562,7 @@ class SocketIOManager: NSObject {
     }
     
     func setFullNameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("fullname_changed")
         socket.on("fullname_changed") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
@@ -553,6 +574,7 @@ class SocketIOManager: NSObject {
     }
     
     func setUsernameChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("username_changed")
         socket.on("username_changed") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
@@ -564,6 +586,7 @@ class SocketIOManager: NSObject {
     }
     
     func setEmailChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("email_changed")
         socket.on("email_changed") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
@@ -575,6 +598,7 @@ class SocketIOManager: NSObject {
     }
     
     func setPhoneNoChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("phone_number_changed")
         socket.on("phone_number_changed") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             completionHandler(responseString)
@@ -586,6 +610,7 @@ class SocketIOManager: NSObject {
     }
     
     func setAboutChangedListener(completionHandler: @escaping (_ response: String) -> Void) {
+        socket.off("about_changed")
         socket.on("about_changed") { ( dataArray, ack) -> Void in
             let responseString = dataArray[0] as! String
             completionHandler(responseString)

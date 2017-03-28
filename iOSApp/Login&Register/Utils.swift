@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SystemConfiguration
 
 private let _instance = Utils()
 
@@ -78,6 +79,7 @@ class Utils: NSObject {
         userDefaults.removeObject(forKey: "fullName")
         userDefaults.removeObject(forKey: "profilePicture")
         userDefaults.removeObject(forKey: "about")
+        userDefaults.removeObject(forKey: "contacts")
         userDefaults.set(false, forKey: "hasLoginKey")
         userDefaults.set(false, forKey: "hasProfilePicture")
         UserDefaults.standard.synchronize()
@@ -102,6 +104,28 @@ class Utils: NSObject {
             print("An error took place: \(error)")
         }
 
+    }
+    
+    // Function that returns the internet connection status
+    func isInternetAvailable() -> Bool
+    {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        return (isReachable && !needsConnection)
     }
     
 }

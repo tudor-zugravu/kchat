@@ -29,66 +29,17 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
         
-        SocketIOManager.sharedInstance.setRequestAcceptedListener(completionHandler: { (response) -> Void in
-            if(response != "fail") {
-                self.contacts.remove(at: Int(response)!)
-                self.tableView.reloadData()
-            } else {
-                print("error")
-            }
-        })
-        
-        SocketIOManager.sharedInstance.setReceivedRequestsListener(completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.contactsDownloaded(userList!)
-            })
-        })
-        
-        SocketIOManager.sharedInstance.setRequestDeletedListener(completionHandler: { (response) -> Void in
-            if(response != "fail") {
-                self.contacts.remove(at: Int(response)!)
-                self.tableView.reloadData()
-            } else {
-                print("error")
-            }
-        })
-        
-        SocketIOManager.sharedInstance.setSentRequestsListener(completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.contactsDownloaded(userList!)
-            })
-        })
-
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
-        if let value = passedValue {
-            if value == true {
-                titleLabel.text = "Sent Requests"
-                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-                SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
-                    SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                })
-            } else {
-                titleLabel.text = "Received Requests"
-                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in
-                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                })
-                SocketIOManager.sharedInstance.setNoMoreContactRequestListener(completionHandler: { () -> Void in
-                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-                })
-            }
+        if (Utils.instance.isInternetAvailable()) {
+            self.setListeners()
+        } else {
+            noInternetAllert()
+            self.searchBar.isUserInteractionEnabled = false
         }
-        
+    
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -245,12 +196,10 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     }
     
     func deleteRequest(receiver: Int) {
-        
         SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
     }
     
     func acceptContact(receiver: Int) {
-        
         SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
     }
     
@@ -282,6 +231,69 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setRequestAcceptedListener(completionHandler: { (response) -> Void in
+            if(response != "fail") {
+                self.contacts.remove(at: Int(response)!)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+        SocketIOManager.sharedInstance.setReceivedRequestsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+        SocketIOManager.sharedInstance.setRequestDeletedListener(completionHandler: { (response) -> Void in
+            if(response != "fail") {
+                self.contacts.remove(at: Int(response)!)
+                self.tableView.reloadData()
+            } else {
+                print("error")
+            }
+        })
+        SocketIOManager.sharedInstance.setSentRequestsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.contactsDownloaded(userList!)
+            })
+        })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        if let value = passedValue {
+            if value == true {
+                titleLabel.text = "Sent Requests"
+                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+                SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
+            } else {
+                titleLabel.text = "Received Requests"
+                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
+                SocketIOManager.sharedInstance.setNoMoreContactRequestListener(completionHandler: { () -> Void in
+                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                })
+            }
+        }
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
+        self.searchBar.isUserInteractionEnabled = false
     }
     
     func dismissKeyboard() {

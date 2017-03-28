@@ -35,7 +35,15 @@ class LoginViewController: UIViewController, LogInModelProtocol {
         userPwdTextField.resignFirstResponder()
         
         if userNameTextField.text != nil && userNameTextField.text != "" && userPwdTextField.text != nil && userPwdTextField.text != "" {
-            logInModel.data_request(userNameTextField.text!, password: userPwdTextField.text!)
+            if (Utils.instance.isInternetAvailable()) {
+                logInModel.data_request(userNameTextField.text!, password: userPwdTextField.text!)
+            } else {
+                let alertView = UIAlertController(title: "No internet connection",
+                                                  message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                alertView.addAction(okAction)
+                self.present(alertView, animated: true, completion: nil)
+            }
         } else {
             let alertView = UIAlertController(title: "Login Failed",
                                               message: "Wrong username or password." as String, preferredStyle:.alert)

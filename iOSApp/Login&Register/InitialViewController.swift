@@ -27,7 +27,12 @@ class InitialViewController: UIViewController, LogInModelProtocol {
         
         // If a user is already logged in, proceed to the messages view
         if UserDefaults.standard.bool(forKey: "hasLoginKey") == true {
-            logInModel.data_request(UserDefaults.standard.value(forKey: "username")! as! String, password: UserDefaults.standard.value(forKey: "password")! as! String)
+            if (Utils.instance.isInternetAvailable()) {
+                logInModel.data_request(UserDefaults.standard.value(forKey: "username")! as! String, password: UserDefaults.standard.value(forKey: "password")! as! String)
+            } else {
+                Utils.instance.logOut()
+                self.performSegue(withIdentifier: "loginView", sender: self)
+            }
         } else {
             self.performSegue(withIdentifier: "loginView", sender: self)
         }

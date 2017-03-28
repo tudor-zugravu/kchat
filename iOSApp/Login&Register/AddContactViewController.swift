@@ -24,30 +24,6 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         searchBar.delegate = self
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
-        
-        SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
-            if(response == true) {
-                self.contacts = []
-                self.tableView.reloadData()
-                self.searchBar.text = ""
-            } else {
-                print("error")
-            }
-        })
-        
-        SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.contactsDownloaded(userList!)
-            })
-        })
-        
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,10 +35,44 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        if (Utils.instance.isInternetAvailable()) {
+            SocketIOManager.sharedInstance.setSentRequestListener(completionHandler: { (response) -> Void in
+                if(response == true) {
+                    self.contacts = []
+                    self.tableView.reloadData()
+                    self.searchBar.text = ""
+                } else {
+                    print("error")
+                }
+            })
+            
+            SocketIOManager.sharedInstance.setSearchUserReceivedListener(completionHandler: { (userList) -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
+                    self.contactsDownloaded(userList!)
+                })
+            })
+            
+            SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+                print("disconnected");
+                Utils.instance.logOut()
+                _ = self.navigationController?.popToRootViewController(animated: true)
+            })
+            SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+            SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        } else {
+            noInternetAllert()
+            self.searchBar.isUserInteractionEnabled = false
+        }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        if (Utils.instance.isInternetAvailable()) {
+            SocketIOManager.sharedInstance.predictSearch(username: searchText, userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        } else {
+            noInternetAllert()
+            self.searchBar.isUserInteractionEnabled = false
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -133,6 +143,15 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     @IBAction func backButtonPressed(_ sender: AnyObject) {
         let _ = navigationController?.popViewController(animated: true)
         navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
+        self.searchBar.isUserInteractionEnabled = false
     }
     
     func keyboardWillShow(notification:NSNotification) {
