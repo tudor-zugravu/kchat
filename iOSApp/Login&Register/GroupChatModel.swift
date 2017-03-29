@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GroupChatModel: NSObject {
+class GroupChatModel: NSObject, NSCoding {
     
     //properties
     var groupId: Int?
@@ -37,6 +37,25 @@ class GroupChatModel: NSObject {
         self.owner = owner
     }
     
+    required init(coder decoder: NSCoder) {
+        self.groupId = decoder.decodeObject(forKey: "groupId") as? Int
+        self.groupName = decoder.decodeObject(forKey: "groupName") as? String ?? ""
+        self.groupDescription = decoder.decodeObject(forKey: "groupDescription") as? String ?? ""
+        self.lastMessage = decoder.decodeObject(forKey: "lastMessage") as? String ?? ""
+        self.timestamp = decoder.decodeObject(forKey: "timestamp") as? String ?? ""
+        self.groupPicture = decoder.decodeObject(forKey: "groupPicture") as? String ?? ""
+        self.owner = decoder.decodeObject(forKey: "owner") as? Int
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(groupId, forKey: "groupId")
+        coder.encode(groupName, forKey: "groupName")
+        coder.encode(groupDescription, forKey: "groupDescription")
+        coder.encode(lastMessage, forKey: "lastMessage")
+        coder.encode(timestamp, forKey: "timestamp")
+        coder.encode(groupPicture, forKey: "groupPicture")
+        coder.encode(owner, forKey: "owner")
+    }
     
     //prints object's current state
     override var description: String {

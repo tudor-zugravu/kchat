@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Register form</title>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='/stylesheets/style.css' />
+
+
+</head>
+
+<body onload="saveData()">
+ <a href="/chat">
+             <img src="/images/kcl-crest.png"/ style="height:100px;margin:10px; border-radius: 100px; align: right">
+              </a>
+<div class="wrapper">
+
+
+
+  <div class="row login_box">
+      <div class="col-md-12 col-xs-12" align="center">
+           
+            <a href="/changeProfile">
+              <div class="outter">
+                <object class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
+                  <img class="image-circle" src="/images/profile.png" />
+                </object>
+              </div>
+            </a>
+      </div>
+
+      <form id="Profile" action="/profile" method="post" onsubmit="return editProfile();" >
+        <div class="col-md-12 col-xs-12 login_control">
+          
+          <div class="control" >
+            <input type="hidden" value="<%=user_id %>" id="userId" name="id"/>  
+          </div>
+
+       <table align="center">
+          <tr>
+          <td><p class="lable">
+                    UserName
+                  </p>
+                    <input type="text" class="info" value="<%=username %>" id="userName" name="user"/></td>
+          <td> <p class="lable">
+                    FullName
+                  </p>
+
+                    <input type="text" class="info" value="<%= fullname %>" id="fullName" name="name"/></td>
+          </tr>
+          <tr>
+          <td>  <p class="lable">
+                    Email
+                  </p>
+                    <input type="text" class="info" value="<%= email %>" id="email" name="email"/></td>
+          <td><p class="lable">
+                    PhoneNo
+                  </p>
+
+                    <input type="text" class="info" value="<%= phone %>"  id="phone" name="phone"/></td>
+          </tr>
+          <tr align="center">
+          <td colspan="2">
+                    About &nbsp;&nbsp;
+                    <input type="text" class="info" value="<%=biography %>" id="biography" name="about"/>
+                     </td>          
+          </tr>
+          <tr align ="center">
+          <td colspan="2"> <a href="">   <button type="submit" class="changePassword">Save changes</button> </a></td>
+          </tr>
+          </table>            
+            </form>
+            <div align="center"><a href="/changePass" class="link">   <i class="fa fa-key" aria-hidden="true"> </i>Change Password </a>
+                <a href="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i>Log Out</a>
+                <a  onclick="deleteAccount()" class="link"> <i class="fa fa-trash-o" aria-hidden="true"></i>  Delete Account </a>
+                </div>
+                
+                 
+             
+              
+        </div>
+  
+
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
+  <script>
+    var userId = "<%=user_id %>";
+    var userFullName = "<%=fullname %>";
+    var socket = io.connect('http://188.166.157.62:3000');
+    var audio = new Audio('notification.mp3');
+    socket.emit('connection');
+    socket.on('connect', function(msg){
+      socket.emit('authenticate', userId,userFullName);
+      socket.on('authenticated',function(msg){
+        console.log("autenticated"+msg);
+      });
+    });
+    socket.on('disconnected',function(msg){
+      document.location.href = "http://188.166.157.62:5000/logout";
+    });
+
+    socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time) {
+      audio.play();
+    });
+
+    socket.on('you_received_contact_request',function(sendersName){
+      audio.play();
+      alert(sendersName + " sent you a contact request!");
+    });
+
+  var old_userName;
+  var old_fullName;
+  var old_email;
+  var old_phone;
+  var old_biography;
+  var currentUser=$("#userId").val();
+  function saveData(){
+    old_userName=$("#userName").val();
+    old_fullName=$("#fullName").val();
+    old_email=$("#email").val();
+    old_phone=$("#phone").val();
+    old_biography=$("#biography").val();
+    console.log("user id" +currentUser);
+    console.log("old user name is" +old_userName);
+
+  console.log("old full name is" +old_fullName);
+
+console.log("old email is" +old_email);
+
+console.log("old phone is" +old_phone);
+
+console.log("old biography is" +old_biography);
+}
+
+ var text = "Hey";
+ var userNameChanged = false;
+ var fullNameChanged = false;
+ var emailChanged = false;
+ var phoneChanged = false;
+ var biographyChanged = false;
+
+ function editProfile(){
+    fieldChecker();
+
+    if((userNameChanged == true) || (fullNameChanged == true) || (emailChanged == true) || (phoneChanged == true) || (biographyChanged == true)){
+      if($("#userName").val()!= old_userName){
+        console.log("user name changed!");
+        socket.emit('change_username', currentUser,$("#userName").val());
+        socket.on('username_changed',function(msg){
+          var result=msg
+          console.log(result);
+          if(result != 'duplicate'&& result != 'fail')
+          console.log("username_changed"+msg);
+          old_userName=result;
+          $("#userName").val(result);
+          text = "";
+        });
+
+
+      }
+      if($("#fullName").val()!= old_fullName){
+        console.log("full name changed!");
+        socket.emit('change_fullname', currentUser,$("#fullName").val());
+        socket.on('fullname_changed',function(msg){
+          var result=msg
+          console.log(result);
+          if(result != 'fail')
+          console.log("fullName_changed"+msg);
+          old_fullName=result;
+          $("#fullName").val(result);
+          text = "";
+        });
+      }
+      if($("#email").val()!= old_email){
+        console.log("email changed!");
+        socket.emit('change_email', currentUser,$("#email").val());
+        socket.on('email_changed',function(msg){
+          var result=msg
+          console.log(result);
+          if(result != 'fail')
+          console.log("email_changed"+msg);
+          old_email=result;
+          $("#email").val(result);
+          text = "";
+        });
+
+      }
+      if($("#phone").val()!= old_phone){
+        console.log("phone changed!");
+        socket.emit('change_phone_number', currentUser,$("#phone").val());
+        socket.on('phone_number_changed',function(msg){
+          var result=msg
+          console.log(result);
+          if(result != 'fail')
+          console.log("phoneNo_changed"+msg);
+          old_phone=result;
+          $("#phone").val(result);
+          text = "";
+        });
+      }
+      if($("#biography").val()!= old_biography){
+        console.log("biography changed!");
+        socket.emit('change_about', currentUser,$("#biography").val());
+        socket.on('about_changed',function(msg){
+          var result=msg
+          console.log("rest"+result);
+          if(result != 'fail'){
+            console.log("about_changed"+msg);
+            old_biography=result;
+            text = "Uh oh";
+            $("#biography").val(result);
+          }
+        });
+      }
+      return true;
+    }else{
+      return false;
+    }
+
+ }
+
+ function fieldChecker(){
+   console.log($("#userName").val());
+
+   if($("#userName").val()!= old_userName){
+     console.log("user name changed!");
+     userNameChanged = true;
+   }
+   if($("#fullName").val()!= old_fullName){
+     console.log("full name changed!");
+     fullNameChanged = true;
+   }
+   if($("#email").val()!= old_email){
+     console.log("email changed!");
+     emailChanged = true;
+   }
+   if($("#phone").val()!= old_phone){
+     console.log("phone changed!");
+     phoneChanged = true;
+   }
+   if($("#biography").val()!= old_biography){
+     console.log("biography changed!");
+     biographyChanged = true;
+   }
+
+ }
+
+function deleteAccount(){
+  console.log("delete account");
+  socket.emit('delete_account',currentUser);
+  socket.on('account_deleted',function(msg){
+    console.log(msg);
+    if(msg=='success'){
+    window.location.replace("http://188.166.157.62:5000/login");
+    }
+  })
+}
+
+function replaceImage(image){
+    image.src="https://www.mautic.org/media/images/default_avatar.png";
+
+  }
+  </script>
+
+</body>
+</html>

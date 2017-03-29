@@ -23,8 +23,9 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     var didOverscroll: Bool = false
     var convLimit: Int = 20
     var groupId: Int = 0;
-    var messages: [MessageModel] = []
+    var messages: [GroupMessageModel] = []
     var passedValue: (groupName: String, groupId: Int, groupDescription: String, owner: Int, groupPicture: String)?
+    var groupIndex: Int?
     var members = [String: (name: String, profilePicture: String)]()
     
     override func viewDidLoad() {
@@ -35,67 +36,30 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
-        
-        SocketIOManager.sharedInstance.setGroupRoomCreatedListener(completionHandler: { (response) -> Void in
-            if response == "fail" {
-                print("room create error")
-            } else {
-                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
-                    
-                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
-                    self.messages.append(item)
-                    self.tableView.reloadData()
-                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
-                })
-                SocketIOManager.sharedInstance.setGotGroupMembersListener(completionHandler: { (membersList) -> Void in
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.membersDownloaded(membersList!)
-                    })
-                })
-                SocketIOManager.sharedInstance.setGetRecentGroupMessagesListener(completionHandler: { (messagesList) -> Void in
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.messagesDownloaded(messagesList!)
-                    })
-                })
-                SocketIOManager.sharedInstance.setGroupDeletedListener(completionHandler: { (response) -> Void in
-                    print(response)
-                    if response == "success" {
-                        let _ = self.navigationController?.popViewController(animated: true)
-                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
-                    }
-                })
-                SocketIOManager.sharedInstance.setGroupLeftListener(completionHandler: { (response) -> Void in
-                    print(response)
-                    if response == "success" {
-                        let _ = self.navigationController?.popViewController(animated: true)
-                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
-                    }
-                })
-                if self.passedValue != nil {
-                    SocketIOManager.sharedInstance.getGroupMembers(groupId: String(self.groupId))
-                }
-            }
-        })
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in })
-        
+        self.setListeners()
         if let value = passedValue {
             
             titleLabel.text = value.groupName
             descriptionLabel.text = value.groupDescription
             self.groupId = value.groupId
             
-            SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
+            if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
+            } else {
+                noInternetAllert()
+                if (UserDefaults.standard.value(forKey: "group\(groupIndex!)") != nil) {
+                    // retrieving a value for a key
+                    if let data = UserDefaults.standard.data(forKey: "group\(groupIndex!)"),
+                        let groupMessages = NSKeyedUnarchiver.unarchiveObject(with: data) as? [GroupMessageModel] {
+                        messages = groupMessages
+                        self.tableView.reloadData()
+                    }
+                }
+            }
             if value.owner == UserDefaults.standard.value(forKey: "userId") as! Int {
                 dropButton.isHidden = false
                 leaveButton.isHidden = true
@@ -103,13 +67,6 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 dropButton.isHidden = true
                 leaveButton.isHidden = false
             }
-            
-            SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
-                if (enemy == String(describing: (self.passedValue?.groupId)!)) {
-                    let _ = self.navigationController?.popViewController(animated: true)
-                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
-                }
-            })
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
@@ -146,7 +103,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             if messages[indexPath.row].senderId == String(describing: UserDefaults.standard.value(forKey: "userId")!) {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "sentMessageCell") as? ConversationSentMessageTableViewCell {
                     
-                    let item: MessageModel = messages[indexPath.row]
+                    let item: GroupMessageModel = messages[indexPath.row]
                     cell.configureCell(item.message!, item.timestamp!)
                     return cell
                 } else {
@@ -155,8 +112,8 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             } else {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "receivedMessageCell") as? ConversationReceivedMessageTableViewCell {
                     
-                    let item: MessageModel = messages[indexPath.row]
-                    cell.configureCell(item.message!, item.timestamp!, (members[item.senderId!]?.profilePicture)!)
+                    let item: GroupMessageModel = messages[indexPath.row]
+                    cell.configureCell(item.message!, item.timestamp!, item.profilePicture!)
                     return cell
                 } else {
                     return ConversationReceivedMessageTableViewCell()
@@ -211,7 +168,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     // The function called at the arival of the response from the server
     func messagesDownloaded(_ messagesDetails: [[String:Any]]) {
         
-        var messagesAux: [MessageModel] = []
+        var messagesAux: [GroupMessageModel] = []
 
         // parse the received JSON and save the messages
         for i in 0 ..< messagesDetails.count {
@@ -221,11 +178,28 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
                 let message = messagesDetails[i]["message"] as? String,
                 let timestamp = messagesDetails[i]["timestmp"] as? String
             {
-                let item = MessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp)
+                var pp:String
+                var name: String
+                if let x = (self.members["\(senderId)"])?.profilePicture {
+                    pp = x
+                } else {
+                    pp = ""
+                }
+                if let y = (self.members["\(senderId)"])?.name {
+                    name = y
+                } else {
+                    name = ""
+                }
+                
+                let item = GroupMessageModel(messageId: messageId, senderId: String(describing: senderId), message: message, timestamp: timestamp, profilePicture: pp, name: name)
+
                 messagesAux.insert(item, at: 0)
             }
         }
         messages = messagesAux
+        
+        let storedGroupMessages = NSKeyedArchiver.archivedData(withRootObject: messages)
+        UserDefaults.standard.set(storedGroupMessages, forKey:"group\(groupIndex!)");
         
         self.tableView.reloadData()
         if self.convLimit == 20 {
@@ -351,6 +325,74 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
         if !self.dropButton.table.frame.contains(gestureRecognizer.location(in: self.view)) {
             self.dropButton.table.isHidden = true
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setGroupRoomCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("room create error")
+            } else {
+                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
+                    
+                    let item = GroupMessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp, profilePicture: self.members[username]!.profilePicture, name: self.members[username]!.name)
+                    self.messages.append(item)
+                    self.tableView.reloadData()
+                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+                })
+                SocketIOManager.sharedInstance.setGotGroupMembersListener(completionHandler: { (membersList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.membersDownloaded(membersList!)
+                    })
+                })
+                SocketIOManager.sharedInstance.setGetRecentGroupMessagesListener(completionHandler: { (messagesList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.messagesDownloaded(messagesList!)
+                    })
+                })
+                SocketIOManager.sharedInstance.setGroupDeletedListener(completionHandler: { (response) -> Void in
+                    print(response)
+                    if response == "success" {
+                        let _ = self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+                    }
+                })
+                SocketIOManager.sharedInstance.setGroupLeftListener(completionHandler: { (response) -> Void in
+                    print(response)
+                    if response == "success" {
+                        let _ = self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.topViewController?.childViewControllers[1].viewWillAppear(true)
+                    }
+                })
+                if self.passedValue != nil {
+                    SocketIOManager.sharedInstance.getGroupMembers(groupId: String(self.groupId))
+                }
+            }
+        })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in })
+        
+        if let value = passedValue {
+            SocketIOManager.sharedInstance.setIWasDeletedFromGroupListener(completionHandler: { (enemy) -> Void in
+                if (enemy == String(describing: (self.passedValue?.groupId)!)) {
+                    let _ = self.navigationController?.popViewController(animated: true)
+                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
+                }
+            })
+        }
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     //Dropdown menu Initinal

@@ -25,28 +25,24 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         searchBar.delegate = self
         
         self.tableView.contentInset = UIEdgeInsetsMake(8, 0, 0, 0)
-        
-        SocketIOManager.sharedInstance.setGetChatsListener(completionHandler: { (userList) -> Void in
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.chatsDownloaded(userList!)
-            })
-        })
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
+        
+        self.setListeners()
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
             SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        })
-        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
-            SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        } else {
+            noInternetAllert()
+            if (UserDefaults.standard.value(forKey: "privateChats") != nil) {
+                // retrieving a value for a key
+                if let data = UserDefaults.standard.data(forKey: "privateChats"),
+                    let chatsAux = NSKeyedUnarchiver.unarchiveObject(with: data) as? [ChatModel] {
+                    chats = chatsAux
+                    self.tableView.reloadData()
+                }
+            }
+        }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
@@ -123,6 +119,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
         conversationViewController?.passedValue = (chats[indexPath.row].receiverName!, chats[indexPath.row].receiverId!, chats[indexPath.row].profilePicture!)
         conversationViewController?.cameFrom = true
+        conversationViewController?.privateIndex = indexPath.row
         self.navigationController?.pushViewController(conversationViewController!, animated: true)
     }
     
@@ -187,7 +184,10 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 chatsAux.append(item)
             }
         }
-        chats = chatsAux        
+        chats = chatsAux
+        
+        let storedPrivateChats = NSKeyedArchiver.archivedData(withRootObject: chats)
+        UserDefaults.standard.set(storedPrivateChats, forKey:"privateChats");
         
         self.tableView.reloadData()
     }
@@ -215,6 +215,34 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 self.view.layoutIfNeeded()
             }, completion: nil)
         }
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setGetChatsListener(completionHandler: { (userList) -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.chatsDownloaded(userList!)
+            })
+        })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in
+            SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
+            SocketIOManager.sharedInstance.getChats(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     func dismissKeyboard() {

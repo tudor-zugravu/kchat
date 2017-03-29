@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>kchat</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/stylesheets/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/stylesheets/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/stylesheets/morris.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/jquery.ioslist.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <!-- for Modal part (pop up send contact request page) -->
+
+    <link rel="stylesheet" href="/jquery-modal/jquery.modal.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/stylesheets/mainPage.css" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/flex-layout-attribute.min.css">
+    <link rel="stylesheet" href="/stylesheets/stylesheet.css" type="text/css">
+
+
+    <!-- Custom Fonts -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body onLoad="viewchats(<%=user_id %>, '<%=fullname%>')">
+  <P id="user_id" style="display: none"><%=user_id %></p>
+    <P id="fullName"  style="display: none"><%=fullname %></p>
+
+    <div id="wrapper">
+
+
+        <p id="target_id" style="display: none" ><%= target_id %></p>
+          <p id="target_name" style="display: none"><%= target_name %></p>
+
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="submit" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="kchat-header">
+            <!-- /.navbar-header -->
+              <div class="row" id="problematic-div">
+                <div class="kchat-menu col-xs-4">
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                      <li >
+                        <a href="/chat" class="active top-buttons-a">
+                          <img class="top-buttons" src="/images/chat-black.png">
+                        </a>
+                      </li>
+                      <li>
+                        <a class="top-buttons-a" href="/groupChat">
+                          <img class="top-buttons" src="/images/group-black.png">
+                        </a>
+                      </li>
+                      <li >
+                        <a class="top-buttons-a" href="/contacts">
+                          <img class="top-buttons" src="/images/contacts-black.png">
+                        </a>
+                      </li>
+                      <li >
+                        <a class="top-buttons-a" href="/profile" >
+                          <img class="top-buttons" src="/images/profile-black.png">
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="kchat-title col-xs-4">
+                  <div class="row">
+                    <div class="col-xs-2">
+                      <object class="header-profile-picture" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
+                        <img class="header-profile-picture4" src="/images/profile.png" />
+                      </object>
+                    </div>
+                    <div class="col-xs-10" style="padding-left: 0px;">
+                      <h2 class="header-username col-xs-9"><%=fullname %></h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="kchat-logo col-xs-4">
+                  <img class="crest" src="/images/kcl-crest.png">
+                </div>
+              </div>
+        </nav>
+
+            <!-- /.navbar-top-links -->
+            <!-- chat list -->
+
+            <div class="navbar-default sidebar">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <div class="ioslist-group-container">
+                          <div class="ioslist-group-header">Chat List</div>
+                        </div>
+                        <div id="list1">
+
+                        </div>
+                   </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+      </div>
+
+      <div id="page-wrapper">
+        <div class="ioslist-group-container">
+          <div class="ioslist-group-header" id="conversation-banner"></div>
+            <div class="ioslist-group-header" id="load-banner" style="margin-left:400px"></div>
+        </div>
+        <div id="chatContent">
+
+        </div>
+        <div class="col-md-12 col-xs-12 login_control text-input">
+          <form id="send_chat" action="" onsubmit="return privateChat();" >
+            <input id="message" autocomplete="off" / placeholder="Enter Message Here" style="width:80%;order-radius: 50px;">
+            <button id="submitButton" class="btn btn-default" type="submit" style="border-radius: 50px;" >
+              send message
+            </button>
+          </form>
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+            <!-- /.row -->
+        </div>
+        <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="/jquery-modal/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
+
+        <script>
+        function updateScroll(){
+          var element = document.getElementById("chatContent");
+          element.scrollTop = element.scrollHeight;
+        }
+        document.getElementById('message').disabled = true;
+        document.getElementById('submitButton').disabled = true;
+        var socket = io.connect('http://188.166.157.62:3000');
+        var currentUser = $("#user_id").text();
+        var name=$("#fullName").text();
+        var target_id=$("#target_id").text();
+        var target_name=$("#target_name").text();
+        var room = "";
+        var userIChatWith;
+        var audio = new Audio('notification.mp3');
+        var contacts ;
+        var limit;
+        var existedUsers=[];
+
+
+
+        function viewchats(id,name){
+        socket.emit('connection');
+        socket.emit('authenticate', id,name);
+        socket.on('authenticated',function(msg){
+          console.log("autenticated"+msg);
+        });
+        socket.on('disconnected',function(msg){
+          document.location.href = "http://188.166.157.62:5000/logout";
+        });
+
+
+      socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time){
+        if (socketRoom != room) {
+          if (socketRoom.includes("private")) {
+            socket.emit('get_chats',id);
+          }
+          audio.play();
+        }
+      });
+
+      socket.on('you_were_deleted',function(userId){
+        if (userIChatWith != null && userIChatWith == userId) {
+          alert("You have been deleted as a contact. You can no longer chat with this user.");
+          location.reload();
+        } else {
+          socket.emit('get_chats',id);
+        }
+      });
+
+      socket.on('you_received_contact_request',function(sendersName){
+        audio.play();
+        alert(sendersName + " sent you a contact request!");
+      });
+
+       socket.emit('get_chats',id);
+
+       socket.on('sent_chats', function(msg){
+        var target = JSON.parse(msg);
+        contacts=JSON.parse(msg);
+        $("#list1").empty();
+         for(var i=0; i < target.length; i++) {
+           if (target[i].receiverId==currentUser){
+             $('#list1').append('<div class="chat-contacts-item" layout="center-right"><a onclick="chat('+target[i].senderId+',\''+target[i].senderName+'\',\''+target[i].receiverName+'\')"><div class="row chat-contacts-container"><div class="col-xs-3 chat-contacts-picture"><object style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].senderId+'.jpg" type="image/png"><img style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" src="/images/profile.png" /></object></div><div class="col-xs-9 chat-contacts-text"><div><i style="font-size: 11px;"></i><b>'+showName(target[i].senderId)+'</b></div><div>'+target[i].message+'</div></div></div></a></div>');
+             existedUsers.push(parseInt(target[i].senderId));
+
+           }
+            else{
+            $('#list1').append('<div class="chat-contacts-item" layout="center-right"><a onclick="chat('+target[i].receiverId+',\''+target[i].receiverName+'\',\''+target[i].senderName+'\')"><div class="row chat-contacts-container"><div class="col-xs-3 chat-contacts-picture"><object style="width:40px;height:40px; border-radius:100%; margin:5px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].receiverId+'.jpg" type="image/png"><img style="width:40px;height:40px; border-radius:100%; margin:5px" class="image-circle" src="/images/profile.png" /></object></div><div class="col-xs-9 chat-contacts-text"><div><i style="font-size: 11px;"></i><b>'+showName(target[i].receiverId)+'</b></div><div>'+target[i].message+'</div></div></div></a></div>');
+            existedUsers.push(parseInt(target[i].receiverId));
+            }
+          }
+         });
+
+       if(target_id!= 0){
+         newChat();
+         console.log("come on reach here");
+       }
+      }
+
+        function chat(firstPersonID,firstPersonName,secondPersonName){
+          document.getElementById("conversation-banner").innerHTML = firstPersonName;
+            $('#load-banner').empty();
+            limit=3;
+          $('#load-banner').append('<button class="btn btn-danger" onclick="loadMore('+currentUser+',\''+firstPersonID+'\')" >Load More</button>');
+          socket.emit('get_recent_messages',currentUser,firstPersonID,limit);
+          socket.on('send_recent_messages', function(msg){
+            $("#chatContent").empty();
+            var target = JSON.parse(msg);
+            for(var i=0; i < target.length; i++) {
+              if(target[i].sender_id==currentUser){
+              $('#chatContent').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+target[i].timestmp+'</i><b> '+showName(target[i].sender_id)+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].sender_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+              } else {
+                $('#chatContent').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].sender_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].sender_id)+'</b><i style="font-size: 11px;"> '+target[i].timestmp+'</i></div><div>'+target[i].message+'</div></div></div>');
+              }
+              updateScroll();
+            }
+          });
+            userIChatWith = firstPersonID;
+            socket.on('update_chat',function(msg){});
+            socket.off('private_room_created');
+            socket.on('private_room_created',function(msg){
+              socket.off(room);
+              room = msg;
+              socket.on(room,function(insertId,username,message,time){
+                if(username==currentUser){
+                  console.log("EU");
+                      $('#chatContent').append('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+time+'</i><b> '+name+'</b></div><div>'+message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+                      } else {
+                        console.log("EL");
+                        $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(username)+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
+                      }
+                      updateScroll();
+                      socket.emit('get_chats', currentUser);
+               });
+            });
+            socket.emit('create_private_room',firstPersonID,currentUser);
+            document.getElementById('message').disabled = false;
+            document.getElementById('submitButton').disabled = false;
+        }
+
+      function privateChat(){
+
+        var mes=$("#message").val();
+        socket.emit('send_chat',mes);
+        document.getElementById('message').value = "";
+        return false;
+      }
+
+      function showName(id){
+    var result = "";
+    for(var i = 0 ; i < contacts.length ; i++){
+        if(contacts[i].senderId == id){
+          result = contacts[i].senderName;}
+      else if (contacts[i].receiverId == id){
+           result=contacts[i].receiverName;
+      }
+
+    }
+
+
+    return result;
+}
+function getPicturepath(id){
+    var result = "";
+    for(var i = 0 ; i < contacts.length ; i++){
+        if(contacts[i].senderId == id){
+          if(contacts[i].senderProfilePicture != null){
+            result = 'http://188.166.157.62/profile_pictures/' + contacts[i].senderProfilePicture;
+          }else{
+            result = 'https://www.mautic.org/media/images/default_avatar.png';
+          }
+
+      }else if(contacts[i].receiverId == id){
+        if(contacts[i].receiverProfilePicture!= null){
+          result = 'http://188.166.157.62/profile_pictures/' + contacts[i].receiverProfilePicture;
+        }else{
+          result = 'https://www.mautic.org/media/images/default_avatar.png';
+        }
+      }
+    }
+    return result;
+  }
+
+  function getPicturepathByFullName(name){
+      var result = "";
+      for(var i = 0 ; i < contacts.length ; i++){
+          if(contacts[i].senderName == name){
+            if(contacts[i].senderProfilePicture != null){
+              result = 'http://188.166.157.62/profile_pictures/' + contacts[i].senderProfilePicture;
+            }else{
+              result = 'https://www.mautic.org/media/images/default_avatar.png';
+            }
+
+        }else if(contacts[i].receiverName == name){
+          if(contacts[i].receiverProfilePicture!= null){
+            result = 'http://188.166.157.62/profile_pictures/' + contacts[i].receiverProfilePicture;
+          }else{
+            result = 'https://www.mautic.org/media/images/default_avatar.png';
+          }
+        }
+      }
+      return result;
+    }
+
+    function loadMore(currentUser,firstPersonID){
+      limit =limit+1;
+      console.log("Now limit is "+limit);
+      socket.emit('get_recent_messages',currentUser,firstPersonID,limit);
+      socket.on('send_recent_messages', function(msg){
+        $("#chatContent").empty();
+        var target = JSON.parse(msg);
+        for(var i=0; i < target.length; i++) {
+          if(target[i].sender_id==currentUser){
+          $('#chatContent').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+target[i].timestmp+'</i><b> '+showName(target[i].sender_id)+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].sender_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+          } else {
+            $('#chatContent').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].sender_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(target[i].sender_id)+'</b><i style="font-size: 11px;"> '+target[i].timestmp+'</i></div><div>'+target[i].message+'</div></div></div>');
+          }
+
+        }
+      });
+    }
+
+   function newChat(){
+     var result= 1;
+      console.log("reached here");
+     socket.emit('get_chats',currentUser);
+      socket.on('sent_chats', function(msg){
+       var target = JSON.parse(msg);
+        for(var i=0; i < target.length; i++) {
+          if (target_id ==target[i].sender_id || target_id==target[i].receiverId || target_id== existedUsers){
+            result = 2;
+          }
+          }
+          console.log (result);
+          console.log(target_id);
+          console.log(target_name);
+          console.log(name);
+          if(result == 1){
+          $('#list1').prepend('<div class="chat-contacts-item" layout="center-right"><a onclick="chat('+target_id+',\''+target_name+'\',\''+name+'\')"><div class="row chat-contacts-container"><div class="col-xs-3 chat-contacts-picture"><object style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target_id+'.jpg" type="image/png"><img style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" src="/images/profile.png" /></object></div><div class="col-xs-9 chat-contacts-text"><div><i style="font-size: 11px;"></i><b>'+target_name+'</b></div><div>'+null+'</div></div></div></a></div>');
+        }
+
+       });
+
+       }
+
+
+
+    </script>
+</body>
+
+</html>

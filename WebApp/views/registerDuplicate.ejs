@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Register form</title>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='/stylesheets/style2.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <img src="/images/kcl-crest.png"/ style="height:100px;margin:10px"  >
+  <form class="login" method="post" action="/register" name="registration">
+    <p class="title" >Register </p>
+    <input type="text" placeholder="Username" name="username"autofocus/>
+    <i class="fa fa-user"></i>
+    <input type="password" placeholder="Password" name="pwd"/>
+    <i class="fa fa-key"></i>
+    <input type="password" placeholder="ReEnter Password" name="re_pwd"/>
+    <i class="fa fa-key"></i>
+    <input type="text" placeholder="Fullname" name="fullName" autofocus/>
+    <i class="fa fa-user"></i>
+    <input type="email" placeholder="Email" name="email" />
+    <i class="fa fa-envelope"></i>
+    <input  type="number" placeholder="PhoneNo" name="phoneNo"/>
+    <i class="fa fa-phone"></i>
+    <input  type="text" placeholder="Biography" name="biography"/>
+    <i class="fa fa-folder"></i>
+	<!--<input class="profile-pic" type="file" name="pic" accept="image/*">-->
+ <div id="errors">
+
+ </div>
+    <button type="submit">
+      <i class="spinner"></i>
+      <span class="state">Register</span>
+    </button>
+  </form>
+  <footer style="color:#E2231A"> Sorry! Username exsited already! Try again!</footer>
+  </p>
+</div>
+<script src="jquery/dist/jquery.min.js"></script>
+<script src="jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="javascripts/form_validation.js"></script>
+
+</body>
+</html>

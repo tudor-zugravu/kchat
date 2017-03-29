@@ -1,0 +1,519 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>kchat</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/stylesheets/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/stylesheets/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/stylesheets/morris.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/jquery.ioslist.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <!-- for Modal part (pop up send contact request page) -->
+
+    <link rel="stylesheet" href="/jquery-modal/jquery.modal.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/stylesheets/mainPage.css" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/flex-layout-attribute.min.css">
+    <link rel="stylesheet" href="/stylesheets/stylesheet.css" type="text/css">
+
+
+
+</head>
+
+<body onLoad="viewchats(<%=user_id %>, '<%=fullname%>')">
+  <P id="user_id" style="display: none"><%=user_id %></p>
+    <P id="fullName"  style="display: none"><%=fullname %></p>
+
+    <div id="wrapper">
+
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="submit" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="kchat-header">
+            <!-- /.navbar-header -->
+              <div class="row" id="problematic-div">
+                <div class="kchat-menu col-xs-4">
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                      <li >
+                        <a href="/chat" class="active top-buttons-a">
+                          <img class="top-buttons" src="/images/chat-black.png">
+                        </a>
+                      </li>
+                      <li>
+                        <a class="top-buttons-a" href="/groupChat">
+                          <img class="top-buttons" src="/images/group-black.png">
+                        </a>
+                      </li>
+                      <li >
+                        <a class="top-buttons-a" href="/contacts">
+                          <img class="top-buttons" src="/images/contacts-black.png">
+                        </a>
+                      </li>
+                      <li >
+                        <a class="top-buttons-a" href="/profile" >
+                          <img class="top-buttons" src="/images/profile-black.png">
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="kchat-title col-xs-4">
+                  <div class="row">
+                    <div class="col-xs-2">
+                      <object class="header-profile-picture" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
+                        <img class="header-profile-picture4" src="/images/profile.png" />
+                      </object>
+                    </div>
+                    <div class="col-xs-10" style="padding-left: 0px;">
+                      <h2 class="header-username col-xs-9"><%=fullname %></h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="kchat-logo col-xs-4">
+                  <img class="crest" src="/images/kcl-crest.png">
+                </div>
+              </div>
+        </nav>
+
+
+            <!-- /.navbar-top-links -->
+            <!-- chat list -->
+
+            <div class="navbar-default sidebar">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                      <div class="ioslist-group-container">
+                          <div class="ioslist-group-header"><p><button type="button" class="btn btn-danger" onclick="showPage()">
+                        <span class="fa fa-1x fa-plus"> Create New Group</span>
+                      </button></p> Group Chat List</div>
+                        </div>
+                        <div id="list1">
+
+                        </div>
+                          </div>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+      </div>
+
+      <div id="page-wrapper">
+        <div class="ioslist-group-container">
+          <div class="ioslist-group-header" id="conversation-banner">
+            <div id="wrapper" style="width: 340px; height: 40px; float: left; display:block; padding :3px 0px 0px 3px;">
+              <!-- <button type="button" class="btn btn-danger" onclick="showUploadGroupImage()">
+              <span class="fa fa-1x fa-image"></span>
+                      </button> -->
+            <div class="dropdown" style="float:left;" id="groupChatAttach">
+              <!-- <button type="button" class="btn btn-danger" onclick="showUploadGroupImage()">
+              <span class="fa fa-1x fa-image"></span>
+                      </button> -->
+            </div>
+            <span id="groupChatInfo" style="height: 30px; width: 100px; padding :0px 0px 0px 5px; font-size: 22px "></span>
+          </div>
+        </div>
+        <div class="ioslist-group-header" id="load-banner" style="margin-left:400px"></div>
+      </div>
+        <div id="chatContent">
+
+         </div>
+
+        <div class="col-md-12 col-xs-12 login_control text-input">
+          <form id="send_chat" action="" onsubmit="return groupChat();" >
+            <input id="message" autocomplete="off" / placeholder="Enter Message Here" style="width:80%;order-radius: 50px;">
+            <button class="btn btn-default" type="submit" style="border-radius: 50px;" >
+              send message
+            </button>
+          </form>
+        </div>
+      </div>
+        </div>
+
+
+        <div id="creatGroup" class="groupbox" style="display:none;" >
+          <h2>Create New Group</h2>
+          <form id="create_group_form" action="" onsubmit="return createGroup();">
+           <input type="text" placeholder="Group Name" id="group_name">
+            <input type="text" placeholder="Group description" id="group_description">
+
+           <div class="select_group_members">
+             <p>
+               Select group members:
+             </p>
+          <ul style="list-style-type: none">
+            <% for(var i=0; i < contacts.length; i++) { %>
+              <li><input type="checkbox" value="<%= contacts[i].user_id %>" name="select_group_contact"><%= contacts[i].username %> (<%= contacts[i].name %>)</li>
+
+              <% } %>
+
+            </ul>
+            </div>
+          <button type="submit">DONE</button>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div>
+
+        <div id="uploadGroupImage" class="groupbox" style="display:none;">
+          <h2>Upload Group Image</h2>
+          <form id="changeGroupProfile" method="post" action="/changeGroupProfile" enctype="multipart/form-data">
+            <p>
+              Select image:
+            </p>
+            <input class="profile-pic" type="file" name="groupPic" style=" padding-bottom:15px;" accept="image/jpeg">
+            <input type ="hidden" name="groupId" id="groupUpload" value="" />
+
+          <button type="submit">DONE</button>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div>
+
+        <div id="inviteContactList" class="groupbox" style="display:none;">
+          <h2>Add members to group</h2>
+          <form id="inviteContactList" action="/" onsubmit="return inviteContacts();">
+            <div class="select_group_members">
+              <p>
+                Select group members:
+              </p>
+           <ul style="list-style-type: none">
+             <% for(var i=0; i < contacts.length; i++) { %>
+               <li class="addMembersLI"><input type="checkbox" class="addMembersInput" value="<%= contacts[i].user_id %>" name="select_group_contact"><%= contacts[i].username %> (<%= contacts[i].name %>)</li>
+
+               <% } %>
+
+             </ul>
+             </div>
+
+          <button type="submit">DONE</button>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div>
+
+
+
+        <div id="createGroupSuccess" style="display:none;">
+          <p>You have successfully created group </p>
+          <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+        </div>
+          </div>
+          <div id="leaveGroupSuccess" style="display:none;">
+            <p>You have successfully leaved group </p>
+            <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+          </div>
+            </div>
+            <div id="leaveGroupFail" style="display:none;">
+              <p>You have failed leaving the group, try again! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+            <div id="deleteGroupSuccess" style="display:none;">
+              <p>You have successfully deleted the group! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+            <div id="deleteGroupFail" style="display:none;">
+              <p>You have failed deleting the group! </p>
+              <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+            </div>
+
+              </div>
+
+
+
+
+
+
+    </div>
+            <!-- /.row -->
+        </div>
+
+  <!--  <script src="/vendor/jquery/jquery.min.js"></script>
+
+
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <script src="/vendor/raphael/raphael.min.js"></script>
+    <script src="/vendor/morrisjs/morris.min.js"></script>
+    <script src="/data/morris-data.js"></script> */
+
+    <script src="/dist/js/sb-admin-2.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+
+  -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+   <script src="/jquery-modal/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script>
+      var socket = io.connect('http://188.166.157.62:3000');
+      var currentUser = $("#user_id").text();
+      var name = $("#fullName").text();
+      var room = "";
+      var audio = new Audio('notification.mp3');
+      var groupMembers;
+      var limit;
+
+      function updateScroll(){
+        var element = document.getElementById("chatContent");
+        element.scrollTop = element.scrollHeight;
+      }
+
+      function viewchats(id,name){
+        socket.emit('connection');
+        socket.emit('authenticate', id,name);
+        socket.on('authenticated',function(msg){
+          console.log("autenticated"+msg);
+        });
+        socket.on('disconnected',function(msg){
+          document.location.href = "http://188.166.157.62:5000/logout";
+        });
+
+        socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time) {
+          if (socketRoom != room) {
+            if (socketRoom.includes("group")) {
+              socket.emit('get_group_chats',currentUser);
+            }
+            audio.play();
+          }
+        });
+
+        socket.on('you_received_contact_request',function(sendersName){
+          audio.play();
+          alert(sendersName + " sent you a contact request!");
+        });
+
+        socket.on('you_have_been_added_to_group',function(msg){
+          socket.emit('get_group_chats',currentUser);
+        });
+
+        socket.on('you_were_deleted_from_group',function(msg) {
+          if (msg != room.replace('group', '')) {
+            socket.emit('get_group_chats',currentUser);
+          } else {
+            console.log("here");
+            alert("You have been removed from this group.");
+            location.reload();
+          }
+        });
+
+        socket.emit('get_group_chats',currentUser);
+        socket.on('sent_group_chats', function(msg){
+          var target = JSON.parse(msg);
+          $("#list1").empty();
+          for(var i=0; i < target.length; i++) {
+            $('#list1').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><a onclick="chat('+target[i].group_id+',\''+target[i].name+'\',\''+target[i].owner+'\')"><div style="width: 40px; display:block; padding-top:5px;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/group_pictures/group_picture'+target[i].group_id+'.jpg" type="image/png"><img style="width: 40px; border-radius: 100%; margin:5px; height:40px class="image-circle" src="/images/profile.png" /></object></div><div class="col-xs-9 chat-contacts-text"><div><i style="padding-left: 20px; font-size: 11px;"></i><b>'+target[i].name+'</b><div><i style="padding-left: 20px;"></i>'+target[i].message+'</div></div></a></div>');
+          }
+        });
+      }
+
+
+      function chat(group_id, group_name,owner){
+        $("#groupUpload").val('');
+        $("#groupUpload").val(group_id);
+        $("#groupChatInfo").empty();
+        $("#groupChatAttach").empty();
+        $('#load-banner').empty();
+        limit=3;
+      $('#load-banner').append('<button class="btn btn-default" onclick="loadMore('+group_id+')" >Load More</button>');
+        $('#groupChatInfo').append(group_name);
+        if (currentUser==owner){
+          $('#groupChatAttach').append('<div><button type="button" class="btn btn-danger" onclick="showUploadGroupImage()"><span class="fa fa-1x fa-image"></span></button> <div class="dropdown"><button class="btn btn-danger dropdown-toggle" id="menu1" type="button" data-toggle="dropdown"><i class="fa fa-bars"></i></button><ul class="dropdown-menu" style="z-index:999;"><li><a onclick="leaveGroup('+group_id+')">Leave group</a></li><li><a onclick="showInviteContactList()">Invite Others to Group</a></li><li><a onclick="deleteGroup('+group_id+')">Delete Group</a></li></ul></div></div><br>')
+        }else{
+          $('#groupChatAttach').append('<div><button type="button" class="btn btn-danger" onclick="showUploadGroupImage()"><span class="fa fa-1x fa-image"></span></button> <div class="dropdown"><button class="btn btn-danger dropdown-toggle" id="menu1" type="button" data-toggle="dropdown"><i class="fa fa-bars"></i></button><ul class="dropdown-menu" style="z-index:999;"><li><a onclick="leaveGroup('+group_id+')">Leave group</a></li></ul></div></div><br>')
+        }
+        socket.on('send_group_members', function(msg){
+          groupMembers = JSON.parse(msg);
+          console.log(groupMembers);
+        });
+        socket.emit('get_group_members',group_id);
+        socket.on('send_recent_group_messages', function(msg){
+          $("#chatContent").empty();
+          var target = JSON.parse(msg);
+          for(var i=0; i < target.length; i++) {
+            if(target[i].user_id == currentUser){
+              $('#chatContent').prepend('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+target[i].timestmp+'</i><b> '+getFullNameById(target[i].user_id)+'</b></div><div>'+target[i].message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].user_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+            } else {
+              $('#chatContent').prepend('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target[i].user_id+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+getFullNameById(target[i].user_id)+'</b><i style="font-size: 11px;"> '+target[i].timestmp+'</i></div><div>'+target[i].message+'</div></div></div>');
+            }
+          }
+          updateScroll();
+        });
+        socket.emit('get_recent_group_messages',group_id, limit);
+        socket.on('group_room_created',function(msg){
+          socket.off(room);
+          room = msg;
+          socket.on(room, function(insertId,username,message,time){
+            if(username == currentUser){
+              $('#chatContent').append('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+ time + '</i><b> '+getFullNameById(username)+'</b></div><div>'+message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+            } else {
+              $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+getFullNameById(username)+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
+            }
+            updateScroll();
+            socket.emit('get_group_chats',currentUser);
+          });
+        });
+        socket.emit('create_group_room',group_id);
+      }
+
+      function groupChat(){
+
+        var mes=$("#message").val();
+        socket.emit('send_group_chat',mes);
+        document.getElementById('message').value = "";
+        return false;
+      }
+
+      function showPage(){
+        $('#creatGroup').modal();
+      }
+
+	function hidePage(){
+	$('#creatGroup').modal('hide');
+	}
+
+
+      function showUploadGroupImage(){
+        $('#uploadGroupImage').modal();
+      }
+
+      function showInviteContactList(){
+        $('#inviteContactList').modal();
+        var liList = document.getElementsByClassName("addMembersLI");
+        var inputList = document.getElementsByClassName("addMembersInput");
+        for(var i = 0; i < liList.length; i++) {
+          groupMembers.forEach(function(member) {
+              if(inputList[i].value == member.user_id) {
+                liList[i].style.display = "none";
+              }
+          });
+        }
+      }
+
+      function createGroup() {
+        var userids = new Array();
+        $("input:checkbox[name=select_group_contact]:checked").each(function(){
+          userids.push($(this).val());
+        });
+        var group_name=$("#group_name").val();
+        var group_description =$("#group_description").val();
+        var group_pic = $("#group_pic").val();
+        socket.off('group_created');
+        socket.on('group_created',function(msg) {
+          $.modal.close();
+          socket.emit('get_group_chats',currentUser);
+        });
+        socket.emit('create_group', group_name, group_description, currentUser, group_pic, userids);
+        return false;
+      }
+
+      function leaveGroup(group_id){
+        socket.off('group_left');
+        socket.on('group_left', function(msg){
+          if (msg == 'success'){
+            location.reload();
+          } else {
+            alert("There was a problem leaving the group");
+          }
+        });
+        if (confirm('Are you sure you want to leave this group?')) {
+          socket.emit('leave_group',currentUser,group_id);
+        }
+        $.modal.close();
+      }
+
+      function inviteContacts(){
+        var userids = new Array();
+        $("input:checkbox[name=select_group_contact]:checked").each(function(){
+          userids.push($(this).val());
+        });
+        socket.off('added_to_group');
+        socket.on('added_to_group',function(msg) {
+          $.modal.close();
+          alert("Users successfully added to group.");
+          location.reload();
+        });
+        socket.emit('add_to_group', room.replace('group', ''), userids);
+        return false;
+      }
+
+      function deleteGroup(group_id){
+        socket.on('group_deleted', function(msg){
+          if (msg == 'success'){
+            location.reload();
+          } else {
+            alert("There was a problem deleting the group");
+          }
+        });
+        if (confirm('Are you sure you want to delete this group?')) {
+          socket.emit('delete_group',currentUser,group_id);
+        }
+        $.modal.close();
+      };
+
+      function getFullNameById(id){
+        var result = "";
+        for(var i = 0 ; i < groupMembers.length ; i++){
+          if(groupMembers[i].user_id == id){
+            return groupMembers[i].name;
+          }
+        }
+        return result;
+      }
+
+      function loadMore(group_id){
+        limit =limit+1;
+        console.log("Now limit is "+limit);
+        socket.emit('get_recent_group_messages',group_id, limit);
+        socket.on('group_room_created',function(msg){
+          socket.off(room);
+          room = msg;
+          socket.on(room, function(insertId,username,message,time){
+            if(username == currentUser){
+              $('#chatContent').append('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+ time + '</i><b> '+getFullNameById(username)+'</b></div><div>'+message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
+            } else {
+              $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+getFullNameById(username)+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
+            }
+
+            socket.emit('get_group_chats',currentUser);
+          });
+        });
+      
+      }
+
+    </script>
+  </body>
+</html>

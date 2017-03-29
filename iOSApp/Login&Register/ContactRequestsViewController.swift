@@ -33,12 +33,7 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     
     override func viewWillAppear(_ animated: Bool) {
         
-        if (Utils.instance.isInternetAvailable()) {
-            self.setListeners()
-        } else {
-            noInternetAllert()
-            self.searchBar.isUserInteractionEnabled = false
-        }
+        self.setListeners()
     
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
@@ -196,11 +191,21 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
     }
     
     func deleteRequest(receiver: Int) {
-        SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+            SocketIOManager.sharedInstance.deleteRequest(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
+        } else {
+            noInternetAllert()
+            self.searchBar.isUserInteractionEnabled = false
+        }
     }
     
     func acceptContact(receiver: Int) {
-        SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+            SocketIOManager.sharedInstance.acceptContact(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(self.contacts[receiver].userId!), receiver: String(receiver))
+        } else {
+            noInternetAllert()
+            self.searchBar.isUserInteractionEnabled = false
+        }
     }
     
     @IBAction func backButtonPressed(_ sender: Any) {
@@ -269,14 +274,18 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         if let value = passedValue {
             if value == true {
                 titleLabel.text = "Sent Requests"
-                SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                    SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                }
                 SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
                 SocketIOManager.sharedInstance.setMyRequestAcceptedListener(completionHandler: { () -> Void in
                     SocketIOManager.sharedInstance.getSentRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
                 })
             } else {
                 titleLabel.text = "Received Requests"
-                SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                    SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+                }
                 SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in
                     SocketIOManager.sharedInstance.getReceivedRequests(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
                 })
@@ -293,7 +302,6 @@ class ContactRequestsViewController: UIViewController, UITableViewDataSource, UI
         let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
         alertView.addAction(okAction)
         self.present(alertView, animated: true, completion: nil)
-        self.searchBar.isUserInteractionEnabled = false
     }
     
     func dismissKeyboard() {

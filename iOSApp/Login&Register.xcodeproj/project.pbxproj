@@ -64,6 +64,7 @@
 		59334E571E492C8700E91DF3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59334E551E492C8700E91DF3 /* LaunchScreen.storyboard */; };
 		59334E621E492C8700E91DF3 /* Login_RegisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E611E492C8700E91DF3 /* Login_RegisterTests.swift */; };
 		59334E6D1E492C8700E91DF3 /* Login_RegisterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */; };
+		5948F8511E8B0DC300DD5184 /* GroupMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5948F8501E8B0DC300DD5184 /* GroupMessageModel.swift */; };
 		59B18ED41E54A9360000642E /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B18ED31E54A9360000642E /* ProfileViewController.swift */; };
 		C333136C1E7D5C8500B8F229 /* GroupChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */; };
 		C333136E1E7D8C4100B8F229 /* GroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */; };
@@ -156,6 +157,7 @@
 		59334E681E492C8700E91DF3 /* Login&RegisterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Login&RegisterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		59334E6C1E492C8700E91DF3 /* Login_RegisterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login_RegisterUITests.swift; sourceTree = "<group>"; };
 		59334E6E1E492C8700E91DF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5948F8501E8B0DC300DD5184 /* GroupMessageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupMessageModel.swift; sourceTree = "<group>"; };
 		59B18ED31E54A9360000642E /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		C333136B1E7D5C8500B8F229 /* GroupChatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupChatsViewController.swift; sourceTree = "<group>"; };
 		C333136D1E7D8C4100B8F229 /* GroupConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupConversationViewController.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				C333136F1E7D8DCD00B8F229 /* GroupChatModel.swift */,
 				C3A527721E8443FB00697D5F /* SelectedContactModel.swift */,
 				C336F8FF1E87F0AE00BD612C /* ImageUploadModel.swift */,
+				5948F8501E8B0DC300DD5184 /* GroupMessageModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -488,6 +491,7 @@
 				3810AC051E74382A005A98EB /* FilteredContactModel.swift in Sources */,
 				3810AC351E743CBF005A98EB /* SocketStringReader.swift in Sources */,
 				3810AC361E743CBF005A98EB /* SocketTypes.swift in Sources */,
+				5948F8511E8B0DC300DD5184 /* GroupMessageModel.swift in Sources */,
 				59205AF81E7C864900B92ABF /* GroupModel.swift in Sources */,
 				3810AC231E743CBF005A98EB /* SocketAnyEvent.swift in Sources */,
 				389CB7AD1E59D4BE00B5FDEE /* Utils.swift in Sources */,

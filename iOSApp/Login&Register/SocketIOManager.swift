@@ -23,6 +23,10 @@ class SocketIOManager: NSObject {
         super.init()
     }
     
+    func isConnected() -> Bool {
+        return socket.status.rawValue != 0
+    }
+    
     func establishConnection() {
         socket = SocketIOClient(socketURL: NSURL(string: "http://188.166.157.62:3000")! as URL)
         socket.connect()
