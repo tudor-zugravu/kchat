@@ -170,6 +170,7 @@ public class DataManager {
 
 
     public void getAllBufferedMessages(){ //logout to delete all
+        ChatsActivity.bufferdList.clear();
         Log.d("MESSI","reeached to get all buffered messages");
         Cursor c2 = db.rawQuery("SELECT * " +
                 " FROM " + BUFFER_MESSAGES_TABLE +
@@ -178,16 +179,17 @@ public class DataManager {
             int sender = c2.getInt(1);
             int receiver = c2.getInt(2); // group id
             String message= c2.getString(3);
-            String timestamp = c2.getString(4);
-            IMessage messageStored = new Message(-1,sender,message,timestamp);
+            String timestamp = c2.getString(5);
+            IMessage messageStored = new Message(MasterUser.usersId,sender,message,timestamp);
             messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            if(InternetHandler.bufferdList!=null )InternetHandler.bufferdList.add(messageStored);
-        }
+            if(ChatsActivity.bufferdList!=null )ChatsActivity.bufferdList.add(messageStored);
+                Log.d("MESSI","got here to add to the list, the size is " + ChatsActivity.bufferdList.size());
+            }
         Log.d("MESSI","reeached to delete");
 
-        String query = "DELETE FROM " + BUFFER_MESSAGES_TABLE+ ";";
-        Log.i("delete() = ", query);
-        db.execSQL(query);
+        String query3 = "DELETE FROM " + BUFFER_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query3);
+        db.execSQL(query3);
     }
 
     public void flushAllMessageData(){ //logout to delete all
