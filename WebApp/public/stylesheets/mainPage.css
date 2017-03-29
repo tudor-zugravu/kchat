@@ -1,0 +1,83 @@
+body {
+	background-color: #ECF0F1;
+}
+.navbar-default {
+	background: #E74C3C;
+}
+.navbar-brand {
+	color : #E74C3C !important;
+}
+.box {
+	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
+	padding: 0px;
+}
+.profile {
+	background-color: #DC143C;
+	color: #FFF;
+	text-align: center;
+	padding: 1em;
+}
+.author-profile {
+	color: #FFF;
+	margin-top: 1em;
+	font-size: 12px;
+	margin-right: 1em;
+}
+.chatlist {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+	overflow: auto;
+	height: 400px;
+}
+.chatlist li {
+	background-color: #DC143C;
+	color: #FFF;
+	padding : .5em;
+	border-top: 1px solid#CCC;
+}
+.chatlist a {
+	color: #FFF;
+	display: block;
+}
+.chatlist a:hover {
+	text-decoration: none;
+}
+.chatlist .author {
+	font-size: 20px;
+}
+.chatlist .message {
+	font-size: 15px;
+}
+.chat-thumb {
+	width: 50px;
+	height: 50px;
+	float: left;
+	margin-right: 20px;
+}
+
+.menu {
+	background-color: #DC143C;
+	text-align: center;
+}
+.menu ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+.menu li {
+	display: inline-table;
+	padding: .5em;
+	text-align: center;
+}
+.menu a {
+	color: #FFF;
+	font-size: 12px;
+	display: block;
+}
+
+.box-search {
+	padding: .5em;
+	background-color: #DC143C;
+}
