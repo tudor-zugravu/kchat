@@ -105,7 +105,7 @@
                 <div class="row">
                   <div class="col-xs-2">
                     <object class="header-profile-picture" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
-                      <img class="header-profile-picture" src="/images/profile.png" />
+                      <img class="header-profile-picture4" src="/images/profile.png" />
                     </object>
                   </div>
                   <div class="col-xs-10" style="padding-left: 0px;">
@@ -334,7 +334,10 @@
                     <% for(var i=0; i < contacts.length; i++) { %>
                     <li class="list-group-item">
                       <div class="col-xs-2"> <!-- profile image -->
-                        <img src="../images/profile.png" alt="" align="center" class="img-circle" width="80%" />
+                        <!-- <img src="../images/profile.png" alt="" align="center" class="img-circle" width="80%" /> -->
+                        <object class="img-circle" data="http://188.166.157.62/profile_pictures/profile_picture<% if(contacts.length != 0) {  %><%= contacts[i].user_id %><%  } %>.jpg" type="image/png" width="80px" height="80px"/>
+                          <img class="img-circle" src="/images/profile.png" width="80px" height="80px"/>
+                        </object>
                       </div>
                       <div class="col-xs-6"> <!-- user info. -->
                         <span class="name"> <h3><p style="line-height: 0pt"><a href="/contacts/<%= contacts[i].user_id %>"><%= contacts[i].username %></a></p></h3></span><br/>
@@ -531,7 +534,7 @@
        var target = JSON.parse(msg);
         $("#received_requests").empty();
        for(var i=0; i < target.length; i++) {
-      $("#received_requests").append('<div id="request'+i+'"><p>you have received a request from '+target[i].name+"</p><button onclick='acceptRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Accept the contact request</button>");
+      $("#received_requests").append('<div class="row top-buffer"><div class="col-xs-8" align="center"><div class="panel panel-default" style="padding-bottom:10px;"><ul class="list-group"><div id="request'+i+'"><p>you have received a request from '+target[i].name+"</p><button onclick='acceptRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Accept the contact request</button>");
     }
 
   });
@@ -545,7 +548,7 @@
        var target = JSON.parse(msg);
         $("#received_requests").empty();
        for(var i=0; i < target.length; i++) {
-      $("#received_requests").append('<div id="request'+i+'"><p>you have sent a request to '+target[i].name+"</p><button onclick='deleteRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Delete the contact request</button>");
+      $("#received_requests").append('<div class="row top-buffer"><div class="col-xs-8" align="center"><div class="panel panel-default" style="padding-bottom:10px;"><ul class="list-group"><div id="request'+i+'"><p>you have sent a request to '+target[i].name+"</p><button onclick='deleteRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Delete the contact request</button>");
     }
 
   });
@@ -577,7 +580,7 @@
    $('#contact-list').searchable({
     searchField: '#contact-list-search',
     selector: 'li',
-    childSelector: '.col-xs-7',
+    childSelector: '.col-xs-6',
     show: function( elem ) {
       elem.slideDown(100);
     },
