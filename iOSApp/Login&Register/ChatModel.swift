@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ChatModel: NSObject {
+class ChatModel: NSObject, NSCoding {
     
     //properties
     var receiverId: Int?
@@ -35,6 +35,23 @@ class ChatModel: NSObject {
         self.profilePicture = profilePicture
     }
     
+    required init(coder decoder: NSCoder) {
+        self.receiverId = decoder.decodeObject(forKey: "receiverId") as? Int
+        self.receiverName = decoder.decodeObject(forKey: "receiverName") as? String ?? ""
+        self.senderName = decoder.decodeObject(forKey: "senderName") as? String ?? ""
+        self.lastMessage = decoder.decodeObject(forKey: "lastMessage") as? String ?? ""
+        self.timestamp = decoder.decodeObject(forKey: "timestamp") as? String ?? ""
+        self.profilePicture = decoder.decodeObject(forKey: "profilePicture") as? String ?? ""
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(receiverId, forKey: "receiverId")
+        coder.encode(receiverName, forKey: "receiverName")
+        coder.encode(senderName, forKey: "senderName")
+        coder.encode(lastMessage, forKey: "lastMessage")
+        coder.encode(timestamp, forKey: "timestamp")
+        coder.encode(profilePicture, forKey: "profilePicture")
+    }
     
     //prints object's current state
     override var description: String {

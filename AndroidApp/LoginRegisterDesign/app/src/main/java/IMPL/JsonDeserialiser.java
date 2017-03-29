@@ -1,19 +1,15 @@
 package IMPL;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.user.kchat01.ChatsActivity;
-import com.example.user.kchat01.ContactsActivity;
 import com.example.user.kchat01.DataManager;
 import com.example.user.kchat01.GroupChatsActivity;
 import com.example.user.kchat01.InternetHandler;
-import com.example.user.kchat01.LoginActivity;
 import com.example.user.kchat01.R;
 
 import org.json.JSONArray;
@@ -22,8 +18,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
@@ -134,7 +128,9 @@ public class JsonDeserialiser {
                 }
                 if(GroupChatsActivity.dataList!=null && type ==1 ) {
                     GroupChatsActivity.dataList.add(0, messageObject);
-                    Log.d("GROUPFUNCTION", "size of the list is : " + GroupChatsActivity.dataList.size());
+                    Log.d("GROUPFUNCTIONN", "size of the list is : " + jArr.length());
+
+
                     dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
                 }
             }
@@ -158,7 +154,8 @@ private void groupDeserialiser(){
                 String message = obj.getString("message");
                 String timestamp = obj.getString("timestmp");
                 int actualOwnerId = obj.getInt("owner");
-                IGroups groups = new Groups(groupName,message,groupId,groupPicture,null);
+                //IGroups groups = new Groups(groupName,message,groupId,groupPicture,null);
+                IGroups groups = new Groups(groupName,message,groupId,groupPicture,description,null);
                 groups.setActualOwnerId(actualOwnerId);
                 Log.d("GROUPSRECEIVED", "object size: " + groupId);
                 Log.d("GROUPSRECEIVED", "actual owner is " + actualOwnerId);

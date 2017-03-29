@@ -35,79 +35,14 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageUploadModel.delegate = self
         picker.delegate = self
         
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
-        SocketIOManager.sharedInstance.setContactDeletedListener(completionHandler: { (response) -> Void in
-            if(response == "success") {
-                let _ = self.navigationController?.popViewController(animated: true)
-                self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
-            } else {
-                let alertView = UIAlertController(title: "Error",
-                                                  message: "There was a problem deleting \((self.passedValue?.name)!) from your contacts" as String, preferredStyle:.alert)
-                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
-                alertView.addAction(okAction)
-                self.present(alertView, animated: true, completion: nil)
-            }
-        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if !(passedValue != nil) {
-            let fullNameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.fullNameLongPress))
-            self.fullNameLabel.addGestureRecognizer(fullNameLongPressGesture)
-            let usernameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.usernameLongPress))
-            self.usernameLabel.addGestureRecognizer(usernameLongPressGesture)
-            let emailLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.emailLongPress))
-            self.emailLabel.addGestureRecognizer(emailLongPressGesture)
-            let phoneNoLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.phoneNoLongPress))
-            self.phoneNoLabel.addGestureRecognizer(phoneNoLongPressGesture)
-            let aboutLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.aboutLongPress))
-            self.aboutLabel.addGestureRecognizer(aboutLongPressGesture)
-            let profilePictureLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.profilePictureLongPress))
-            self.profilePictureImageView.addGestureRecognizer(profilePictureLongPressGesture)
-            
-            SocketIOManager.sharedInstance.setFullNameChangedListener(completionHandler: { (response) -> Void in
-                self.fullNameLabel.text = response
-                UserDefaults.standard.set(response, forKey:"fullName");
-                UserDefaults.standard.synchronize();
-            })
-            SocketIOManager.sharedInstance.setUsernameChangedListener(completionHandler: { (response) -> Void in
-                if (response == "duplicate") {
-                    let alertView = UIAlertController(title: "Failed",
-                                                      message: "Username already exists" as String, preferredStyle:.alert)
-                    let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
-                    alertView.addAction(okAction)
-                    self.present(alertView, animated: true, completion: nil)
-                } else {
-                    self.usernameLabel.text = response
-                    UserDefaults.standard.set(response, forKey:"username");
-                    UserDefaults.standard.synchronize();
-                }
-            })
-            SocketIOManager.sharedInstance.setEmailChangedListener(completionHandler: { (response) -> Void in
-                self.emailLabel.text = response
-                UserDefaults.standard.set(response, forKey:"email");
-                UserDefaults.standard.synchronize();
-            })
-            SocketIOManager.sharedInstance.setPhoneNoChangedListener(completionHandler: { (response) -> Void in
-                self.phoneNoLabel.text = response
-                UserDefaults.standard.set(response, forKey:"phoneNo");
-                UserDefaults.standard.synchronize();
-            })
-            SocketIOManager.sharedInstance.setAboutChangedListener(completionHandler: { (response) -> Void in
-                self.aboutLabel.text = response
-                UserDefaults.standard.set(response, forKey:"about");
-                UserDefaults.standard.synchronize();
-            })
-        }
+        self.setListeners()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        
         if let value = passedValue {
             usernameLabel.text = value.username
             fullNameLabel.text = value.name
@@ -143,7 +78,6 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             if UserDefaults.standard.bool(forKey: "hasProfilePicture") {
                 let image = UIImage(contentsOfFile: (Utils.instance.getDocumentsDirectory().appendingPathComponent("\(UserDefaults.standard.value(forKey: "profilePicture"))")).path)
-                print(image?.imageOrientation.rawValue);
                 profilePictureImageView.image = image
             }
             dropButton.isHidden = false
@@ -161,7 +95,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0]
                 if textField?.text != "" && textField?.text != nil {
-                    SocketIOManager.sharedInstance.changeFullName(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newName: (textField?.text)!)
+                    if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                        SocketIOManager.sharedInstance.changeFullName(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newName: (textField?.text)!)
+                    } else {
+                        self.noInternetAllert()
+                    }
                 }
             }))
             alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
@@ -178,7 +116,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0]
                 if textField?.text != "" && textField?.text != nil {
-                    SocketIOManager.sharedInstance.changeUsername(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newUsername: (textField?.text)!)
+                    if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                        SocketIOManager.sharedInstance.changeUsername(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newUsername: (textField?.text)!)
+                    } else {
+                        self.noInternetAllert()
+                    }
                 }
             }))
             alert.addAction(UIAlertAction(title:"Cancel", style:UIAlertActionStyle.default, handler:nil))
@@ -199,7 +141,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     let mailPattern = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
                     let email = MyRegex(mailPattern)
                     if email.match(input: (textField?.text!)!) {
-                        SocketIOManager.sharedInstance.changeEmail(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newEmail: (textField?.text)!)
+                        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                            SocketIOManager.sharedInstance.changeEmail(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newEmail: (textField?.text)!)
+                        } else {
+                            self.noInternetAllert()
+                        }
+                       
                     }else{
                         let alertView = UIAlertController(title: "Failed",
                                                           message: "Email format not valid" as String, preferredStyle:.alert)
@@ -227,7 +174,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                     let phoneParrern = "^7[0-9]{9}$"
                     let matcher = MyRegex(phoneParrern)
                     if matcher.match(input: (textField?.text!)!){
-                        SocketIOManager.sharedInstance.changePhoneNo(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newPhoneNo: (textField?.text)!)
+                        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                            SocketIOManager.sharedInstance.changePhoneNo(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newPhoneNo: (textField?.text)!)
+                        } else {
+                            self.noInternetAllert()
+                        }
                     } else {
                         let alertView = UIAlertController(title: "Failed",
                                                           message: "Phone number format not valid" as String, preferredStyle:.alert)
@@ -252,7 +203,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 let textField = alert?.textFields![0]
                 if textField?.text != "" && textField?.text != nil {
                     if (textField?.text)!.characters.count <= 50 {
-                        SocketIOManager.sharedInstance.changeAbout(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newAbout: (textField?.text)!)
+                        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                            SocketIOManager.sharedInstance.changeAbout(userId: UserDefaults.standard.value(forKey: "userId") as! Int, newAbout: (textField?.text)!)
+                        } else {
+                            self.noInternetAllert()
+                        }
                     } else {
                         let alertView = UIAlertController(title: "Failed",
                                                          message: "Description must be under 50 characters" as String, preferredStyle:.alert)
@@ -311,8 +266,12 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
         self.selectedImg = chosenImage
-        self.uploadImage(id: String(describing: UserDefaults.standard.value(forKey: "userId")!))
-        dismiss(animated:true, completion: nil) //5
+        if Utils.instance.isInternetAvailable() {
+            self.uploadImage(id: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+        } else {
+            dismiss(animated:true, completion: nil) //5
+            self.noInternetAllert()
+        }
     }
     
     func uploadImage(id: String) {
@@ -453,6 +412,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.logOut(Any.self)
         })])
     }
+    
     func logOut(_ sender: Any) {
         
         Utils.instance.logOut()
@@ -460,12 +420,20 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func deleteContact(receiver: Int) {
-        SocketIOManager.sharedInstance.deleteContact(userId: UserDefaults.standard.value(forKey: "userId") as! Int, otherUserId: receiver)
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+            SocketIOManager.sharedInstance.deleteContact(userId: UserDefaults.standard.value(forKey: "userId") as! Int, otherUserId: receiver)
+        } else {
+            noInternetAllert()
+        }
     }
     
     func deleteAccount(userId: Int) {
-        SocketIOManager.sharedInstance.deleteAccount(userId: userId)
-        self.logOut(Any.self)
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+            SocketIOManager.sharedInstance.deleteAccount(userId: userId)
+            self.logOut(Any.self)
+        } else {
+            noInternetAllert()
+        }
     }
     
     @IBAction func deleteContactPressed(_ sender: Any) {
@@ -502,5 +470,89 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 return false
             }
         }
+    }
+    
+    func setListeners() {
+        if !(passedValue != nil) {
+            let fullNameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.fullNameLongPress))
+            self.fullNameLabel.removeGestureRecognizer(fullNameLongPressGesture)
+            self.fullNameLabel.addGestureRecognizer(fullNameLongPressGesture)
+            let usernameLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.usernameLongPress))
+            self.usernameLabel.removeGestureRecognizer(usernameLongPressGesture)
+            self.usernameLabel.addGestureRecognizer(usernameLongPressGesture)
+            let emailLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.emailLongPress))
+            self.emailLabel.removeGestureRecognizer(emailLongPressGesture)
+            self.emailLabel.addGestureRecognizer(emailLongPressGesture)
+            let phoneNoLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.phoneNoLongPress))
+            self.phoneNoLabel.removeGestureRecognizer(phoneNoLongPressGesture)
+            self.phoneNoLabel.addGestureRecognizer(phoneNoLongPressGesture)
+            let aboutLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.aboutLongPress))
+            self.aboutLabel.removeGestureRecognizer(aboutLongPressGesture)
+            self.aboutLabel.addGestureRecognizer(aboutLongPressGesture)
+            let profilePictureLongPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ProfileViewController.profilePictureLongPress))
+            self.profilePictureImageView.removeGestureRecognizer(profilePictureLongPressGesture)
+            self.profilePictureImageView.addGestureRecognizer(profilePictureLongPressGesture)
+            
+            SocketIOManager.sharedInstance.setFullNameChangedListener(completionHandler: { (response) -> Void in
+                self.fullNameLabel.text = response
+                UserDefaults.standard.set(response, forKey:"fullName");
+                UserDefaults.standard.synchronize();
+            })
+            SocketIOManager.sharedInstance.setUsernameChangedListener(completionHandler: { (response) -> Void in
+                if (response == "duplicate") {
+                    let alertView = UIAlertController(title: "Failed",
+                                                      message: "Username already exists" as String, preferredStyle:.alert)
+                    let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                    alertView.addAction(okAction)
+                    self.present(alertView, animated: true, completion: nil)
+                } else {
+                    self.usernameLabel.text = response
+                    UserDefaults.standard.set(response, forKey:"username");
+                    UserDefaults.standard.synchronize();
+                }
+            })
+            SocketIOManager.sharedInstance.setEmailChangedListener(completionHandler: { (response) -> Void in
+                self.emailLabel.text = response
+                UserDefaults.standard.set(response, forKey:"email");
+                UserDefaults.standard.synchronize();
+            })
+            SocketIOManager.sharedInstance.setPhoneNoChangedListener(completionHandler: { (response) -> Void in
+                self.phoneNoLabel.text = response
+                UserDefaults.standard.set(response, forKey:"phoneNo");
+                UserDefaults.standard.synchronize();
+            })
+            SocketIOManager.sharedInstance.setAboutChangedListener(completionHandler: { (response) -> Void in
+                self.aboutLabel.text = response
+                UserDefaults.standard.set(response, forKey:"about");
+                UserDefaults.standard.synchronize();
+            })
+        }
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setContactDeletedListener(completionHandler: { (response) -> Void in
+            if(response == "success") {
+                let _ = self.navigationController?.popViewController(animated: true)
+                self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+            } else {
+                let alertView = UIAlertController(title: "Error",
+                                                  message: "There was a problem deleting \((self.passedValue?.name)!) from your contacts" as String, preferredStyle:.alert)
+                let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+                alertView.addAction(okAction)
+                self.present(alertView, animated: true, completion: nil)
+            }
+        })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+    }
+    
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
 }

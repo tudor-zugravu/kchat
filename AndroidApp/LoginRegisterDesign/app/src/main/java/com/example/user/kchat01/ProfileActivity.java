@@ -20,15 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import IMPL.MasterUser;
-import IMPL.RESTApi;
 
 import static android.view.View.GONE;
 import static com.example.user.kchat01.R.id.editTextNewProfile;
@@ -66,11 +61,11 @@ public class ProfileActivity extends CustomActivity {
     @Override
     protected void onResume() {
         super.onResume();
-            toolbarTitle.setText("My Profile");
+            toolbarTitle.setText("Profile");
             toolbarTitle.setTypeface(Typeface.createFromAsset(getAssets(), "Georgia.ttf"));
             MasterUser man = new MasterUser();
             if(man.getProfileLocation()!=null&&!man.getProfileLocation().equals("null")) {
-                imageProfile.setImageBitmap(man.getUsersprofile());
+              //  imageProfile.setImageBitmap(man.getUsersprofile());
                 Log.d("MYTAG", "location is" + man.getUsersprofile());
             }else if(man.getProfileLocation().equals("null")){
                 imageProfile.setImageResource(R.drawable.human);
@@ -85,9 +80,9 @@ public class ProfileActivity extends CustomActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(InternetHandler.hasInternetConnection(ProfileActivity.this,1)==false){
-            ContactsActivity.mSocket.disconnect();
+           // ContactsActivity.mSocket.disconnect();
         }else {
-            ContactsActivity.mSocket.connect();
+            //ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("fullname_changed", fullnameChanged);
             ContactsActivity.mSocket.on("username_changed", usernameChanged); //-----------refresh
             ContactsActivity.mSocket.on("email_changed", emailChanged);

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Change Profile form</title>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='/stylesheets/style2.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+  <form class="login" method="post" action="/changeProfile" name="newProfile" enctype="multipart/form-data">
+    <p class="title" >Upload Profile Picture</p>
+    <input type="file" name="new_ProfilePic" accept="image/jpeg"/>
+
+
+
+ <div id="errors">
+ </div>
+    <button type="submit">
+      <i class="spinner"></i>
+      <span class="state">Upload</span>
+    </button>
+  </form>
+  <footer> Let's get connected !</footer>
+  </p>
+</div>
+
+
+
+</body>
+</html>

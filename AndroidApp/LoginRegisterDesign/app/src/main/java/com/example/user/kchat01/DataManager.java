@@ -115,9 +115,16 @@ public class DataManager {
         counter = counter + 1;
         Log.d("OFFLINE TESTER", "this was called  " + counter + " times");
     }
-
+//dm.insertGroupMessage(Integer.parseInt(messageid),Integer.parseInt(username),Integer.parseInt(receiver),message,messagetimestamp,"");
     public void insertGroupMessage(int messageId, int senderId, int receiverId, String message, String timestamp, String type){
-        String query = "INSERT OR REPLACE INTO " + GROUP_MESSAGES_TABLE + " ( " +
+
+        String query2 = "DELETE FROM " +  GROUP_MESSAGES_TABLE+
+                " WHERE " + GROUP_MESSAGES_RECEIVERID + " = " + receiverId + " AND " + GROUP_MESSAGES_MESSAGEID + " = " + messageId +";";
+        Log.i("delete() = ", query2);
+        db.execSQL(query2);
+
+
+        String query = "INSERT  INTO " + GROUP_MESSAGES_TABLE + " ( " +
                 GROUP_MESSAGES_MESSAGEID + ", " +
                 GROUP_MESSAGES_SENDERID + ", " +
                 GROUP_MESSAGES_RECEIVERID + ", " +
@@ -159,6 +166,30 @@ public class DataManager {
         String query = "DELETE FROM " +  CONTACTS_TABLE+ ";";
         Log.i("delete() = ", query);
         db.execSQL(query);
+    }
+
+
+    public void getAllBufferedMessages(){ //logout to delete all
+        ChatsActivity.bufferdList.clear();
+        Log.d("MESSI","reeached to get all buffered messages");
+        Cursor c2 = db.rawQuery("SELECT * " +
+                " FROM " + BUFFER_MESSAGES_TABLE +
+                " ORDER BY datetime(timestamp) ASC ;", null);
+            while (c2.moveToNext()){
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // group id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(5);
+            IMessage messageStored = new Message(MasterUser.usersId,sender,message,timestamp);
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
+            if(ChatsActivity.bufferdList!=null )ChatsActivity.bufferdList.add(messageStored);
+                Log.d("MESSI","got here to add to the list, the size is " + ChatsActivity.bufferdList.size());
+            }
+        Log.d("MESSI","reeached to delete");
+
+        String query3 = "DELETE FROM " + BUFFER_MESSAGES_TABLE+ ";";
+        Log.i("delete() = ", query3);
+        db.execSQL(query3);
     }
 
     public void flushAllMessageData(){ //logout to delete all
@@ -260,19 +291,14 @@ public class DataManager {
                 " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + myID +"' )"+ " OR " +
                 "( "+ PRIVATE_MESSAGES_SENDERID + " = '" + myID +"' )"+
                 " AND ( " + PRIVATE_MESSAGES_RECEIVERID + " = '" + senderId +"' )"+
-                " ORDER BY datetime(timestamp) DESC ;", null);
+                " ORDER BY datetime(timestamp) ASC ;", null);
         while (c2.moveToNext()){
-            int sender = c2.getInt(0);
-            int receiver = c2.getInt(1); // senders id
-            String message= c2.getString(2);
-            String timestamp = c2.getString(3);
-
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // senders id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(4);
             IMessage messageStored = new Message(-1,sender,message,timestamp);
-            if(sender == myID){
-                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            }else{
-                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
-            }
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
             if(ChatsActivity.dataList!=null )ChatsActivity.dataList.add(messageStored);
         }
         Log.d("OFFLINE TESTER", "size of the offline list is  " + ChatsActivity.dataList.size());
@@ -280,7 +306,8 @@ public class DataManager {
     }
 
     public Cursor selectAllGroupMessages(int groupId, int myID) { ///name = 34 ken //myId is 2 Tudor
-        Cursor c = db.rawQuery("SELECT DISTINCT * " +
+        Log.d("DATABASE"," a ----- "+  groupId);
+        Cursor c = db.rawQuery("SELECT * " +
                 " FROM " + GROUP_MESSAGES_TABLE +
                 " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
                 " ORDER BY datetime(timestamp) DESC ;", null);
@@ -305,24 +332,16 @@ public class DataManager {
         Cursor c2 = db.rawQuery("SELECT DISTINCT * " +
                 " FROM " + BUFFER_MESSAGES_TABLE +
                 " WHERE" + "( "+ GROUP_MESSAGES_RECEIVERID + " = '" + groupId +"' )"+
-                " ORDER BY datetime(timestamp) DESC ;", null);
+                " ORDER BY datetime(timestamp) ASC ;", null);
         while (c2.moveToNext()){
-            int sender = c2.getInt(0);
-            int receiver = c2.getInt(1); // group id
-            String message= c2.getString(2);
-            String timestamp = c2.getString(3);
-
+            int sender = c2.getInt(1);
+            int receiver = c2.getInt(2); // group id
+            String message= c2.getString(3);
+            String timestamp = c2.getString(4);
             IMessage messageStored = new Message(-1,sender,message,timestamp);
-            if(sender == myID){
-                messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            }else{
-                messageStored.setMe(false);//if the message is sender, set "true". if not, set "false".
-            }
+            messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
             if(GroupChatsActivity.dataList!=null )GroupChatsActivity.dataList.add(messageStored);
         }
-
-
-        Log.d("OFFLINE TESTER", "size of the offline list is  " + GroupChatsActivity.dataList.size());
         return c;
     }
 
@@ -407,6 +426,8 @@ public class DataManager {
 
             String bufferMessageTableQueryString = "create table "
                     + BUFFER_MESSAGES_TABLE + " ("
+                    + "id"
+                    + " integer primary key AUTOINCREMENT ,"
                     + PRIVATE_MESSAGES_SENDERID
                     + " integer not null,"
                     + PRIVATE_MESSAGES_RECEIVERID

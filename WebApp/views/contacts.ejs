@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>kchat</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/stylesheets/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/stylesheets/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/stylesheets/morris.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/jquery.ioslist.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <!-- for Modal part (pop up send contact request page) -->
+
+    <link rel="stylesheet" href="/jquery-modal/jquery.modal.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/stylesheets/mainPage.css" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/flex-layout-attribute.min.css">
+    <link rel="stylesheet" href="/stylesheets/stylesheet.css" type="text/css">
+
+
+    <!-- Custom Fonts -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+      <body onLoad="authenticate(<%=user_id %>, '<%=fullname %>')">
+<!--Ken out and add>
+  <P id="user_id"  style="visibility: invisible"><%=user_id %></p>
+    <P id="fullName" ><%=fullname %></p>
+    -->
+    <P id="user_id" style="display: none"><%=user_id %></p>
+      <P id="fullName"  style="display: none"><%=fullname %></p>
+
+
+        <div id="wrapper">
+
+         <!-- Navigation -->
+         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+          <div class="navbar-header">
+            <button type="submit" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+
+
+          <div class="kchat-header">
+            <!-- /.navbar-header -->
+            <div class="row" id="problematic-div">
+              <div class="kchat-menu col-xs-4">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav">
+                    <li >
+                      <a href="/chat" class="active top-buttons-a">
+                        <img class="top-buttons" src="/images/chat-black.png">
+                      </a>
+                    </li>
+                    <li>
+                      <a class="top-buttons-a" href="/groupChat">
+                        <img class="top-buttons" src="/images/group-black.png">
+                      </a>
+                    </li>
+                    <li >
+                      <a class="top-buttons-a" href="/contacts">
+                        <img class="top-buttons" src="/images/contacts-black.png">
+                      </a>
+                    </li>
+                    <li >
+                      <a class="top-buttons-a" href="/profile" >
+                        <img class="top-buttons" src="/images/profile-black.png">
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="kchat-title col-xs-4">
+                <div class="row">
+                  <div class="col-xs-2">
+                    <object class="header-profile-picture" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
+                      <img class="header-profile-picture" src="/images/profile.png" />
+                    </object>
+                  </div>
+                  <div class="col-xs-10" style="padding-left: 0px;">
+                    <h2 class="header-username col-xs-9"><%=fullname %></h2>
+                  </div>
+                </div>
+              </div>
+              <div class="kchat-logo col-xs-4">
+                <img class="crest" src="/images/kcl-crest.png">
+              </div>
+            </div>
+          </nav>
+
+          <div id="wrap">
+
+            <div id="sidebar1"><!-- left side bar but its only title -->
+
+              <div class="navbar-default sidebar">
+                <div class="sidebar-nav navbar-collapse">
+                  <ul class="nav" id="side-menu">
+                    <div class="ioslist-group-container">
+                      <div class="ioslist-group-header">Contacts List</div>
+                    </div>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="sidebar2"> <!-- right side bar (Profile area)-->
+
+         <div class="navbar-default sidebar">
+          <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+              <div class="ioslist-group-container">
+                <div class="ioslist-group-header">Info</div>
+              </div>
+              <div id="list2">
+
+                <div id="profileDisp" class="panel panel-primary verticalcenter">
+                  <div class="panel-heading-ab">
+                    <h1 class="panel-title text-center"> <br/> Contacts Profile </h1>
+                  </div>
+                  <div class="panel-body">
+
+                        <object class="header-profile-picture2" data="http://188.166.157.62/profile_pictures/profile_picture<% if(contacts.length != 0) {  %><%= contacts[pointer].user_id %><%  } %>.jpg" type="image/png" width="30%"/>
+                          <img class="header-profile-picture3" src="/images/profile.png" />
+                        </object>
+
+
+                    <table class="table table-borderless" align="center">
+                      <tr>
+                        <td rowspan="2" width="30%">
+                          <img src="../images/human.png" align="right" width="70%">
+                        </td>
+                        <div class="text-left" width="70%">
+                          <td>Username</td>
+                        </div>
+                      </tr>
+                      <tr>
+                        <td><b><% if(contacts.length != 0) {  %><%= contacts[pointer].username %><%  } %> </b></td>
+                      </tr>
+                    </table>
+
+                    <table class="table table-borderless" align="center">
+                      <tr>
+                        <td rowspan="2" width="30%">
+                          <img src="../images/ic_email_black_24dp_2x.png" align="right" width="60%">
+                        </td>
+                        <div class="text-left" width="70%">
+                          <td>Email</td>
+                        </div>
+                      </tr>
+                      <tr>
+                        <td><b><% if(contacts.length != 0) {  %><%= contacts[pointer].email %><%  } %> </b></td>
+                      </tr>
+                    </table>
+
+                    <table class="table table-borderless" align="center">
+                      <tr>
+                        <td rowspan="2" width="30%">
+                          <img src="../images/ic_phone_android_black_24dp_2x.png" align="right" width="60%">
+                        </td>
+                        <div class="text-left" width="70%">
+                          <td>Phone</td>
+                        </div>
+                      </tr>
+                      <tr>
+                        <td><b><% if(contacts.length != 0) { %><%= contacts[pointer].phone_number %><% } %></b></td>
+                      </tr>
+                    </table>
+
+
+                    <table class="table table-borderless" align="center">
+                      <tr>
+                        <td rowspan="2" width="30%">
+                          <img src="../images/ic_folder_shared_black_24dp_2x.png" align="right" width="60%">
+                        </td>
+                        <div class="text-left" width="70%">
+                          <td>Biography</td>
+                        </div>
+                      </tr>
+                      <tr>
+                        <td><b><% if(contacts.length != 0) { %><%= contacts[pointer].biography %><% }%></b></td>
+                      </tr>
+                    </table>
+                    <div>
+                      <button type="button" class="btn btn-danger cc" onclick="deleteContact(<%=user_id %>,<% if(contacts.length != 0) { %><%= contacts[pointer].user_id %><% }%>)">Delete contact</button>
+                    </div>
+                    <div>
+                      <form method="post" action="/chat">
+                        <input name="contactId" type="hidden" value="<% if(contacts.length != 0) { %><%= contacts[pointer].user_id %><% }%>">
+                        <input name="contactName" type="hidden" value="<% if(contacts.length != 0) { %><%= contacts[pointer].name %><% }%>">
+                        <button class="btn btn-danger cc" type="submit"> Start Conversation </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="ioslist-group-container">
+        <!--
+          <div class="ioslist-group-header" id="conversation-banner">Contacts List</div>
+        -->
+      </div>
+
+
+    </div>
+
+
+    <div id="content_wrap">
+      <div id="content">
+
+        <div class="container">
+          <div class="row top-buffer">
+            <div class="col-xs-8">
+              <ul class="nav nav-tabs nav-justified">
+
+                <li><a onclick="viewSentRequests(<%= user_id %>)" data-toggle="tab"><img src="/images/send_request.png" width="40"></a></li>
+                <li><a onclick="viewRequests(<%= user_id %>)" data-toggle="tab"><img src="/images/receive_request.png" width="31"></a></li>
+                <li><a onclick="showAddNewContact()"><img src="/images/add_contact.png" width="34"></a></li>
+
+              </ul>
+            </div>
+          </div>
+
+          <div id="addNewContact" class="groupbox" style="display:none; z-index:999;">
+          <h2>Search User</h2>
+
+                              <form id="search_user" action="">
+                            <input id="search" autocomplete="off" / placeholder="search user">
+                            <button class="btn btn-default" type="submit" href="/search">
+                              <i class="fa fa-search"></i>
+                              </button>
+                            </form>
+
+
+                            <ul id="search_result">
+
+        </ul>
+        <div id="modal">
+        </div>
+          <button class="btn btn-danger" type="submit">DONE</button>
+          <button class="btn btn-danger" type="button" onclick="$.modal.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div>
+        <div id="received_requests">
+
+      </div>
+      <div id="acceptRequest">
+
+      </div>
+
+        <!-- <div id="requestUser" class="groupbox" style="display:none;" >
+          <h2>Create New Group</h2>
+          <form id="create_group_form" action="" onsubmit="return createGroup();">
+           <input type="text" placeholder="Group Name" id="group_name">
+            <input type="text" placeholder="Group description" id="group_description">
+
+           <div class="select_group_members">
+             <p>
+               Select group members:
+             </p>
+          <ul style="list-style-type: none">
+            <% for(var i=0; i < contacts.length; i++) { %>
+              <li><input type="checkbox" value="<%= contacts[i].user_id %>" name="select_group_contact"><%= contacts[i].username %> (<%= contacts[i].name %>)</li>
+
+              <% } %>
+
+            </ul>
+            </div>
+          <button type="submit">DONE</button>
+          <button type="button" onclick="$.groupbox.close();" rel="modal:close">CANCEL</button>
+        </form>
+        </div> -->
+
+          <div id="contactList">
+            <div class="row top-buffer"> <!-- Search bar -->
+              <div class="col-xs-8" align="text-center">
+                <form id="search_user" action="" class="ulala">
+                  <div class="input-group text-center">
+                    <input type="text" class="form-control" id="contact-list-search" placeholder="Search Contacts List">
+                    <span class="input-group-btn bbb">
+                      <button class="btn btn-default" type="button"><span class="fa fa-search text-muted">Search</span></button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row top-buffer"> <!-- Contact List -->
+              <div class="col-xs-8">
+                <div class="panel panel-default">
+                  <ul class="list-group" id="contact-list">
+                    <% for(var i=0; i < contacts.length; i++) { %>
+                    <li class="list-group-item">
+                      <div class="col-xs-2"> <!-- profile image -->
+                        <img src="../images/profile.png" alt="" align="center" class="img-circle" width="80%" />
+                      </div>
+                      <div class="col-xs-6"> <!-- user info. -->
+                        <span class="name"> <h3><p style="line-height: 0pt"><a href="/contacts/<%= contacts[i].user_id %>"><%= contacts[i].username %></a></p></h3></span><br/>
+                        <span class="name text-muted"> <%= contacts[i].name %></span><br/>
+                        <span class="name text-muted"> <span class="text-muted"><%= contacts[i].email %></span><br/></span>
+                        <P id="person<%=i%>"  style="display: none"><%=contacts[i].user_id %></p>
+                      </div>
+
+                      <div class="clearfix"></div>
+                    </li>
+                    <% } %>
+
+                            <!--
+                            <div class="col-xs-2 col-sm-2">
+                              <br/>
+                              <button id="showProfile" class="btn btn-primary" data-toggle="modal" data-target="#profileDialog"> Show Profile </button>
+
+                            </div>
+                          -->
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+                </div>
+                <!-- <ul id="search_result">
+
+                </ul>
+                <div id="received_requests">
+
+                </div>
+              </div>
+              <div id="modal">
+
+              </div>
+              <div id="acceptRequest">
+
+              </div> -->
+
+              <!--Modal to show when it's successful -->
+              <div id="inviteSuccessful" style="display:none;">
+                <p>Invitation Sucessful</p>
+                <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+              </div>
+
+              <!--Modal to show when it's error -->
+              <div id="inviteError" style="display:none;">
+                <p>Invitation Error. Please Try Again.</p>
+                <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+              </div>
+
+              <div id="deleteContact" style="display:none;">
+                <p>You have succefully deleted this contact </p>
+                <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+              </div>
+
+              <div id="acceptContact" style="display:none;">
+                <p>You have accept the request </p>
+                <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
+              </div>
+
+              <!-- Link to open the modal -->
+
+
+            </div>
+            <!-- /.row -->
+          </div>
+
+  <!--  <script src="/vendor/jquery/jquery.min.js"></script>
+
+
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <script src="/vendor/raphael/raphael.min.js"></script>
+    <script src="/vendor/morrisjs/morris.min.js"></script>
+    <script src="/data/morris-data.js"></script> */
+
+    <script src="/dist/js/sb-admin-2.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+    -->
+    <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/jquery-modal/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//rawgithub.com/stidges/jquery-searchable/master/dist/jquery.searchable-1.0.0.min.js"></script>
+
+    <script>
+      var socket = io.connect('http://188.166.157.62:3000');
+      var currentUser = $("#user_id").text();
+      var name = $("#fullName").text();
+      var audio = new Audio('notification.mp3');
+      var users = [];
+       console.log($("#person0").text());
+       console.log($("#person1").text());
+       console.log($("#person2").text());
+
+       for(var i=0; i < <%= contacts.length %> ; i++){
+         console.log($("#person<%=i%>").text());
+       }
+
+      function authenticate(id, name) {
+        socket.emit('connection');
+        socket.emit('authenticate', id,name);
+        socket.on('authenticated',function(msg){
+          console.log("autenticated"+msg);
+        });
+      }
+      socket.on('disconnected',function(msg){
+        document.location.href = "http://188.166.157.62:5000/logout";
+      });
+      socket.on('global_private_messages',function(socketRoom,insertId,fullName,message,time) {
+        audio.play();
+      });
+
+      socket.on('you_received_contact_request',function(sendersName){
+        audio.play();
+        alert(sendersName + " sent you a contact request!");
+      });
+
+      socket.on('accepted_my_contact_request',function(sendersName){
+        location.reload();
+      });
+
+      socket.on('you_were_deleted',function(userId){
+        location.reload();
+      });
+
+      $(function () {
+        var FriendUser="";
+        $('#search').keyup(function () {
+          if ($('#search').val() != null && $('#search').val() != "") {
+            socket.emit('search_user_filter',$('#search').val() , currentUser);
+          } else {
+            if(!$('#search_result').is(':empty')){
+              $( "#search_result" ).empty();
+            }
+          }
+      });
+      socket.on('search_user_received', function(msg){
+        console.log(msg);
+        var target = JSON.parse(msg);
+        if(!$('#search_result').is(':empty')){
+          $( "#search_result" ).empty();
+        }
+        for(var i=0; i < target.length; i++) {
+           $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text(""+target[i].name));
+
+           $("#modal").append('<div id="ex'+i+'" style="display:none; padding-top:100px;"><p>Send request confirmation<p><p>Send contact request to '+target[i].name+'?</p><button class="btn btn-danger" style="margin-right:10px;" onclick="sendRequest('+target[i].user_id+')">OK</button><button class="btn btn-danger"type="button" onclick="$.modal.close(); location.reload();" rel="modal:close">Cancel</button>');
+        }
+      });
+    });
+
+
+    function showAddNewContact(){
+      $('#addNewContact').modal();
+    }
+
+      function sendRequest(id) {
+        $.modal.close();
+        var error;
+        socket.on('sent_request', function(msg){
+          if(msg == "fail"){
+            alert("Failed to send the contact request.");
+          } else {
+            alert("Contact request sent.");
+          }
+        });
+        socket.emit('send_contact_request', currentUser, name, id);
+      }
+
+     function deleteContact(currentUser, id){
+      socket.on('contact_deleted', function(msg){
+        if(msg == "fail"){
+          alert("Failed to delete the user");
+        }else{
+          alert("You have removed the contact");
+          window.location.href = "http://188.166.157.62:5000/contacts"
+        }
+      });
+      socket.emit('delete_contact', currentUser, id, "success");
+    }
+
+
+    function viewRequests(id){
+
+      socket.off('received_requests');
+     socket.on('received_requests', function(msg){
+       var target = JSON.parse(msg);
+        $("#received_requests").empty();
+       for(var i=0; i < target.length; i++) {
+      $("#received_requests").append('<div id="request'+i+'"><p>you have received a request from '+target[i].name+"</p><button onclick='acceptRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Accept the contact request</button>");
+    }
+
+  });
+     socket.emit('received_contact_requests',id);
+   }
+
+   function viewSentRequests(id){
+
+      socket.off('sent_requests');
+     socket.on('sent_requests', function(msg){
+       var target = JSON.parse(msg);
+        $("#received_requests").empty();
+       for(var i=0; i < target.length; i++) {
+      $("#received_requests").append('<div id="request'+i+'"><p>you have sent a request to '+target[i].name+"</p><button onclick='deleteRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Delete the contact request</button>");
+    }
+
+  });
+     socket.emit('sent_contact_requests',id);
+
+   }
+
+   function acceptRequest(id, name, position) {
+    socket.on('request_accepted', function(msg){
+      alert("You have accepted " + name + "'s contact request.");
+      location.reload();
+    });
+    socket.emit('accept_contact_request', id, currentUser,"success");
+  }
+
+  function deleteRequest(id, name, position) {
+    socket.on('request_deleted', function(msg){
+      alert("You have deleted the contact request.");
+      location.reload();
+    });
+    socket.emit('delete_contact_request', currentUser, id,"success");
+  }
+
+
+</script>
+
+<script>
+  $(function () {
+   $('#contact-list').searchable({
+    searchField: '#contact-list-search',
+    selector: 'li',
+    childSelector: '.col-xs-7',
+    show: function( elem ) {
+      elem.slideDown(100);
+    },
+    hide: function( elem ) {
+      elem.slideUp( 100 );
+    }
+  })
+ });
+</script>
+
+</body>
+
+</html>

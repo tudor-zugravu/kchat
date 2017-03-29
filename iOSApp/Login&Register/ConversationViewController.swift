@@ -21,6 +21,7 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
     var convLimit: Int = 20
     var contactId: Int = 0;
     var messages: [MessageModel] = []
+    var privateIndex: Int?
     var passedValue: (contactName: String, contactId: Int, contactImage: String)?
     var cameFrom: Bool?
     
@@ -28,62 +29,31 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         tableView.delegate = self
         tableView.dataSource = self
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-//        
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 60
-        
-        SocketIOManager.sharedInstance.setPrivateRoomCreatedListener(completionHandler: { (response) -> Void in
-            if response == "fail" {
-                print("room create error")
-            } else {
-                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
-                    
-                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
-                    
-                    self.messages.append(item)
-                    self.tableView.reloadData()
-                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
-                })
-                SocketIOManager.sharedInstance.setGetRecentMessagesListener(completionHandler: { (messagesList) -> Void in
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.messagesDownloaded(messagesList!)
-                    })
-                })
-                if let value = self.passedValue {
-                    SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(self.convLimit))
-                }
-            }
-        })
-        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
-            print("disconnected");
-            Utils.instance.logOut()
-            _ = self.navigationController?.popToRootViewController(animated: true)
-        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
-        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
-        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
-            if (enemy == String(describing: (self.passedValue?.contactId)!)) {
-                let _ = self.navigationController?.popViewController(animated: true)
-                if self.cameFrom! == true {
-                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
-                } else {
-                    self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
-                }
-            }
-        })
-        
+        self.setListeners()
         if let value = passedValue {
+            
             titleLabel.text = value.contactName
             self.contactId = value.contactId
             
-            SocketIOManager.sharedInstance.createPrivateRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+            if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                SocketIOManager.sharedInstance.createPrivateRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
+            } else {
+                noInternetAllert()
+                if (UserDefaults.standard.value(forKey: "private\(privateIndex!)") != nil) {
+                    // retrieving a value for a key
+                    if let data = UserDefaults.standard.data(forKey: "private\(privateIndex!)"),
+                        let privateMessages = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MessageModel] {
+                        messages = privateMessages
+                        self.tableView.reloadData()
+                    }
+                }
+            }
         }
         
         // Adding the gesture recognizer that will dismiss the keyboard on an exterior tap
@@ -91,11 +61,15 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         tap.cancelsTouchesInView = false
         navigationView.addGestureRecognizer(tap)
         tableView.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         SocketIOManager.sharedInstance.setCurrentRoom(room: "")
     }
     
@@ -159,6 +133,9 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             }
         }
         messages = messagesAux
+        
+        let storedPrivateMessages = NSKeyedArchiver.archivedData(withRootObject: messages)
+        UserDefaults.standard.set(storedPrivateMessages, forKey:"private\(privateIndex!)");
         
         self.tableView.reloadData()
         if self.convLimit == 20 {
@@ -250,6 +227,56 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         }
         
         self.tableViewScrollToBottom(topOrBottom: true, animated: false, delay: 0)
+    }
+    
+    func setListeners() {
+        SocketIOManager.sharedInstance.setPrivateRoomCreatedListener(completionHandler: { (response) -> Void in
+            if response == "fail" {
+                print("room create error")
+            } else {
+                SocketIOManager.sharedInstance.setRoomListener(room: response, completionHandler: { (messageId, username, message, timestamp) -> Void in
+                    
+                    let item = MessageModel(messageId: messageId, senderId: username, message: message, timestamp: timestamp)
+                    
+                    self.messages.append(item)
+                    self.tableView.reloadData()
+                    self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+                })
+                SocketIOManager.sharedInstance.setGetRecentMessagesListener(completionHandler: { (messagesList) -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        self.messagesDownloaded(messagesList!)
+                    })
+                })
+                if let value = self.passedValue {
+                    SocketIOManager.sharedInstance.getRecentMessage(userId: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiverId: String(value.contactId), limit: String(self.convLimit))
+                }
+            }
+        })
+        SocketIOManager.sharedInstance.setDisconnectedListener(completionHandler: { (userList) -> Void in
+            print("disconnected");
+            Utils.instance.logOut()
+            _ = self.navigationController?.popToRootViewController(animated: true)
+        })
+        SocketIOManager.sharedInstance.setIReceivedContactRequestListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setGlobalPrivateListener(completionHandler: { () -> Void in })
+        SocketIOManager.sharedInstance.setIWasDeletedListener(completionHandler: { (enemy) -> Void in
+            if (enemy == String(describing: (self.passedValue?.contactId)!)) {
+                let _ = self.navigationController?.popViewController(animated: true)
+                if self.cameFrom! == true {
+                    self.navigationController?.topViewController?.childViewControllers[0].viewWillAppear(true)
+                } else {
+                    self.navigationController?.topViewController?.childViewControllers[2].viewWillAppear(true)
+                }
+            }
+        })
+    }
+        
+    func noInternetAllert() {
+        let alertView = UIAlertController(title: "No internet connection",
+                                          message: "Please reconnect to the internet" as String, preferredStyle:.alert)
+        let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+        alertView.addAction(okAction)
+        self.present(alertView, animated: true, completion: nil)
     }
     
     @IBAction func backButtonPressed(_ sender: Any) {

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ContactModel: NSObject {
+class ContactModel: NSObject, NSCoding {
     
     //properties
     var username: String?
@@ -39,6 +39,30 @@ class ContactModel: NSObject {
         self.about = about
         self.contactId = contactId
         self.timestamp = timestamp
+    }
+    
+    required init(coder decoder: NSCoder) {
+        self.username = decoder.decodeObject(forKey: "username") as? String ?? ""
+        self.name = decoder.decodeObject(forKey: "name") as? String ?? ""
+        self.email = decoder.decodeObject(forKey: "email") as? String ?? ""
+        self.phoneNo = decoder.decodeObject(forKey: "phoneNo") as? String ?? ""
+        self.userId = decoder.decodeObject(forKey: "userId") as? Int
+        self.profilePicture = decoder.decodeObject(forKey: "profilePicture") as? String ?? ""
+        self.about = decoder.decodeObject(forKey: "about") as? String ?? ""
+        self.contactId = decoder.decodeObject(forKey: "contactId") as? Int
+        self.timestamp = decoder.decodeObject(forKey: "contactId") as? String ?? ""
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(username, forKey: "username")
+        coder.encode(name, forKey: "name")
+        coder.encode(email, forKey: "email")
+        coder.encode(phoneNo, forKey: "phoneNo")
+        coder.encode(userId, forKey: "userId")
+        coder.encode(profilePicture, forKey: "profilePicture")
+        coder.encode(about, forKey: "about")
+        coder.encode(contactId, forKey: "contactId")
+        coder.encode(timestamp, forKey: "timestamp")
     }
     
     

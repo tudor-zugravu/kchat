@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         inputPassword = (TextInputEditText) findViewById(R.id.input_password);
         btnGoRegister = (Button) findViewById(R.id.btn_goRegister);
 
-        inputUsername.setText("tudor");
+        inputUsername.setText("tudorv");
         inputPassword.setText("tudor");
         // apply toolbar title
         toolbarTitle.setText("Login");
@@ -147,3 +147,4 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 }
+//changes

@@ -25,7 +25,7 @@ class ContactsModel: NSObject, URLSessionDataDelegate {
         self.data = NSMutableData()
         
         // Setting up the server session with the URL and the request
-        let url: URL = URL(string: "http://188.166.157.62:4000/contacts")!
+        let url: URL = URL(string: "http://188.166.157.62:3000/contacts")!
         let session = URLSession.shared
         var request = URLRequest(url:url)
         request.httpMethod = "POST"

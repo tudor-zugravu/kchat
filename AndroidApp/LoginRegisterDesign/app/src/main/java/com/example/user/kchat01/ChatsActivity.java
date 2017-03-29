@@ -66,6 +66,7 @@ public class ChatsActivity extends AppCompatActivity {
     public static boolean didOverscroll = false;
     DataManager dm;
     static boolean active = false;
+    public static ArrayList<IMessage> bufferdList;
 
     @Override
     public void onStart() {
@@ -89,6 +90,7 @@ public class ChatsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
+        bufferdList = new ArrayList<>();
         dataList = new ArrayList<>();
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
@@ -109,18 +111,17 @@ public class ChatsActivity extends AppCompatActivity {
         }
 
 
-        if(InternetHandler.hasInternetConnection(ChatsActivity.this,0)==false){
-            ContactsActivity.mSocket.disconnect();
+        if(InternetHandler.hasInternetConnection(ChatsActivity.this,1)==false){
+
             dm.selectAllPrivateMessages(Integer.parseInt(userId),MasterUser.usersId);
           //  recyclerView.setNestedScrollingEnabled(false);
         }else {
-            ContactsActivity.mSocket.connect();
             ContactsActivity.mSocket.on("you_were_deleted",contactDelete);
             ContactsActivity.mSocket.on("private_room_created", stringReply2);
             ContactsActivity.mSocket.emit("create_private_room", userId, MasterUser.usersId);
             ContactsActivity.mSocket.on("update_chat", serverReplyLogs); // sends server messages
             ContactsActivity.mSocket.on("send_recent_messages", getallmessages); // sends server messages
-                Log.d("OFFLINE TESTER", "Did i reach here?");
+
         }
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -173,15 +174,16 @@ public class ChatsActivity extends AppCompatActivity {
                     if (InternetHandler.hasInternetConnection(ChatsActivity.this, 2) == false) {
                     //insert into database
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                        dm.insertIntoBufferTable(MasterUser.usersId,Integer.parseInt(userId),message,timestamp.toString(),"");
+
                         IMessage offlineMessage = new Message(MasterUser.usersId,Integer.parseInt(userId),message,timestamp.toString());
                         offlineMessage.setMe(true);
                         dataList.add(offlineMessage);
                         adapter.notifyDataSetChanged();
+                        dm.insertIntoBufferTable(MasterUser.usersId,contactId,message,timestamp.toString(),"private");
                     } else {
                         //before i am outputting to the screen i will take the text of the message and any other user related information
                         //and i will send it to the server using the socket.io
-                        if (  ContactsActivity.mSocket.connected()) {
+                        if (ContactsActivity.mSocket.connected()) {
                             ContactsActivity.mSocket.emit("send_chat", message);
                         } else {
                             Log.d("MESSAGEERROR", "Cannot send message:" + message);
@@ -243,7 +245,6 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("Chickensz","roomnumber is:" + ContactsActivity.roomnumber);
         dataList.clear();
         Log.d("DATALIST","roomnumber is:" + ContactsActivity.roomnumber);
         if(  ContactsActivity.mSocket!=null) {

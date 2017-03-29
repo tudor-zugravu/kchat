@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MessageModel: NSObject {
+class MessageModel: NSObject, NSCoding {
     
     //properties
     var messageId: Int?
@@ -32,6 +32,20 @@ class MessageModel: NSObject {
         let separators = CharacterSet(charactersIn: " -:")
         let timeParts = timestamp.components(separatedBy: separators)
         self.timestamp = "\(timeParts[0])-\(timeParts[1]) \(timeParts[3]):\(timeParts[4])"
+    }
+    
+    required init(coder decoder: NSCoder) {
+        self.messageId = decoder.decodeObject(forKey: "messageId") as? Int
+        self.senderId = decoder.decodeObject(forKey: "senderId") as? String ?? ""
+        self.message = decoder.decodeObject(forKey: "message") as? String ?? ""
+        self.timestamp = decoder.decodeObject(forKey: "timestamp") as? String ?? ""
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(messageId, forKey: "messageId")
+        coder.encode(senderId, forKey: "senderId")
+        coder.encode(message, forKey: "message")
+        coder.encode(timestamp, forKey: "timestamp")
     }
 
     //prints object's current state
