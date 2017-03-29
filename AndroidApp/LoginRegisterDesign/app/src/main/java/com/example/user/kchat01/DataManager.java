@@ -182,12 +182,6 @@ public class DataManager {
             int receiver = c2.getInt(2); // group id
             String message= c2.getString(3);
             String timestamp = c2.getString(5);
-                Log.d("MESSI","values are1:" + sender);
-                Log.d("MESSI","values are1:" + receiver);
-                Log.d("MESSI","values are1:" + message);
-                Log.d("MESSI","values are1:" + timestamp);
-                //public Message(int messageId,int senderId,String message,String timestamp){
-
 
                 IMessage messageStored = new Message(sender,receiver,message,timestamp);
             messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
