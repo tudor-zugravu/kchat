@@ -9,6 +9,8 @@ import android.util.Log;
 import com.github.nkzawa.socketio.client.IO;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -22,12 +24,11 @@ import IMPL.RESTApi;
  */
 
 public class InternetHandler {
-    public static ArrayList<IMessage> bufferdList;
+
     static DataManager dm;
 
 //send messages from post
     public static boolean hasInternetConnection(Context context, int num){
-        bufferdList = new ArrayList<>();
         dm = new DataManager(context);
 
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -37,10 +38,10 @@ public class InternetHandler {
                 if(ContactsActivity.mSocket.connected()!=true){
                     Log.d("Burger","Yellow");
                     ContactsActivity.mSocket.connect();
-                    if(bufferdList!=null) {
+                    if(ChatsActivity.bufferdList!=null) {
                         dm.getAllBufferedMessages();
-                        sendToServer(context, bufferdList);
-                        bufferdList.clear();
+                        sendToServer(context);
+                        ChatsActivity.bufferdList.clear();
                     }
                 }
             }
@@ -53,11 +54,10 @@ public class InternetHandler {
                 if(ContactsActivity.mSocket.connected()!=true){
                     Log.d("Burger","Yellow");
                     ContactsActivity.mSocket.connect();
-                    if(bufferdList!=null) {
+                    if(ChatsActivity.bufferdList!=null) {
                         Log.d("MESSI","PART1");
                         dm.getAllBufferedMessages();
-                        sendToServer(context, bufferdList);
-                        bufferdList.clear();
+                        sendToServer(context);
                     }
                 }
             }
@@ -70,11 +70,11 @@ public class InternetHandler {
                 if(ContactsActivity.mSocket.connected()!=true){
                     Log.d("Burger","Yellow");
                     ContactsActivity.mSocket.connect();
-                    if(bufferdList!=null) {
+                    if(ChatsActivity.bufferdList!=null) {
                         Log.d("MESSI","PART22");
                         dm.getAllBufferedMessages();
-                        sendToServer(context, bufferdList);
-                        bufferdList.clear();
+                        sendToServer(context);
+                        ChatsActivity.bufferdList.clear();
                     }
                 }
             }
@@ -96,16 +96,44 @@ public class InternetHandler {
         return false;
     }
 
-    public static void sendToServer(Context context, ArrayList<IMessage> bufferdList){
-        JSONArray jsonAraay = new JSONArray(bufferdList);
-        Log.d("MESSI","reeached here to send");
+    public static void sendToServer(Context context){
+        if(ChatsActivity.bufferdList!=null) {
+            JSONArray jsonArray = new JSONArray();
 
-        String type = "bufferSend";
-        String login_url = "http://188.166.157.62:3000/bufferUpload";
-        ArrayList<String> paramList = new ArrayList<>();
-        paramList.add("type");
-        paramList.add("contents");
-        RESTApi backgroundasync = new RESTApi(context, login_url, paramList);
-        backgroundasync.execute(type, "buffer", jsonAraay.toString());
+            for (int i=0; i < ChatsActivity.bufferdList.size(); i++) {
+                jsonArray.put(getJSONObject(Integer.toString(ChatsActivity.bufferdList.get(i).getSenderId()),
+                                            Integer.toString(ChatsActivity.bufferdList.get(i).getReceiverId()),
+                                            ChatsActivity.bufferdList.get(i).getMessage(),
+                                             ChatsActivity.bufferdList.get(i).getTimestamp()));
+            }
+            Log.d("MESSI", "reeached here to send");
+
+            for(int i=0; i<ChatsActivity.bufferdList.size();i++){
+                Log.d("MESSI","Printed messages are: " + ChatsActivity.bufferdList.get(i).getMessage());
+            }
+            Log.d("MESSI", "json arraylise is: " + jsonArray.length());
+
+            String type = "bufferSend";
+            String login_url = "http://188.166.157.62:3000/bufferUpload";
+            ArrayList<String> paramList = new ArrayList<>();
+            paramList.add("type");
+            paramList.add("contents");
+            RESTApi backgroundasync = new RESTApi(context, login_url, paramList);
+            Log.d("MESSI", "I send this to ther server:  " + jsonArray.toString());
+            backgroundasync.execute(type, "buffer", jsonArray.toString());
+        }
+
+    }
+
+    public static JSONObject getJSONObject(String senderId, String receiverId, String message, String type) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("sender", senderId);
+            obj.put("receiver", receiverId);
+            obj.put("message", message);
+            obj.put("messageType", type);
+        } catch (JSONException e) {
+        }
+        return obj;
     }
 }

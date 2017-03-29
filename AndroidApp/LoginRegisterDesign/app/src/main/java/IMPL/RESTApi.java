@@ -129,7 +129,7 @@ public class RESTApi extends AsyncTask<String,Void,String> {
 
         if(type.equals("bufferSend")){
             if (result == null || result.equals("") || result.equals("null")) {
-                Log.d("MESSI","got a result from the server");
+                Log.d("MESSI","got a result from the server" + result);
             }
         }
 

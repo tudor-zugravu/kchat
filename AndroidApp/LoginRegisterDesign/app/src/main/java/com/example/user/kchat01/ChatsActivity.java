@@ -66,6 +66,7 @@ public class ChatsActivity extends AppCompatActivity {
     public static boolean didOverscroll = false;
     DataManager dm;
     static boolean active = false;
+    public static ArrayList<IMessage> bufferdList;
 
     @Override
     public void onStart() {
@@ -89,6 +90,7 @@ public class ChatsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
+        bufferdList = new ArrayList<>();
         dataList = new ArrayList<>();
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
