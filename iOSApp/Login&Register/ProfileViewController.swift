@@ -171,7 +171,7 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
                 let textField = alert?.textFields![0]
                 if textField?.text != "" && textField?.text != nil {
                     // Telephone format check
-                    let phoneParrern = "^7[0-9]{9}$"
+                    let phoneParrern = "^07[0-9]{9}$"
                     let matcher = MyRegex(phoneParrern)
                     if matcher.match(input: (textField?.text!)!){
                         if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {

@@ -84,12 +84,12 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, RegisterMod
             }
 
             // Telephone format check
-            let phoneParrern = "^7[0-9]{9}$"
+            let phoneParrern = "^07[0-9]{9}$"
             let matcher = MyRegex(phoneParrern)
             if matcher.match(input: phoneNoTextField.text!){
                 
             }else{
-                displayAlertMessage(mymessage: "UK phone number contains 10 numbers beginning with 7!")
+                displayAlertMessage(mymessage: "UK phone number contains 11 numbers beginning with 07!")
                 return;
             }
 

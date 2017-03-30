@@ -111,6 +111,8 @@ class Utils: NSObject {
         }
         return (isReachable && !needsConnection)
     }
+    // (Source: http://stackoverflow.com/questions/39558868/check-internet-connection-ios-10 retrieved on 28.03.2017)
+    // Used to check internet connection on iOS
     
     func flushBuffer() {
         if (UserDefaults.standard.value(forKey: "storedMessages") != nil) {
