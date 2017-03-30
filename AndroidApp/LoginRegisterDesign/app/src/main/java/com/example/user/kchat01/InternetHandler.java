@@ -27,17 +27,6 @@ import IMPL.RESTApi;
 public class InternetHandler {
 
     static DataManager dm;
-
-
-    /*
-    AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                //TODO your background code
-            }
-        });
-     */
-//send messages from post
     public static boolean hasInternetConnection(Context context, int num){
         dm = new DataManager(context);
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -69,13 +58,20 @@ public class InternetHandler {
         if (mobileNetwork != null && mobileNetwork.isConnected()) {
             if(num ==1){
                 if(ContactsActivity.mSocket.connected()!=true){
-                    Log.d("Burger","Yellow2");
+                    Log.d("Burger","Yellow1" + "not connected");
                     ContactsActivity.mSocket.connect();
-                    if(ContactsActivity.bufferdList!=null) {
-                        Log.d("MESSI","PART1");
-                        dm.getAllBufferedMessages();
-                        sendToServer(context);
-                        ContactsActivity.bufferdList.clear();
+                }
+                if(ContactsActivity.mSocket.connected()==true){
+                    Log.d("Burger","Yellow22" + "it is connected");
+                    if(ContactsActivity.bufferdList!=null){
+                        Log.d("Burger","Yellow22" + "list is not null");
+                        if(dm.getAllBufferedMessages().getCount()>0){
+                            sendToServer(context);
+                            ContactsActivity.bufferdList.clear();
+                        }
+
+                    }else if (ContactsActivity.bufferdList==null){
+                        Log.d("MESSI","null list");
                     }
                 }
             }
@@ -86,13 +82,20 @@ public class InternetHandler {
         if (activeNetwork != null && activeNetwork.isConnected()) {
             if(num ==1){
                 if(ContactsActivity.mSocket.connected()!=true){
-                    Log.d("Burger","Yellow3");
+                    Log.d("Burger","Yellow1" + "not connected");
                     ContactsActivity.mSocket.connect();
-                    if(ContactsActivity.bufferdList!=null) {
-                        Log.d("MESSI","PART333");
-                        dm.getAllBufferedMessages();
-                        sendToServer(context);
-                        ContactsActivity.bufferdList.clear();
+                }
+                if(ContactsActivity.mSocket.connected()==true){
+                    Log.d("Burger","Yellow22" + "it is connected");
+                    if(ContactsActivity.bufferdList!=null){
+                        Log.d("Burger","Yellow22" + "list is not null");
+                        if(dm.getAllBufferedMessages().getCount()>0){
+                            sendToServer(context);
+                            ContactsActivity.bufferdList.clear();
+                        }
+
+                    }else if (ContactsActivity.bufferdList==null){
+                        Log.d("MESSI","null list");
                     }
                 }
             }
@@ -115,32 +118,15 @@ public class InternetHandler {
     }
 
     public static void sendToServer(Context context){
-        Log.d("MESSI", "reeached here to send000");
-
         if(ContactsActivity.bufferdList!=null) {
-            Log.d("MESSI", "reeached here to send 111");
-
             JSONArray jsonArray = new JSONArray();
 
             for (int i=0; i < ContactsActivity.bufferdList.size(); i++) {
-                Log.d("MESSI", "Data i have is: "+Integer.toString(ContactsActivity.bufferdList.get(i).getMessageId()));
-                Log.d("MESSI", "Data i have is: "+Integer.toString(ContactsActivity.bufferdList.get(i).getGroupId()));
-                Log.d("MESSI", "Data i have is: "+Integer.toString(ContactsActivity.bufferdList.get(i).getSenderId()));
-                Log.d("MESSI", "Data i have is: "+Integer.toString(ContactsActivity.bufferdList.get(i).getReceiverId()));
-                Log.d("MESSI", "Data i have is: "+ContactsActivity.bufferdList.get(i).getMessage());
-
-
                 jsonArray.put(getJSONObject(Integer.toString(ContactsActivity.bufferdList.get(i).getMessageId()),
                                             Integer.toString(ContactsActivity.bufferdList.get(i).getSenderId()),
                                             ContactsActivity.bufferdList.get(i).getMessage(),
                         ContactsActivity.bufferdList.get(i).getTimestamp()));
             }
-            Log.d("MESSI", "reeached here to send222");
-
-            for(int i=0; i<ContactsActivity.bufferdList.size();i++){
-                Log.d("MESSI","Printed messages are: " + ContactsActivity.bufferdList.get(i).getMessage());
-            }
-            Log.d("MESSI", "json arraylise is: " + jsonArray.length());
 
             String type = "bufferSend";
             String login_url = "http://188.166.157.62:3000/bufferUpload";
