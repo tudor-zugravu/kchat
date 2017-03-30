@@ -47,6 +47,7 @@
 
 
         <!-- Navigation -->
+          <!-- Retrieved 27 October, 2014, from https://gitlab-hybrilit.jinr.ru -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="submit" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -292,11 +293,12 @@
         element.scrollTop = element.scrollHeight;
       }
 
+// load when user access group chat page and load all chat list information
       function viewchats(id,name){
         socket.emit('connection');
         socket.emit('authenticate', id,name);
         socket.on('authenticated',function(msg){
-          console.log("autenticated"+msg);
+
         });
         socket.on('disconnected',function(msg){
           document.location.href = "http://188.166.157.62:5000/logout";
@@ -324,7 +326,7 @@
           if (msg != room.replace('group', '')) {
             socket.emit('get_group_chats',currentUser);
           } else {
-            console.log("here");
+
             alert("You have been removed from this group.");
             location.reload();
           }
@@ -340,7 +342,7 @@
         });
       }
 
-
+// send chat to group
       function chat(group_id, group_name,owner){
         $("#groupUpload").val('');
         $("#groupUpload").val(group_id);
@@ -357,7 +359,7 @@
         }
         socket.on('send_group_members', function(msg){
           groupMembers = JSON.parse(msg);
-          console.log(groupMembers);
+
         });
         socket.emit('get_group_members',group_id);
         socket.on('send_recent_group_messages', function(msg){
@@ -388,6 +390,7 @@
         });
         socket.emit('create_group_room',group_id);
       }
+
 
       function groupChat(){
 
@@ -496,7 +499,7 @@
 
       function loadMore(group_id){
         limit =limit+1;
-        console.log("Now limit is "+limit);
+
         socket.emit('get_recent_group_messages',group_id, limit);
         socket.on('group_room_created',function(msg){
           socket.off(room);
@@ -511,7 +514,7 @@
             socket.emit('get_group_chats',currentUser);
           });
         });
-      
+
       }
 
     </script>

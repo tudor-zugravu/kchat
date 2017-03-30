@@ -61,6 +61,7 @@
 
 
         <!-- Navigation -->
+        <!-- Retrieved 27 October, 2014, from https://gitlab-hybrilit.jinr.ru -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="submit" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -189,12 +190,12 @@
         var existedUsers=[];
 
 
-
+//load when user first access chat page , get user and chat list informations as well as other events
         function viewchats(id,name){
         socket.emit('connection');
         socket.emit('authenticate', id,name);
         socket.on('authenticated',function(msg){
-          console.log("autenticated"+msg);
+
         });
         socket.on('disconnected',function(msg){
           document.location.href = "http://188.166.157.62:5000/logout";
@@ -245,14 +246,15 @@
 
        if(target_id!= 0){
          newChat();
-         console.log("come on reach here");
+
        }
       }
 
+//user sends chat to other clients
         function chat(firstPersonID,firstPersonName,secondPersonName){
           document.getElementById("conversation-banner").innerHTML = firstPersonName;
             $('#load-banner').empty();
-            limit=3;
+            limit=10;
           $('#load-banner').append('<button class="btn btn-danger" onclick="loadMore('+currentUser+',\''+firstPersonID+'\')" >Load More</button>');
           socket.emit('get_recent_messages',currentUser,firstPersonID,limit);
           socket.on('send_recent_messages', function(msg){
@@ -275,10 +277,9 @@
               room = msg;
               socket.on(room,function(insertId,username,message,time){
                 if(username==currentUser){
-                  console.log("EU");
                       $('#chatContent').append('<div layout="center-right" style="height: 60px;"><div layout="column center-right" style="padding-right: 10px;"><div><i style="font-size: 11px;">  '+time+'</i><b> '+name+'</b></div><div>'+message+'</div></div><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div></div>');
                       } else {
-                        console.log("EL");
+
                         $('#chatContent').append('<div layout="center-right" style="height: 60px; padding-left: 10px;"><div style="width: 40px; display:block;" layout="column center-center"><object style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+username+'.jpg" type="image/png"><img style="width:40px; border-radius:100%; margin:5px;height:40px" class="image-circle" src="/images/profile.png" /></object></div><div layout="column center-left" style="padding-left: 10px;"><div><b>'+showName(username)+'</b><i style="font-size: 11px;"> '+time+'</i></div><div>'+message+'</div></div></div>');
                       }
                       updateScroll();
@@ -290,6 +291,7 @@
             document.getElementById('submitButton').disabled = false;
         }
 
+//user send chat
       function privateChat(){
 
         var mes=$("#message").val();
@@ -306,12 +308,10 @@
       else if (contacts[i].receiverId == id){
            result=contacts[i].receiverName;
       }
-
     }
-
-
     return result;
 }
+
 function getPicturepath(id){
     var result = "";
     for(var i = 0 ; i < contacts.length ; i++){
@@ -354,9 +354,9 @@ function getPicturepath(id){
       return result;
     }
 
+// user lick load more button and get more chat history
     function loadMore(currentUser,firstPersonID){
-      limit =limit+1;
-      console.log("Now limit is "+limit);
+      limit =limit+10;
       socket.emit('get_recent_messages',currentUser,firstPersonID,limit);
       socket.on('send_recent_messages', function(msg){
         $("#chatContent").empty();
@@ -371,10 +371,9 @@ function getPicturepath(id){
         }
       });
     }
-
+ // when new contacts come in , the info appears in the top of chat list
    function newChat(){
      var result= 1;
-      console.log("reached here");
      socket.emit('get_chats',currentUser);
       socket.on('sent_chats', function(msg){
        var target = JSON.parse(msg);
@@ -383,10 +382,6 @@ function getPicturepath(id){
             result = 2;
           }
           }
-          console.log (result);
-          console.log(target_id);
-          console.log(target_name);
-          console.log(name);
           if(result == 1){
           $('#list1').prepend('<div class="chat-contacts-item" layout="center-right"><a onclick="chat('+target_id+',\''+target_name+'\',\''+name+'\')"><div class="row chat-contacts-container"><div class="col-xs-3 chat-contacts-picture"><object style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture'+target_id+'.jpg" type="image/png"><img style="width:40px; height:40px; border-radius:100%; margin:5px" class="image-circle" src="/images/profile.png" /></object></div><div class="col-xs-9 chat-contacts-text"><div><i style="font-size: 11px;"></i><b>'+target_name+'</b></div><div>'+null+'</div></div></div></a></div>');
         }

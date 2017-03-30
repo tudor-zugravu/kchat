@@ -22,7 +22,7 @@
 
   <div class="row login_box">
       <div class="col-md-12 col-xs-12" align="center">
-           
+
             <a href="/changeProfile">
               <div class="outter">
                 <object class="image-circle" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
@@ -34,9 +34,9 @@
 
       <form id="Profile" action="/profile" method="post" onsubmit="return editProfile();" >
         <div class="col-md-12 col-xs-12 login_control">
-          
+
           <div class="control" >
-            <input type="hidden" value="<%=user_id %>" id="userId" name="id"/>  
+            <input type="hidden" value="<%=user_id %>" id="userId" name="id"/>
           </div>
 
        <table align="center">
@@ -66,23 +66,23 @@
           <td colspan="2">
                     About &nbsp;&nbsp;
                     <input type="text" class="info" value="<%=biography %>" id="biography" name="about"/>
-                     </td>          
+                     </td>
           </tr>
           <tr align ="center">
           <td colspan="2"> <a href="">   <button type="submit" class="changePassword">Save changes</button> </a></td>
           </tr>
-          </table>            
+          </table>
             </form>
             <div align="center"><a href="/changePass" class="link">   <i class="fa fa-key" aria-hidden="true"> </i>Change Password </a>
                 <a href="/logout" class="link"> <i class="fa fa-sign-out" aria-hidden="true"></i>Log Out</a>
                 <a  onclick="deleteAccount()" class="link"> <i class="fa fa-trash-o" aria-hidden="true"></i>  Delete Account </a>
                 </div>
-                
-                 
-             
-              
+
+
+
+
         </div>
-  
+
 
     </div>
   </div>
@@ -97,7 +97,7 @@
     socket.on('connect', function(msg){
       socket.emit('authenticate', userId,userFullName);
       socket.on('authenticated',function(msg){
-        console.log("autenticated"+msg);
+
       });
     });
     socket.on('disconnected',function(msg){
@@ -125,16 +125,7 @@
     old_email=$("#email").val();
     old_phone=$("#phone").val();
     old_biography=$("#biography").val();
-    console.log("user id" +currentUser);
-    console.log("old user name is" +old_userName);
 
-  console.log("old full name is" +old_fullName);
-
-console.log("old email is" +old_email);
-
-console.log("old phone is" +old_phone);
-
-console.log("old biography is" +old_biography);
 }
 
  var text = "Hey";
@@ -149,13 +140,10 @@ console.log("old biography is" +old_biography);
 
     if((userNameChanged == true) || (fullNameChanged == true) || (emailChanged == true) || (phoneChanged == true) || (biographyChanged == true)){
       if($("#userName").val()!= old_userName){
-        console.log("user name changed!");
         socket.emit('change_username', currentUser,$("#userName").val());
         socket.on('username_changed',function(msg){
           var result=msg
-          console.log(result);
           if(result != 'duplicate'&& result != 'fail')
-          console.log("username_changed"+msg);
           old_userName=result;
           $("#userName").val(result);
           text = "";
@@ -164,26 +152,20 @@ console.log("old biography is" +old_biography);
 
       }
       if($("#fullName").val()!= old_fullName){
-        console.log("full name changed!");
         socket.emit('change_fullname', currentUser,$("#fullName").val());
         socket.on('fullname_changed',function(msg){
           var result=msg
-          console.log(result);
           if(result != 'fail')
-          console.log("fullName_changed"+msg);
           old_fullName=result;
           $("#fullName").val(result);
           text = "";
         });
       }
       if($("#email").val()!= old_email){
-        console.log("email changed!");
         socket.emit('change_email', currentUser,$("#email").val());
         socket.on('email_changed',function(msg){
           var result=msg
-          console.log(result);
           if(result != 'fail')
-          console.log("email_changed"+msg);
           old_email=result;
           $("#email").val(result);
           text = "";
@@ -191,26 +173,20 @@ console.log("old biography is" +old_biography);
 
       }
       if($("#phone").val()!= old_phone){
-        console.log("phone changed!");
         socket.emit('change_phone_number', currentUser,$("#phone").val());
         socket.on('phone_number_changed',function(msg){
           var result=msg
-          console.log(result);
           if(result != 'fail')
-          console.log("phoneNo_changed"+msg);
           old_phone=result;
           $("#phone").val(result);
           text = "";
         });
       }
       if($("#biography").val()!= old_biography){
-        console.log("biography changed!");
         socket.emit('change_about', currentUser,$("#biography").val());
         socket.on('about_changed',function(msg){
           var result=msg
-          console.log("rest"+result);
           if(result != 'fail'){
-            console.log("about_changed"+msg);
             old_biography=result;
             text = "Uh oh";
             $("#biography").val(result);
@@ -225,36 +201,28 @@ console.log("old biography is" +old_biography);
  }
 
  function fieldChecker(){
-   console.log($("#userName").val());
 
    if($("#userName").val()!= old_userName){
-     console.log("user name changed!");
      userNameChanged = true;
    }
    if($("#fullName").val()!= old_fullName){
-     console.log("full name changed!");
      fullNameChanged = true;
    }
    if($("#email").val()!= old_email){
-     console.log("email changed!");
      emailChanged = true;
    }
    if($("#phone").val()!= old_phone){
-     console.log("phone changed!");
      phoneChanged = true;
    }
    if($("#biography").val()!= old_biography){
-     console.log("biography changed!");
      biographyChanged = true;
    }
 
  }
 
 function deleteAccount(){
-  console.log("delete account");
   socket.emit('delete_account',currentUser);
   socket.on('account_deleted',function(msg){
-    console.log(msg);
     if(msg=='success'){
     window.location.replace("http://188.166.157.62:5000/login");
     }

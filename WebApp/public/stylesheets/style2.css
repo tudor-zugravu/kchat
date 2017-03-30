@@ -1,7 +1,7 @@
 body {
   font-family: "Open Sans", sans-serif;
   height: 100vh;
-  background: url("http://i.imgur.com/HgflTDf.jpg") 50% fixed;
+  background-color: #B8C1C8;
   background-size: cover;
 }
 
@@ -20,12 +20,12 @@ body {
 .wrapper {
   display: flex;
   align-items: center;
-  flex-direction: column;
   justify-content: center;
   width: 100%;
   min-height: 100%;
   padding: 10px;
-  background: rgba(4, 40, 68, 0.85);
+  background: #B8C1C8;
+  flex-direction: column;
 }
 
 .login {
