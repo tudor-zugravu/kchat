@@ -208,10 +208,15 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func shortPress(gestureRecognizer: MyTapGestureRecognizer){
-        let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
-        conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
-        conversationViewController?.cameFrom = false
-        self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+            let conversationViewController = self.storyboard?.instantiateViewController(withIdentifier: "conversationViewController") as? ConversationViewController
+            conversationViewController?.passedValue = (gestureRecognizer.selectedName!, gestureRecognizer.selectedId!, gestureRecognizer.selectedPicture!)
+            conversationViewController?.cameFrom = false
+            conversationViewController?.privateIndex = 0
+            self.navigationController?.pushViewController(conversationViewController!, animated: true)
+        } else {
+            noInternetAllert()
+        }
     }
     
     func longPress(sender : MyLongPressGestureRecognizer){

@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-
 var Client = require('node-rest-client').Client;
 var client = new Client();
-
 var app = require('./app');
-// var socket = require('socket.io-client')('http://188.166.157.62:3000');
+
 
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
@@ -34,7 +32,6 @@ router.route('/login').get(function(req, res, next) {
             req.session.biography = ans.biography;
             req.session.profile_picture = ans.profile_picture;
 
-            console.log("session started for: " + req.session.fullname);
             res.render('individualChat', { user_id: req.session.user_id, fullname: req.session.fullname, target_id: 0, target_name: ""});
         });
     } else {
@@ -42,8 +39,8 @@ router.route('/login').get(function(req, res, next) {
     }
 });
 
+// clear all the sessions when user logout
 router.route('/logout').get(function(req, res, next) {
-    console.log("logging out " + req.session.fullname);
     req.session.username = "";
     req.session.password = "";
     req.session.email = "";
@@ -60,6 +57,7 @@ router.route('/changePass').get(function(req, res, next) {
     res.render('changePass');
 });
 
+// get and send all required information to chat page
 router.route('/chat').get(function(req, res){
     var args= {
         data: {
@@ -74,6 +72,8 @@ router.route('/chat').get(function(req, res){
     });
 });
 
+
+// get all contacts informations and send to contact page
 router.route('/contacts').get(function(req,res){
     var args = {
         data: {
@@ -89,6 +89,7 @@ router.route('/contacts').get(function(req,res){
     });
 });
 
+// get all contacts informations and send to group chat page
 router.route('/groupChat').get(function(req, res){
     var args = {
             data: {
@@ -120,6 +121,7 @@ router.route('/individualChat').get(function(req, res, next) {
     res.render('/individualChat', { user_id: req.session.user_id, fullname: req.session.fullname });
 });
 
+// get all profile informations and send to profile page
 router.route('/profile').get(function(req, res){
     res.render('profile', { user_id: req.session.user_id,
                             username: req.session.username,
@@ -130,6 +132,7 @@ router.route('/profile').get(function(req, res){
                             biography: req.session.biography });
 });
 
+// save all the changes in profile page and send new data to profile page
 router.route('/profile').post(function(req, res){
     req.session.username = req.body.user;
     req.session.fullname = req.body.name;
@@ -152,6 +155,7 @@ router.route('/changeProfile').get(function(req, res){
     res.render('changeProfile');
 });
 
+// authenticate user when they login and save information in sessions
 router.route('/authenticate').post(function(req,res){
     var args = {
         data: {
@@ -173,13 +177,14 @@ router.route('/authenticate').post(function(req,res){
         req.session.user_id = ans.user_id;
         req.session.biography = ans.biography;
         req.session.profile_picture = ans.profile_picture;
-        console.log("the current user's session id is: " + req.session.user_id);
+
         res.render('individualChat', {user_id: req.session.user_id, fullname: req.session.fullname, target_id : 0,target_name:""});
     });
 });
 
+// register user to system and save all the information to sessions if register success
 router.route('/register').post(function(req,res){
-    console.log("register test");
+
     var args = {
         data: {
             username :req.body.username ,
@@ -193,7 +198,7 @@ router.route('/register').post(function(req,res){
     };
     client.post("http://188.166.157.62:3000/register", args, function (data, response) {
         var ans = data;
-        console.log(ans.toString());
+
        var split = ans.toString().split(" ");
         var insertId = split[split.length-1];
         if (ans.includes("success")){
@@ -215,6 +220,7 @@ router.route('/register').post(function(req,res){
     });
 });
 
+// change password and save new password to session
 router.route('/changePass').post(function(req,res){
     var args = {
         data: {
@@ -242,7 +248,7 @@ router.route('/changePass').post(function(req,res){
 });
 
 
-
+// change profile information in database and save in session
 router.route('/changeProfile').post(function(req,res,next){
   var id = req.session.user_id;
 
@@ -260,7 +266,7 @@ router.route('/changeProfile').post(function(req,res,next){
      };
      client.post("http://188.166.157.62:3000/imageUpload", args, function (data, response) {
          if(id == data.toString()){
-           console.log("Successful image Write");
+
            res.render('profile',{user_id: req.session.user_id,
                                    username: req.session.username,
                                    fullname: req.session.fullname,
@@ -273,6 +279,7 @@ router.route('/changeProfile').post(function(req,res,next){
 });
 
 
+// change group profile in server
 router.route('/changeGroupProfile').post(function(req,res,next){
     var id = req.body.groupId;
      var profilePic = req.files.groupPic.data;
@@ -288,9 +295,9 @@ router.route('/changeGroupProfile').post(function(req,res,next){
          headers: { "Content-Type": "application/json" }
      };
      client.post("http://188.166.157.62:3000/groupImageUpload", args, function (data, response) {
-         console.log("OUT");
+
          if(id == data.toString()){
-            console.log("IN");
+
             var args = {
                 data: {
                 userId :req.session.user_id
@@ -307,16 +314,16 @@ router.route('/changeGroupProfile').post(function(req,res,next){
      });
 });
 
-
+// retrive information from contacts page and send the information to chat page
 router.route('/chat').post(function(req, res){
- console.log("start chat 1");
+
     id = req.body.contactId;
     name = req.body.contactName;
-    console.log(id);
-    console.log(name);
+
    var send = { user_id: req.session.user_id, fullname: req.session.fullname, target_id: id, target_name: name};
     res.render('individualChat',send);
 });
+
 
 router.route('/changeUsername').post(function(req,res){
     var args = {
@@ -328,10 +335,11 @@ router.route('/changeUsername').post(function(req,res){
     };
     client.post("http://188.166.157.62:3000/changeUsername", args, function(data, response){
         var ans = data;
-        console.log("changeUsername post request: " + ans.toString());
+
     });
 });
 
+// saves all the contatcs information and send data to realated links in contatcs page
 router.route('/contacts/:id').get(function(req,res){
     target = req.params.id;
     temp = req.session.contactList;

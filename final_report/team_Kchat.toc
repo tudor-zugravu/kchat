@@ -1,0 +1,33 @@
+\contentsline {paragraph}{}{2}
+\contentsline {section}{\numberline {1}Introduction}{3}
+\contentsline {section}{\numberline {2}Review}{3}
+\contentsline {section}{\numberline {3}Requirements}{6}
+\contentsline {subsection}{\numberline {3.1}Platform Requirements}{6}
+\contentsline {subsection}{\numberline {3.2}Functional Requirements}{6}
+\contentsline {subsection}{\numberline {3.3}Security Requirements}{7}
+\contentsline {section}{\numberline {4}Design}{10}
+\contentsline {subsection}{\numberline {4.1}Workflow}{10}
+\contentsline {subsection}{\numberline {4.2}System Architecture}{11}
+\contentsline {subsection}{\numberline {4.3}\relax $\@@underline {\hbox {\textbf {Android}}}\mathsurround \z@ $\relax }{12}
+\contentsline {subsection}{\numberline {4.4}\relax $\@@underline {\hbox {\textbf {iOS}}}\mathsurround \z@ $\relax }{13}
+\contentsline {subsection}{\numberline {4.5}\relax $\@@underline {\hbox {\textbf {Web}}}\mathsurround \z@ $\relax }{14}
+\contentsline {section}{\numberline {5}Implementation}{16}
+\contentsline {subsection}{\numberline {5.1}Technology}{16}
+\contentsline {subsection}{\numberline {5.2}Server}{17}
+\contentsline {subsection}{\numberline {5.3}\relax $\@@underline {\hbox {\textbf {Android}}}\mathsurround \z@ $\relax }{18}
+\contentsline {subsection}{\numberline {5.4}\relax $\@@underline {\hbox {\textbf {iOS}}}\mathsurround \z@ $\relax }{21}
+\contentsline {subsection}{\numberline {5.5}\relax $\@@underline {\hbox {\textbf {Web}}}\mathsurround \z@ $\relax }{22}
+\contentsline {subsection}{\numberline {5.6}\relax $\@@underline {\hbox {\textbf {Testing}}}\mathsurround \z@ $\relax }{24}
+\contentsline {subsection}{\numberline {5.7}Licences}{27}
+\contentsline {section}{\numberline {6}Team work and group management}{27}
+\contentsline {subsection}{\numberline {6.1}Agile methodology}{28}
+\contentsline {subsubsection}{\numberline {6.1.1}Planning Phase}{28}
+\contentsline {subsubsection}{\numberline {6.1.2}Implementation Phase}{29}
+\contentsline {subsubsection}{\numberline {6.1.3}Test Phase}{29}
+\contentsline {subsection}{\numberline {6.2}Tools}{29}
+\contentsline {subsubsection}{\numberline {6.2.1}Face to face}{29}
+\contentsline {subsubsection}{\numberline {6.2.2}Online tools}{29}
+\contentsline {section}{\numberline {7}Evaluation}{30}
+\contentsline {section}{\numberline {8}Peer assessment}{31}
+\contentsline {section}{\numberline {9}Appendix}{31}
+\contentsline {section}{References}{35}

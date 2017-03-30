@@ -86,14 +86,6 @@ public class RegisterActivity extends AppCompatActivity{
         });
         btnRegister.setEnabled(false);
 
-        inputFullName.setText("Tudor Vasile");
-        inputUsername.setText("TUDOR");
-        inputEmail.setText("tudor-dan@hotmail.co.uk");
-        inputPhone.setText("07983967714");
-        inputPassword.setText("!Kings777");
-        inputConfirm.setText("!Kings777");
-        inputBio.setText("This is a biography of the user");
-
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

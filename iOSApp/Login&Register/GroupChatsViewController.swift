@@ -65,7 +65,7 @@ class GroupChatsViewController: UIViewController, UITableViewDataSource, UITable
         filteredChats = chats.filter({ (chat) -> Bool in
             return (chat.groupName!.lowercased().hasPrefix(searchText.lowercased()));
         })
-        
+        searchActive = true
         self.tableView.reloadData()
     }
     

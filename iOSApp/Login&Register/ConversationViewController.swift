@@ -44,13 +44,14 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
             if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
                 SocketIOManager.sharedInstance.createPrivateRoom(receiverId: String(value.contactId), userId: String(describing: UserDefaults.standard.value(forKey: "userId")!))
             } else {
-                noInternetAllert()
+//                noInternetAllert()
                 if (UserDefaults.standard.value(forKey: "private\(privateIndex!)") != nil) {
                     // retrieving a value for a key
                     if let data = UserDefaults.standard.data(forKey: "private\(privateIndex!)"),
                         let privateMessages = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MessageModel] {
                         messages = privateMessages
                         self.tableView.reloadData()
+                        self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
                     }
                 }
             }
@@ -149,7 +150,32 @@ class ConversationViewController: UIViewController, UITableViewDataSource, UITab
         
         if (messageInputTextField.text != nil && messageInputTextField.text != "") {
             
-            SocketIOManager.sharedInstance.sendMessage(message: messageInputTextField.text!)
+            if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                SocketIOManager.sharedInstance.sendMessage(message: messageInputTextField.text!)
+            } else {
+                let item: MessageModel = MessageModel(messageId: 0, senderId: String(describing: UserDefaults.standard.value(forKey: "userId")!), message: messageInputTextField.text!, timestamp: "!!!")
+                
+                var storedMessages: [StoredMessagesModel]
+                if (UserDefaults.standard.value(forKey: "storedMessages") != nil) {
+                    if let data = UserDefaults.standard.data(forKey: "storedMessages"),
+                        let storedMessagesAux = NSKeyedUnarchiver.unarchiveObject(with: data) as? [StoredMessagesModel] {
+                            storedMessages = storedMessagesAux
+                    } else {
+                        storedMessages = []
+                    }
+                } else {
+                    storedMessages = []
+                }
+                
+                storedMessages.append(StoredMessagesModel(sender: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiver: passedValue!.contactId, message: messageInputTextField.text!, messageType: "private"))
+                let storedMessagesAux = NSKeyedArchiver.archivedData(withRootObject: storedMessages)
+                UserDefaults.standard.set(storedMessagesAux, forKey:"storedMessages");
+                messages.append(item)
+                let storedPrivateMessages = NSKeyedArchiver.archivedData(withRootObject: messages)
+                UserDefaults.standard.set(storedPrivateMessages, forKey:"private\(privateIndex!)");
+                self.tableView.reloadData()
+                self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+            }
             messageInputTextField.text = ""
         }
     }

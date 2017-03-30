@@ -50,10 +50,6 @@
 </head>
 
       <body onLoad="authenticate(<%=user_id %>, '<%=fullname %>')">
-<!--Ken out and add>
-  <P id="user_id"  style="visibility: invisible"><%=user_id %></p>
-    <P id="fullName" ><%=fullname %></p>
-    -->
     <P id="user_id" style="display: none"><%=user_id %></p>
       <P id="fullName"  style="display: none"><%=fullname %></p>
 
@@ -105,7 +101,7 @@
                 <div class="row">
                   <div class="col-xs-2">
                     <object class="header-profile-picture" data="http://188.166.157.62/profile_pictures/profile_picture<%=user_id %>.jpg" type="image/png">
-                      <img class="header-profile-picture" src="/images/profile.png" />
+                      <img class="header-profile-picture4" src="/images/profile.png" />
                     </object>
                   </div>
                   <div class="col-xs-10" style="padding-left: 0px;">
@@ -150,7 +146,7 @@
 
                 <div id="profileDisp" class="panel panel-primary verticalcenter">
                   <div class="panel-heading-ab">
-                    <h1 class="panel-title text-center"> <br/> Contacts Profile </h1>
+                    <h1 class="panel-title text-center ccc"> <br/> Contacts Profile </h1>
                   </div>
                   <div class="panel-body">
 
@@ -239,9 +235,6 @@
   </div>
 
   <div class="ioslist-group-container">
-        <!--
-          <div class="ioslist-group-header" id="conversation-banner">Contacts List</div>
-        -->
       </div>
 
 
@@ -290,30 +283,6 @@
       <div id="acceptRequest">
 
       </div>
-
-        <!-- <div id="requestUser" class="groupbox" style="display:none;" >
-          <h2>Create New Group</h2>
-          <form id="create_group_form" action="" onsubmit="return createGroup();">
-           <input type="text" placeholder="Group Name" id="group_name">
-            <input type="text" placeholder="Group description" id="group_description">
-
-           <div class="select_group_members">
-             <p>
-               Select group members:
-             </p>
-          <ul style="list-style-type: none">
-            <% for(var i=0; i < contacts.length; i++) { %>
-              <li><input type="checkbox" value="<%= contacts[i].user_id %>" name="select_group_contact"><%= contacts[i].username %> (<%= contacts[i].name %>)</li>
-
-              <% } %>
-
-            </ul>
-            </div>
-          <button type="submit">DONE</button>
-          <button type="button" onclick="$.groupbox.close();" rel="modal:close">CANCEL</button>
-        </form>
-        </div> -->
-
           <div id="contactList">
             <div class="row top-buffer"> <!-- Search bar -->
               <div class="col-xs-8" align="text-center">
@@ -334,7 +303,9 @@
                     <% for(var i=0; i < contacts.length; i++) { %>
                     <li class="list-group-item">
                       <div class="col-xs-2"> <!-- profile image -->
-                        <img src="../images/profile.png" alt="" align="center" class="img-circle" width="80%" />
+                      <object class="img-circle" data="http://188.166.157.62/profile_pictures/profile_picture<% if(contacts.length != 0) {  %><%= contacts[i].user_id %><%  } %>.jpg" type="image/png" width="80px" height="80px"/>
+                          <img class="img-circle" src="/images/profile.png" width="80px" height="80px"/>
+                        </object>
                       </div>
                       <div class="col-xs-6"> <!-- user info. -->
                         <span class="name"> <h3><p style="line-height: 0pt"><a href="/contacts/<%= contacts[i].user_id %>"><%= contacts[i].username %></a></p></h3></span><br/>
@@ -347,13 +318,6 @@
                     </li>
                     <% } %>
 
-                            <!--
-                            <div class="col-xs-2 col-sm-2">
-                              <br/>
-                              <button id="showProfile" class="btn btn-primary" data-toggle="modal" data-target="#profileDialog"> Show Profile </button>
-
-                            </div>
-                          -->
 
                       </ul>
                     </div>
@@ -362,30 +326,12 @@
               </div>
             </div>
 
-
-
                 </div>
-                <!-- <ul id="search_result">
 
-                </ul>
-                <div id="received_requests">
-
-                </div>
-              </div>
-              <div id="modal">
-
-              </div>
-              <div id="acceptRequest">
-
-              </div> -->
-
-              <!--Modal to show when it's successful -->
               <div id="inviteSuccessful" style="display:none;">
                 <p>Invitation Sucessful</p>
                 <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
               </div>
-
-              <!--Modal to show when it's error -->
               <div id="inviteError" style="display:none;">
                 <p>Invitation Error. Please Try Again.</p>
                 <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
@@ -400,27 +346,9 @@
                 <p>You have accept the request </p>
                 <button type="button" onclick="$.modal.close();" rel="modal:close">Close</button>
               </div>
-
-              <!-- Link to open the modal -->
-
-
             </div>
-            <!-- /.row -->
           </div>
 
-  <!--  <script src="/vendor/jquery/jquery.min.js"></script>
-
-
-    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <script src="/vendor/raphael/raphael.min.js"></script>
-    <script src="/vendor/morrisjs/morris.min.js"></script>
-    <script src="/data/morris-data.js"></script> */
-
-    <script src="/dist/js/sb-admin-2.js"></script>
-      <script src="/socket.io/socket.io.js"></script>
-    -->
     <script src="http://188.166.157.62:3000/socket.io/socket.io.js"></script>
 
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -428,24 +356,17 @@
     <script src="//rawgithub.com/stidges/jquery-searchable/master/dist/jquery.searchable-1.0.0.min.js"></script>
 
     <script>
+     /* connect to server io*/
       var socket = io.connect('http://188.166.157.62:3000');
       var currentUser = $("#user_id").text();
       var name = $("#fullName").text();
       var audio = new Audio('notification.mp3');
-      var users = [];
-       console.log($("#person0").text());
-       console.log($("#person1").text());
-       console.log($("#person2").text());
 
-       for(var i=0; i < <%= contacts.length %> ; i++){
-         console.log($("#person<%=i%>").text());
-       }
-
+      /* authenticate user when they first visit this page*/
       function authenticate(id, name) {
         socket.emit('connection');
         socket.emit('authenticate', id,name);
         socket.on('authenticated',function(msg){
-          console.log("autenticated"+msg);
         });
       }
       socket.on('disconnected',function(msg){
@@ -468,6 +389,7 @@
         location.reload();
       });
 
+/* Search users in database and send friend requet*/
       $(function () {
         var FriendUser="";
         $('#search').keyup(function () {
@@ -479,15 +401,15 @@
             }
           }
       });
+
       socket.on('search_user_received', function(msg){
-        console.log(msg);
         var target = JSON.parse(msg);
         if(!$('#search_result').is(':empty')){
           $( "#search_result" ).empty();
         }
+          $("#modal").empty();
         for(var i=0; i < target.length; i++) {
            $('#search_result').append($('<br><a href="#ex'+i+'" rel="modal:open">').text(""+target[i].name));
-
            $("#modal").append('<div id="ex'+i+'" style="display:none; padding-top:100px;"><p>Send request confirmation<p><p>Send contact request to '+target[i].name+'?</p><button class="btn btn-danger" style="margin-right:10px;" onclick="sendRequest('+target[i].user_id+')">OK</button><button class="btn btn-danger"type="button" onclick="$.modal.close(); location.reload();" rel="modal:close">Cancel</button>');
         }
       });
@@ -498,6 +420,7 @@
       $('#addNewContact').modal();
     }
 
+ /*send friend request to other user */
       function sendRequest(id) {
         $.modal.close();
         var error;
@@ -511,6 +434,7 @@
         socket.emit('send_contact_request', currentUser, name, id);
       }
 
+ /*delete the contact */
      function deleteContact(currentUser, id){
       socket.on('contact_deleted', function(msg){
         if(msg == "fail"){
@@ -523,7 +447,7 @@
       socket.emit('delete_contact', currentUser, id, "success");
     }
 
-
+ /*view the friend request others send to the user*/
     function viewRequests(id){
 
       socket.off('received_requests');
@@ -531,13 +455,14 @@
        var target = JSON.parse(msg);
         $("#received_requests").empty();
        for(var i=0; i < target.length; i++) {
-      $("#received_requests").append('<div id="request'+i+'"><p>you have received a request from '+target[i].name+"</p><button onclick='acceptRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Accept the contact request</button>");
+      $("#received_requests").append('<div class="row top-buffer"><div class="col-xs-8" align="center"><div class="panel panel-default" style="padding-bottom:10px;"><ul class="list-group"><div id="request'+i+'"><p>you have received a request from '+target[i].name+"</p><button onclick='acceptRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Accept the contact request</button>");
     }
 
   });
      socket.emit('received_contact_requests',id);
    }
 
+ /*view the friend request the uer has sent */
    function viewSentRequests(id){
 
       socket.off('sent_requests');
@@ -545,7 +470,7 @@
        var target = JSON.parse(msg);
         $("#received_requests").empty();
        for(var i=0; i < target.length; i++) {
-      $("#received_requests").append('<div id="request'+i+'"><p>you have sent a request to '+target[i].name+"</p><button onclick='deleteRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Delete the contact request</button>");
+      $("#received_requests").append('<div class="row top-buffer"><div class="col-xs-8" align="center"><div class="panel panel-default" style="padding-bottom:10px;"><ul class="list-group"><div id="request'+i+'"><p>you have sent a request to '+target[i].name+"</p><button onclick='deleteRequest(\""+target[i].user_id+"\",\""+target[i].name+"\","+i+")'>Delete the contact request</button>");
     }
 
   });
@@ -553,6 +478,7 @@
 
    }
 
+ /*accept friend request */
    function acceptRequest(id, name, position) {
     socket.on('request_accepted', function(msg){
       alert("You have accepted " + name + "'s contact request.");
@@ -560,6 +486,7 @@
     });
     socket.emit('accept_contact_request', id, currentUser,"success");
   }
+
 
   function deleteRequest(id, name, position) {
     socket.on('request_deleted', function(msg){
@@ -572,12 +499,13 @@
 
 </script>
 
+
 <script>
   $(function () {
    $('#contact-list').searchable({
     searchField: '#contact-list-search',
     selector: 'li',
-    childSelector: '.col-xs-7',
+    childSelector: '.col-xs-6',
     show: function( elem ) {
       elem.slideDown(100);
     },

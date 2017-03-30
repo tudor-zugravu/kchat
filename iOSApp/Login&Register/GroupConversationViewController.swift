@@ -50,7 +50,7 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
             if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
                 SocketIOManager.sharedInstance.createGroupRoom(groupId: String(value.groupId))
             } else {
-                noInternetAllert()
+//                noInternetAllert()
                 if (UserDefaults.standard.value(forKey: "group\(groupIndex!)") != nil) {
                     // retrieving a value for a key
                     if let data = UserDefaults.standard.data(forKey: "group\(groupIndex!)"),
@@ -211,8 +211,32 @@ class GroupConversationViewController: UIViewController, UITableViewDataSource, 
     
     @IBAction func sendButtonPressed(_ sender: Any) {
         if (messageInputTextField.text != nil && messageInputTextField.text != "") {
-            
-            SocketIOManager.sharedInstance.sendGroupMessage(message: messageInputTextField.text!)
+            if SocketIOManager.sharedInstance.isConnected() && Utils.instance.isInternetAvailable() {
+                SocketIOManager.sharedInstance.sendGroupMessage(message: messageInputTextField.text!)
+            } else {
+                let item: GroupMessageModel = GroupMessageModel(messageId: 0, senderId: String(describing: UserDefaults.standard.value(forKey: "userId")!), message: messageInputTextField.text!, timestamp: "!!!", profilePicture: "", name: "")
+                
+                var storedMessages: [StoredMessagesModel]
+                if (UserDefaults.standard.value(forKey: "storedMessages") != nil) {
+                    if let data = UserDefaults.standard.data(forKey: "storedMessages"),
+                        let storedMessagesAux = NSKeyedUnarchiver.unarchiveObject(with: data) as? [StoredMessagesModel] {
+                        storedMessages = storedMessagesAux
+                    } else {
+                        storedMessages = []
+                    }
+                } else {
+                    storedMessages = []
+                }
+                
+                storedMessages.append(StoredMessagesModel(sender: String(describing: UserDefaults.standard.value(forKey: "userId")!), receiver: passedValue!.groupId, message: messageInputTextField.text!, messageType: "group"))
+                let storedMessagesAux = NSKeyedArchiver.archivedData(withRootObject: storedMessages)
+                UserDefaults.standard.set(storedMessagesAux, forKey:"storedMessages");
+                messages.append(item)
+                let storedGroupMessages = NSKeyedArchiver.archivedData(withRootObject: messages)
+                UserDefaults.standard.set(storedGroupMessages, forKey:"group\(groupIndex!)");
+                self.tableView.reloadData()
+                self.tableViewScrollToBottom(topOrBottom: true, animated: true, delay: 100)
+            }
             messageInputTextField.text = ""
         }
     }

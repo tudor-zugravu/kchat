@@ -37,6 +37,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
 import API.IMessage;
 import IMPL.JsonDeserialiser;
 import IMPL.MasterUser;
@@ -66,7 +69,6 @@ public class ChatsActivity extends AppCompatActivity {
     public static boolean didOverscroll = false;
     DataManager dm;
     static boolean active = false;
-    public static ArrayList<IMessage> bufferdList;
 
     @Override
     public void onStart() {
@@ -90,7 +92,6 @@ public class ChatsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         imageUpload = (ImageButton)findViewById(R.id.imageUpload);
         textViewChatUser = (TextView) findViewById(R.id.textViewChatUser);
-        bufferdList = new ArrayList<>();
         dataList = new ArrayList<>();
         Intent intent = getIntent();
         String chatUser = intent.getStringExtra("type");
@@ -194,6 +195,7 @@ public class ChatsActivity extends AppCompatActivity {
         });
         imageUpload.setOnClickListener(new ImageListener(this, "PrivateChat"));
     }
+
 
     private Emitter.Listener serverReplyLogs = new Emitter.Listener() {
         @Override

@@ -43,6 +43,7 @@ import java.util.concurrent.ExecutionException;
 
 import API.IContacts;
 import API.IGroups;
+import API.IMessage;
 import IMPL.Contacts;
 import IMPL.Groups;
 import IMPL.JsonDeserialiser;
@@ -75,6 +76,7 @@ public class ContactsActivity extends AppCompatActivity {
     static NotificationCompat.Builder notification;
     public static final int uniqueId = 45611;
     LinearLayoutManager layoutManager;
+    public static ArrayList<IMessage> bufferdList = new ArrayList<>();
 
     @Override
     protected void onResume() {
@@ -109,7 +111,6 @@ public class ContactsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         dm = new DataManager(ContactsActivity.this);
              if(man.getProfileLocation()!=null) {
                  if(InternetHandler.hasInternetConnection(ContactsActivity.this,0)==false){

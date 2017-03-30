@@ -201,6 +201,8 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
             self.present(alertView, animated: true, completion: nil)
         }
     }
+    // (Source: http://stackoverflow.com/questions/39620095/uiimagepickercontroller-not-working-properly-with-swift-3)
+    // Used for accessing the camera functions of the device
     
     @IBAction func photosButtonPressed(_ sender: Any) {
         picker.allowsEditing = false
@@ -208,6 +210,8 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
         present(picker, animated: true, completion: nil)
     }
+    // (Source: https://makeapppie.com/2016/06/28/how-to-use-uiimagepickercontroller-for-a-camera-and-photo-library-in-swift-3-0/)
+    // Used for accessing a photo from the library
     
     @IBAction func backButtonPressed(_ sender: Any) {
         self.goBack()
@@ -216,6 +220,26 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBAction func doneButtonPressed(_ sender: Any) {
         if groupNameTextField.text != nil && groupNameTextField.text != "" && groupDescriptionTextField.text != nil && groupDescriptionTextField.text != "" {
             
+            if numberOfSelectedContacts == 0 {
+                let myAlert = UIAlertController(title:"Create empty group?", message:"You are the only contact in the group", preferredStyle:.alert);
+                let yesAction=UIAlertAction(title:"Yes", style:UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.createTheGroup() })
+                myAlert.addAction(yesAction);
+                let noAction=UIAlertAction(title:"No", style:UIAlertActionStyle.default, handler:nil);
+                myAlert.addAction(noAction);
+                self.present(myAlert, animated:true, completion:nil);
+            } else {
+                createTheGroup()
+            }
+        } else {
+            let alertView = UIAlertController(title: "Failed",
+                                              message: "Please fill in the group name and description" as String, preferredStyle:.alert)
+            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
+            alertView.addAction(okAction)
+            self.present(alertView, animated: true, completion: nil)
+        }
+    }
+        
+        func createTheGroup() {
             var selectedContacts: [Int] = []
             contacts.forEach { contact in
                 if contact.selected! {
@@ -229,14 +253,7 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
             } else {
                 SocketIOManager.sharedInstance.createGroup(name: groupNameTextField.text!, description: groupDescriptionTextField.text!, ownerId: UserDefaults.standard.value(forKey: "userId") as! Int, group_picture: "", members: selectedContacts)
             }
-        } else {
-            let alertView = UIAlertController(title: "Failed",
-                                              message: "Please fill in the group name and description" as String, preferredStyle:.alert)
-            let okAction = UIAlertAction(title: "Done", style: .default, handler: nil)
-            alertView.addAction(okAction)
-            self.present(alertView, animated: true, completion: nil)
         }
-    }
     
     func uploadImage(id: String) {
         // upload image
@@ -337,6 +354,8 @@ class NewGroupViewController: UIViewController, UIImagePickerControllerDelegate,
         imageHasChanged = true
         dismiss(animated:true, completion: nil) //5
     }
+    // (Source: https://makeapppie.com/2014/12/04/swift-swift-using-the-uiimagepickercontroller-for-a-camera-and-photo-library/)
+    // Used for accessing the selected or taken photograph
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

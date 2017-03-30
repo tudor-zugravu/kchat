@@ -37,7 +37,7 @@ class ImageUploadModel: NSObject, URLSessionDataDelegate {
             // Check for request errors
             guard let _:Data = data, let _:URLResponse = response, error == nil else {
                 print("error")
-                print(error)
+               // print(error)
                 return
             }
             

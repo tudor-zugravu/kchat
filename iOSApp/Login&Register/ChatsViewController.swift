@@ -64,7 +64,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         filteredChats = chats.filter({ (chat) -> Bool in
             return (chat.receiverName!.lowercased().hasPrefix(searchText.lowercased()));
         })
-        
+        searchActive = true
         self.tableView.reloadData()
     }
     
@@ -78,6 +78,7 @@ class ChatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchActive = false;
+        print(searchActive)
         self.dismissKeyboard()
     }
     

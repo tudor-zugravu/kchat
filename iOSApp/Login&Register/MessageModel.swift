@@ -30,8 +30,12 @@ class MessageModel: NSObject, NSCoding {
         self.message = message
         
         let separators = CharacterSet(charactersIn: " -:")
-        let timeParts = timestamp.components(separatedBy: separators)
-        self.timestamp = "\(timeParts[0])-\(timeParts[1]) \(timeParts[3]):\(timeParts[4])"
+        if timestamp != "!!!" {
+            let timeParts = timestamp.components(separatedBy: separators)
+            self.timestamp = "\(timeParts[0])-\(timeParts[1]) \(timeParts[3]):\(timeParts[4])"
+        } else {
+            self.timestamp = timestamp
+        }
     }
     
     required init(coder decoder: NSCoder) {

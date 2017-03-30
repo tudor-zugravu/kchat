@@ -144,6 +144,8 @@ public class DataManager {
     }
 
     public void insertIntoBufferTable( int senderId, int receiverId, String message, String timestamp, String type){
+        Log.d("MESSI", "reeached here to add into buffer database the message"+ senderId+ " " + receiverId + " " + message+ " " + timestamp);
+
         String query = "INSERT INTO " + BUFFER_MESSAGES_TABLE + " (" +
                 GROUP_MESSAGES_SENDERID + ", " +
                 GROUP_MESSAGES_RECEIVERID + ", " +
@@ -169,8 +171,8 @@ public class DataManager {
     }
 
 
-    public void getAllBufferedMessages(){ //logout to delete all
-        ChatsActivity.bufferdList.clear();
+    public Cursor getAllBufferedMessages(){ //logout to delete all
+        ContactsActivity.bufferdList.clear();
         Log.d("MESSI","reeached to get all buffered messages");
         Cursor c2 = db.rawQuery("SELECT * " +
                 " FROM " + BUFFER_MESSAGES_TABLE +
@@ -180,16 +182,18 @@ public class DataManager {
             int receiver = c2.getInt(2); // group id
             String message= c2.getString(3);
             String timestamp = c2.getString(5);
-            IMessage messageStored = new Message(MasterUser.usersId,sender,message,timestamp);
+
+                IMessage messageStored = new Message(sender,receiver,message,timestamp);
             messageStored.setMe(true);//if the message is sender, set "true". if not, set "false".
-            if(ChatsActivity.bufferdList!=null )ChatsActivity.bufferdList.add(messageStored);
-                Log.d("MESSI","got here to add to the list, the size is " + ChatsActivity.bufferdList.size());
+            if(ContactsActivity.bufferdList!=null )ContactsActivity.bufferdList.add(messageStored);
+                Log.d("MESSI","got here to add to the list, the size is " + ContactsActivity.bufferdList.size());
             }
         Log.d("MESSI","reeached to delete");
 
         String query3 = "DELETE FROM " + BUFFER_MESSAGES_TABLE+ ";";
         Log.i("delete() = ", query3);
         db.execSQL(query3);
+        return c2;
     }
 
     public void flushAllMessageData(){ //logout to delete all
